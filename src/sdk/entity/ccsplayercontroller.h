@@ -2,6 +2,7 @@
 
 #include "cbaseplayercontroller.h"
 #include "random.h"
+#include <core/memory.h>
 
 enum OverlapState : uint8 {
 	PERFECT = 0x1,
@@ -52,7 +53,7 @@ public:
 		if (iTeam <= CS_TEAM_SPECTATOR) {
 			ChangeTeam(iTeam);
 		} else {
-			// UTIL::SwitchTeam(this, iTeam);
+			MEM::CALL::SwitchTeam(this, iTeam);
 		}
 	}
 

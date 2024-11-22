@@ -15,7 +15,6 @@ namespace UTIL {
 		}
 	} // namespace PATH
 
-	inline std::string GetWorkingDirectory() {
-		return PATH::Join(std::filesystem::current_path().string(), "..", "..", GAME_NAME, "addons", "cs2surf");
-	}
+	std::string GetWorkingDirectory();
+	json LoadJsonc(std::string sFilePath);
 } // namespace UTIL

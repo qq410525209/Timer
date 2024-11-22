@@ -3,6 +3,9 @@
 
 #include <core/interfaces.h>
 #include <core/memory.h>
+#include <core/gameconfig.h>
+
+#include <utils/utils.h>
 
 CSurfPlugin g_SurfPlugin;
 
@@ -12,7 +15,11 @@ CSurfPlugin* SurfPlugin() {
 	return &g_SurfPlugin;
 }
 
+CGameConfig* g_pGameConfig = nullptr;
+
 bool CSurfPlugin::Load(PluginId id, ISmmAPI* ismm, char* error, size_t maxlen, bool late) {
+	g_pGameConfig = new CGameConfig("cs2surf-core.games.jsonc");
+
 	IFACE::Setup(ismm, error, maxlen);
 	MEM::SetupHooks();
 
@@ -28,7 +35,7 @@ const char* CSurfPlugin::GetName() {
 }
 
 const char* CSurfPlugin::GetDescription() {
-	return "";
+	return "yep";
 }
 
 const char* CSurfPlugin::GetURL() {
@@ -44,9 +51,9 @@ const char* CSurfPlugin::GetVersion() {
 }
 
 const char* CSurfPlugin::GetDate() {
-	return "";
+	return "1337";
 }
 
 const char* CSurfPlugin::GetLogTag() {
-	return "";
+	return "LEET";
 }

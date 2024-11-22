@@ -6,18 +6,36 @@
 
 using namespace libmodule;
 
-CGameConfig::CGameConfig(std::string pszPath) : m_Json(nullptr), m_pszFile(pszPath) {
-	std::string sPath = UTIL::PATH::Join(UTIL::GetWorkingDirectory(), "gamedata", pszPath);
-	std::ifstream file(sPath);
+CGameConfig::CGameConfig(std::string sFilePath) : m_Json(nullptr), m_sFilePath(sFilePath) {
+	std::string sPath = UTIL::PATH::Join(UTIL::GetWorkingDirectory(), "gamedata", sFilePath);
+	m_Json = UTIL::LoadJsonc(sPath);
+	SURF_ASSERT(!m_Json.empty());
+}
 
-	bool bFileRead = file.good();
-
-	SURF_ASSERT(bFileRead);
-
-	if (bFileRead) {
-		m_Json = json::parse(file);
-		file.close();
+int CGameConfig::GetOffset(std::string name) {
+	if (m_Json.is_null()) {
+		SURF_ASSERT(false);
+		return -1;
 	}
+
+	if (m_Json.find("Offset") == m_Json.end()) {
+		SURF_ASSERT(false);
+		return -1;
+	}
+
+	auto& offset = m_Json["Offset"];
+	if (offset.is_null() || offset.empty()) {
+		SURF_ASSERT(false);
+		return -1;
+	}
+
+	auto& element = offset[name];
+	if (element.is_null() || element.empty()) {
+		SURF_ASSERT(false);
+		return -1;
+	}
+
+	return element[WIN_LINUX("windows", "linux")].get<int>();
 }
 
 void* CGameConfig::GetMemSig(std::string name) {
