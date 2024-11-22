@@ -42,15 +42,16 @@ void* Plat_GetModuleHandle(const char* path) {
 }
 
 bool Plat_GetCommandArgument(const char* argName, char* buffer, size_t maxlength) {
-	if (buffer)
+	if (buffer) {
 		buffer[0] = '\0';
+	}
 
 #if defined _WIN32
 	wchar_t wargName[256];
 	mbstowcs(wargName, argName, sizeof(wargName) / sizeof(wchar_t));
 
-	LPWSTR	pCmdLine = GetCommandLineW();
-	int		argc;
+	LPWSTR pCmdLine = GetCommandLineW();
+	int argc;
 	LPWSTR* wargv = CommandLineToArgvW(pCmdLine, &argc);
 
 	bool found = false;
@@ -73,10 +74,10 @@ bool Plat_GetCommandArgument(const char* argName, char* buffer, size_t maxlength
 #else
 	FILE* pFile = fopen("/proc/self/cmdline", "rb");
 	if (pFile) {
-		char*  arg = nullptr;
+		char* arg = nullptr;
 		size_t argsize = 0;
-		bool   nextIsValue = false;
-		bool   found = false;
+		bool nextIsValue = false;
+		bool found = false;
 
 		while (getdelim(&arg, &argsize, 0, pFile) != -1) {
 			if (nextIsValue) {
