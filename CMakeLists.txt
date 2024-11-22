@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.22)
 
-project(CS2-SurfTimer)
+project(cs2surf)
 
 include("shared.cmake")
 
@@ -34,14 +34,14 @@ target_link_libraries(${PROJECT_NAME} PRIVATE ${SURFTIMER_LIBS})
 
 set_target_properties(${PROJECT_NAME} PROPERTIES PREFIX "")
 
-set(EXT_DIR "" CACHE PATH "Source2Mod extension directory for post-build file copy")
+set(OUT_DIR "" CACHE PATH "SurfTimer binary directory for post-build file copy")
 
-if (EXISTS "${EXT_DIR}")
+if (EXISTS ${OUT_DIR})
 	add_custom_command(
 		TARGET ${PROJECT_NAME} POST_BUILD
 		COMMAND ${CMAKE_COMMAND} -E copy
 			$<TARGET_FILE:${PROJECT_NAME}>
-			${EXT_DIR}
+			${OUT_DIR}
 	)
 endif()
 

@@ -1,6 +1,9 @@
 #include "cs2surf.h"
+#include "version.h"
 
 CSurfPlugin g_SurfPlugin;
+
+PLUGIN_EXPOSE(CSurfPlugin, g_SurfPlugin);
 
 CSurfPlugin* SurfPlugin() {
 	return &g_SurfPlugin;
@@ -11,33 +14,33 @@ bool CSurfPlugin::Load(PluginId id, ISmmAPI* ismm, char* error, size_t maxlen, b
 }
 
 const char* CSurfPlugin::GetAuthor() {
-	return nullptr;
+	return "Nyano1337";
 }
 
 const char* CSurfPlugin::GetName() {
-	return nullptr;
+	return "CS2-SurfTimer";
 }
 
 const char* CSurfPlugin::GetDescription() {
-	return nullptr;
+	return "";
 }
 
 const char* CSurfPlugin::GetURL() {
-	return nullptr;
+	return " https://cs2surf.com";
 }
 
 const char* CSurfPlugin::GetLicense() {
-	return nullptr;
+	return "MIT License";
 }
 
 const char* CSurfPlugin::GetVersion() {
-	return nullptr;
+	return VERSION_STRING;
 }
 
 const char* CSurfPlugin::GetDate() {
-	return nullptr;
+	return "";
 }
 
 const char* CSurfPlugin::GetLogTag() {
-	return nullptr;
+	return "";
 }
