@@ -40,7 +40,7 @@ const char* CSurfPlugin::GetLicense() {
 }
 
 const char* CSurfPlugin::GetVersion() {
-	return VERSION_STRING;
+	return "dev"; // VERSION_STRING
 }
 
 const char* CSurfPlugin::GetDate() {

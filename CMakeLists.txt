@@ -40,7 +40,9 @@ file(GLOB_RECURSE SURFTIMER_SOURCES "${SURFTIMER_SRC}/*.cpp" "${SURFTIMER_SRC}/*
 
 add_library(${PROJECT_NAME} SHARED ${SDK_CONVAR} ${SDK_MEMOVERRIDE} ${LIBMODULE_SOURCES} ${PROTOBUF_SOURCES} ${SURFTIMER_SOURCES})
 
-target_link_options(${PROJECT_NAME} PRIVATE "ntdll.lib")
+if(WIN32)
+	target_link_options(${PROJECT_NAME} PRIVATE "ntdll.lib")
+endif()
 
 target_link_libraries(${PROJECT_NAME} PRIVATE ${SURFTIMER_LIBS})
 
