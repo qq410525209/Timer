@@ -8,8 +8,7 @@
 
 class CCSPlayerPawn;
 
-enum class PlayerConnectedState : uint32_t
-{
+enum class PlayerConnectedState : uint32_t {
 	PlayerNeverConnected = 0xFFFFFFFF,
 	PlayerConnected = 0x0,
 	PlayerConnecting = 0x1,
@@ -19,8 +18,7 @@ enum class PlayerConnectedState : uint32_t
 	PlayerReserved = 0x5,
 };
 
-class CBasePlayerController : public CBaseEntity
-{
+class CBasePlayerController : public CBaseEntity {
 public:
 	DECLARE_SCHEMA_CLASS(CBasePlayerController);
 
@@ -29,18 +27,15 @@ public:
 	SCHEMA_FIELD(CHandle<CCSPlayerPawn>, m_hPawn);
 	SCHEMA_FIELD_POINTER(char, m_iszPlayerName);
 
-	CBasePlayerPawn *GetCurrentPawn()
-	{
+	CBasePlayerPawn* GetCurrentPawn() {
 		return m_hPawn().Get();
 	}
 
-	const char *GetPlayerName()
-	{
+	const char* GetPlayerName() {
 		return m_iszPlayerName();
 	}
 
-	int GetPlayerSlot()
-	{
+	int GetPlayerSlot() {
 		return entindex() - 1;
 	}
 

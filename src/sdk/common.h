@@ -3,6 +3,15 @@
 #include <json.h>
 using json = nlohmann::json;
 
+#pragma region GAME_DEF
+
+#define CS_TEAM_NONE      0
+#define CS_TEAM_SPECTATOR 1
+#define CS_TEAM_T         2
+#define CS_TEAM_CT        3
+
+#pragma endregion
+
 #pragma region SURF_DEF
 
 #ifndef SURF_DEBUG_BREAK

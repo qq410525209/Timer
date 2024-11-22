@@ -4,8 +4,7 @@
 #include <entityhandle.h>
 #include <entitysystem.h>
 
-struct EntityIOConnectionDesc_t
-{
+struct EntityIOConnectionDesc_t {
 	string_t m_targetDesc;
 	string_t m_targetInput;
 	string_t m_valueOverride;
@@ -15,23 +14,20 @@ struct EntityIOConnectionDesc_t
 	float m_flDelay;
 };
 
-struct EntityIOConnection_t : EntityIOConnectionDesc_t
-{
+struct EntityIOConnection_t : EntityIOConnectionDesc_t {
 	bool m_bMarkedForRemoval;
-	EntityIOConnection_t *m_pNext;
+	EntityIOConnection_t* m_pNext;
 };
 
-struct EntityIOOutputDesc_t
-{
-	const char *m_pName;
+struct EntityIOOutputDesc_t {
+	const char* m_pName;
 	uint32 m_nFlags;
 	uint32 m_nOutputOffset;
 };
 
-class CEntityIOOutput
-{
+class CEntityIOOutput {
 public:
-	void *vtable;
-	EntityIOConnection_t *m_pConnections;
-	EntityIOOutputDesc_t *m_pDesc;
+	void* vtable;
+	EntityIOConnection_t* m_pConnections;
+	EntityIOOutputDesc_t* m_pDesc;
 };

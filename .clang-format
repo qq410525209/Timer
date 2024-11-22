@@ -24,7 +24,7 @@ IndentCaseLabels: true
 InsertBraces: true
 InsertNewlineAtEOF: true
 KeepEmptyLinesAtTheStartOfBlocks: false
-LineEnding: CRLF
+LineEnding: LF
 MaxEmptyLinesToKeep: 1
 NamespaceIndentation: All
 PointerAlignment: Left

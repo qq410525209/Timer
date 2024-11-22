@@ -161,6 +161,11 @@ inline constexpr uint64_t hash_64_fnv1a_const(const char* const str, const uint6
 	SCHEMA_FIELD_POINTER_SETTER(SCHEMA_VA(type), varName, 0)
 
 // See SCHEMA_FIELD_POINTER.
+#define SCHEMA_FIELD_POINTER_OFFSET(type, varName, offset) \
+	SCHEMA_FIELD_POINTER_GETTER(SCHEMA_VA(type), varName, offset) \
+	SCHEMA_FIELD_POINTER_SETTER(SCHEMA_VA(type), varName, offset)
+
+// See SCHEMA_FIELD_POINTER.
 // Support custom offset and custom name.
 #define SCHEMA_FIELD_POINTER_CUSTOM(type, varName, offset) \
 	SCHEMA_FIELD_POINTER_GETTER(type, varName, offset) \
