@@ -1,29 +1,24 @@
-#ifndef __LIBMEM_LIBMEM_HELPER__
-#define __LIBMEM_LIBMEM_HELPER__
+#pragma once
 
 #include <sstream>
 #include <cstring>
 #include <unordered_map>
 #include <libmem/libmem_virtual.h>
-#include <modules/dynlibutils/module.h>
 
 #ifdef _WIN32
 #define MODULE_PREFIX ""
-#define MODULE_EXT ".dll"
+#define MODULE_EXT    ".dll"
 #else
 #define MODULE_PREFIX "lib"
-#define MODULE_EXT ".so"
+#define MODULE_EXT    ".so"
 #endif
 
-#define LM_STORE_TO_ADDRESS(address, ...) \
-    libmem::StoreToAddress(address, __VA_ARGS__)
+#define LM_STORE_TO_ADDRESS(address, ...) libmem::StoreToAddress(address, __VA_ARGS__)
 
-#define LM_STORE_TO_ADDRESS_WITH_OFFSET(address, offset, ...)	\
-	libmem::StoreToAddress<offset>(address, __VA_ARGS__)
+#define LM_STORE_TO_ADDRESS_WITH_OFFSET(address, offset, ...) libmem::StoreToAddress<offset>(address, __VA_ARGS__)
 
 namespace libmem {
-
-	template <typename T>
+	template<typename T>
 	inline bool HookFunc(void* from, T to, void*& trampoline) {
 		if (!from) {
 			return false;
@@ -33,7 +28,7 @@ namespace libmem {
 		if (!res.has_value()) {
 			return false;
 		}
-		
+
 		trampoline = res.value().callable<void*>();
 		return true;
 	}
@@ -50,15 +45,16 @@ namespace libmem {
 		}
 
 		Module mod;
-		auto   modules = std::move(EnumModules().value());
+		auto modules = std::move(EnumModules().value());
 
 		// dont get our own server.dll module.
 		constexpr const char* libServer = MODULE_PREFIX "server" MODULE_EXT;
-		bool				  is_find_server_hdl = !strcmp(name, libServer);
+		bool is_find_server_hdl = !strcmp(name, libServer);
 
 		for (auto& it : modules) {
-			if (is_find_server_hdl && strstr(it.path.c_str(), "addons") != nullptr)
+			if (is_find_server_hdl && strstr(it.path.c_str(), "addons") != nullptr) {
 				continue;
+			}
 
 			if (!strcmp(it.name.c_str(), name)) {
 				mod = Module(it);
@@ -72,16 +68,16 @@ namespace libmem {
 
 	inline Address FindSymbolAddress(const Module& module, const char* symbol_name) {
 		auto res = FindSymbolAddress(&module, symbol_name);
-		return res.has_value() ? res.value() : (Address)nullptr;
+		return res.has_value() ? res.value() : (Address) nullptr;
 	}
 
 	inline Address FindSymbolAddress(const char* module, const char* name) {
 		auto pModule = GetModule(module);
 		if (!pModule.base) {
-			return (Address)nullptr;
+			return (Address) nullptr;
 		}
 
-		return FindSymbolAddress(&pModule, name).value();;
+		return FindSymbolAddress(&pModule, name).value();
 	}
 
 	inline auto PatternScan(const unsigned char* pattern, const char* mask, const Module& module) {
@@ -120,7 +116,7 @@ namespace libmem {
 		return *static_cast<void***>(instance);
 	}
 
-	template <typename T>
+	template<typename T>
 	inline auto VmtHook(void* instance, int fnindex, T hook_func) {
 		Vmt vmt(*static_cast<Address**>(instance));
 
@@ -129,7 +125,7 @@ namespace libmem {
 		vmt.Hook(fnindex, (Address)hook_func);
 	}
 
-	template <typename T>
+	template<typename T>
 	inline auto VmtHookEx(void* instance, int fnindex, T hook_func, void*& org_func) {
 		Vmt vmt(*static_cast<Address**>(instance));
 
@@ -139,7 +135,7 @@ namespace libmem {
 		vmt.Hook(fnindex, (Address)hook_func);
 	}
 
-	template <typename T>
+	/*template<typename T>
 	inline bool VmtHookEx(uint32_t uIndex, const char* moduleName, const char* className, T pFunc, void*& pOriginFunc, bool allInstance = false) {
 		auto pmodule = GetModule(moduleName);
 		if (!pmodule.base) {
@@ -170,11 +166,11 @@ namespace libmem {
 		}
 
 		return true;
-	}
+	}*/
 
-	template <size_t nOffset = 0, typename... Args >
+	template<size_t nOffset = 0, typename... Args>
 	inline void StoreToAddress(void* pAddress, Args... args) {
-		const uint8_t bytes[] = { static_cast<uint8_t>(args)... };
+		const uint8_t bytes[] = {static_cast<uint8_t>(args)...};
 		uint8_t* adr_patch = static_cast<uint8_t*>(pAddress) + nOffset;
 		for (size_t i = 0; i < sizeof...(args); ++i) {
 			auto old_mem_prot = ProtMemory((Address)adr_patch, 1, Prot::XRW);
@@ -184,21 +180,4 @@ namespace libmem {
 			}
 		}
 	}
-
-	inline size_t GetVTableLength(const char* moduleName, const char* className) {
-		auto pModule = GetModule(moduleName);
-		if (!pModule.base) {
-			return -1;
-		}
-
-		auto pBase = DynLibUtils::CModule(pModule.base);
-		auto vtable = pBase.GetVirtualTableByName(className);
-		if (!vtable) {
-			return -1;
-		}
-
-		return pBase.GetVirtualTableLength(vtable);
-	}
 } // namespace libmem
-
-#endif

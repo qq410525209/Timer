@@ -20,8 +20,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef LIBMEM_H
-#define LIBMEM_H
+#pragma once
 
 /* Export prefix for functions */
 #ifdef _MSC_VER
@@ -1423,6 +1422,4 @@ LM_VmtFree(lm_vmt_t *vmt);
 
 #ifdef __cplusplus
 }
-#endif
-
 #endif

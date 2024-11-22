@@ -1,0 +1,32 @@
+{
+    "Offset": {
+        "FOO": {
+            "windows": 1,
+            "linux": 1
+        }
+    },
+    "Addresses": {
+        "FOO": {
+            "signature": "BAR",
+            "windows": {
+                "offset_func": 1,
+                "offset_opcode": 1,
+                "opcode_length": 1,
+                "dereference": false
+            },
+            "linux": {
+                "offset_func": 1,
+                "offset_opcode": 1,
+                "opcode_length": 1,
+                "dereference": false
+            }
+        }
+    },
+    "Signature": {
+        "FOO": {
+            "library": "server",
+            "windows": "",
+            "linux": ""
+        }
+    }
+}

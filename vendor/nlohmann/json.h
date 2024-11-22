@@ -15,8 +15,7 @@
  * file docs/README.md.                                                     *
 \****************************************************************************/
 
-#ifndef INCLUDE_NLOHMANN_JSON_HPP_
-#define INCLUDE_NLOHMANN_JSON_HPP_
+#pragma once
 
 #include <algorithm> // all_of, find, for_each
 #include <cstddef> // nullptr_t, ptrdiff_t, size_t
@@ -24761,4 +24760,4 @@ using nlohmann::literals::json_literals::operator "" _json_pointer; //NOLINT(mis
 
 
 
-#endif  // INCLUDE_NLOHMANN_JSON_HPP_
+

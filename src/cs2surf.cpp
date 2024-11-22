@@ -1,6 +1,9 @@
 #include "cs2surf.h"
 #include "version.h"
 
+#include <core/interfaces.h>
+#include <core/memory.h>
+
 CSurfPlugin g_SurfPlugin;
 
 PLUGIN_EXPOSE(CSurfPlugin, g_SurfPlugin);
@@ -10,6 +13,9 @@ CSurfPlugin* SurfPlugin() {
 }
 
 bool CSurfPlugin::Load(PluginId id, ISmmAPI* ismm, char* error, size_t maxlen, bool late) {
+	IFACE::Setup(ismm, error, maxlen);
+	MEM::SetupHooks();
+
 	return true;
 }
 

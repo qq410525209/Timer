@@ -20,8 +20,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef LIBMEM_HPP
-#define LIBMEM_HPP
+#pragma once
 
 #include <cstdint>
 #include <cstddef>
@@ -445,5 +444,3 @@ namespace libmem {
 	/// NOTE: the trampoline will become unusable after this operation
 	bool UnhookCode(const Process *process, Address from, RemoteTrampoline &trampoline);
 }
-
-#endif

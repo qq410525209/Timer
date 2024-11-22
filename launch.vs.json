@@ -7,7 +7,7 @@
 			"debuggerConfiguration": "gdb",
 			"name": "Remote-SurfTimer",
 			"project": "CMakeLists.txt",
-			"projectTarget": "CS2-SurfTimer.so",
+			"projectTarget": "cs2surf.so",
 			"program": "${env.CS2_BIN}",
 			"args": [
 				"-insecure",
