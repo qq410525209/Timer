@@ -10,9 +10,6 @@
 
 PLUGIN_GLOBALVARS();
 
-template<>
-CCoreForward* CForwardBase<CCoreForward>::m_pFirst = nullptr;
-
 template<typename T>
 struct ReturnType;
 
