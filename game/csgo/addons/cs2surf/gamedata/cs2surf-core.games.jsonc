@@ -3,6 +3,10 @@
 		"GameEntitySystem": {
 			"windows": 88,
 			"linux": 80
+		},
+		"CEntityDebugGameSystem::ServerGamePostSimulate": {
+			"windows": 36,
+			"linux": 37
 		}
 	},
 	"Addresses": {

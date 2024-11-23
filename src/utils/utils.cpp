@@ -1,6 +1,8 @@
 #include "utils.h"
 #include <fstream>
 #include <steam/isteamgameserver.h>
+#include <core/interfaces.h>
+#include <public/iserver.h>
 
 std::string UTIL::GetWorkingDirectory() {
 	return PATH::Join(std::filesystem::current_path().string(), "..", "..", GAME_NAME, "addons", "cs2surf");
@@ -32,4 +34,14 @@ json UTIL::LoadJsonc(std::string sFilePath) {
 	}
 
 	return json::parse(file, nullptr, true, true);
+}
+
+CGlobalVars* UTIL::GetGlobals() {
+	INetworkGameServer* server = g_pNetworkServerService->GetIGameServer();
+
+	if (!server) {
+		return nullptr;
+	}
+
+	return server->GetGlobals();
 };

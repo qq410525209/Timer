@@ -135,39 +135,6 @@ namespace libmem {
 		vmt.Hook(fnindex, (Address)hook_func);
 	}
 
-	/*template<typename T>
-	inline bool VmtHookEx(uint32_t uIndex, const char* moduleName, const char* className, T pFunc, void*& pOriginFunc, bool allInstance = false) {
-		auto pmodule = GetModule(moduleName);
-		if (!pmodule.base) {
-			return false;
-		}
-
-		auto extractClassName = [](std::string input) {
-			size_t pos = input.find("::");
-			if (pos != std::string::npos) {
-				return input.substr(0, pos);
-			}
-			return input;
-		};
-
-		void* vtable = DynLibUtils::CModule(pmodule.base).GetVirtualTableByName(extractClassName(className));
-		if (!vtable) {
-			return false;
-		}
-
-		Vmt vmt((Address*)vtable);
-		auto from = vmt.GetOriginal(uIndex);
-
-		if (allInstance) {
-			libmem::HookFunc((void*)from, pFunc, pOriginFunc);
-		} else {
-			vmt.Hook(uIndex, (Address)pFunc);
-			pOriginFunc = (void*)from;
-		}
-
-		return true;
-	}*/
-
 	template<size_t nOffset = 0, typename... Args>
 	inline void StoreToAddress(void* pAddress, Args... args) {
 		const uint8_t bytes[] = {static_cast<uint8_t>(args)...};

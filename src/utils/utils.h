@@ -5,6 +5,8 @@
 #include <string>
 #include <filesystem>
 
+#include <edict.h>
+
 namespace UTIL {
 	namespace PATH {
 		template<typename... Args>
@@ -18,4 +20,6 @@ namespace UTIL {
 	std::string GetWorkingDirectory();
 	std::string GetPublicIP();
 	json LoadJsonc(std::string sFilePath);
+
+	CGlobalVars* GetGlobals();
 } // namespace UTIL

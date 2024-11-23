@@ -3,6 +3,19 @@
 #include <json.h>
 using json = nlohmann::json;
 
+typedef int8_t i8;
+typedef int16_t i16;
+typedef int32_t i32;
+typedef int64_t i64;
+
+typedef uint8_t u8;
+typedef uint16_t u16;
+typedef uint32_t u32;
+typedef uint64_t u64;
+
+typedef float f32;
+typedef double f64;
+
 #pragma region GAME_DEF
 
 #define CS_TEAM_NONE      0
@@ -215,6 +228,7 @@ void* Plat_GetModuleHandle(const char* path);
 bool Plat_GetCommandArgument(const char* argName, char* buffer, size_t maxlength);
 
 namespace LIB {
+	constexpr inline const char* gamebin = GAMEBIN;
 	constexpr inline const char* addons = GAME_NAME "/addons/cs2surf";
 	constexpr inline const char* engine2 = FILLMODULE("engine2");
 	constexpr inline const char* server = FILLMODULE("server");
@@ -225,6 +239,7 @@ namespace LIB {
 	constexpr inline const char* matchmaking = FILLMODULE("matchmaking");
 	constexpr inline const char* soundsystem = FILLMODULE("soundsystem");
 	constexpr inline const char* resourcesystem = FILLMODULE("resourcesystem");
+	constexpr inline const char* steamnetworkingsockets = FILLMODULE("steamnetworkingsockets");
 } // namespace LIB
 
 #pragma endregion

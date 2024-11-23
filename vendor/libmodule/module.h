@@ -42,6 +42,10 @@ namespace libmodule {
 		CModule(const CModule&) = delete;
 		CModule& operator=(const CModule&) = delete;
 
+		explicit operator bool() const {
+			return m_pModuleHandle != nullptr;
+		}
+
 		CModule(CModule&& other) noexcept
 			: m_ExecutableCode(std::move(other.m_ExecutableCode)), m_sModulePath(std::move(other.m_sModulePath)),
 			  m_pModuleHandle(std::exchange(other.m_pModuleHandle, nullptr)), m_vModuleSections(std::move(other.m_vModuleSections)) {}

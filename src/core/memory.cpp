@@ -7,6 +7,9 @@
 #include <sdk/usercmd.h>
 #include <sdk/entity/services.h>
 #include <sdk/entity/ccsplayerpawn.h>
+#include <igamesystem.h>
+#include <utils/ctimer.h>
+#include <utils/utils.h>
 
 template<>
 CSurfForward* CForwardBase<CSurfForward>::m_pFirst = nullptr;
@@ -37,8 +40,11 @@ struct ReturnType<Ret (*)(Args...)> {
 	static auto fn##fnHook = g_pGameConfig->GetMemSig(sig); \
 	SURF_ASSERT(fn##fnHook); \
 	if (fn##fnHook) { \
-		libmem::HookFunc(fn##fnHook, fnHook, g_fnMovementServicesRunCmds_Trampoline); \
+		libmem::HookFunc(fn##fnHook, fnHook, fnTrampoline); \
 	}
+
+#define HOOK_VMT(gdOffsetKey, pModule, fnHook, fnTrampoline) \
+	SURF_ASSERT(MEM::VmtHookEx(g_pGameConfig->GetOffset(gdOffsetKey), pModule.get(), gdOffsetKey, fnHook, fnTrampoline));
 
 void MEM::CALL::SwitchTeam(CCSPlayerController* controller, int team) {
 	CALL_SIG("CCSPlayerController_SwitchTeam", SwitchTeam, controller, team);
@@ -48,18 +54,16 @@ void MEM::CALL::SetPawn(CBasePlayerController* controller, CCSPlayerPawn* pawn, 
 	CALL_SIG("CBasePlayerController_SetPawn", SetPawn, controller, pawn, a3, a4, a5);
 }
 
-void* g_fnMovementServicesRunCmds_Trampoline;
-
-void Hook_OnMovementServicesRunCmds(CPlayer_MovementServices* pMovementServices, CUserCmd* pUserCmd) {
+static void Hook_OnMovementServicesRunCmds(CPlayer_MovementServices* pMovementServices, CUserCmd* pUserCmd) {
 	CCSPlayerPawn* pawn = pMovementServices->GetPawn();
 	if (!pawn) {
-		MEM::SDKCall<void>(g_fnMovementServicesRunCmds_Trampoline, pMovementServices, pUserCmd);
+		MEM::SDKCall<void>(MEM::g_fnMovementServicesRunCmds_Trampoline, pMovementServices, pUserCmd);
 		return;
 	}
 
 	CCSPlayerController* controller = pawn->GetController<CCSPlayerController>();
 	if (!controller) {
-		MEM::SDKCall<void>(g_fnMovementServicesRunCmds_Trampoline, pMovementServices, pUserCmd);
+		MEM::SDKCall<void>(MEM::g_fnMovementServicesRunCmds_Trampoline, pMovementServices, pUserCmd);
 		return;
 	}
 
@@ -130,7 +134,7 @@ void Hook_OnMovementServicesRunCmds(CPlayer_MovementServices* pMovementServices,
 	}
 
 	if (!block) {
-		MEM::SDKCall<void>(g_fnMovementServicesRunCmds_Trampoline, pMovementServices, pUserCmd);
+		MEM::SDKCall<void>(MEM::g_fnMovementServicesRunCmds_Trampoline, pMovementServices, pUserCmd);
 	}
 
 	for (auto p = CSurfForward::m_pFirst; p; p = p->m_pNext) {
@@ -138,17 +142,43 @@ void Hook_OnMovementServicesRunCmds(CPlayer_MovementServices* pMovementServices,
 	}
 }
 
+static void Hook_ServerGamePostSimulate(IGameSystem* pThis, const EventServerGamePostSimulate_t* a2) {
+	MEM::SDKCall<void>(MEM::g_fnServerGamePostSimulate_Trampoline, pThis, a2);
+
+	UTIL::ProcessTimers();
+}
+
 static bool SetupDetours() {
-	HOOK_SIG("CPlayer_MovementServices::RunCmds", Hook_OnMovementServicesRunCmds, g_fnMovementServicesRunCmds_Trampoline);
+	HOOK_SIG("CPlayer_MovementServices::RunCmds", Hook_OnMovementServicesRunCmds, MEM::g_fnMovementServicesRunCmds_Trampoline);
 
 	return true;
 }
 
 static bool SetupVMTHooks() {
+	HOOK_VMT("CEntityDebugGameSystem::ServerGamePostSimulate", MEM::MODULE::server, Hook_ServerGamePostSimulate,
+			 MEM::g_fnServerGamePostSimulate_Trampoline);
+
 	return true;
 }
 
 void MEM::SetupHooks() {
 	SURF_ASSERT(SetupDetours());
 	SURF_ASSERT(SetupVMTHooks());
+}
+
+void MEM::MODULE::Setup() {
+	engine = std::make_shared<libmodule::CModule>();
+	engine->InitFromName(LIB::engine2, true);
+
+	tier0 = std::make_shared<libmodule::CModule>();
+	tier0->InitFromName(LIB::tier0, true);
+
+	server = std::make_shared<libmodule::CModule>();
+	server->InitFromMemory(libmem::GetModule(LIB::server).base);
+
+	schemasystem = std::make_shared<libmodule::CModule>();
+	schemasystem->InitFromName(LIB::schemasystem, true);
+
+	steamnetworkingsockets = std::make_shared<libmodule::CModule>();
+	steamnetworkingsockets->InitFromName(LIB::steamnetworkingsockets, true);
 }
