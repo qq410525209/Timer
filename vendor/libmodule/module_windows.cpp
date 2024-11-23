@@ -56,7 +56,7 @@ bool CModule::InitFromName(const std::string_view svModuleName, bool bExtension)
 		sModuleName.append(".dll");
 	}
 
-	HMODULE handle = GetModuleHandleA(sModuleName.c_str());
+	HMODULE handle = ::GetModuleHandle(sModuleName.c_str());
 	if (!handle) {
 		return false;
 	}

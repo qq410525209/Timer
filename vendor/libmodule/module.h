@@ -71,7 +71,7 @@ namespace libmodule {
 		[[nodiscard]] CMemory GetFunctionByName(const std::string_view svFunctionName) const noexcept;
 
 		[[nodiscard]] ModuleSections_t GetSectionByName(const std::string_view svSectionName) const;
-		[[nodiscard]] void* GetModuleHandle() const noexcept;
+		[[nodiscard]] void* GetModuleAddress() const noexcept;
 		[[nodiscard]] CMemory GetModuleBase() const noexcept;
 		[[nodiscard]] std::string_view GetModulePath() const;
 		[[nodiscard]] std::string_view GetModuleName() const;

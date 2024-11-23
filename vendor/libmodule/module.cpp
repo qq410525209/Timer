@@ -155,7 +155,7 @@ CModule::ModuleSections_t CModule::GetSectionByName(const std::string_view svSec
 //-----------------------------------------------------------------------------
 // Purpose: Returns the module handle
 //-----------------------------------------------------------------------------
-void* CModule::GetModuleHandle() const noexcept {
+void* CModule::GetModuleAddress() const noexcept {
 	return m_pModuleHandle;
 }
 

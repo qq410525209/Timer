@@ -70,7 +70,7 @@ elseif(CMAKE_BUILD_TYPE STREQUAL "Release")
 	add_definitions(-DNDEBUG)
 endif()
 
-add_definitions(-DMETA_IS_SOURCE2 -DHAVE_MEMOVERRIDE_NEW_DELETE)
+add_definitions(-DMETA_IS_SOURCE2)
 
 if(WIN32)
 	file(GLOB SHARED_LIBS

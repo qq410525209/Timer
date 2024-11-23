@@ -1,23 +1,16 @@
 #include "memory.h"
-#include "gamedata.h"
-#include <sdk/common.h>
-#include <libmem/libmem_helper.h>
+#include <core/gamedata.h>
 #include <core/forwards.h>
 #include <core/interfaces.h>
+
+#include <sdk/common.h>
+#include <libmem/libmem_helper.h>
 
 #include <sdk/usercmd.h>
 #include <sdk/entity/services.h>
 #include <sdk/entity/ccsplayerpawn.h>
 #include <utils/ctimer.h>
 #include <utils/utils.h>
-
-#include <sourcehook.h>
-#include <ISmmPlugin.h>
-
-#include <iserver.h>
-#include <igamesystem.h>
-#include <igameevents.h>
-#include <igameeventsystem.h>
 
 PLUGIN_GLOBALVARS();
 
@@ -173,53 +166,97 @@ static bool Hook_ClientConnect(CPlayerSlot slot, const char* pszName, uint64 xui
 SH_DECL_HOOK6_void(ISource2GameClients, OnClientConnected, SH_NOATTRIB, false, CPlayerSlot, const char *, uint64, const char *, const char *, bool);
 static void Hook_OnClientConnected(CPlayerSlot slot, const char* pszName, uint64 xuid, const char* pszNetworkID, const char* pszAddress,
 								   bool bFakePlayer) {
+	for (auto p = CSurfForward::m_pFirst; p; p = p->m_pNext) {
+		p->OnClientConnected(META_IFACEPTR(ISource2GameClients), slot, pszName, xuid, pszNetworkID, pszAddress, bFakePlayer);
+	}
+
 	RETURN_META(MRES_IGNORED);
 }
 
 SH_DECL_HOOK1_void(ISource2GameClients, ClientFullyConnect, SH_NOATTRIB, false, CPlayerSlot);
 static void Hook_ClientFullyConnect(CPlayerSlot slot) {
+	for (auto p = CSurfForward::m_pFirst; p; p = p->m_pNext) {
+		p->OnClientFullyConnect(META_IFACEPTR(ISource2GameClients), slot);
+	}
+
 	RETURN_META(MRES_IGNORED);
 }
 
 SH_DECL_HOOK4_void(ISource2GameClients, ClientPutInServer, SH_NOATTRIB, false, CPlayerSlot, char const *, int, uint64);
 static void Hook_ClientPutInServer(CPlayerSlot slot, char const* pszName, int type, uint64 xuid) {
+	for (auto p = CSurfForward::m_pFirst; p; p = p->m_pNext) {
+		p->OnClientPutInServer(META_IFACEPTR(ISource2GameClients), slot, pszName, type, xuid);
+	}
+
 	RETURN_META(MRES_IGNORED);
 }
 
 SH_DECL_HOOK4_void(ISource2GameClients, ClientActive, SH_NOATTRIB, false, CPlayerSlot, bool, const char *, uint64);
 static void Hook_ClientActive(CPlayerSlot slot, bool bLoadGame, const char* pszName, uint64 xuid) {
+	for (auto p = CSurfForward::m_pFirst; p; p = p->m_pNext) {
+		p->OnClientActive(META_IFACEPTR(ISource2GameClients), slot, bLoadGame, pszName, xuid);
+	}
+
 	RETURN_META(MRES_IGNORED);
 }
 
 SH_DECL_HOOK5_void(ISource2GameClients, ClientDisconnect, SH_NOATTRIB, false, CPlayerSlot, ENetworkDisconnectionReason, const char *, uint64, const char *);
 static void Hook_ClientDisconnect(CPlayerSlot slot, ENetworkDisconnectionReason reason, const char* pszName, uint64 xuid, const char* pszNetworkID) {
+	for (auto p = CSurfForward::m_pFirst; p; p = p->m_pNext) {
+		p->OnClientDisconnect(META_IFACEPTR(ISource2GameClients), slot, reason, pszName, xuid, pszNetworkID);
+	}
+
 	RETURN_META(MRES_IGNORED);
 }
 
 SH_DECL_HOOK1_void(ISource2GameClients, ClientVoice, SH_NOATTRIB, false, CPlayerSlot);
-static void Hook_ClientVoice(CPlayerSlot slot) {}
+static void Hook_ClientVoice(CPlayerSlot slot) {
+	for (auto p = CSurfForward::m_pFirst; p; p = p->m_pNext) {
+		p->OnClientVoice(META_IFACEPTR(ISource2GameClients), slot);
+	}
+}
 
 SH_DECL_HOOK2_void(ISource2GameClients, ClientCommand, SH_NOATTRIB, false, CPlayerSlot, const CCommand &);
 static void Hook_ClientCommand(CPlayerSlot slot, const CCommand& args) {
+	for (auto p = CSurfForward::m_pFirst; p; p = p->m_pNext) {
+		p->OnClientCommand(META_IFACEPTR(ISource2GameClients), slot, args);
+	}
+
 	RETURN_META(MRES_IGNORED);
 }
 
 SH_DECL_HOOK3_void(INetworkServerService, StartupServer, SH_NOATTRIB, 0, const GameSessionConfiguration_t &, ISource2WorldSession *, const char *);
 static void Hook_StartupServer(const GameSessionConfiguration_t& config, ISource2WorldSession*, const char*) {
+	for (auto p = CSurfForward::m_pFirst; p; p = p->m_pNext) {
+		p->OnStartupServer(META_IFACEPTR(INetworkServerService), config);
+	}
+
 	RETURN_META(MRES_IGNORED);
 }
 
 SH_DECL_HOOK2(IGameEventManager2, FireEvent, SH_NOATTRIB, false, bool, IGameEvent *, bool);
 static bool Hook_FireEvent(IGameEvent* pEvent, bool bDontBroadcast) {
+	for (auto p = CSurfForward::m_pFirst; p; p = p->m_pNext) {
+		p->OnFireEvent(META_IFACEPTR(IGameEventManager2), pEvent, bDontBroadcast);
+	}
+
 	RETURN_META_VALUE(MRES_IGNORED, true);
 }
 
 SH_DECL_HOOK3_void(ICvar, DispatchConCommand, SH_NOATTRIB, 0, ConCommandHandle, const CCommandContext &, const CCommand &);
-static void Hook_DispatchConCommand(ConCommandHandle cmd, const CCommandContext& ctx, const CCommand& args) {}
+static void Hook_DispatchConCommand(ConCommandHandle cmd, const CCommandContext& ctx, const CCommand& args) {
+	for (auto p = CSurfForward::m_pFirst; p; p = p->m_pNext) {
+		p->OnDispatchConCommand(META_IFACEPTR(ICvar), cmd, ctx, args);
+	}
+}
 
 SH_DECL_HOOK8_void(IGameEventSystem, PostEventAbstract, SH_NOATTRIB, 0, CSplitScreenSlot, bool, int, const uint64 *, INetworkMessageInternal *, const CNetMessage *, unsigned long, NetChannelBufType_t);
 static void Hook_PostEvent(CSplitScreenSlot nSlot, bool bLocalOnly, int nClientCount, const uint64* clients, INetworkMessageInternal* pEvent,
-						   const CNetMessage* pData, unsigned long nSize, NetChannelBufType_t bufType) {}
+						   const CNetMessage* pData, unsigned long nSize, NetChannelBufType_t bufType) {
+	for (auto p = CSurfForward::m_pFirst; p; p = p->m_pNext) {
+		p->OnPostEventAbstract(META_IFACEPTR(IGameEventSystem), nSlot, nClientCount, clients, pEvent, pData);
+	}
+}
 
 // clang-format on
 #pragma endregion

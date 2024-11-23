@@ -1,8 +1,5 @@
 #pragma once
 
-#include <json.h>
-using json = nlohmann::json;
-
 typedef int8_t i8;
 typedef int16_t i16;
 typedef int32_t i32;

@@ -39,9 +39,9 @@ file(GLOB_RECURSE ENTITY2_SOURCES "${SDK_ROOT}/entity2/entityidentity.cpp" "${SD
 file(GLOB_RECURSE PROTOBUF_SOURCES "${SURFTIMER_SRC}/protobuf/*.pb.cc" "${SURFTIMER_SRC}/protobuf/*.pb.h")
 file(GLOB_RECURSE SURFTIMER_SOURCES "${SURFTIMER_SRC}/*.cpp" "${SURFTIMER_SRC}/*.h")
 
-add_compile_definitions(-DHV_STATICLIB)
+add_compile_definitions(-DHV_STATICLIB -DHAVE_MEMOVERRIDE_NEW_DELETE)
 
-add_library(${PROJECT_NAME} SHARED ${SDK_CONVAR} ${SDK_MEMOVERRIDE} ${LIBMODULE_SOURCES} ${ENTITY2_SOURCES} ${PROTOBUF_SOURCES} ${SURFTIMER_SOURCES} "src/core/cvarmanager.h")
+add_library(${PROJECT_NAME} SHARED ${SDK_CONVAR} ${LIBMODULE_SOURCES} ${ENTITY2_SOURCES} ${PROTOBUF_SOURCES} ${SURFTIMER_SOURCES} "src/core/cvarmanager.h")
 
 if(WIN32)
 	target_link_options(${PROJECT_NAME} PRIVATE "ntdll.lib")
@@ -49,7 +49,7 @@ endif()
 
 target_link_libraries(${PROJECT_NAME} PRIVATE ${SURFTIMER_LIBS})
 
-#target_precompile_headers(${PROJECT_NAME} PRIVATE ${PCH})
+target_precompile_headers(${PROJECT_NAME} PRIVATE "${SURFTIMER_SRC}/pch.h")
 
 set_target_properties(${PROJECT_NAME} PROPERTIES PREFIX "")
 
