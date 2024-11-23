@@ -1,6 +1,5 @@
 #include "memory.h"
 #include <core/gamedata.h>
-#include <core/forwards.h>
 #include <core/interfaces.h>
 
 #include <sdk/usercmd.h>
@@ -10,6 +9,9 @@
 #include <utils/utils.h>
 
 PLUGIN_GLOBALVARS();
+
+template<>
+CCoreForward* CForwardBase<CCoreForward>::m_pFirst = nullptr;
 
 template<typename T>
 struct ReturnType;

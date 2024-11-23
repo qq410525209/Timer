@@ -1,6 +1,6 @@
 #pragma once
 
-#include <core/forwards.h>
+#include <pch.h>
 #include <core/adminmanager.h>
 
 #include <sdk/entity/ccsplayercontroller.h>

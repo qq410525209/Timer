@@ -14,6 +14,8 @@ class CTimerBase {
 public:
 	CTimerBase(f64 initialInterval, bool useRealTime) : interval(initialInterval), useRealTime(useRealTime) {};
 
+	virtual ~CTimerBase() {}
+
 	virtual bool Execute() = 0;
 
 	f64 interval {};

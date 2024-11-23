@@ -608,11 +608,11 @@ public:
 		return GetConVarData()->Clamp(value);
 	}
 
-	inline const T& GetValue(const CSplitScreenSlot& index = CSplitScreenSlot()) const {
+	inline const T& GetValue(const CSplitScreenSlot& index = CSplitScreenSlot(0)) const {
 		return GetConVarData()->GetValue(index);
 	}
 
-	inline void SetValue(const T& val, const CSplitScreenSlot& index = CSplitScreenSlot()) {
+	inline void SetValue(const T& val, const CSplitScreenSlot& index = CSplitScreenSlot(0)) {
 		auto newValue = this->Clamp(val);
 
 		char szNewValue[256], szOldValue[256];
