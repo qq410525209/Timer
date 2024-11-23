@@ -16,5 +16,6 @@ namespace UTIL {
 	} // namespace PATH
 
 	std::string GetWorkingDirectory();
+	std::string GetPublicIP();
 	json LoadJsonc(std::string sFilePath);
 } // namespace UTIL

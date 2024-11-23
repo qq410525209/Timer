@@ -2,8 +2,7 @@
 
 #include <sdk/forwardbase.h>
 #include <sdk/usercmd.h>
-
-class CCSPlayerPawn;
+#include <sdk/entity/ccsplayerpawn.h>
 
 class CSurfForward : public CForwardBase<CSurfForward> {
 public:
