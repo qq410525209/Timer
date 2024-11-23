@@ -13,4 +13,6 @@ public:
 
 	virtual void OnPlayerRunCmdPost(CCSPlayerPawn* pawn, const CInButtonState* buttons, const float (&vec)[3], const float (&angles)[3],
 									const int& weapon, const int& cmdnum, const int& tickcount, const int& seed, const int (&mouse)[2]) {}
+
+	virtual void OnGameFrame(ISource2Server* pServer, bool simulating, bool bFirstTick, bool bLastTick) {}
 };

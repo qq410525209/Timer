@@ -7,6 +7,10 @@
 		"CEntityDebugGameSystem::ServerGamePostSimulate": {
 			"windows": 36,
 			"linux": 37
+		},
+		"CSource2Server::GameFrame": {
+			"windows": 19,
+			"linux": 19
 		}
 	},
 	"Addresses": {

@@ -54,6 +54,8 @@ void MEM::CALL::SetPawn(CBasePlayerController* controller, CCSPlayerPawn* pawn, 
 	CALL_SIG("CBasePlayerController_SetPawn", SetPawn, controller, pawn, a3, a4, a5);
 }
 
+#pragma region hooks
+
 static void Hook_OnMovementServicesRunCmds(CPlayer_MovementServices* pMovementServices, CUserCmd* pUserCmd) {
 	CCSPlayerPawn* pawn = pMovementServices->GetPawn();
 	if (!pawn) {
@@ -142,11 +144,23 @@ static void Hook_OnMovementServicesRunCmds(CPlayer_MovementServices* pMovementSe
 	}
 }
 
-static void Hook_ServerGamePostSimulate(IGameSystem* pThis, const EventServerGamePostSimulate_t* a2) {
-	MEM::SDKCall<void>(MEM::g_fnServerGamePostSimulate_Trampoline, pThis, a2);
-
+static void Hook_OnServerGamePostSimulate(IGameSystem* pThis, const EventServerGamePostSimulate_t* a2) {
 	UTIL::ProcessTimers();
+
+	MEM::SDKCall<void>(MEM::g_fnServerGamePostSimulate_Trampoline, pThis, a2);
 }
+
+static void Hook_OnGameFrame(ISource2Server* pThis, bool simulating, bool bFirstTick, bool bLastTick) {
+	for (auto p = CSurfForward::m_pFirst; p; p = p->m_pNext) {
+		p->OnGameFrame(pThis, simulating, bFirstTick, bLastTick);
+	}
+
+	MEM::SDKCall<void>(MEM::g_fnGameFrame_Trampoline, pThis, simulating, bFirstTick, bLastTick);
+}
+
+#pragma endregion
+
+#pragma region setup
 
 static bool SetupDetours() {
 	HOOK_SIG("CPlayer_MovementServices::RunCmds", Hook_OnMovementServicesRunCmds, MEM::g_fnMovementServicesRunCmds_Trampoline);
@@ -155,8 +169,10 @@ static bool SetupDetours() {
 }
 
 static bool SetupVMTHooks() {
-	HOOK_VMT("CEntityDebugGameSystem::ServerGamePostSimulate", MEM::MODULE::server, Hook_ServerGamePostSimulate,
+	HOOK_VMT("CEntityDebugGameSystem::ServerGamePostSimulate", MEM::MODULE::server, Hook_OnServerGamePostSimulate,
 			 MEM::g_fnServerGamePostSimulate_Trampoline);
+
+	HOOK_VMT("CSource2Server::GameFrame", MEM::MODULE::server, Hook_OnGameFrame, MEM::g_fnGameFrame_Trampoline);
 
 	return true;
 }
@@ -182,3 +198,5 @@ void MEM::MODULE::Setup() {
 	steamnetworkingsockets = std::make_shared<libmodule::CModule>();
 	steamnetworkingsockets->InitFromName(LIB::steamnetworkingsockets, true);
 }
+
+#pragma endregion
