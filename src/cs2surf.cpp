@@ -1,6 +1,8 @@
 #include "cs2surf.h"
 #include "version.h"
 
+#include <sdk/entity/cgameresourceservice.h>
+
 #include <core/interfaces.h>
 #include <core/memory.h>
 #include <core/gameconfig.h>
@@ -56,4 +58,10 @@ const char* CSurfPlugin::GetDate() {
 
 const char* CSurfPlugin::GetLogTag() {
 	return "LEET";
+}
+
+class CGameEntitySystem;
+
+CGameEntitySystem* GameEntitySystem() {
+	return IFACE::pGameResourceServiceServer->GetGameEntitySystem();
 }

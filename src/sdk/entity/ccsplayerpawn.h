@@ -1,8 +1,8 @@
 #pragma once
 
-class CCSPlayer_ViewModelServices;
-
 #include "cbaseplayerpawn.h"
+
+class CCSPlayer_ViewModelServices;
 
 class CCSPlayerPawnBase : public CBasePlayerPawn {
 public:
@@ -19,6 +19,12 @@ public:
 	SCHEMA_FIELD(float, m_flSlopeDropHeight);
 
 	SCHEMA_FIELD(float, m_flVelocityModifier);
+
+public:
+	template<typename T = CBasePlayerController>
+	T* GetController() {
+		return (T*)(m_hController()->Get());
+	}
 
 	void Respawn() {
 		CALL_VIRTUAL(void, g_pGameConfig->GetOffset("Respawn"), this);
