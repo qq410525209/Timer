@@ -1,11 +1,9 @@
 #pragma once
 
-#include <sdk/common.h>
+#include <pch.h>
 
 #include <string>
 #include <filesystem>
-
-#include <edict.h>
 
 namespace UTIL {
 	namespace PATH {
@@ -20,6 +18,10 @@ namespace UTIL {
 	std::string GetWorkingDirectory();
 	std::string GetPublicIP();
 	json LoadJsonc(std::string sFilePath);
+	std::wstring ToWideString(const char* pszCharStr);
 
 	CGlobalVars* GetGlobals();
+	CGlobalVars* GetServerGlobals();
+	CBasePlayerController* GetController(CBaseEntity* entity);
+	CBasePlayerController* GetController(CPlayerSlot slot);
 } // namespace UTIL

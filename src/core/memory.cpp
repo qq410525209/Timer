@@ -99,7 +99,7 @@ static void Hook_OnMovementServicesRunCmds(CPlayer_MovementServices* pMovementSe
 	CInButtonState* button = (CInButtonState*)buttons_state;
 
 	bool block = false;
-	for (auto p = CSurfForward::m_pFirst; p; p = p->m_pNext) {
+	for (auto p = CCoreForward::m_pFirst; p; p = p->m_pNext) {
 		if (!p->OnPlayerRunCmd(pawn, button, vec, angles, weapon, cmdnum, tickcount, seed, mouse)) {
 			block = true;
 		}
@@ -139,7 +139,7 @@ static void Hook_OnMovementServicesRunCmds(CPlayer_MovementServices* pMovementSe
 		MEM::SDKCall<void>(MEM::g_fnMovementServicesRunCmds_Trampoline, pMovementServices, pUserCmd);
 	}
 
-	for (auto p = CSurfForward::m_pFirst; p; p = p->m_pNext) {
+	for (auto p = CCoreForward::m_pFirst; p; p = p->m_pNext) {
 		p->OnPlayerRunCmdPost(pawn, button, vec, angles, weapon, cmdnum, tickcount, seed, mouse);
 	}
 }
@@ -152,7 +152,7 @@ static void Hook_OnServerGamePostSimulate(const EventServerGamePostSimulate_t* a
 
 SH_DECL_HOOK3_void(ISource2Server, GameFrame, SH_NOATTRIB, false, bool, bool, bool);
 static void Hook_OnGameFrame(bool simulating, bool bFirstTick, bool bLastTick) {
-	for (auto p = CSurfForward::m_pFirst; p; p = p->m_pNext) {
+	for (auto p = CCoreForward::m_pFirst; p; p = p->m_pNext) {
 		p->OnGameFrame(META_IFACEPTR(ISource2Server), simulating, bFirstTick, bLastTick);
 	}
 }
@@ -166,7 +166,7 @@ static bool Hook_ClientConnect(CPlayerSlot slot, const char* pszName, uint64 xui
 SH_DECL_HOOK6_void(ISource2GameClients, OnClientConnected, SH_NOATTRIB, false, CPlayerSlot, const char *, uint64, const char *, const char *, bool);
 static void Hook_OnClientConnected(CPlayerSlot slot, const char* pszName, uint64 xuid, const char* pszNetworkID, const char* pszAddress,
 								   bool bFakePlayer) {
-	for (auto p = CSurfForward::m_pFirst; p; p = p->m_pNext) {
+	for (auto p = CCoreForward::m_pFirst; p; p = p->m_pNext) {
 		p->OnClientConnected(META_IFACEPTR(ISource2GameClients), slot, pszName, xuid, pszNetworkID, pszAddress, bFakePlayer);
 	}
 
@@ -175,7 +175,7 @@ static void Hook_OnClientConnected(CPlayerSlot slot, const char* pszName, uint64
 
 SH_DECL_HOOK1_void(ISource2GameClients, ClientFullyConnect, SH_NOATTRIB, false, CPlayerSlot);
 static void Hook_ClientFullyConnect(CPlayerSlot slot) {
-	for (auto p = CSurfForward::m_pFirst; p; p = p->m_pNext) {
+	for (auto p = CCoreForward::m_pFirst; p; p = p->m_pNext) {
 		p->OnClientFullyConnect(META_IFACEPTR(ISource2GameClients), slot);
 	}
 
@@ -184,7 +184,7 @@ static void Hook_ClientFullyConnect(CPlayerSlot slot) {
 
 SH_DECL_HOOK4_void(ISource2GameClients, ClientPutInServer, SH_NOATTRIB, false, CPlayerSlot, char const *, int, uint64);
 static void Hook_ClientPutInServer(CPlayerSlot slot, char const* pszName, int type, uint64 xuid) {
-	for (auto p = CSurfForward::m_pFirst; p; p = p->m_pNext) {
+	for (auto p = CCoreForward::m_pFirst; p; p = p->m_pNext) {
 		p->OnClientPutInServer(META_IFACEPTR(ISource2GameClients), slot, pszName, type, xuid);
 	}
 
@@ -193,7 +193,7 @@ static void Hook_ClientPutInServer(CPlayerSlot slot, char const* pszName, int ty
 
 SH_DECL_HOOK4_void(ISource2GameClients, ClientActive, SH_NOATTRIB, false, CPlayerSlot, bool, const char *, uint64);
 static void Hook_ClientActive(CPlayerSlot slot, bool bLoadGame, const char* pszName, uint64 xuid) {
-	for (auto p = CSurfForward::m_pFirst; p; p = p->m_pNext) {
+	for (auto p = CCoreForward::m_pFirst; p; p = p->m_pNext) {
 		p->OnClientActive(META_IFACEPTR(ISource2GameClients), slot, bLoadGame, pszName, xuid);
 	}
 
@@ -202,7 +202,7 @@ static void Hook_ClientActive(CPlayerSlot slot, bool bLoadGame, const char* pszN
 
 SH_DECL_HOOK5_void(ISource2GameClients, ClientDisconnect, SH_NOATTRIB, false, CPlayerSlot, ENetworkDisconnectionReason, const char *, uint64, const char *);
 static void Hook_ClientDisconnect(CPlayerSlot slot, ENetworkDisconnectionReason reason, const char* pszName, uint64 xuid, const char* pszNetworkID) {
-	for (auto p = CSurfForward::m_pFirst; p; p = p->m_pNext) {
+	for (auto p = CCoreForward::m_pFirst; p; p = p->m_pNext) {
 		p->OnClientDisconnect(META_IFACEPTR(ISource2GameClients), slot, reason, pszName, xuid, pszNetworkID);
 	}
 
@@ -211,14 +211,14 @@ static void Hook_ClientDisconnect(CPlayerSlot slot, ENetworkDisconnectionReason 
 
 SH_DECL_HOOK1_void(ISource2GameClients, ClientVoice, SH_NOATTRIB, false, CPlayerSlot);
 static void Hook_ClientVoice(CPlayerSlot slot) {
-	for (auto p = CSurfForward::m_pFirst; p; p = p->m_pNext) {
+	for (auto p = CCoreForward::m_pFirst; p; p = p->m_pNext) {
 		p->OnClientVoice(META_IFACEPTR(ISource2GameClients), slot);
 	}
 }
 
 SH_DECL_HOOK2_void(ISource2GameClients, ClientCommand, SH_NOATTRIB, false, CPlayerSlot, const CCommand &);
 static void Hook_ClientCommand(CPlayerSlot slot, const CCommand& args) {
-	for (auto p = CSurfForward::m_pFirst; p; p = p->m_pNext) {
+	for (auto p = CCoreForward::m_pFirst; p; p = p->m_pNext) {
 		p->OnClientCommand(META_IFACEPTR(ISource2GameClients), slot, args);
 	}
 
@@ -227,7 +227,7 @@ static void Hook_ClientCommand(CPlayerSlot slot, const CCommand& args) {
 
 SH_DECL_HOOK3_void(INetworkServerService, StartupServer, SH_NOATTRIB, 0, const GameSessionConfiguration_t &, ISource2WorldSession *, const char *);
 static void Hook_StartupServer(const GameSessionConfiguration_t& config, ISource2WorldSession*, const char*) {
-	for (auto p = CSurfForward::m_pFirst; p; p = p->m_pNext) {
+	for (auto p = CCoreForward::m_pFirst; p; p = p->m_pNext) {
 		p->OnStartupServer(META_IFACEPTR(INetworkServerService), config);
 	}
 
@@ -236,7 +236,7 @@ static void Hook_StartupServer(const GameSessionConfiguration_t& config, ISource
 
 SH_DECL_HOOK2(IGameEventManager2, FireEvent, SH_NOATTRIB, false, bool, IGameEvent *, bool);
 static bool Hook_FireEvent(IGameEvent* pEvent, bool bDontBroadcast) {
-	for (auto p = CSurfForward::m_pFirst; p; p = p->m_pNext) {
+	for (auto p = CCoreForward::m_pFirst; p; p = p->m_pNext) {
 		p->OnFireEvent(META_IFACEPTR(IGameEventManager2), pEvent, bDontBroadcast);
 	}
 
@@ -245,7 +245,7 @@ static bool Hook_FireEvent(IGameEvent* pEvent, bool bDontBroadcast) {
 
 SH_DECL_HOOK3_void(ICvar, DispatchConCommand, SH_NOATTRIB, 0, ConCommandHandle, const CCommandContext &, const CCommand &);
 static void Hook_DispatchConCommand(ConCommandHandle cmd, const CCommandContext& ctx, const CCommand& args) {
-	for (auto p = CSurfForward::m_pFirst; p; p = p->m_pNext) {
+	for (auto p = CCoreForward::m_pFirst; p; p = p->m_pNext) {
 		p->OnDispatchConCommand(META_IFACEPTR(ICvar), cmd, ctx, args);
 	}
 }
@@ -253,7 +253,7 @@ static void Hook_DispatchConCommand(ConCommandHandle cmd, const CCommandContext&
 SH_DECL_HOOK8_void(IGameEventSystem, PostEventAbstract, SH_NOATTRIB, 0, CSplitScreenSlot, bool, int, const uint64 *, INetworkMessageInternal *, const CNetMessage *, unsigned long, NetChannelBufType_t);
 static void Hook_PostEvent(CSplitScreenSlot nSlot, bool bLocalOnly, int nClientCount, const uint64* clients, INetworkMessageInternal* pEvent,
 						   const CNetMessage* pData, unsigned long nSize, NetChannelBufType_t bufType) {
-	for (auto p = CSurfForward::m_pFirst; p; p = p->m_pNext) {
+	for (auto p = CCoreForward::m_pFirst; p; p = p->m_pNext) {
 		p->OnPostEventAbstract(META_IFACEPTR(IGameEventSystem), nSlot, nClientCount, clients, pEvent, pData);
 	}
 }

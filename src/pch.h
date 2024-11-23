@@ -11,5 +11,7 @@
 #include <sourcehook.h>
 #include <ISmmPlugin.h>
 
+#include <sdk/common.h>
+
 #include <json.h>
 using json = nlohmann::json;

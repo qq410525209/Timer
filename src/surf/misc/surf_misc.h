@@ -2,4 +2,4 @@
 
 #include <core/forwards.h>
 
-class CSurfMiscellaneous : CSurfForward {};
+class CSurfMiscellaneous : CCoreForward {};

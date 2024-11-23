@@ -29,8 +29,6 @@ namespace MEM {
 #pragma region trampoline
 
 	inline void* g_fnMovementServicesRunCmds_Trampoline;
-	inline void* g_fnServerGamePostSimulate_Trampoline;
-	inline void* g_fnGameFrame_Trampoline;
 
 #pragma endregion
 

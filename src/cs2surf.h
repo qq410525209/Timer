@@ -13,6 +13,10 @@ private:
 	const char* GetVersion() override;
 	const char* GetDate() override;
 	const char* GetLogTag() override;
+
+public:
+	bool simulatingPhysics = false;
+	CGlobalVars serverGlobals;
 };
 
 extern CSurfPlugin* SurfPlugin();
