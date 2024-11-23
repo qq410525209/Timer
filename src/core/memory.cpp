@@ -3,6 +3,7 @@
 #include <sdk/common.h>
 #include <libmem/libmem_helper.h>
 #include <core/forwards.h>
+#include <core/interfaces.h>
 
 #include <sdk/usercmd.h>
 #include <sdk/entity/services.h>
@@ -11,8 +12,10 @@
 #include <utils/ctimer.h>
 #include <utils/utils.h>
 
-template<>
-CSurfForward* CForwardBase<CSurfForward>::m_pFirst = nullptr;
+#include <sourcehook.h>
+#include <ISmmPlugin.h>
+
+PLUGIN_GLOBALVARS();
 
 template<typename T>
 struct ReturnType;
@@ -23,28 +26,28 @@ struct ReturnType<Ret (*)(Args...)> {
 };
 
 #define CALL_SIG(sig, fnCurrent, ...) \
-	static auto fnSig = g_pGameConfig->GetMemSig(sig); \
+	static auto fnSig = GAMEDATA::GetMemSig(sig); \
 	SURF_ASSERT(fnSig); \
 	using FunctionType = decltype(&fnCurrent); \
 	using ReturnTypeValue = ReturnType<FunctionType>::type; \
 	return MEM::SDKCall<ReturnTypeValue>(fnCurrent, __VA_ARGS__);
 
 #define CALL_ADDRESS(sig, fnCurrent, ...) \
-	static auto fnSig = g_pGameConfig->GetAddress(sig); \
+	static auto fnSig = GAMEDATA::GetAddress(sig); \
 	SURF_ASSERT(fnSig); \
 	using FunctionType = decltype(&fnCurrent); \
 	using ReturnTypeValue = ReturnType<FunctionType>::type; \
 	return MEM::SDKCall<ReturnTypeValue>(fnCurrent, __VA_ARGS__);
 
 #define HOOK_SIG(sig, fnHook, fnTrampoline) \
-	static auto fn##fnHook = g_pGameConfig->GetMemSig(sig); \
+	static auto fn##fnHook = GAMEDATA::GetMemSig(sig); \
 	SURF_ASSERT(fn##fnHook); \
 	if (fn##fnHook) { \
 		libmem::HookFunc(fn##fnHook, fnHook, fnTrampoline); \
 	}
 
 #define HOOK_VMT(gdOffsetKey, pModule, fnHook, fnTrampoline) \
-	SURF_ASSERT(MEM::VmtHookEx(g_pGameConfig->GetOffset(gdOffsetKey), pModule.get(), gdOffsetKey, fnHook, fnTrampoline));
+	SURF_ASSERT(MEM::VmtHookEx(GAMEDATA::GetOffset(gdOffsetKey), pModule.get(), gdOffsetKey, fnHook, fnTrampoline));
 
 void MEM::CALL::SwitchTeam(CCSPlayerController* controller, int team) {
 	CALL_SIG("CCSPlayerController_SwitchTeam", SwitchTeam, controller, team);
@@ -144,18 +147,18 @@ static void Hook_OnMovementServicesRunCmds(CPlayer_MovementServices* pMovementSe
 	}
 }
 
-static void Hook_OnServerGamePostSimulate(IGameSystem* pThis, const EventServerGamePostSimulate_t* a2) {
-	UTIL::ProcessTimers();
+SH_DECL_HOOK1_void(IGameSystem, ServerGamePostSimulate, SH_NOATTRIB, false, const EventServerGamePostSimulate_t*);
 
-	MEM::SDKCall<void>(MEM::g_fnServerGamePostSimulate_Trampoline, pThis, a2);
+static void Hook_OnServerGamePostSimulate(const EventServerGamePostSimulate_t* a2) {
+	UTIL::ProcessTimers();
 }
 
-static void Hook_OnGameFrame(ISource2Server* pThis, bool simulating, bool bFirstTick, bool bLastTick) {
-	for (auto p = CSurfForward::m_pFirst; p; p = p->m_pNext) {
-		p->OnGameFrame(pThis, simulating, bFirstTick, bLastTick);
-	}
+SH_DECL_HOOK3_void(ISource2Server, GameFrame, SH_NOATTRIB, false, bool, bool, bool);
 
-	MEM::SDKCall<void>(MEM::g_fnGameFrame_Trampoline, pThis, simulating, bFirstTick, bLastTick);
+static void Hook_OnGameFrame(bool simulating, bool bFirstTick, bool bLastTick) {
+	for (auto p = CSurfForward::m_pFirst; p; p = p->m_pNext) {
+		p->OnGameFrame(META_IFACEPTR(ISource2Server), simulating, bFirstTick, bLastTick);
+	}
 }
 
 #pragma endregion
@@ -163,23 +166,41 @@ static void Hook_OnGameFrame(ISource2Server* pThis, bool simulating, bool bFirst
 #pragma region setup
 
 static bool SetupDetours() {
+	// clang-format off
 	HOOK_SIG("CPlayer_MovementServices::RunCmds", Hook_OnMovementServicesRunCmds, MEM::g_fnMovementServicesRunCmds_Trampoline);
+	// clang-format on
 
 	return true;
 }
 
 static bool SetupVMTHooks() {
-	HOOK_VMT("CEntityDebugGameSystem::ServerGamePostSimulate", MEM::MODULE::server, Hook_OnServerGamePostSimulate,
-			 MEM::g_fnServerGamePostSimulate_Trampoline);
+	// clang-format off
+	// HOOK_VMT("CEntityDebugGameSystem::ServerGamePostSimulate", MEM::MODULE::server, Hook_OnServerGamePostSimulate, MEM::g_fnServerGamePostSimulate_Trampoline);
 
-	HOOK_VMT("CSource2Server::GameFrame", MEM::MODULE::server, Hook_OnGameFrame, MEM::g_fnGameFrame_Trampoline);
+	// clang-format on
+	return true;
+}
 
+static bool SetupSourceHooks() {
+	SH_ADD_HOOK(ISource2Server, GameFrame, IFACE::pServer, SH_STATIC(Hook_OnGameFrame), false);
+
+	// clang-format off
+
+	SH_ADD_DVPHOOK(IGameSystem, 
+		ServerGamePostSimulate, 
+		MEM::MODULE::server->GetVirtualTableByName("CEntityDebugGameSystem").RCast<IGameSystem*>(), 
+		SH_STATIC(Hook_OnServerGamePostSimulate), 
+		true
+	);
+
+	// clang-format on
 	return true;
 }
 
 void MEM::SetupHooks() {
 	SURF_ASSERT(SetupDetours());
 	SURF_ASSERT(SetupVMTHooks());
+	SURF_ASSERT(SetupSourceHooks());
 }
 
 void MEM::MODULE::Setup() {

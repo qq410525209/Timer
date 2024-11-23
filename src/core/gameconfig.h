@@ -5,22 +5,14 @@
 
 #include <sdk/common.h>
 
-class CGameConfig {
-public:
-	CGameConfig(std::string sFilePath);
+// for one gamedata cfg now
+namespace GAMEDATA {
+	void Append(std::string sFilePath);
+	int GetOffset(std::string name);
+	void* GetMemSig(std::string name);
+	void* GetAddress(std::string name);
 
-	virtual int GetOffset(std::string name);
-	virtual void* GetMemSig(std::string name);
-	virtual void* GetAddress(std::string name);
-
-	bool IsValid() const {
-		return !m_Json.is_null() && !m_Json.empty();
-	}
-
-private:
-	json m_Json;
-	std::string m_sFilePath;
-	std::unordered_map<std::string, void*> m_pMemSig;
-};
-
-extern CGameConfig* g_pGameConfig;
+	inline json m_Json;
+	inline std::string m_sFilePath;
+	inline std::unordered_map<std::string, void*> m_pMemSig;
+}; // namespace GAMEDATA

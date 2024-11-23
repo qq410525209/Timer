@@ -6,13 +6,16 @@
 
 using namespace libmodule;
 
-CGameConfig::CGameConfig(std::string sFilePath) : m_Json(nullptr), m_sFilePath(sFilePath) {
+void GAMEDATA::Append(std::string sFilePath) {
+	m_Json = json();
+	m_sFilePath = sFilePath;
+
 	std::string sPath = UTIL::PATH::Join(UTIL::GetWorkingDirectory(), "gamedata", sFilePath);
 	m_Json = UTIL::LoadJsonc(sPath);
 	SURF_ASSERT(!m_Json.empty());
 }
 
-int CGameConfig::GetOffset(std::string name) {
+int GAMEDATA::GetOffset(std::string name) {
 	if (m_Json.is_null()) {
 		SURF_ASSERT(false);
 		return -1;
@@ -38,7 +41,7 @@ int CGameConfig::GetOffset(std::string name) {
 	return element[WIN_LINUX("windows", "linux")].get<int>();
 }
 
-void* CGameConfig::GetMemSig(std::string name) {
+void* GAMEDATA::GetMemSig(std::string name) {
 	if (m_pMemSig.count(name)) {
 		return m_pMemSig[name];
 	}
@@ -73,7 +76,7 @@ void* CGameConfig::GetMemSig(std::string name) {
 	return addr;
 }
 
-void* CGameConfig::GetAddress(std::string name) {
+void* GAMEDATA::GetAddress(std::string name) {
 	if (m_Json.is_null() || m_Json.empty()) {
 		SURF_ASSERT(false);
 		return nullptr;
@@ -97,7 +100,7 @@ void* CGameConfig::GetAddress(std::string name) {
 	}
 
 	auto signature = element["signature"].get<std::string>();
-	auto base = this->GetMemSig(signature.c_str());
+	auto base = GetMemSig(signature.c_str());
 	if (!base) {
 		SURF_ASSERT(false);
 		return nullptr;

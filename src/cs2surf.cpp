@@ -17,10 +17,10 @@ CSurfPlugin* SurfPlugin() {
 	return &g_SurfPlugin;
 }
 
-CGameConfig* g_pGameConfig = nullptr;
-
 bool CSurfPlugin::Load(PluginId id, ISmmAPI* ismm, char* error, size_t maxlen, bool late) {
-	g_pGameConfig = new CGameConfig("cs2surf-core.games.jsonc");
+	PLUGIN_SAVEVARS();
+
+	GAMEDATA::Append("cs2surf-core.games.jsonc");
 
 	IFACE::Setup(ismm, error, maxlen);
 	MEM::MODULE::Setup();

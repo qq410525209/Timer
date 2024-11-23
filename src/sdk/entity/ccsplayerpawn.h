@@ -27,6 +27,6 @@ public:
 	}
 
 	void Respawn() {
-		CALL_VIRTUAL(void, g_pGameConfig->GetOffset("Respawn"), this);
+		CALL_VIRTUAL(void, GAMEDATA::GetOffset("Respawn"), this);
 	}
 };

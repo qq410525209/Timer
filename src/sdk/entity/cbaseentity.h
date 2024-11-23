@@ -5,8 +5,6 @@
 #include <sdk/schema.h>
 #include <libmem/libmem_virtual.h>
 
-extern CGameConfig* g_pGameConfig;
-
 class CCollisionProperty;
 
 class CNetworkedQuantizedFloat {
@@ -99,11 +97,11 @@ public:
 	}
 
 	bool IsPawn() {
-		return CALL_VIRTUAL(bool, g_pGameConfig->GetOffset("IsEntityPawn"), this);
+		return CALL_VIRTUAL(bool, GAMEDATA::GetOffset("IsEntityPawn"), this);
 	}
 
 	bool IsController() {
-		return CALL_VIRTUAL(bool, g_pGameConfig->GetOffset("IsEntityController"), this);
+		return CALL_VIRTUAL(bool, GAMEDATA::GetOffset("IsEntityController"), this);
 	}
 
 	bool IsAlive() {
@@ -116,7 +114,7 @@ public:
 	}
 
 	void CollisionRulesChanged() {
-		CALL_VIRTUAL(void, g_pGameConfig->GetOffset("CollisionRulesChanged"), this);
+		CALL_VIRTUAL(void, GAMEDATA::GetOffset("CollisionRulesChanged"), this);
 	}
 
 	int GetTeam() {
@@ -124,18 +122,18 @@ public:
 	}
 
 	void StartTouch(CBaseEntity* pOther) {
-		CALL_VIRTUAL(bool, g_pGameConfig->GetOffset("StartTouch"), this, pOther);
+		CALL_VIRTUAL(bool, GAMEDATA::GetOffset("StartTouch"), this, pOther);
 	}
 
 	void Touch(CBaseEntity* pOther) {
-		CALL_VIRTUAL(bool, g_pGameConfig->GetOffset("Touch"), this, pOther);
+		CALL_VIRTUAL(bool, GAMEDATA::GetOffset("Touch"), this, pOther);
 	}
 
 	void EndTouch(CBaseEntity* pOther) {
-		CALL_VIRTUAL(bool, g_pGameConfig->GetOffset("EndTouch"), this, pOther);
+		CALL_VIRTUAL(bool, GAMEDATA::GetOffset("EndTouch"), this, pOther);
 	}
 
 	void Teleport(const Vector* newPosition, const QAngle* newAngles, const Vector* newVelocity) {
-		CALL_VIRTUAL(bool, g_pGameConfig->GetOffset("Teleport"), this, newPosition, newAngles, newVelocity);
+		CALL_VIRTUAL(bool, GAMEDATA::GetOffset("Teleport"), this, newPosition, newAngles, newVelocity);
 	}
 };
