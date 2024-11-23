@@ -8,6 +8,8 @@ class CBasePlayerController;
 class CCSPlayerController;
 class CCSPlayerPawn;
 
+class GameSessionConfiguration_t {};
+
 namespace MEM {
 	namespace CALL {
 		void SwitchTeam(CCSPlayerController* controller, int team);

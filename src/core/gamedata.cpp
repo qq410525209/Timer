@@ -1,4 +1,4 @@
-#include "gameconfig.h"
+#include "gamedata.h"
 #include <fstream>
 #include <libmem/libmem_helper.h>
 #include <memaddr.h>

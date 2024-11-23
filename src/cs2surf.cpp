@@ -5,7 +5,7 @@
 
 #include <core/interfaces.h>
 #include <core/memory.h>
-#include <core/gameconfig.h>
+#include <core/gamedata.h>
 
 #include <utils/utils.h>
 

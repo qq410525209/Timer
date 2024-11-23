@@ -6,18 +6,18 @@
 		}
 	},
 	"Addresses": {
-		"FOO": {
-			"signature": "BAR",
+		"GetGameEventManager": {
+			"signature": "GameEventManager",
 			"windows": {
-				"offset_func": 1,
-				"offset_opcode": 1,
-				"opcode_length": 1,
+				"offset_func": 0,
+				"offset_opcode": 3,
+				"opcode_length": 7,
 				"dereference": false
 			},
 			"linux": {
-				"offset_func": 1,
-				"offset_opcode": 1,
-				"opcode_length": 1,
+				"offset_func": 0,
+				"offset_opcode": 3,
+				"opcode_length": 7,
 				"dereference": false
 			}
 		}
@@ -29,6 +29,11 @@
 			"windows": "48 89 5C 24 08 57 48 83 EC 20 48 8B FA 48 8B D9 E8 ? ? ? ? 48 85 C0 74 ? BA FF FF FF FF",
 			"note": "str -> \"Client cmd out of sync (delta %i).\n\"",
 			"note2": "sv_runcmds xref"
+		},
+		"GameEventManager": {
+			"library": "server",
+			"windows": "48 8D 0D ? ? ? ? 48 0F 45 D0 48 8B 05",
+			"linux": "48 8D 3D ? ? ? ? 4C 89 E0"
 		}
 	}
 }

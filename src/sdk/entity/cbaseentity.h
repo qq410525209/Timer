@@ -1,7 +1,7 @@
 #pragma once
 
 #include <ehandle.h>
-#include <core/gameconfig.h>
+#include <core/gamedata.h>
 #include <sdk/schema.h>
 #include <libmem/libmem_virtual.h>
 
