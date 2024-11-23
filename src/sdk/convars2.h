@@ -4,6 +4,89 @@
 #include <tier1/convar.h>
 #include <sdk/common.h>
 
+template<typename T>
+constexpr EConVarType TranslateConVarType();
+
+template<>
+constexpr EConVarType TranslateConVarType<bool>(void) {
+	return EConVarType_Bool;
+}
+
+template<>
+constexpr EConVarType TranslateConVarType<int16_t>(void) {
+	return EConVarType_Int16;
+}
+
+template<>
+constexpr EConVarType TranslateConVarType<uint16_t>(void) {
+	return EConVarType_UInt16;
+}
+
+template<>
+constexpr EConVarType TranslateConVarType<int32_t>(void) {
+	return EConVarType_Int32;
+}
+
+template<>
+constexpr EConVarType TranslateConVarType<uint32_t>(void) {
+	return EConVarType_UInt32;
+}
+
+template<>
+constexpr EConVarType TranslateConVarType<int64_t>(void) {
+	return EConVarType_Int64;
+}
+
+template<>
+constexpr EConVarType TranslateConVarType<uint64_t>(void) {
+	return EConVarType_UInt64;
+}
+
+template<>
+constexpr EConVarType TranslateConVarType<float>(void) {
+	return EConVarType_Float32;
+}
+
+template<>
+constexpr EConVarType TranslateConVarType<double>(void) {
+	return EConVarType_Float64;
+}
+
+template<>
+constexpr EConVarType TranslateConVarType<const char*>(void) {
+	return EConVarType_String;
+}
+
+template<>
+constexpr EConVarType TranslateConVarType<Color>(void) {
+	return EConVarType_Color;
+}
+
+template<>
+constexpr EConVarType TranslateConVarType<Vector2D>(void) {
+	return EConVarType_Vector2;
+}
+
+template<>
+constexpr EConVarType TranslateConVarType<Vector>(void) {
+	return EConVarType_Vector3;
+}
+
+template<>
+constexpr EConVarType TranslateConVarType<Vector4D>(void) {
+	return EConVarType_Vector4;
+}
+
+template<>
+constexpr EConVarType TranslateConVarType<QAngle>(void) {
+	return EConVarType_Qangle;
+}
+
+template<>
+constexpr EConVarType TranslateConVarType<void*>(void) {
+	return EConVarType_Invalid;
+}
+
 class ConVarHandleS2 {
 public:
 	ConVarHandleS2(uint16_t index = -1, uint32_t handle = -1) : m_convarIndex(index), m_handleIndex(handle) {}
@@ -202,89 +285,6 @@ struct ConVarCreation_t : CVarCreationBase_t {
 static_assert(sizeof(ConVarCreation_t) == 0x70, "ConVarCreation_t wrong size!");
 static_assert(sizeof(ConVarCreation_t) % 8 == 0x0, "ConVarCreation_t isn't 8 bytes aligned!");
 static_assert(sizeof(CVValue_t) == 0x10, "CVValue_t wrong size!");
-
-template<typename T>
-constexpr EConVarType TranslateConVarType();
-
-template<>
-constexpr EConVarType TranslateConVarType<bool>(void) {
-	return EConVarType_Bool;
-}
-
-template<>
-constexpr EConVarType TranslateConVarType<int16_t>(void) {
-	return EConVarType_Int16;
-}
-
-template<>
-constexpr EConVarType TranslateConVarType<uint16_t>(void) {
-	return EConVarType_UInt16;
-}
-
-template<>
-constexpr EConVarType TranslateConVarType<int32_t>(void) {
-	return EConVarType_Int32;
-}
-
-template<>
-constexpr EConVarType TranslateConVarType<uint32_t>(void) {
-	return EConVarType_UInt32;
-}
-
-template<>
-constexpr EConVarType TranslateConVarType<int64_t>(void) {
-	return EConVarType_Int64;
-}
-
-template<>
-constexpr EConVarType TranslateConVarType<uint64_t>(void) {
-	return EConVarType_UInt64;
-}
-
-template<>
-constexpr EConVarType TranslateConVarType<float>(void) {
-	return EConVarType_Float32;
-}
-
-template<>
-constexpr EConVarType TranslateConVarType<double>(void) {
-	return EConVarType_Float64;
-}
-
-template<>
-constexpr EConVarType TranslateConVarType<const char*>(void) {
-	return EConVarType_String;
-}
-
-template<>
-constexpr EConVarType TranslateConVarType<Color>(void) {
-	return EConVarType_Color;
-}
-
-template<>
-constexpr EConVarType TranslateConVarType<Vector2D>(void) {
-	return EConVarType_Vector2;
-}
-
-template<>
-constexpr EConVarType TranslateConVarType<Vector>(void) {
-	return EConVarType_Vector3;
-}
-
-template<>
-constexpr EConVarType TranslateConVarType<Vector4D>(void) {
-	return EConVarType_Vector4;
-}
-
-template<>
-constexpr EConVarType TranslateConVarType<QAngle>(void) {
-	return EConVarType_Qangle;
-}
-
-template<>
-constexpr EConVarType TranslateConVarType<void*>(void) {
-	return EConVarType_Invalid;
-}
 
 template<typename T>
 class ConVarS2;

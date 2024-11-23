@@ -38,7 +38,7 @@ else()
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Dstricmp=strcasecmp -D_stricmp=strcasecmp -D_strnicmp=strncasecmp")
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Dstrnicmp=strncasecmp -D_snprintf=snprintf -Dsprintf_s=snprintf")
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -D_vsnprintf=vsnprintf -D_alloca=alloca -Dstrcmpi=strcasecmp -Dstrncpy_s=strncpy")
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -D__forceinline= -D__thiscall= -D__cdecl= -D__fastcall= -Dcdecl=")
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -D__forceinline= -D__thiscall= -D__cdecl= -D__fastcall=")
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DMAX_PATH=PATH_MAX")
 
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pipe -fPIC")

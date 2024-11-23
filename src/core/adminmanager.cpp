@@ -6,6 +6,8 @@ bool ADMIN::IsAdmin(uint64 xuid) {
 		auto& info = it->second;
 		return info.m_nFlag > AdminFlag::None;
 	}
+
+	return false;
 }
 
 bool ADMIN::IsAdmin(CCSPlayerController* controller) {

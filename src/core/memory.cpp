@@ -24,14 +24,14 @@ struct ReturnType<Ret (*)(Args...)> {
 	SURF_ASSERT(fnSig); \
 	using FunctionType = decltype(&fnCurrent); \
 	using ReturnTypeValue = ReturnType<FunctionType>::type; \
-	return MEM::SDKCall<ReturnTypeValue>(fnCurrent, __VA_ARGS__);
+	return MEM::SDKCall<ReturnTypeValue>(fnSig, __VA_ARGS__);
 
 #define CALL_ADDRESS(sig, fnCurrent, ...) \
 	static auto fnSig = GAMEDATA::GetAddress(sig); \
 	SURF_ASSERT(fnSig); \
 	using FunctionType = decltype(&fnCurrent); \
 	using ReturnTypeValue = ReturnType<FunctionType>::type; \
-	return MEM::SDKCall<ReturnTypeValue>(fnCurrent, __VA_ARGS__);
+	return MEM::SDKCall<ReturnTypeValue>(fnSig, __VA_ARGS__);
 
 #define HOOK_SIG(sig, fnHook, fnTrampoline) \
 	static auto fn##fnHook = GAMEDATA::GetMemSig(sig); \
