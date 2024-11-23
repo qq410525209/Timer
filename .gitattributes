@@ -1,6 +1,1 @@
 * text=auto
-
-vendor/libhv/lib/Release/hv_static.lib filter=lfs diff=lfs merge=lfs -text
-vendor/libhv/lib/libhv_static.a filter=lfs diff=lfs merge=lfs -text
-vendor/libmem/lib/release/libmem.lib filter=lfs diff=lfs merge=lfs -text
-vendor/libmem/lib/liblibmem.a filter=lfs diff=lfs merge=lfs -text
