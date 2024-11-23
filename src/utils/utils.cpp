@@ -24,7 +24,13 @@ std::string UTIL::GetPublicIP() {
 
 	uint32_t ip = sAddr.m_unIPv4;
 	std::ostringstream oss;
-	oss << ((ip >> 24) & 0xFF) << "." << ((ip >> 16) & 0xFF) << "." << ((ip >> 8) & 0xFF) << "." << ((ip) & 0xFF);
+
+	// clang-format off
+	oss << ((ip >> 24) & 0xFF) << "." 
+		<< ((ip >> 16) & 0xFF) << "." 
+		<< ((ip >>  8) & 0xFF) << "." 
+		<< ((ip >>  0) & 0xFF);
+	// clang-format on
 
 	ipv4 = oss.str();
 	return ipv4;
