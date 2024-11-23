@@ -3,9 +3,6 @@
 #include <core/forwards.h>
 #include <core/interfaces.h>
 
-#include <sdk/common.h>
-#include <libmem/libmem_helper.h>
-
 #include <sdk/usercmd.h>
 #include <sdk/entity/services.h>
 #include <sdk/entity/ccsplayerpawn.h>
@@ -52,6 +49,10 @@ void MEM::CALL::SwitchTeam(CCSPlayerController* controller, int team) {
 
 void MEM::CALL::SetPawn(CBasePlayerController* controller, CCSPlayerPawn* pawn, bool a3, bool a4, bool a5) {
 	CALL_SIG("CBasePlayerController_SetPawn", SetPawn, controller, pawn, a3, a4, a5);
+}
+
+IGameEventListener2* MEM::CALL::GetLegacyGameEventListener(CPlayerSlot slot) {
+	CALL_SIG("GetLegacyGameEventListener", GetLegacyGameEventListener, slot);
 }
 
 #pragma region hooks

@@ -3,6 +3,45 @@
 		"GameEntitySystem": {
 			"windows": 88,
 			"linux": 80
+		},
+		// 9 functions after one with "CBasePlayerPawn::PhysicsSimulate"
+		"IsEntityPawn": {
+			"windows": 161,
+			"linux": 160
+		},
+		"IsEntityController": {
+			"windows": 162,
+			"linux": 161
+		},
+		"Teleport": {
+			"windows": 157,
+			"linux": 156
+		},
+		// 2 functions after one with "targethealthfrac"
+		"CollisionRulesChanged": {
+			"windows": 179,
+			"linux": 178
+		},
+		// String: "%s<%i><%s><%s>" ChangeTeam() CTMDBG..."
+		"ControllerChangeTeam": {
+			"windows": 100,
+			"linux": 99
+		},
+		// Look for the kill command, go through its callback and you should a find call like this, with v9 being a pawn pointer:
+		// return (*(*v9 + 2832LL))(v9, v27, 0LL);
+		// 2832 (354 * 8) is the offset
+		"CommitSuicide": {
+			"windows": 380,
+			"linux": 380
+		},
+		"ControllerRespawn": {
+			"windows": 257,
+			"linux": 259
+		},
+		// "Player.Respawn"
+		"Respawn": {
+			"windows": 348,
+			"linux": 349
 		}
 	},
 	"Addresses": {
@@ -34,6 +73,11 @@
 			"library": "server",
 			"windows": "48 8D 0D ? ? ? ? 48 0F 45 D0 48 8B 05",
 			"linux": "48 8D 3D ? ? ? ? 4C 89 E0"
+		},
+		"GetLegacyGameEventListener": {
+			"library": "server",
+			"windows": "48 8B 15 ? ? ? ? 48 85 D2 74 ? 85 C9 74",
+			"linux": "48 8B 05 ? ? ? ? 48 85 C0 74 ? 85 FF"
 		}
 	}
 }

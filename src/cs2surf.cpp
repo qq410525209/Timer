@@ -6,6 +6,7 @@
 #include <core/interfaces.h>
 #include <core/memory.h>
 #include <core/gamedata.h>
+#include <core/cvarmanager.h>
 
 #include <utils/utils.h>
 

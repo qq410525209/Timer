@@ -13,22 +13,27 @@ namespace CONCMD {
 		virtual void OnDispatchConCommand(ICvar* pCvar, ConCommandHandle cmd, const CCommandContext& ctx, const CCommand& args) override;
 
 	public:
-		struct CSmConCmdInfo {
+		struct CConCmdInfo {
 			ConCmd_Callback callback;
 			AdminFlag adminFlags = AdminFlag::None;
 			std::string description;
 			int64_t cmdFlags = FCVAR_NONE;
 		};
 
-		struct CSmSrvCmdInfo {
+		struct CSrvCmdInfo {
 			SrvCmd_Callback callback;
 			std::string description;
 			int64_t cmdFlags = FCVAR_NONE;
 		};
 
-		std::unordered_map<std::wstring, std::vector<CSmConCmdInfo>> m_umConCmds;
-		std::unordered_map<std::wstring, std::vector<CSmSrvCmdInfo>> m_umSrvCmds;
+		std::unordered_map<std::wstring, std::vector<CConCmdInfo>> m_umConCmds;
+		std::unordered_map<std::wstring, std::vector<CSrvCmdInfo>> m_umSrvCmds;
 	};
+
+	void RegServerCmd(std::string cmd, SrvCmd_Callback cb, std::string description = std::string(), int64_t cmdFlag = FCVAR_NONE);
+	void RegConsoleCmd(std::string cmd, ConCmd_Callback cb, std::string description = std::string(), int64_t cmdFlag = FCVAR_NONE);
+	void RegAdminCmd(std::string cmd, ConCmd_Callback cb, AdminFlag adminFlags, std::string description = std::string(),
+					 int64_t cmdFlag = FCVAR_NONE);
 
 	extern CConCmdManager* GetManager();
 } // namespace CONCMD

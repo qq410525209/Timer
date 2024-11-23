@@ -1,5 +1,7 @@
 #pragma once
 
+#include <pch.h>
+
 #include <sdk/common.h>
 #include <libmem/libmem_helper.h>
 #include <vendor/libmodule/module.h>
@@ -14,6 +16,7 @@ namespace MEM {
 	namespace CALL {
 		void SwitchTeam(CCSPlayerController* controller, int team);
 		void SetPawn(CBasePlayerController* controller, CCSPlayerPawn* pawn, bool a3, bool a4, bool a5);
+		IGameEventListener2* GetLegacyGameEventListener(CPlayerSlot slot);
 	} // namespace CALL
 
 	namespace MODULE {

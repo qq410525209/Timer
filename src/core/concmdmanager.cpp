@@ -1,6 +1,6 @@
 #include "concmdmanager.h"
-#include "concmdmanager.h"
 #include <utils/utils.h>
+#include <utils/print.h>
 
 CONCMD::CConCmdManager g_manager;
 
@@ -8,10 +8,68 @@ CONCMD::CConCmdManager* CONCMD::GetManager() {
 	return &g_manager;
 }
 
+void CONCMD::RegServerCmd(std::string cmd, SrvCmd_Callback cb, std::string description, int64_t cmdFlag) {
+	std::transform(cmd.begin(), cmd.end(), cmd.begin(), ::tolower);
+
+	if (!cmd.starts_with("sm_")) {
+		cmd = "sm_" + cmd;
+	}
+
+	CConCmdManager::CSrvCmdInfo info;
+	info.callback = cb;
+	info.description = description;
+	info.cmdFlags = cmdFlag;
+	g_manager.m_umSrvCmds[UTIL::ToWideString(cmd.c_str())].emplace_back(info);
+
+	static FnCommandCallback_t nullcb;
+	ConCommandRefAbstract ref;
+	ConCommand command = ConCommand(&ref, cmd.c_str(), nullcb, description.c_str(), cmdFlag);
+	g_pCVar->RegisterConCommand(&command);
+}
+
+void CONCMD::RegConsoleCmd(std::string cmd, ConCmd_Callback cb, std::string description, int64_t cmdFlag) {
+	std::transform(cmd.begin(), cmd.end(), cmd.begin(), ::tolower);
+
+	if (!cmd.starts_with("sm_")) {
+		cmd = "sm_" + cmd;
+	}
+
+	CConCmdManager::CConCmdInfo info;
+	info.callback = cb;
+	info.description = description;
+	info.adminFlags = AdminFlag::None;
+	info.cmdFlags = cmdFlag;
+	g_manager.m_umConCmds[UTIL::ToWideString(cmd.c_str())].emplace_back(info);
+
+	static FnCommandCallback_t nullcb;
+	ConCommandRefAbstract ref;
+	ConCommand command = ConCommand(&ref, cmd.c_str(), nullcb, description.c_str(), cmdFlag);
+	g_pCVar->RegisterConCommand(&command);
+}
+
+void CONCMD::RegAdminCmd(std::string cmd, ConCmd_Callback cb, AdminFlag adminFlags, std::string description, int64_t cmdFlag) {
+	std::transform(cmd.begin(), cmd.end(), cmd.begin(), ::tolower);
+
+	if (!cmd.starts_with("sm_")) {
+		cmd = "sm_" + cmd;
+	}
+
+	CConCmdManager::CConCmdInfo info;
+	info.callback = cb;
+	info.description = description;
+	info.adminFlags = adminFlags;
+	info.cmdFlags = cmdFlag;
+	g_manager.m_umConCmds[UTIL::ToWideString(cmd.c_str())].emplace_back(info);
+
+	static FnCommandCallback_t nullcb;
+	ConCommandRefAbstract ref;
+	ConCommand command = ConCommand(&ref, cmd.c_str(), nullcb, description.c_str(), cmdFlag);
+	g_pCVar->RegisterConCommand(&command);
+}
+
 static void HandleSrvCommand(const CCommand& pCommand, const std::wstring& wCommand) {
-	auto manager = CONCMD::GetManager();
-	auto it = manager->m_umSrvCmds.find(wCommand);
-	if (it == manager->m_umSrvCmds.end()) {
+	auto it = g_manager.m_umSrvCmds.find(wCommand);
+	if (it == g_manager.m_umSrvCmds.end()) {
 		return;
 	}
 
@@ -28,9 +86,8 @@ static void HandleSrvCommand(const CCommand& pCommand, const std::wstring& wComm
 
 static void HandleConCommand(CCSPlayerController* pController, const CCommand& pCommand, const std::wstring& wCommand, bool sayCommand,
 							 bool spaceFound) {
-	auto manager = CONCMD::GetManager();
-	auto it = manager->m_umConCmds.find(wCommand);
-	if (it == manager->m_umConCmds.end()) {
+	auto it = g_manager.m_umConCmds.find(wCommand);
+	if (it == g_manager.m_umConCmds.end()) {
 		return;
 	}
 
@@ -66,10 +123,10 @@ static void HandleConCommand(CCSPlayerController* pController, const CCommand& p
 	auto& vCmdInfo = it->second;
 	for (const auto& info : vCmdInfo) {
 		if (info.adminFlags != AdminFlag::None) {
-			/*if (!AdminManager()->CheckAccess(pController->GetSteamIDAsUInt64(), info.adminFlags)) {
-				pController->ClientPrint(sayCommand ? HUD_PRINTTALK : HUD_PRINTCONSOLE, "Access denied");
+			if (!ADMIN::CheckAccess(pController->m_steamID(), info.adminFlags)) {
+				sayCommand ? UTIL::PrintChat(pController, "Access denied") : UTIL::PrintConsole(pController, "Access denied");
 				continue;
-			}*/
+			}
 		}
 
 		info.callback(pController, vArgs);
@@ -96,9 +153,7 @@ void CONCMD::CConCmdManager::OnDispatchConCommand(ICvar* pCvar, ConCommandHandle
 
 		auto wSayContent = UTIL::ToWideString(pszSayContent);
 		wchar_t commandSymbol = wSayContent[0];
-		if (commandSymbol != L'!' && commandSymbol != 65281 && /*full-width !*/
-			commandSymbol != L'.' && commandSymbol != 12290 && /*full-width .*/
-			commandSymbol != L'/') {
+		if (commandSymbol != L'!' && commandSymbol != 65281 && commandSymbol != L'.' && commandSymbol != 12290 && commandSymbol != L'/') {
 			return;
 		}
 

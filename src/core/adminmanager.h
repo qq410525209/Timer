@@ -1,5 +1,7 @@
 #pragma once
 
+#include <sdk/entity/ccsplayercontroller.h>
+
 /**
  * Access levels (flags) for admins.
  */
@@ -21,4 +23,31 @@ enum class AdminFlag : uint32_t {
 	Root = 1 << 13      /* z: All access by default */
 };
 
-namespace ADMIN {}
+inline AdminFlag operator|(AdminFlag a, AdminFlag b) {
+	return static_cast<AdminFlag>(static_cast<uint32_t>(a) | static_cast<uint32_t>(b));
+}
+
+inline AdminFlag operator&(AdminFlag a, AdminFlag b) {
+	return static_cast<AdminFlag>(static_cast<uint32_t>(a) & static_cast<uint32_t>(b));
+}
+
+inline AdminFlag operator~(AdminFlag a) {
+	return static_cast<AdminFlag>(~static_cast<uint32_t>(a));
+}
+
+struct CAdminInfo {
+	uint64 m_iSteamID;
+	AdminFlag m_nFlag;
+};
+
+namespace ADMIN {
+	bool IsAdmin(uint64 xuid);
+	bool IsAdmin(CCSPlayerController* controller);
+	CAdminInfo GetAdmin(uint64 xuid);
+	CAdminInfo GetAdmin(CCSPlayerController* controller);
+	bool CheckAccess(uint64 xuid, AdminFlag flag);
+	bool CheckAccess(CCSPlayerController* controller, AdminFlag flag);
+	void AddAdmin(uint64 xuid, std::string nick, AdminFlag flag);
+
+	inline std::unordered_map<uint64, CAdminInfo> m_umAdmins;
+} // namespace ADMIN

@@ -25,6 +25,7 @@ public:
 	SCHEMA_FIELD(uint64, m_steamID);
 	SCHEMA_FIELD(bool, m_bIsHLTV);
 	SCHEMA_FIELD(CHandle<CCSPlayerPawn>, m_hPawn);
+	SCHEMA_FIELD(PlayerConnectedState, m_iConnected);
 	SCHEMA_FIELD_POINTER(char, m_iszPlayerName);
 
 	CBasePlayerPawn* GetCurrentPawn() {
@@ -37,6 +38,18 @@ public:
 
 	int GetPlayerSlot() {
 		return entindex() - 1;
+	}
+
+	PlayerConnectedState GetConnectedState() {
+		return m_iConnected();
+	}
+
+	bool InGame() {
+		return GetConnectedState() == PlayerConnectedState::PlayerConnected;
+	}
+
+	bool IsBot() {
+		return m_steamID() == 0;
 	}
 
 	void SetPawn(CCSPlayerPawn* pawn);

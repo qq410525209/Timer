@@ -1,9 +1,9 @@
 #pragma once
 
+#include <pch.h>
+
 #include <string>
 #include <unordered_map>
-
-#include <sdk/common.h>
 
 // for one gamedata cfg now
 namespace GAMEDATA {
