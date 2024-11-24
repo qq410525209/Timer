@@ -18,7 +18,7 @@ public:
 	virtual CCSPlayerController* GetController() const;
 	virtual CBasePlayerPawn* GetCurrentPawn() const;
 	virtual CCSPlayerPawn* GetPlayerPawn() const;
-	virtual CCSPlayerPawnBase* GetObserverPawn() const;
+	virtual CCSObserverPawn* GetObserverPawn() const;
 	virtual CServerSideClient* GetClient() const;
 
 	// Returns true if this client has been fully authenticated by Steam

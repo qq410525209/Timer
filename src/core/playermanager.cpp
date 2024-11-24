@@ -22,9 +22,9 @@ CCSPlayerPawn* CPlayer::GetPlayerPawn() const {
 	return controller ? controller->GetPlayerPawn() : nullptr;
 }
 
-CCSPlayerPawnBase* CPlayer::GetObserverPawn() const {
+CCSObserverPawn* CPlayer::GetObserverPawn() const {
 	auto controller = this->GetController();
-	return controller ? controller->GetObserverPawn() : nullptr;
+	return controller ? reinterpret_cast<CCSObserverPawn*>(controller->GetObserverPawn()) : nullptr;
 }
 
 CServerSideClient* CPlayer::GetClient() const {
@@ -32,7 +32,8 @@ CServerSideClient* CPlayer::GetClient() const {
 }
 
 bool CPlayer::IsAuthenticated() const {
-	return false;
+	auto client = GetClient();
+	return client && client->IsConnected() && !client->IsFakeClient() && IFACE::pEngine->IsClientFullyAuthenticated(GetPlayerSlot());
 }
 
 bool CPlayer::IsConnected() const {
