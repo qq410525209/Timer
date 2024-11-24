@@ -32,6 +32,8 @@ public:
 	virtual const char* GetIpAddress() const;
 	virtual CSteamID GetSteamId(bool validated = false) const;
 
+	virtual void Kick(const char* internalReason, ENetworkDisconnectionReason reason);
+
 	uint64 GetSteamId64(bool validated = false) const {
 		return GetSteamId(validated).ConvertToUint64();
 	}

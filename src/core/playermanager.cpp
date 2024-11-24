@@ -91,6 +91,10 @@ CSteamID CPlayer::GetSteamId(bool validated) const {
 	return unauthenticatedSteamID;
 }
 
+void CPlayer::Kick(const char* internalReason, ENetworkDisconnectionReason reason) {
+	IFACE::pEngine->KickClient(this->GetPlayerSlot(), internalReason, reason);
+}
+
 CPlayer* CPlayerManager::ToPlayer(CServerSideClientBase* pClient) const {
 	return this->ToPlayer(CPlayerSlot(pClient->GetPlayerSlot()));
 }
