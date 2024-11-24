@@ -7,6 +7,7 @@
 #include <core/memory.h>
 #include <core/gamedata.h>
 #include <core/cvarmanager.h>
+#include <core/logger.h>
 
 #include <utils/utils.h>
 
@@ -24,6 +25,9 @@ bool CSurfPlugin::Load(PluginId id, ISmmAPI* ismm, char* error, size_t maxlen, b
 	GAMEDATA::Append("cs2surf-core.games.jsonc");
 
 	IFACE::Setup(ismm, error, maxlen);
+
+	LOG::Setup(0x00FFFF);
+
 	MEM::MODULE::Setup();
 	MEM::SetupHooks();
 
