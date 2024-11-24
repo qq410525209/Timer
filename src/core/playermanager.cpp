@@ -185,13 +185,16 @@ void CPlayerManager::OnClientConnected(ISource2GameClients* pClient, CPlayerSlot
 									   const char* pszAddress, bool bFakePlayer) {
 	int iSlot = slot.Get();
 	m_pPlayers[iSlot] = std::make_unique<CPlayer>(iSlot);
-
-	auto player = m_pPlayers[iSlot].get();
-	player->SetUnauthenticatedSteamID(xuid);
 }
 
 void CPlayerManager::OnClientDisconnect(ISource2GameClients* pClient, CPlayerSlot slot, ENetworkDisconnectionReason reason, const char* pszName,
 										uint64 xuid, const char* pszNetworkID) {
 	int iSlot = slot.Get();
 	m_pPlayers[iSlot].reset();
+}
+
+void CPlayerManager::OnClientActive(ISource2GameClients* pClient, CPlayerSlot slot, bool bLoadGame, const char* pszName, uint64 xuid) {
+	int iSlot = slot.Get();
+	auto player = m_pPlayers[iSlot].get();
+	player->SetUnauthenticatedSteamID(xuid);
 }

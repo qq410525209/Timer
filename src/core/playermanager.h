@@ -75,6 +75,8 @@ private:
 	virtual void OnClientDisconnect(ISource2GameClients* pClient, CPlayerSlot slot, ENetworkDisconnectionReason reason, const char* pszName,
 									uint64 xuid, const char* pszNetworkID) override;
 
+	virtual void OnClientActive(ISource2GameClients* pClient, CPlayerSlot slot, bool bLoadGame, const char* pszName, uint64 xuid) override;
+
 private:
 	std::array<std::unique_ptr<CPlayer>, MAXPLAYERS> m_pPlayers;
 };
