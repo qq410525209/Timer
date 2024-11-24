@@ -7,7 +7,6 @@
 // $NoKeywords: $
 //=============================================================================//
 
-
 #include "tier0/platform.h"
 #include "tier1/refcount.h"
 

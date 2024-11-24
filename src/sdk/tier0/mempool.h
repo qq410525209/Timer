@@ -390,7 +390,7 @@ inline void CUtlMemoryPool<T>::Free(T* pMem) {
 
 template<class T>
 inline void CUtlMemoryPool<T>::Clear() {
-	CUtlMemoryPoolBase::ClearDestruct((void (*)(void*)) & Destruct<T>);
+	CUtlMemoryPoolBase::ClearDestruct((void (*)(void*))&Destruct<T>);
 }
 
 //-----------------------------------------------------------------------------
@@ -478,8 +478,12 @@ inline CAlignedMemPool<ITEM_SIZE, ALIGNMENT, CHUNK_SIZE, CAllocator, GROWMODE, C
 	: m_pFirstFree(0), m_nFree(0), m_TimeLastCompact(0) {
 	// These COMPILE_TIME_ASSERT checks need to be in individual scopes to avoid build breaks
 	// on MacOS and Linux due to a gcc bug.
-	{ COMPILE_TIME_ASSERT(sizeof(FreeBlock_t) >= BLOCK_SIZE); }
-	{ COMPILE_TIME_ASSERT(ALIGN_VALUE(sizeof(FreeBlock_t), ALIGNMENT) == sizeof(FreeBlock_t)); }
+	{
+		COMPILE_TIME_ASSERT(sizeof(FreeBlock_t) >= BLOCK_SIZE);
+	}
+	{
+		COMPILE_TIME_ASSERT(ALIGN_VALUE(sizeof(FreeBlock_t), ALIGNMENT) == sizeof(FreeBlock_t));
+	}
 }
 
 template<int ITEM_SIZE, int ALIGNMENT, int CHUNK_SIZE, class CAllocator, bool GROWMODE, int COMPACT_THRESHOLD>

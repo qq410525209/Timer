@@ -45,7 +45,7 @@ public:
 	INetworkStringTable* m_pUserInfoTable;                                 // 392
 	INetworkStringTable* m_pServerStartupTable;                            // 400
 	CFrameSnapshotManager m_snapshotManager;                               // 408
-	char pad528[16];													   // 528
+	char pad528[16];                                                       // 528
 	char pad544[30];                                                       // 544
 	bf_write m_Signon;                                                     // 576
 	CUtlMemory<byte> m_SignonBuffer;                                       // 616
