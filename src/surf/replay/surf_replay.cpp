@@ -6,7 +6,6 @@ bool CSurfReplay::OnPlayerRunCmd(CCSPlayerPawn* pawn, CInButtonState* buttons, f
 								 int& tickcount, int& seed, int (&mouse)[2]) {
 	auto bBot = pawn->IsBot();
 	if (bBot) {
-		SURF_ASSERT(false);
 	}
 
 	return true;

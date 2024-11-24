@@ -57,6 +57,7 @@ public:
 	DECLARE_SCHEMA_CLASS(CPlayer_CameraServices);
 
 	SCHEMA_FIELD_POINTER(CHandle<CBaseEntity>, m_hViewEntity);
+	SCHEMA_FIELD(float, m_flOldPlayerViewOffsetZ);
 };
 
 class CCSPlayerBase_CameraServices : public CPlayer_CameraServices {

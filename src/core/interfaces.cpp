@@ -19,6 +19,7 @@ bool IFACE::Setup(ISmmAPI* ismm, char* error, size_t maxlen) {
 	GET_V_IFACE_CURRENT(GetFileSystemFactory, g_pFullFileSystem, IFileSystem, FILESYSTEM_INTERFACE_VERSION);
 
 	IFACE::pGameEventManager = (IGameEventManager2*)GAMEDATA::GetAddress("GetGameEventManager");
+	IFACE::pGameTraceService = (CGameTraceService*)GAMEDATA::GetAddress("g_pGameTraceService");
 
 	return true;
 }

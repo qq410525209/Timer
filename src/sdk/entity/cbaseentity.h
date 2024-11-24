@@ -136,4 +136,6 @@ public:
 	void Teleport(const Vector* newPosition, const QAngle* newAngles, const Vector* newVelocity) {
 		CALL_VIRTUAL(bool, GAMEDATA::GetOffset("Teleport"), this, newPosition, newAngles, newVelocity);
 	}
+
+	Vector GetAbsOrigin();
 };

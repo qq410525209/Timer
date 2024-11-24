@@ -6,6 +6,7 @@ class CCSPlayer_WaterServices;
 class CPlayer_MovementServices;
 class CPlayer_ObserverServices;
 class CCSPlayer_ItemServices;
+class CPlayer_CameraServices;
 
 class CCSPlayerPawn;
 class CBasePlayerController;
@@ -19,6 +20,7 @@ public:
 	SCHEMA_FIELD(CCSPlayer_ItemServices*, m_pItemServices);
 	SCHEMA_FIELD(CPlayer_ObserverServices*, m_pObserverServices);
 	SCHEMA_FIELD(CCSPlayer_WaterServices*, m_pWaterServices);
+	SCHEMA_FIELD(CPlayer_CameraServices*, m_pCameraServices);
 
 public:
 	CBasePlayerController* GetController() {

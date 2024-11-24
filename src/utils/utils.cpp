@@ -6,6 +6,7 @@
 #include <sdk/entity/ccsplayercontroller.h>
 #include <sdk/entity/ccsplayerpawn.h>
 #include <cs2surf.h>
+#include <worldsize.h>
 
 std::string UTIL::GetWorkingDirectory() {
 	return PATH::Join(std::filesystem::current_path().string(), "..", "..", GAME_NAME, "addons", "cs2surf");
@@ -141,4 +142,24 @@ CUtlVector<CServerSideClient*>* UTIL::GetClientList() {
 
 CServerSideClient* UTIL::GetClientBySlot(CPlayerSlot slot) {
 	return (GetClientList() && GetController(slot)) ? GetClientList()->Element(slot.Get()) : nullptr;
+}
+
+bool UTIL::TraceLine(const Vector& vecStart, const Vector& vecEnd, CEntityInstance* ignore1, CGameTrace* tr, uint64 traceLayer, uint64 excludeLayer) {
+	Ray_t ray;
+	CTraceFilter filter;
+	filter.SetPassEntity1(ignore1);
+	filter.m_nInteractsWith = traceLayer;
+	filter.m_nInteractsExclude = excludeLayer;
+
+	return MEM::CALL::TraceShape(ray, vecStart, vecEnd, filter, tr);
+}
+
+void UTIL::GetPlayerAiming(CCSPlayerPawnBase* pPlayer, CGameTrace& ret) {
+	Vector from = pPlayer->GetEyePosition();
+
+	Vector forward;
+	AngleVectors(pPlayer->m_angEyeAngles(), &forward);
+	Vector to = from + forward * MAX_COORD_FLOAT;
+
+	TraceLine(from, to, pPlayer, &ret, MASK_SOLID, CONTENTS_TRIGGER | CONTENTS_PLAYER);
 }

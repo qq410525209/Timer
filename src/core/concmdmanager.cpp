@@ -24,7 +24,7 @@ void CONCMD::RegServerCmd(std::string cmd, SrvCmd_Callback cb, std::string descr
 	static FnCommandCallback_t nullcb;
 	ConCommandRefAbstract ref;
 	ConCommand command = ConCommand(&ref, cmd.c_str(), nullcb, description.c_str(), cmdFlag);
-	g_pCVar->RegisterConCommand(&command);
+	g_pCVar->RegisterConCommand(&command, 4);
 }
 
 void CONCMD::RegConsoleCmd(std::string cmd, ConCmd_Callback cb, std::string description, int64_t cmdFlag) {
@@ -43,8 +43,8 @@ void CONCMD::RegConsoleCmd(std::string cmd, ConCmd_Callback cb, std::string desc
 
 	static FnCommandCallback_t nullcb;
 	ConCommandRefAbstract ref;
-	ConCommand command = ConCommand(&ref, cmd.c_str(), nullcb, description.c_str(), cmdFlag);
-	g_pCVar->RegisterConCommand(&command);
+	ConCommand command = ConCommand(&ref, cmd.c_str(), nullcb, description.c_str(), cmdFlag | FCVAR_CLIENT_CAN_EXECUTE);
+	g_pCVar->RegisterConCommand(&command, 4);
 }
 
 void CONCMD::RegAdminCmd(std::string cmd, ConCmd_Callback cb, AdminFlag adminFlags, std::string description, int64_t cmdFlag) {
@@ -63,8 +63,8 @@ void CONCMD::RegAdminCmd(std::string cmd, ConCmd_Callback cb, AdminFlag adminFla
 
 	static FnCommandCallback_t nullcb;
 	ConCommandRefAbstract ref;
-	ConCommand command = ConCommand(&ref, cmd.c_str(), nullcb, description.c_str(), cmdFlag);
-	g_pCVar->RegisterConCommand(&command);
+	ConCommand command = ConCommand(&ref, cmd.c_str(), nullcb, description.c_str(), cmdFlag | FCVAR_CLIENT_CAN_EXECUTE);
+	g_pCVar->RegisterConCommand(&command, 4);
 }
 
 static void HandleSrvCommand(const CCommand& pCommand, const std::wstring& wCommand) {

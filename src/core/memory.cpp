@@ -54,6 +54,10 @@ IGameEventListener2* MEM::CALL::GetLegacyGameEventListener(CPlayerSlot slot) {
 	CALL_SIG("GetLegacyGameEventListener", GetLegacyGameEventListener, slot);
 }
 
+bool MEM::CALL::TraceShape(const Ray_t& ray, const Vector& vecStart, const Vector& vecEnd, const CTraceFilter& filter, CGameTrace* tr) {
+	CALL_SIG("TraceShape", TraceShape, IFACE::pGameTraceService, &ray, &vecStart, &vecEnd, &filter, tr);
+}
+
 #pragma region hooks
 
 static void Hook_OnMovementServicesRunCmds(CPlayer_MovementServices* pMovementServices, CUserCmd* pUserCmd) {

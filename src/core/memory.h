@@ -17,6 +17,7 @@ namespace MEM {
 		void SwitchTeam(CCSPlayerController* controller, int team);
 		void SetPawn(CBasePlayerController* controller, CCSPlayerPawn* pawn, bool a3, bool a4, bool a5);
 		IGameEventListener2* GetLegacyGameEventListener(CPlayerSlot slot);
+		bool TraceShape(const Ray_t& ray, const Vector& vecStart, const Vector& vecEnd, const CTraceFilter& filter, CGameTrace* tr);
 	} // namespace CALL
 
 	namespace MODULE {

@@ -9,6 +9,9 @@ public:
 	DECLARE_SCHEMA_CLASS(CCSPlayerPawnBase);
 
 	SCHEMA_FIELD(CCSPlayer_ViewModelServices*, m_pViewModelServices);
+	SCHEMA_FIELD(QAngle, m_angEyeAngles);
+
+	Vector GetEyePosition();
 };
 
 class CCSPlayerPawn : public CCSPlayerPawnBase {
@@ -17,7 +20,6 @@ public:
 	SCHEMA_FIELD(float, m_ignoreLadderJumpTime);
 	SCHEMA_FIELD(float, m_flSlopeDropOffset);
 	SCHEMA_FIELD(float, m_flSlopeDropHeight);
-
 	SCHEMA_FIELD(float, m_flVelocityModifier);
 
 public:
