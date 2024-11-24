@@ -163,3 +163,12 @@ void UTIL::GetPlayerAiming(CCSPlayerPawnBase* pPlayer, CGameTrace& ret) {
 
 	TraceLine(from, to, pPlayer, &ret, MASK_SOLID, CONTENTS_TRIGGER | CONTENTS_PLAYER);
 }
+
+CBaseEntity* UTIL::FindEntityByClassname(CEntityInstance* start, const char* name) {
+	if (!GameEntitySystem()) {
+		return nullptr;
+	}
+	EntityInstanceByClassIter_t iter(start, name);
+
+	return static_cast<CBaseEntity*>(iter.Next());
+}
