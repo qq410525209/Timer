@@ -1,0 +1,192 @@
+#include "playermanager.h"
+#include <sdk/entity/ccsplayercontroller.h>
+#include <utils/utils.h>
+
+CCSPlayerController* CPlayer::GetController() const {
+	auto entIndex = this->GetEntityIndex();
+	CBaseEntity* ent = static_cast<CBaseEntity*>(GameEntitySystem()->GetEntityInstance(entIndex));
+	if (!ent) {
+		return nullptr;
+	}
+
+	return ent->IsController() ? static_cast<CCSPlayerController*>(ent) : nullptr;
+}
+
+CBasePlayerPawn* CPlayer::GetCurrentPawn() const {
+	auto controller = this->GetController();
+	return controller ? controller->GetCurrentPawn() : nullptr;
+}
+
+CCSPlayerPawn* CPlayer::GetPlayerPawn() const {
+	auto controller = this->GetController();
+	return controller ? controller->GetPlayerPawn() : nullptr;
+}
+
+CCSPlayerPawnBase* CPlayer::GetObserverPawn() const {
+	auto controller = this->GetController();
+	return controller ? controller->GetObserverPawn() : nullptr;
+}
+
+CServerSideClient* CPlayer::GetClient() const {
+	return UTIL::GetClientBySlot(GetPlayerSlot());
+}
+
+bool CPlayer::IsAuthenticated() const {
+	return false;
+}
+
+bool CPlayer::IsConnected() const {
+	auto client = GetClient();
+	return client ? client->IsConnected() : false;
+}
+
+bool CPlayer::IsInGame() const {
+	auto client = GetClient();
+	return client ? client->IsInGame() : false;
+}
+
+bool CPlayer::IsFakeClient() const {
+	auto client = GetClient();
+	return client ? client->IsFakeClient() : false;
+}
+
+bool CPlayer::IsSourceTV() const {
+	auto client = GetClient();
+	return client ? client->IsHLTV() : false;
+}
+
+bool CPlayer::IsValidClient() const {
+	CServerSideClient* client = GetClient();
+	if (!client) {
+		return false;
+	}
+
+	auto controller = UTIL::GetController(client->GetPlayerSlot());
+	return controller && controller->IsController() && client->IsConnected() && client->IsInGame() && !client->IsHLTV();
+}
+
+const char* CPlayer::GetName() const {
+	auto controller = GetController();
+	return controller ? controller->GetPlayerName() : "<blank>";
+}
+
+const char* CPlayer::GetIpAddress() const {
+	auto client = GetClient();
+	return client ? client->GetNetChannel()->GetRemoteAddress().ToString(true) : nullptr;
+}
+
+CSteamID CPlayer::GetSteamId(bool validated) const {
+	static const CSteamID invalidId = k_steamIDNil;
+	bool authenticated = this->IsAuthenticated();
+	if (validated && !authenticated) {
+		return invalidId;
+	}
+
+	CServerSideClient* client = GetClient();
+	if (client && authenticated) {
+		return client->GetClientSteamID();
+	}
+
+	return unauthenticatedSteamID;
+}
+
+CPlayer* CPlayerManager::ToPlayer(CServerSideClientBase* pClient) const {
+	return this->ToPlayer(CPlayerSlot(pClient->GetPlayerSlot()));
+}
+
+CPlayer* CPlayerManager::ToPlayer(CPlayerPawnComponent* component) const {
+	return this->ToPlayer(component->GetPawn());
+}
+
+CPlayer* CPlayerManager::ToPlayer(CBasePlayerController* controller) const {
+	if (!controller) {
+		return nullptr;
+	}
+
+	return this->ToPlayer(CPlayerSlot(controller->GetPlayerSlot()));
+}
+
+CPlayer* CPlayerManager::ToPlayer(CBasePlayerPawn* pawn) const {
+	if (!pawn) {
+		return nullptr;
+	}
+
+	CBasePlayerController* controller = pawn->GetController();
+	if (!controller) {
+		return nullptr;
+	}
+
+	return this->ToPlayer(controller);
+}
+
+CPlayer* CPlayerManager::ToPlayer(CPlayerSlot slot) const {
+	if (UTIL::IsPlayerSlot(slot)) {
+		return m_pPlayers.at(slot.Get()).get();
+	}
+
+	return nullptr;
+}
+
+CPlayer* CPlayerManager::ToPlayer(CEntityIndex entIndex) const {
+	CBaseEntity* ent = static_cast<CBaseEntity*>(GameEntitySystem()->GetEntityInstance(entIndex));
+	if (!ent) {
+		return nullptr;
+	}
+
+	if (ent->IsPawn()) {
+		return this->ToPlayer(static_cast<CBasePlayerPawn*>(ent));
+	}
+
+	if (ent->IsController()) {
+		return this->ToPlayer(static_cast<CBasePlayerController*>(ent));
+	}
+
+	return nullptr;
+}
+
+CPlayer* CPlayerManager::ToPlayer(CPlayerUserId userID) const {
+	for (int slot = 0; slot < UTIL::GetGlobals()->maxClients; slot++) {
+		if (g_pEngineServer->GetPlayerUserId(CPlayerSlot(slot)) == userID.Get()) {
+			return this->ToPlayer(CPlayerSlot(slot));
+		}
+	}
+
+	return nullptr;
+}
+
+CPlayer* CPlayerManager::ToPlayer(CSteamID steamid, bool validate) const {
+	auto steam64 = steamid.ConvertToUint64();
+	for (auto& player : GetOnlinePlayers()) {
+		if (player->GetSteamId64(validate) == steam64) {
+			return player;
+		}
+	}
+
+	return nullptr;
+}
+
+std::vector<CPlayer*> CPlayerManager::GetOnlinePlayers() const {
+	std::vector<CPlayer*> players;
+	for (auto& x : m_pPlayers) {
+		if (auto player = x.get()) {
+			players.emplace_back(player);
+		}
+	}
+
+	return players;
+}
+
+void CPlayerManager::OnClientConnected(ISource2GameClients* pClient, CPlayerSlot slot, const char* pszName, uint64 xuid, const char* pszNetworkID,
+									   const char* pszAddress, bool bFakePlayer) {
+	int iSlot = slot.Get();
+	m_pPlayers[iSlot] = std::make_unique<CPlayer>(iSlot);
+
+	auto player = m_pPlayers[iSlot].get();
+	player->SetUnauthenticatedSteamID(xuid);
+}
+
+void CPlayerManager::OnClientDisconnect(ISource2GameClients* pClient, CPlayerSlot slot, ENetworkDisconnectionReason reason, const char* pszName,
+										uint64 xuid, const char* pszNetworkID) {
+	int iSlot = slot.Get();
+	m_pPlayers[iSlot].reset();
+}

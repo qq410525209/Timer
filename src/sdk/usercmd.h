@@ -1,7 +1,7 @@
 #pragma once
 
 #include "common.h"
-#include <protobuf/cs_usercmd.pb.h>
+#include <sdk/protobuf/cs_usercmd.pb.h>
 
 class CSGOUserCmdPB;
 

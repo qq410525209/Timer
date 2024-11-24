@@ -33,6 +33,7 @@ static_assert(offsetof(CNetworkVarChainer, m_PathIndex) == 32);
 
 namespace schema {
 	int16_t FindChainOffset(const char* className);
+	SchemaKey GetOffset(const char* className, const char* memberName);
 	SchemaKey GetOffset(const char* className, uint32_t classKey, const char* memberName, uint32_t memberKey);
 	void NetworkStateChanged(int64 chainEntity, uint32 nLocalOffset, uint32 nArrayIndex);
 	size_t GetClassSize(const char* className);

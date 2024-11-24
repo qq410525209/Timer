@@ -15,6 +15,11 @@ public:
 	}
 };
 
+class CPlayer_ObserverServices : public CPlayerPawnComponent {
+public:
+	DECLARE_SCHEMA_CLASS(CPlayer_ObserverServices);
+};
+
 class CPlayer_MovementServices : public CPlayerPawnComponent {
 public:
 	DECLARE_SCHEMA_CLASS(CPlayer_MovementServices);
@@ -35,4 +40,26 @@ public:
 	SCHEMA_FIELD_POINTER(CInButtonState, m_nButtons);
 	SCHEMA_FIELD_POINTER(uint32_t, m_pButtonPressedCmdNumber);
 	SCHEMA_FIELD_POINTER(float, m_arrForceSubtickMoveWhen);
+};
+
+class CPlayer_UseServices : public CPlayerPawnComponent {
+public:
+	DECLARE_SCHEMA_CLASS(CPlayer_UseServices);
+};
+
+class CPlayer_ViewModelServices : public CPlayerPawnComponent {
+public:
+	DECLARE_SCHEMA_CLASS(CPlayer_ViewModelServices);
+};
+
+class CPlayer_CameraServices : public CPlayerPawnComponent {
+public:
+	DECLARE_SCHEMA_CLASS(CPlayer_CameraServices);
+
+	SCHEMA_FIELD_POINTER(CHandle<CBaseEntity>, m_hViewEntity);
+};
+
+class CCSPlayerBase_CameraServices : public CPlayer_CameraServices {
+public:
+	DECLARE_SCHEMA_CLASS(CCSPlayerBase_CameraServices);
 };

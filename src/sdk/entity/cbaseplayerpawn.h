@@ -21,6 +21,10 @@ public:
 	SCHEMA_FIELD(CCSPlayer_WaterServices*, m_pWaterServices);
 
 public:
+	CBasePlayerController* GetController() {
+		return m_hController()->Get();
+	}
+
 	bool IsBot() {
 		return !!(this->m_fFlags() & FL_PAWN_FAKECLIENT);
 	}

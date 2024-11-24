@@ -79,6 +79,10 @@ int16_t schema::FindChainOffset(const char* className) {
 	return 0;
 }
 
+SchemaKey schema::GetOffset(const char* className, const char* memberName) {
+	return schema::GetOffset(className, hash_32_fnv1a_const(className), memberName, hash_32_fnv1a_const(memberName));
+}
+
 SchemaKey schema::GetOffset(const char* className, uint32_t classKey, const char* memberName, uint32_t memberKey) {
 	static SchemaTableMap_t schemaTableMap(0, 0, DefLessFunc(uint32_t));
 	int16_t tableMapIndex = schemaTableMap.Find(classKey);

@@ -8,7 +8,7 @@ set(SURFTIMER_SRC "./src")
 
 include_directories(
 	${SURFTIMER_SRC}
-	${SURFTIMER_SRC}/protobuf
+	${SURFTIMER_SRC}/sdk/protobuf
 	./vendor/libhv/include
 	./vendor/libmem/include
 	./vendor/libmodule
@@ -36,7 +36,7 @@ else()
 endif()
 
 file(GLOB_RECURSE ENTITY2_SOURCES "${SDK_ROOT}/entity2/entityidentity.cpp" "${SDK_ROOT}/entity2/entitysystem.cpp")
-file(GLOB_RECURSE PROTOBUF_SOURCES "${SURFTIMER_SRC}/protobuf/*.pb.cc" "${SURFTIMER_SRC}/protobuf/*.pb.h")
+file(GLOB_RECURSE PROTOBUF_SOURCES "${SURFTIMER_SRC}/sdk/protobuf/*.pb.cc" "${SURFTIMER_SRC}/sdk/protobuf/*.pb.h")
 file(GLOB_RECURSE SURFTIMER_SOURCES "${SURFTIMER_SRC}/*.cpp" "${SURFTIMER_SRC}/*.h")
 
 add_compile_definitions(-DHV_STATICLIB -DHAVE_MEMOVERRIDE_NEW_DELETE)

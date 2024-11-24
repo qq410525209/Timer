@@ -5,6 +5,8 @@
 #include <string>
 #include <filesystem>
 
+#include <sdk/serversideclient.h>
+
 namespace UTIL {
 	namespace PATH {
 		template<typename... Args>
@@ -24,4 +26,7 @@ namespace UTIL {
 	CGlobalVars* GetServerGlobals();
 	CBasePlayerController* GetController(CBaseEntity* entity);
 	CBasePlayerController* GetController(CPlayerSlot slot);
+	bool IsPlayerSlot(CPlayerSlot slot);
+	CUtlVector<CServerSideClient*>* GetClientList();
+	CServerSideClient* GetClientBySlot(CPlayerSlot slot);
 } // namespace UTIL

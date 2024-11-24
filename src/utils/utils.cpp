@@ -124,3 +124,21 @@ CBasePlayerController* UTIL::GetController(CPlayerSlot slot) {
 	}
 	return ent->IsController() ? static_cast<CBasePlayerController*>(ent) : nullptr;
 }
+
+bool UTIL::IsPlayerSlot(CPlayerSlot slot) {
+	int iSlot = slot.Get();
+	return iSlot >= 0 && iSlot < MAXPLAYERS;
+}
+
+CUtlVector<CServerSideClient*>* UTIL::GetClientList() {
+	if (!g_pNetworkServerService) {
+		return nullptr;
+	}
+
+	static int offset = GAMEDATA::GetOffset("ClientOffset");
+	return reinterpret_cast<CUtlVector<CServerSideClient*>*>(((uint8_t*)g_pNetworkServerService->GetIGameServer() + offset));
+}
+
+CServerSideClient* UTIL::GetClientBySlot(CPlayerSlot slot) {
+	return (GetClientList() && GetController(slot)) ? GetClientList()->Element(slot.Get()) : nullptr;
+}

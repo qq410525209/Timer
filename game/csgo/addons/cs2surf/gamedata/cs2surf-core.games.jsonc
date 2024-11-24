@@ -42,6 +42,11 @@
 		"Respawn": {
 			"windows": 348,
 			"linux": 349
+		},
+		// Check sv_fullupdate
+		"ClientOffset": {
+			"windows": 624,
+			"linux": 640
 		}
 	},
 	"Addresses": {
