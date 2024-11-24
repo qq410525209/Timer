@@ -379,7 +379,7 @@ public:
 
 private:
 	[[maybe_unused]] char pad2920[0x20]; // 2920
-}; // sizeof 2952
+};                                       // sizeof 2952
 
 class CServerSideClient : public CServerSideClientBase {
 public:
@@ -414,7 +414,7 @@ public:
 
 private:
 	[[maybe_unused]] char pad3984[8]; // 4008
-}; // sizeof 4016
+};                                    // sizeof 4016
 
 // not full class reversed
 class CHLTVClient : public CServerSideClientBase {
@@ -442,4 +442,4 @@ public:
 	bool m_bUnkBool3 = false; // 3015
 
 	[[maybe_unused]] char pad3976[0x28]; // 2984
-}; // sizeof 3056
+};                                       // sizeof 3056

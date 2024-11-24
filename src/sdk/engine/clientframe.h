@@ -27,7 +27,7 @@ public:
 	CBitVec<MAX_EDICTS> unkBitVec4128;
 	CBitVec<MAX_EDICTS> unkBitVec6176;
 	CBitVec<MAX_EDICTS>* transmit_always; // if bit is set, don't do PVS checks before sending (HLTV only)
-}; // sizeof 8232
+};                                        // sizeof 8232
 
 // TODO substitute CClientFrameManager with an intelligent structure (Tree, hash, cache, etc)
 class CClientFrameManager {
@@ -38,4 +38,4 @@ public:
 	[[maybe_unused]] char pad120[120];
 	CUtlMemoryPool<CClientFrame> m_ClientFramePool;
 	CClientFrame* m_Frames = NULL; // updates can be delta'ed from here
-}; // sizeof 288
+};                                 // sizeof 288
