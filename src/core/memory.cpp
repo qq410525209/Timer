@@ -1,6 +1,7 @@
 #include "memory.h"
 #include <core/gamedata.h>
 #include <core/interfaces.h>
+#include <core/eventmanager.h>
 
 #include <sdk/usercmd.h>
 #include <sdk/entity/services.h>
@@ -153,15 +154,6 @@ static void Hook_StartupServer(const GameSessionConfiguration_t& config, ISource
 	RETURN_META(MRES_IGNORED);
 }
 
-SH_DECL_HOOK2(IGameEventManager2, FireEvent, SH_NOATTRIB, false, bool, IGameEvent *, bool);
-static bool Hook_FireEvent(IGameEvent* pEvent, bool bDontBroadcast) {
-	for (auto p = CCoreForward::m_pFirst; p; p = p->m_pNext) {
-		p->OnFireEvent(META_IFACEPTR(IGameEventManager2), pEvent, bDontBroadcast);
-	}
-
-	RETURN_META_VALUE(MRES_IGNORED, true);
-}
-
 SH_DECL_HOOK3_void(ICvar, DispatchConCommand, SH_NOATTRIB, 0, ConCommandHandle, const CCommandContext &, const CCommand &);
 static void Hook_DispatchConCommand(ConCommandHandle cmd, const CCommandContext& ctx, const CCommand& args) {
 	for (auto p = CCoreForward::m_pFirst; p; p = p->m_pNext) {
@@ -187,6 +179,56 @@ static bool Hook_ActivateServer() {
 }
 
 // clang-format on
+
+static IGameEvent* Hook_OnCreateEvent(IGameEventManager2* pEventManager, const char* szName, bool bForce, int* pCookie) {
+	return MEM::SDKCall<IGameEvent*>(MEM::TRAMPOLINE::g_fnCreateGameEvent, pEventManager, szName, true, pCookie);
+}
+
+static bool Hook_OnFireEvent(IGameEventManager2* pEventManager, IGameEvent* pEvent, bool bDontBroadcast) {
+	if (!pEvent) {
+		return MEM::SDKCall<bool>(MEM::TRAMPOLINE::g_fnFireGameEvent, pEventManager, pEvent, bDontBroadcast);
+	}
+
+	auto& pList = EVENT::m_plist[std::string(pEvent->GetName())];
+	if (pList.empty()) {
+		return MEM::SDKCall<bool>(MEM::TRAMPOLINE::g_fnFireGameEvent, pEventManager, pEvent, bDontBroadcast);
+	}
+
+	auto pClone = IFACE::pGameEventManager->DuplicateEvent(pEvent);
+	if (!pClone) {
+		return MEM::SDKCall<bool>(MEM::TRAMPOLINE::g_fnFireGameEvent, pEventManager, pEvent, bDontBroadcast);
+	}
+
+	auto dontBroadcast = false;
+	for (auto& event : pList) {
+		if (!event.m_pCallbackPre) {
+			continue;
+		}
+
+		if ((event.m_pCallbackPre)(pEvent, pEvent->GetName(), bDontBroadcast) == EventHookAction_Block) {
+			dontBroadcast = true;
+		}
+	}
+
+	if (dontBroadcast) {
+		IFACE::pGameEventManager->FireEvent(pClone);
+		return false;
+	}
+
+	auto result = MEM::SDKCall<bool>(MEM::TRAMPOLINE::g_fnFireGameEvent, pEventManager, pEvent, bDontBroadcast);
+	for (auto& event : pList) {
+		if (event.m_pCallbackPost) {
+			(event.m_pCallbackPost)(pClone, pClone->GetName(), bDontBroadcast);
+		} else if (event.m_pCallbackPostNoCopy) {
+			(event.m_pCallbackPostNoCopy)(pClone->GetName(), bDontBroadcast);
+		}
+	}
+
+	pEventManager->FreeEvent(pClone);
+
+	return result;
+}
+
 #pragma endregion
 
 #pragma region setup
@@ -201,7 +243,8 @@ static bool SetupDetours() {
 
 static bool SetupVMTHooks() {
 	// clang-format off
-	// HOOK_VMT("CEntityDebugGameSystem::ServerGamePostSimulate", MEM::MODULE::server, Hook_OnServerGamePostSimulate, MEM::g_fnServerGamePostSimulate_Trampoline);
+	HOOK_VMT("CGameEventManager::CreateEvent", MEM::MODULE::server, Hook_OnCreateEvent, MEM::TRAMPOLINE::g_fnCreateGameEvent);
+	HOOK_VMT("CGameEventManager::FireEvent", MEM::MODULE::server, Hook_OnFireEvent, MEM::TRAMPOLINE::g_fnFireGameEvent);
 
 	// clang-format on
 	return true;
@@ -220,8 +263,6 @@ static bool SetupSourceHooks() {
 	SH_ADD_HOOK(ISource2GameClients, ClientCommand, g_pSource2GameClients, SH_STATIC(Hook_ClientCommand), false);
 
 	SH_ADD_HOOK(INetworkServerService, StartupServer, g_pNetworkServerService, SH_STATIC(Hook_StartupServer), true);
-
-	SH_ADD_HOOK(IGameEventManager2, FireEvent, IFACE::pGameEventManager, SH_STATIC(Hook_FireEvent), false);
 
 	SH_ADD_HOOK(ICvar, DispatchConCommand, g_pCVar, SH_STATIC(Hook_DispatchConCommand), false);
 

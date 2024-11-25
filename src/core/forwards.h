@@ -36,8 +36,6 @@ public:
 
 	virtual void OnStartupServer(INetworkServerService* pServerService, const GameSessionConfiguration_t& config) {}
 
-	virtual void OnFireEvent(IGameEventManager2* pEventManager, IGameEvent* pEvent, bool bDontBroadcast) {}
-
 	virtual void OnDispatchConCommand(ICvar* pCvar, ConCommandHandle cmd, const CCommandContext& ctx, const CCommand& args) {}
 
 	virtual void OnPostEventAbstract(IGameEventSystem* pEventSystem, CSplitScreenSlot nSlot, int nClientCount, const uint64* clients,

@@ -46,9 +46,10 @@ namespace MEM {
 		void Setup();
 	} // namespace MODULE
 
-#pragma region trampoline
-
-#pragma endregion
+	namespace TRAMPOLINE {
+		inline void* g_fnCreateGameEvent;
+		inline void* g_fnFireGameEvent;
+	} // namespace TRAMPOLINE
 
 	void SetupHooks();
 
