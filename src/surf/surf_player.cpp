@@ -6,6 +6,10 @@ CSurfPlayerManager* SURF::GetPlayerManager() {
 	return &g_SurfPlayerManager;
 }
 
+CMovementPlayerManager* MOVEMENT::GetPlayerManager() {
+	return static_cast<CMovementPlayerManager*>(&g_SurfPlayerManager);
+}
+
 CSurfPlayer* CSurfPlayerManager::ToPlayer(CServerSideClientBase* pClient) const {
 	return static_cast<CSurfPlayer*>(CPlayerManager::ToPlayer(pClient));
 }

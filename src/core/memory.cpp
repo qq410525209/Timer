@@ -57,6 +57,10 @@ void MEM::CALL::InitPlayerMovementTraceFilter(CTraceFilterPlayerMovementCS& pFil
 	CALL_SIG("InitPlayerMovementTraceFilter", InitPlayerMovementTraceFilter, &pFilter, pHandleEntity, interactWith, collisionGroup);
 }
 
+void MEM::CALL::SnapViewAngles(CBasePlayerPawn* pawn, const QAngle& angle) {
+	CALL_SIG("SnapViewAngles", SnapViewAngles, pawn, &angle);
+}
+
 #pragma region hooks
 
 // clang-format off

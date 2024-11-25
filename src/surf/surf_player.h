@@ -14,7 +14,7 @@ public:
 	CUtlVector<Vector> tpmTriggerFixOrigins;
 };
 
-class CSurfPlayerManager : public CPlayerManager {
+class CSurfPlayerManager : public CMovementPlayerManager {
 public:
 	CSurfPlayerManager() {
 		for (int i = 0; i < MAXPLAYERS; i++) {
@@ -31,9 +31,14 @@ public:
 	virtual CSurfPlayer* ToPlayer(CPlayerUserId userID) const override;
 	virtual CSurfPlayer* ToPlayer(CSteamID steamid, bool validate = false) const override;
 
-	// You should know what you doing
+	// Safe
+	CSurfPlayer* ToSurfPlayer(CMovementPlayer* player) {
+		return static_cast<CSurfPlayer*>(player);
+	}
+
+	// Dont pass by global playermanager
 	CSurfPlayer* ToSurfPlayer(CPlayer* player) {
-		return dynamic_cast<CSurfPlayer*>(player);
+		return static_cast<CSurfPlayer*>(player);
 	}
 };
 

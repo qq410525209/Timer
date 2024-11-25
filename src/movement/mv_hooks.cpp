@@ -202,7 +202,7 @@ void MOVEMENT::ClipVelocity(Vector& in, Vector& normal, Vector& out) {
 	out = normal * backoff + in;
 }
 
-bool MOVEMENT::IsValidMovementTrace(trace_t& tr, bbox_t bounds, CTraceFilterPlayerMovementCS* filter) {
+bool MOVEMENT::IsValidMovementTrace(trace_t& tr, bbox_t& bounds, CTraceFilterPlayerMovementCS* filter) {
 	trace_t stuck;
 	// Maybe we don't need this one.
 	// if (tr.m_flFraction < FLT_EPSILON)

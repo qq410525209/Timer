@@ -120,10 +120,16 @@ public:
 	virtual void Reset() override;
 
 	virtual CCSPlayer_MovementServices* GetMoveServices();
-	virtual void GetBBoxBounds(bbox_t* bounds);
+	virtual void GetBBoxBounds(bbox_t& bounds);
 
 	virtual void RegisterTakeoff(bool jumped);
 	virtual void RegisterLanding(const Vector& landingVelocity, bool distbugFix = true);
+	virtual void GetOrigin(Vector& origin);
+	virtual void SetOrigin(const Vector& origin);
+	virtual void GetVelocity(Vector& velocity);
+	virtual void SetVelocity(const Vector& velocity);
+	virtual void GetAngles(QAngle& angles);
+	virtual void SetAngles(const QAngle& angles);
 
 public:
 	// General
@@ -137,6 +143,12 @@ public:
 
 class CMovementPlayerManager : public CPlayerManager {
 public:
+	CMovementPlayerManager() {
+		for (int i = 0; i < MAXPLAYERS; i++) {
+			m_pPlayers[i] = std::make_unique<CMovementPlayer>(i);
+		}
+	}
+
 	virtual CMovementPlayer* ToPlayer(CServerSideClientBase* pClient) const override;
 	virtual CMovementPlayer* ToPlayer(CPlayerPawnComponent* component) const override;
 	virtual CMovementPlayer* ToPlayer(CBasePlayerController* controller) const override;
@@ -146,8 +158,9 @@ public:
 	virtual CMovementPlayer* ToPlayer(CPlayerUserId userID) const override;
 	virtual CMovementPlayer* ToPlayer(CSteamID steamid, bool validate = false) const override;
 
+	// Dont pass by global playermanager
 	CMovementPlayer* ToMovementPlayer(CPlayer* player) {
-		return dynamic_cast<CMovementPlayer*>(player);
+		return static_cast<CMovementPlayer*>(player);
 	}
 };
 
@@ -183,7 +196,7 @@ public:
 		return true;
 	}
 
-	virtual void OnProcessMovementPost(CCSPlayer_MovementServices* ms, CMoveData* mv) {}
+	virtual void OnProcessMovementPost(CCSPlayer_MovementServices* ms, const CMoveData* mv) {}
 
 public:
 	virtual void OnStartTouchGround(CMovementPlayer* player) {}
@@ -205,5 +218,5 @@ namespace MOVEMENT {
 	void SetupHooks();
 
 	void ClipVelocity(Vector& in, Vector& normal, Vector& out);
-	bool IsValidMovementTrace(trace_t& tr, bbox_t bounds, CTraceFilterPlayerMovementCS* filter);
+	bool IsValidMovementTrace(trace_t& tr, bbox_t& bounds, CTraceFilterPlayerMovementCS* filter);
 } // namespace MOVEMENT

@@ -21,7 +21,7 @@ void CSlopeFix::OnStartTouchGround(CMovementPlayer* player) {
 	f32 standableZ = 0.7f; // Equal to the mode's cvar.
 
 	bbox_t bounds;
-	player->GetBBoxBounds(&bounds);
+	player->GetBBoxBounds(bounds);
 	trace_t trace;
 	MEM::CALL::TracePlayerBBox(player->currentMoveData->m_vecAbsOrigin, ground, bounds, &filter, trace);
 

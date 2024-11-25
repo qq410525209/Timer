@@ -33,6 +33,7 @@ namespace MEM {
 		void TracePlayerBBox(const Vector& start, const Vector& end, const bbox_t& bounds, CTraceFilter* filter, trace_t& pm);
 		void InitPlayerMovementTraceFilter(CTraceFilterPlayerMovementCS& pFilter, CEntityInstance* pHandleEntity, uint64 interactWith,
 										   int collisionGroup);
+		void SnapViewAngles(CBasePlayerPawn* pawn, const QAngle& angle);
 	} // namespace CALL
 
 	namespace MODULE {

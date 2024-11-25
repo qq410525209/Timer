@@ -24,6 +24,10 @@ typedef double f64;
 
 #pragma region SURF_DEF
 
+#define ENGINE_FIXED_TICK_INTERVAL 0.015625f
+#define ENGINE_FIXED_TICK_RATE     (1.0f / ENGINE_FIXED_TICK_INTERVAL)
+#define EPSILON                    0.000001f
+
 #ifndef SURF_DEBUG_BREAK
 #ifdef _WIN32
 #define SURF_DEBUG_BREAK() __debugbreak()

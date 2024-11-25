@@ -3,10 +3,6 @@
 template<>
 CMovementForward* CForwardBase<CMovementForward>::m_pFirst = nullptr;
 
-CMovementPlayerManager* MOVEMENT::GetPlayerManager() {
-	return static_cast<CMovementPlayerManager*>(::GetPlayerManager());
-}
-
 CMovementPlayer* CMovementPlayerManager::ToPlayer(CServerSideClientBase* pClient) const {
 	return static_cast<CMovementPlayer*>(CPlayerManager::ToPlayer(pClient));
 }
@@ -52,11 +48,11 @@ CCSPlayer_MovementServices* CMovementPlayer::GetMoveServices() {
 	return static_cast<CCSPlayer_MovementServices*>(this->GetPlayerPawn()->m_pMovementServices());
 }
 
-void CMovementPlayer::GetBBoxBounds(bbox_t* bounds) {
-	bounds->mins = {-16.0f, -16.0f, 0.0f};
-	bounds->maxs = {16.0f, 16.0f, 72.0f};
+void CMovementPlayer::GetBBoxBounds(bbox_t& bounds) {
+	bounds.mins = {-16.0f, -16.0f, 0.0f};
+	bounds.maxs = {16.0f, 16.0f, 72.0f};
 	if (this->GetMoveServices() && this->GetMoveServices()->m_bDucked()) {
-		bounds->maxs.z = 54.0f;
+		bounds.maxs.z = 54.0f;
 	}
 }
 
@@ -66,4 +62,78 @@ void CMovementPlayer::RegisterTakeoff(bool jumped) {
 
 void CMovementPlayer::RegisterLanding(const Vector& landingVelocity, bool distbugFix) {
 	this->landingVelocity = landingVelocity;
+}
+
+void CMovementPlayer::GetOrigin(Vector& origin) {
+	if (this->processingMovement && this->currentMoveData) {
+		origin = this->currentMoveData->m_vecAbsOrigin;
+	} else {
+		CBasePlayerPawn* pawn = this->GetPlayerPawn();
+		if (!pawn) {
+			return;
+		}
+
+		origin = pawn->m_CBodyComponent()->m_pSceneNode()->m_vecAbsOrigin();
+	}
+}
+
+void CMovementPlayer::SetOrigin(const Vector& origin) {
+	if (this->processingMovement && this->currentMoveData) {
+		this->currentMoveData->m_vecAbsOrigin = origin;
+	} else {
+		CBasePlayerPawn* pawn = this->GetPlayerPawn();
+		if (!pawn) {
+			return;
+		}
+		pawn->Teleport(&origin, NULL, NULL);
+	}
+
+	// Origin teleported, remove all errors.
+	this->GetMoveServices()->m_flAccumulatedJumpError(0);
+}
+
+void CMovementPlayer::GetVelocity(Vector& velocity) {
+	if (this->processingMovement && this->currentMoveData) {
+		velocity = this->currentMoveData->m_vecVelocity;
+	} else {
+		CBasePlayerPawn* pawn = this->GetPlayerPawn();
+		if (!pawn) {
+			return;
+		}
+		velocity = pawn->m_vecAbsVelocity();
+	}
+}
+
+void CMovementPlayer::SetVelocity(const Vector& velocity) {
+	if (this->processingMovement && this->currentMoveData) {
+		this->currentMoveData->m_vecVelocity = velocity;
+	} else {
+		CBasePlayerPawn* pawn = this->GetPlayerPawn();
+		if (!pawn) {
+			return;
+		}
+		pawn->Teleport(NULL, NULL, &velocity);
+	}
+}
+
+void CMovementPlayer::GetAngles(QAngle& angles) {
+	if (this->processingMovement && this->currentMoveData) {
+		angles = this->currentMoveData->m_vecViewAngles;
+	} else {
+		angles = this->moveDataPost.m_vecViewAngles;
+	}
+}
+
+void CMovementPlayer::SetAngles(const QAngle& angles) {
+	CBasePlayerPawn* pawn = this->GetPlayerPawn();
+	if (!pawn) {
+		return;
+	}
+
+	// Don't change the pitch of the absolute angles because it messes with the player model.
+	QAngle absAngles = angles;
+	absAngles.x = 0;
+
+	pawn->Teleport(NULL, &absAngles, NULL);
+	MEM::CALL::SnapViewAngles(pawn, angles);
 }
