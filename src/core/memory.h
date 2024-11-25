@@ -34,6 +34,8 @@ namespace MEM {
 		void InitPlayerMovementTraceFilter(CTraceFilterPlayerMovementCS& pFilter, CEntityInstance* pHandleEntity, uint64 interactWith,
 										   int collisionGroup);
 		void SnapViewAngles(CBasePlayerPawn* pawn, const QAngle& angle);
+		void CEntityInstance_AcceptInput(CEntityInstance* pEnt, const char* pInputName, CEntityInstance* pActivator, CEntityInstance* pCaller,
+										 variant_t* value, int nOutputID);
 	} // namespace CALL
 
 	namespace MODULE {
@@ -49,6 +51,7 @@ namespace MEM {
 	namespace TRAMPOLINE {
 		inline void* g_fnCreateGameEvent;
 		inline void* g_fnFireGameEvent;
+		inline void* g_fnWeaponDrop;
 	} // namespace TRAMPOLINE
 
 	void SetupHooks();

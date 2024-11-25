@@ -1,6 +1,6 @@
 #pragma once
 
-#include "cbasemodelentity.h"
+#include <sdk/entity/cbaseentity.h>
 
 class CCSPlayer_WaterServices;
 class CPlayer_MovementServices;

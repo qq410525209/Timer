@@ -33,6 +33,8 @@ struct ReturnType<Ret (*)(Args...)> {
 	using ReturnTypeValue = ReturnType<FunctionType>::type; \
 	return MEM::SDKCall<ReturnTypeValue>(fnSig, __VA_ARGS__);
 
+#pragma region calls
+
 void MEM::CALL::SwitchTeam(CCSPlayerController* controller, int team) {
 	CALL_SIG("CCSPlayerController_SwitchTeam", SwitchTeam, controller, team);
 }
@@ -61,6 +63,13 @@ void MEM::CALL::InitPlayerMovementTraceFilter(CTraceFilterPlayerMovementCS& pFil
 void MEM::CALL::SnapViewAngles(CBasePlayerPawn* pawn, const QAngle& angle) {
 	CALL_SIG("SnapViewAngles", SnapViewAngles, pawn, &angle);
 }
+
+void MEM::CALL::CEntityInstance_AcceptInput(CEntityInstance* pEnt, const char* pInputName, CEntityInstance* pActivator, CEntityInstance* pCaller,
+											variant_t* value, int nOutputID) {
+	CALL_SIG("CEntityInstance_AcceptInput", CEntityInstance_AcceptInput, pEnt, pInputName, pActivator, pCaller, value, nOutputID);
+}
+
+#pragma endregion
 
 #pragma region hooks
 
@@ -229,13 +238,31 @@ static bool Hook_OnFireEvent(IGameEventManager2* pEventManager, IGameEvent* pEve
 	return result;
 }
 
+static bool Hook_OnWeaponDrop(CCSPlayer_WeaponServices* pService, CBasePlayerWeapon* pWeapon, int iDropType, Vector* targetPos) {
+	bool block = false;
+	for (auto p = CCoreForward::m_pFirst; p; p = p->m_pNext) {
+		if (!p->OnWeaponDrop(pService, pWeapon, iDropType, targetPos)) {
+			block = true;
+		}
+	}
+	if (block) {
+		return false;
+	}
+
+	auto ret = MEM::SDKCall<bool>(MEM::TRAMPOLINE::g_fnWeaponDrop, pService, pWeapon, iDropType, targetPos);
+
+	FORWARD_POST(CCoreForward, OnWeaponDropPost, pService, pWeapon, iDropType, targetPos);
+
+	return ret;
+}
+
 #pragma endregion
 
 #pragma region setup
 
 static bool SetupDetours() {
 	// clang-format off
-
+	HOOK_SIG("CCSPlayer_WeaponServices::Weapon_Drop", Hook_OnWeaponDrop, MEM::TRAMPOLINE::g_fnWeaponDrop);
 	// clang-format on
 
 	return true;

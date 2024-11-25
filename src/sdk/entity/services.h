@@ -86,3 +86,13 @@ class CCSPlayerBase_CameraServices : public CPlayer_CameraServices {
 public:
 	DECLARE_SCHEMA_CLASS(CCSPlayerBase_CameraServices);
 };
+
+class CPlayer_WeaponServices : public CPlayerPawnComponent {
+public:
+	DECLARE_SCHEMA_CLASS(CPlayer_WeaponServices);
+};
+
+class CCSPlayer_WeaponServices : public CPlayer_WeaponServices {
+public:
+	DECLARE_SCHEMA_CLASS(CCSPlayer_WeaponServices);
+};

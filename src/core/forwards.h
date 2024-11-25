@@ -42,4 +42,10 @@ public:
 									 INetworkMessageInternal* pEvent, const CNetMessage* pData) {}
 
 	virtual void OnActivateServer(CNetworkGameServerBase* pGameServer) {}
+
+	virtual bool OnWeaponDrop(CCSPlayer_WeaponServices* pService, CBasePlayerWeapon* pWeapon, int& iDropType, Vector* targetPos) {
+		return true;
+	}
+
+	virtual void OnWeaponDropPost(CCSPlayer_WeaponServices* pService, CBasePlayerWeapon* pWeapon, const int& iDropType, const Vector* targetPos) {}
 };

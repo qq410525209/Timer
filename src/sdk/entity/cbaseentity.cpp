@@ -1,4 +1,9 @@
 #include "cbaseentity.h"
+#include <core/memory.h>
+
+void CBaseEntity::AcceptInput(const char* pInputName, variant_t value, CEntityInstance* pActivator, CEntityInstance* pCaller) {
+	MEM::CALL::CEntityInstance_AcceptInput(this, pInputName, pActivator, pCaller, &value, 0);
+}
 
 Vector CBaseEntity::GetAbsOrigin() {
 	auto pBodyComponent = m_CBodyComponent();

@@ -4,6 +4,7 @@
 #include <core/gamedata.h>
 #include <sdk/schema.h>
 #include <libmem/libmem_virtual.h>
+#include <sdk/entity/ccollisionproperty.h>
 
 class CCollisionProperty;
 
@@ -137,5 +138,43 @@ public:
 		CALL_VIRTUAL(bool, GAMEDATA::GetOffset("Teleport"), this, newPosition, newAngles, newVelocity);
 	}
 
+	void AcceptInput(const char* pInputName, variant_t value = variant_t(""), CEntityInstance* pActivator = nullptr,
+					 CEntityInstance* pCaller = nullptr);
+
 	Vector GetAbsOrigin();
+};
+
+class CBaseModelEntity : public CBaseEntity {
+public:
+	DECLARE_SCHEMA_CLASS(CBaseModelEntity);
+
+	SCHEMA_FIELD(CCollisionProperty, m_Collision)
+	SCHEMA_FIELD(Color, m_clrRender)
+	SCHEMA_FIELD(uint8, m_nRenderMode)
+};
+
+class CBaseViewModel : public CBaseModelEntity {
+public:
+	DECLARE_SCHEMA_CLASS(CBaseViewModel);
+	SCHEMA_FIELD(int, m_nViewModelIndex);
+};
+
+class CBaseAnimGraph : public CBaseModelEntity {
+public:
+	DECLARE_SCHEMA_CLASS(CBaseAnimGraph);
+};
+
+class CBaseFlex : public CBaseAnimGraph {
+public:
+	DECLARE_SCHEMA_CLASS(CBaseFlex);
+};
+
+class CEconEntity : public CBaseFlex {
+public:
+	DECLARE_SCHEMA_CLASS(CEconEntity);
+};
+
+class CBasePlayerWeapon : public CEconEntity {
+public:
+	DECLARE_SCHEMA_CLASS(CBasePlayerWeapon);
 };

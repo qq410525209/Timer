@@ -60,3 +60,7 @@ void CSurfMisc::OnActivateServer(CNetworkGameServerBase* pGameServer) {
 	// Restart round to ensure settings (e.g. mp_weapons_allow_map_placed) are applied
 	IFACE::pEngine->ServerCommand("mp_restartgame 1");
 }
+
+void CSurfMisc::OnWeaponDropPost(CCSPlayer_WeaponServices* pService, CBasePlayerWeapon* pWeapon, const int& iDropType, const Vector* targetPos) {
+	pWeapon->AcceptInput("kill");
+}

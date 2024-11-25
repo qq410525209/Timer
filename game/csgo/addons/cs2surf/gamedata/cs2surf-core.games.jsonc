@@ -134,6 +134,19 @@
 			"windows": "76 ? F2 0F 10 4F ? 41 0F 28 C1 0F 28 D1 F3 0F 59 C0",
 			"linux": "0F 87 ? ? ? ? 49 8B 7C 24 ? E8 ? ? ? ? 66 0F EF ED 66 0F D6 85"
 		},
+		// #SFUI_Notice_YouDroppedWeapon
+		// sub_CD4DC0(a1, v7, 1, 0)
+		"CCSPlayer_WeaponServices::Weapon_Drop": {
+			"library": "server",
+			"windows": "48 89 5C 24 ? 48 89 74 24 ? 55 57 41 54 41 56 41 57 48 8D 6C 24 ? 48 81 EC ? ? ? ? 4D 8B F9",
+			"linux": "55 48 89 E5 41 57 49 89 F7 41 56 49 89 CE 41 55 41 54"
+		},
+		// "Explode" is passed to this
+		"CEntityInstance_AcceptInput": {
+			"library": "server",
+			"windows": "48 89 5C 24 ? 48 89 74 24 ? 57 48 83 EC ? 49 8B F0 48 8B D9 48 8B 0D",
+			"linux": "55 48 89 E5 41 57 49 89 FF 41 56 48 8D 7D C0"
+		},
 		// Client cmd out of sync (delta %i)
 		// sv_runcmds xref
 		"CPlayer_MovementServices::RunCmds": {
