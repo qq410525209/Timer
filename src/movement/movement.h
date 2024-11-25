@@ -115,6 +115,8 @@ static_assert(sizeof(CMoveData) == 256, "Class didn't match expected size");
 
 class CMovementPlayer : public CPlayer {
 public:
+	using CPlayer::CPlayer;
+
 	virtual void Reset() override;
 
 	virtual CCSPlayer_MovementServices* GetMoveServices();
@@ -145,7 +147,7 @@ public:
 	virtual CMovementPlayer* ToPlayer(CSteamID steamid, bool validate = false) const override;
 
 	CMovementPlayer* ToMovementPlayer(CPlayer* player) {
-		return static_cast<CMovementPlayer*>(player);
+		return dynamic_cast<CMovementPlayer*>(player);
 	}
 };
 
@@ -190,6 +192,8 @@ public:
 };
 
 namespace MOVEMENT {
+	extern CMovementPlayerManager* GetPlayerManager();
+
 	namespace TRAMPOLINE {
 		inline void* g_fnMovementServicesRunCmds;
 		inline void* g_fnTryPlayerMove;
@@ -200,5 +204,6 @@ namespace MOVEMENT {
 
 	void SetupHooks();
 
-	extern CMovementPlayerManager* GetPlayerManager();
+	void ClipVelocity(Vector& in, Vector& normal, Vector& out);
+	bool IsValidMovementTrace(trace_t& tr, bbox_t bounds, CTraceFilterPlayerMovementCS* filter);
 } // namespace MOVEMENT

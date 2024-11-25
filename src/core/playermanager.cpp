@@ -63,6 +63,10 @@ bool CPlayer::IsSourceTV() const {
 }
 
 bool CPlayer::IsValidClient() const {
+	if (!UTIL::IsPlayerSlot(m_iSlot)) {
+		return false;
+	}
+
 	CServerSideClient* client = GetClient();
 	if (!client) {
 		return false;
@@ -178,29 +182,23 @@ CPlayer* CPlayerManager::ToPlayer(CSteamID steamid, bool validate) const {
 
 std::vector<CPlayer*> CPlayerManager::GetOnlinePlayers() const {
 	std::vector<CPlayer*> players;
-	for (auto& x : m_pPlayers) {
-		if (auto player = x.get()) {
-			players.emplace_back(player);
+	for (auto& player : m_pPlayers) {
+		if (UTIL::IsPlayerSlot(player->GetPlayerSlot())) {
+			players.emplace_back(player.get());
 		}
 	}
 
 	return players;
 }
 
-void CPlayerManager::OnClientConnected(ISource2GameClients* pClient, CPlayerSlot slot, const char* pszName, uint64 xuid, const char* pszNetworkID,
-									   const char* pszAddress, bool bFakePlayer) {
-	int iSlot = slot.Get();
-	m_pPlayers[iSlot] = std::make_unique<CPlayer>(iSlot);
-}
-
 void CPlayerManager::OnClientDisconnect(ISource2GameClients* pClient, CPlayerSlot slot, ENetworkDisconnectionReason reason, const char* pszName,
 										uint64 xuid, const char* pszNetworkID) {
-	int iSlot = slot.Get();
-	m_pPlayers[iSlot].reset();
+	this->ToPlayer(slot)->Reset();
 }
 
 void CPlayerManager::OnClientActive(ISource2GameClients* pClient, CPlayerSlot slot, bool bLoadGame, const char* pszName, uint64 xuid) {
 	int iSlot = slot.Get();
-	auto player = m_pPlayers[iSlot].get();
+	CPlayer* player = m_pPlayers[iSlot].get();
+	::new (player) CPlayer(iSlot);
 	player->SetUnauthenticatedSteamID(xuid);
 }

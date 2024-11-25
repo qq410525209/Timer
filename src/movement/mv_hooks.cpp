@@ -166,6 +166,7 @@ static void Hook_OnProcessMovement(CCSPlayer_MovementServices* ms, CMoveData* mv
 	CMovementPlayer* player = MOVEMENT::GetPlayerManager()->ToPlayer(ms);
 	player->currentMoveData = mv;
 	player->moveDataPre = CMoveData(*mv);
+	player->processingMovement = true;
 
 	bool block = false;
 	for (auto p = CMovementForward::m_pFirst; p; p = p->m_pNext) {
@@ -180,6 +181,7 @@ static void Hook_OnProcessMovement(CCSPlayer_MovementServices* ms, CMoveData* mv
 	MEM::SDKCall<void>(MOVEMENT::TRAMPOLINE::g_fnProcessMovement, ms, mv);
 
 	player->moveDataPost = CMoveData(*mv);
+	player->processingMovement = false;
 
 	FORWARD_POST(CMovementForward, OnProcessMovementPost, ms, mv);
 }
@@ -192,6 +194,49 @@ void MOVEMENT::SetupHooks() {
 	HOOK_SIG("CCSPlayer_MovementServices::ProcessMovement", Hook_OnProcessMovement, MOVEMENT::TRAMPOLINE::g_fnProcessMovement);
 }
 
-CMovementPlayerManager* MOVEMENT::GetPlayerManager() {
-	return static_cast<CMovementPlayerManager*>(::GetPlayerManager());
+// copy from cs2kz.
+void MOVEMENT::ClipVelocity(Vector& in, Vector& normal, Vector& out) {
+	f32 backoff = -((in.x * normal.x) + ((normal.z * in.z) + (in.y * normal.y))) * 1;
+	backoff = fmaxf(backoff, 0.0) + 0.03125;
+
+	out = normal * backoff + in;
+}
+
+bool MOVEMENT::IsValidMovementTrace(trace_t& tr, bbox_t bounds, CTraceFilterPlayerMovementCS* filter) {
+	trace_t stuck;
+	// Maybe we don't need this one.
+	// if (tr.m_flFraction < FLT_EPSILON)
+	//{
+	//	return false;
+	//}
+
+	if (tr.m_bStartInSolid) {
+		return false;
+	}
+
+	// We hit something but no valid plane data?
+	if (tr.m_flFraction < 1.0f && fabs(tr.m_vHitNormal.x) < FLT_EPSILON && fabs(tr.m_vHitNormal.y) < FLT_EPSILON
+		&& fabs(tr.m_vHitNormal.z) < FLT_EPSILON) {
+		return false;
+	}
+
+	// Is the plane deformed?
+	if (fabs(tr.m_vHitNormal.x) > 1.0f || fabs(tr.m_vHitNormal.y) > 1.0f || fabs(tr.m_vHitNormal.z) > 1.0f) {
+		return false;
+	}
+
+	// Do an unswept trace and a backward trace just to be sure.
+	MEM::CALL::TracePlayerBBox(tr.m_vEndPos, tr.m_vEndPos, bounds, filter, stuck);
+	if (stuck.m_bStartInSolid || stuck.m_flFraction < 1.0f - FLT_EPSILON) {
+		return false;
+	}
+
+	MEM::CALL::TracePlayerBBox(tr.m_vEndPos, tr.m_vStartPos, bounds, filter, stuck);
+	// For whatever reason if you can hit something in only one direction and not the other way around.
+	// Only happens since Call to Arms update, so this fraction check is commented out until it is fixed.
+	if (stuck.m_bStartInSolid /*|| stuck.m_flFraction < 1.0f - FLT_EPSILON*/) {
+		return false;
+	}
+
+	return true;
 }

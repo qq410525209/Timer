@@ -3,6 +3,10 @@
 template<>
 CMovementForward* CForwardBase<CMovementForward>::m_pFirst = nullptr;
 
+CMovementPlayerManager* MOVEMENT::GetPlayerManager() {
+	return static_cast<CMovementPlayerManager*>(::GetPlayerManager());
+}
+
 CMovementPlayer* CMovementPlayerManager::ToPlayer(CServerSideClientBase* pClient) const {
 	return static_cast<CMovementPlayer*>(CPlayerManager::ToPlayer(pClient));
 }

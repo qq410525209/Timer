@@ -13,6 +13,7 @@ public:
 	virtual ~CPlayer() {}
 
 	virtual void Reset() {
+		m_iSlot = -1;
 		unauthenticatedSteamID = k_steamIDNil;
 	}
 
@@ -52,12 +53,18 @@ public:
 	}
 
 private:
-	const int m_iSlot;
+	int m_iSlot;
 	CSteamID unauthenticatedSteamID = k_steamIDNil;
 };
 
 class CPlayerManager : CCoreForward {
 public:
+	CPlayerManager() {
+		for (int i = 0; i < MAXPLAYERS; i++) {
+			m_pPlayers[i] = std::make_unique<CPlayer>(i);
+		}
+	}
+
 	virtual CPlayer* ToPlayer(CServerSideClientBase* pClient) const;
 	virtual CPlayer* ToPlayer(CPlayerPawnComponent* component) const;
 	virtual CPlayer* ToPlayer(CBasePlayerController* controller) const;
@@ -67,18 +74,16 @@ public:
 	virtual CPlayer* ToPlayer(CPlayerUserId userID) const;
 	virtual CPlayer* ToPlayer(CSteamID steamid, bool validate = false) const;
 
+	// included fake players
 	virtual std::vector<CPlayer*> GetOnlinePlayers() const;
 
 private:
-	virtual void OnClientConnected(ISource2GameClients* pClient, CPlayerSlot slot, const char* pszName, uint64 xuid, const char* pszNetworkID,
-								   const char* pszAddress, bool bFakePlayer) override;
-
 	virtual void OnClientDisconnect(ISource2GameClients* pClient, CPlayerSlot slot, ENetworkDisconnectionReason reason, const char* pszName,
 									uint64 xuid, const char* pszNetworkID) override;
 
 	virtual void OnClientActive(ISource2GameClients* pClient, CPlayerSlot slot, bool bLoadGame, const char* pszName, uint64 xuid) override;
 
-private:
+protected:
 	std::array<std::unique_ptr<CPlayer>, MAXPLAYERS> m_pPlayers;
 };
 
