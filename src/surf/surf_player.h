@@ -11,7 +11,6 @@ public:
 	Vector tpmVelocity = vec3_invalid;
 	Vector tpmOrigin = vec3_invalid;
 	Vector lastValidPlane = vec3_origin;
-	CUtlVector<Vector> tpmTriggerFixOrigins;
 };
 
 class CSurfPlayerManager : public CMovementPlayerManager {

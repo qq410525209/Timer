@@ -12,6 +12,10 @@ public:
 
 	virtual ~CPlayer() {}
 
+	virtual void Init(int slot) {
+		m_iSlot = slot;
+	}
+
 	virtual void Reset() {
 		m_iSlot = -1;
 		unauthenticatedSteamID = k_steamIDNil;
