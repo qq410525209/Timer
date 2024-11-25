@@ -2,6 +2,12 @@
 #include <sdk/entity/ccsplayercontroller.h>
 #include <utils/utils.h>
 
+CPlayerManager g_PlayerManager;
+
+CPlayerManager* GetPlayerManager() {
+	return &g_PlayerManager;
+}
+
 CCSPlayerController* CPlayer::GetController() const {
 	auto entIndex = this->GetEntityIndex();
 	CBaseEntity* ent = static_cast<CBaseEntity*>(GameEntitySystem()->GetEntityInstance(entIndex));

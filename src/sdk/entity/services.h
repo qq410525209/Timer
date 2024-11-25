@@ -42,6 +42,28 @@ public:
 	SCHEMA_FIELD_POINTER(float, m_arrForceSubtickMoveWhen);
 };
 
+class CPlayer_MovementServices_Humanoid : public CPlayer_MovementServices {
+public:
+	DECLARE_SCHEMA_CLASS(CPlayer_MovementServices_Humanoid);
+
+	SCHEMA_FIELD(bool, m_bDucking);
+	SCHEMA_FIELD(bool, m_bDucked);
+	SCHEMA_FIELD(float, m_flSurfaceFriction);
+};
+
+class CCSPlayer_MovementServices : public CPlayer_MovementServices_Humanoid {
+public:
+	DECLARE_SCHEMA_CLASS(CCSPlayer_MovementServices);
+
+	SCHEMA_FIELD(Vector, m_vecLadderNormal);
+	SCHEMA_FIELD(bool, m_bOldJumpPressed);
+	SCHEMA_FIELD(float, m_flJumpPressedTime);
+	SCHEMA_FIELD(float, m_flAccumulatedJumpError);
+	SCHEMA_FIELD(float, m_flDuckSpeed);
+	SCHEMA_FIELD(float, m_flDuckAmount);
+	SCHEMA_FIELD(float, m_flStamina);
+};
+
 class CPlayer_UseServices : public CPlayerPawnComponent {
 public:
 	DECLARE_SCHEMA_CLASS(CPlayer_UseServices);

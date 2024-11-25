@@ -5,12 +5,24 @@
 #include <sdk/common.h>
 #include <libmem/libmem_helper.h>
 #include <vendor/libmodule/module.h>
+#include <sdk/datatypes.h>
 
 class CBasePlayerController;
 class CCSPlayerController;
 class CCSPlayerPawn;
+class CEntityInstance;
 
 class GameSessionConfiguration_t {};
+
+#define HOOK_SIG(sig, fnHook, fnTrampoline) \
+	static auto fn##fnHook = GAMEDATA::GetMemSig(sig); \
+	SURF_ASSERT(fn##fnHook); \
+	if (fn##fnHook) { \
+		libmem::HookFunc(fn##fnHook, fnHook, fnTrampoline); \
+	}
+
+#define HOOK_VMT(gdOffsetKey, pModule, fnHook, fnTrampoline) \
+	SURF_ASSERT(MEM::VmtHookEx(GAMEDATA::GetOffset(gdOffsetKey), pModule.get(), gdOffsetKey, fnHook, fnTrampoline));
 
 namespace MEM {
 	namespace CALL {
@@ -18,6 +30,9 @@ namespace MEM {
 		void SetPawn(CBasePlayerController* controller, CCSPlayerPawn* pawn, bool a3, bool a4, bool a5);
 		IGameEventListener2* GetLegacyGameEventListener(CPlayerSlot slot);
 		bool TraceShape(const Ray_t& ray, const Vector& vecStart, const Vector& vecEnd, const CTraceFilter& filter, CGameTrace* tr);
+		void TracePlayerBBox(const Vector& start, const Vector& end, const bbox_t& bounds, CTraceFilter* filter, trace_t& pm);
+		void InitPlayerMovementTraceFilter(CTraceFilterPlayerMovementCS& pFilter, CEntityInstance* pHandleEntity, uint64 interactWith,
+										   int collisionGroup);
 	} // namespace CALL
 
 	namespace MODULE {
@@ -31,8 +46,6 @@ namespace MEM {
 	} // namespace MODULE
 
 #pragma region trampoline
-
-	inline void* g_fnMovementServicesRunCmds_Trampoline;
 
 #pragma endregion
 

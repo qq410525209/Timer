@@ -5,17 +5,15 @@
 #include <sdk/forwardbase.h>
 #include <sdk/usercmd.h>
 #include <sdk/entity/ccsplayerpawn.h>
+#include <sdk/entity/services.h>
+
+#define FORWARD_POST(forwardClass, forwardFn, ...) \
+	for (auto p = forwardClass::m_pFirst; p; p = p->m_pNext) { \
+		p->forwardFn(__VA_ARGS__); \
+	}
 
 class CCoreForward : public CForwardBase<CCoreForward> {
 public:
-	virtual bool OnPlayerRunCmd(CCSPlayerPawn* pawn, CInButtonState* buttons, float (&vec)[3], float (&angles)[3], int& weapon, int& cmdnum,
-								int& tickcount, int& seed, int (&mouse)[2]) {
-		return true;
-	}
-
-	virtual void OnPlayerRunCmdPost(CCSPlayerPawn* pawn, const CInButtonState* buttons, const float (&vec)[3], const float (&angles)[3],
-									const int& weapon, const int& cmdnum, const int& tickcount, const int& seed, const int (&mouse)[2]) {}
-
 	virtual void OnGameFrame(ISource2Server* pServer, bool simulating, bool bFirstTick, bool bLastTick) {}
 
 	virtual void OnClientConnected(ISource2GameClients* pClient, CPlayerSlot slot, const char* pszName, uint64 xuid, const char* pszNetworkID,

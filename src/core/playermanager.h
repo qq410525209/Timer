@@ -4,6 +4,7 @@
 #include <sdk/serversideclient.h>
 #include <sdk/entity/observer.h>
 #include <sdk/entity/ccsplayercontroller.h>
+#include <core/forwards.h>
 
 class CPlayer {
 public:
@@ -80,3 +81,5 @@ private:
 private:
 	std::array<std::unique_ptr<CPlayer>, MAXPLAYERS> m_pPlayers;
 };
+
+extern CPlayerManager* GetPlayerManager();

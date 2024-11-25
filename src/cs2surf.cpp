@@ -9,6 +9,8 @@
 #include <core/cvarmanager.h>
 #include <core/logger.h>
 
+#include <movement/movement.h>
+
 #include <utils/utils.h>
 
 CSurfPlugin g_SurfPlugin;
@@ -30,6 +32,7 @@ bool CSurfPlugin::Load(PluginId id, ISmmAPI* ismm, char* error, size_t maxlen, b
 
 	MEM::MODULE::Setup();
 	MEM::SetupHooks();
+	MOVEMENT::SetupHooks();
 
 	return true;
 }
