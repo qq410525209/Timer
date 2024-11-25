@@ -144,6 +144,15 @@ CServerSideClient* UTIL::GetClientBySlot(CPlayerSlot slot) {
 	return (GetClientList() && GetController(slot)) ? GetClientList()->Element(slot.Get()) : nullptr;
 }
 
+CCSGameRules* UTIL::GetGameRules() {
+	CCSGameRulesProxy* proxy = nullptr;
+	proxy = (CCSGameRulesProxy*)FindEntityByClassname(proxy, "cs_gamerules");
+	if (proxy) {
+		return proxy->m_pGameRules();
+	}
+	return nullptr;
+}
+
 bool UTIL::TraceLine(const Vector& vecStart, const Vector& vecEnd, CEntityInstance* ignore1, CGameTrace* tr, uint64 traceLayer, uint64 excludeLayer) {
 	Ray_t ray;
 	CTraceFilter filter;

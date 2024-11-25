@@ -14,9 +14,9 @@ enum EventHookMode {
 	EventHookMode_PostNoCopy //< Hook callback fired after event is fired, but event data won't be copied */
 };
 
-typedef std::function<void(const char*, bool)> FnFireEventCallbackPostNoCopy_t;
-typedef std::function<void(IGameEvent*, const char*, bool)> FnFireEventCallbackPost_t;
-typedef std::function<EventHookAction(IGameEvent*, const char*, bool&)> FnFireEventCallbackPre_t;
+using FnFireEventCallbackPostNoCopy_t = std::function<void(const char* szName, bool bDontBroadcast)>;
+using FnFireEventCallbackPost_t = std::function<void(IGameEvent* pEvent, const char* szName, bool bDontBroadcast)>;
+using FnFireEventCallbackPre_t = std::function<EventHookAction(IGameEvent* pEvent, const char* szName, bool& bDontBroadcast)>;
 
 struct event_t {
 	const char* m_szName;

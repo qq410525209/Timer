@@ -6,6 +6,7 @@
 #include <filesystem>
 
 #include <sdk/serversideclient.h>
+#include <sdk/gamerules.h>
 
 namespace UTIL {
 	namespace PATH {
@@ -29,6 +30,7 @@ namespace UTIL {
 	bool IsPlayerSlot(CPlayerSlot slot);
 	CUtlVector<CServerSideClient*>* GetClientList();
 	CServerSideClient* GetClientBySlot(CPlayerSlot slot);
+	CCSGameRules* GetGameRules();
 
 	bool TraceLine(const Vector& vecStart, const Vector& vecEnd, CEntityInstance* ignore1, CGameTrace* tr, uint64 traceLayer,
 				   uint64 excludeLayer = 0);
