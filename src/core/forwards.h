@@ -14,6 +14,8 @@
 
 class CCoreForward : public CForwardBase<CCoreForward> {
 public:
+	virtual void OnPluginStart() {}
+
 	virtual void OnGameFrame(ISource2Server* pServer, bool simulating, bool bFirstTick, bool bLastTick) {}
 
 	virtual void OnClientConnected(ISource2GameClients* pClient, CPlayerSlot slot, const char* pszName, uint64 xuid, const char* pszNetworkID,

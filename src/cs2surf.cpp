@@ -34,6 +34,8 @@ bool CSurfPlugin::Load(PluginId id, ISmmAPI* ismm, char* error, size_t maxlen, b
 	MEM::SetupHooks();
 	MOVEMENT::SetupHooks();
 
+	FORWARD_POST(CCoreForward, OnPluginStart);
+
 	return true;
 }
 
