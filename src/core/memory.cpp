@@ -177,6 +177,15 @@ static void Hook_PostEvent(CSplitScreenSlot nSlot, bool bLocalOnly, int nClientC
 	}
 }
 
+SH_DECL_HOOK0(CNetworkGameServerBase, ActivateServer, SH_NOATTRIB, false, bool);
+static bool Hook_ActivateServer() {
+	for (auto p = CCoreForward::m_pFirst; p; p = p->m_pNext) {
+		p->OnActivateServer(META_IFACEPTR(CNetworkGameServerBase));
+	}
+
+	RETURN_META_VALUE(MRES_IGNORED, true);
+}
+
 // clang-format on
 #pragma endregion
 
@@ -223,6 +232,14 @@ static bool SetupSourceHooks() {
 		ServerGamePostSimulate, 
 		MEM::MODULE::server->GetVirtualTableByName("CEntityDebugGameSystem").RCast<IGameSystem*>(), 
 		SH_STATIC(Hook_OnServerGamePostSimulate), 
+		true
+	);
+
+	SH_ADD_DVPHOOK(
+		CNetworkGameServerBase, 
+		ActivateServer,
+		MEM::MODULE::engine->GetVirtualTableByName("CNetworkGameServer").RCast<CNetworkGameServerBase*>(),
+		SH_STATIC(Hook_ActivateServer), 
 		true
 	);
 	// clang-format on

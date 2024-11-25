@@ -19,6 +19,11 @@ namespace LOG {
 	}
 
 	template<typename... Args>
+	LoggingResponse_t PrintWarning(const char* fmt, Args... args) {
+		return LoggingSystem_Log(g_iChannelID, LS_WARNING, fmt, args...);
+	}
+
+	template<typename... Args>
 	LoggingResponse_t PrintError(const char* fmt, Args... args) {
 		return LoggingSystem_Log(g_iChannelID, LS_ERROR, fmt, args...);
 	}

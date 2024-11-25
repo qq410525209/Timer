@@ -42,4 +42,6 @@ public:
 
 	virtual void OnPostEventAbstract(IGameEventSystem* pEventSystem, CSplitScreenSlot nSlot, int nClientCount, const uint64* clients,
 									 INetworkMessageInternal* pEvent, const CNetMessage* pData) {}
+
+	virtual void OnActivateServer(CNetworkGameServerBase* pGameServer) {}
 };
