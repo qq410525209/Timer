@@ -1,7 +1,9 @@
 #include "surf_misc.h"
+#include <surf/surf_player.h>
 #include <core/interfaces.h>
 #include <core/logger.h>
 #include <core/eventmanager.h>
+#include <core/patch.h>
 #include <utils/utils.h>
 
 CSurfMisc g_SurfMisc;
@@ -35,6 +37,8 @@ void CSurfMisc::OnPluginStart() {
 	EVENT::HookEvent("round_start", ::OnRoundStart);
 	EVENT::HookEvent("player_team", ::OnPlayerTeam);
 	EVENT::HookEvent("player_spawn", ::OnPlayerSpawm);
+
+	PATCH::DoMovementUnlocker();
 }
 
 void CSurfMisc::OnActivateServer(CNetworkGameServerBase* pGameServer) {
@@ -63,4 +67,15 @@ void CSurfMisc::OnActivateServer(CNetworkGameServerBase* pGameServer) {
 
 void CSurfMisc::OnWeaponDropPost(CCSPlayer_WeaponServices* pService, CBasePlayerWeapon* pWeapon, const int& iDropType, const Vector* targetPos) {
 	pWeapon->AcceptInput("kill");
+}
+
+bool CSurfMisc::OnProcessMovement(CCSPlayer_MovementServices* ms, CMoveData* mv) {
+	CSurfPlayer* player = SURF::GetPlayerManager()->ToPlayer(ms);
+	if (!player) {
+		return true;
+	}
+
+	player->EnableGodMode();
+
+	return true;
 }

@@ -41,3 +41,13 @@ CSurfPlayer* CSurfPlayerManager::ToPlayer(CPlayerUserId userID) const {
 CSurfPlayer* CSurfPlayerManager::ToPlayer(CSteamID steamid, bool validate) const {
 	return static_cast<CSurfPlayer*>(CPlayerManager::ToPlayer(steamid, validate));
 }
+
+void CSurfPlayer::EnableGodMode() {
+	CCSPlayerPawn* pawn = this->GetPlayerPawn();
+	if (!pawn) {
+		return;
+	}
+	if (pawn->m_bTakesDamage()) {
+		pawn->m_bTakesDamage(false);
+	}
+}

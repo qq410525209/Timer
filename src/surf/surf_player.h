@@ -11,6 +11,8 @@ public:
 	Vector tpmVelocity = vec3_invalid;
 	Vector tpmOrigin = vec3_invalid;
 	Vector lastValidPlane = vec3_origin;
+
+	void EnableGodMode();
 };
 
 class CSurfPlayerManager : public CMovementPlayerManager {
