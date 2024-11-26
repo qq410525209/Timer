@@ -1,5 +1,3 @@
-#pragma once
-
 #include <core/concmdmanager.h>
 #include <surf/surf_player.h>
 #include <utils/print.h>

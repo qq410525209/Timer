@@ -1,5 +1,3 @@
-#pragma once
-
 #include <core/eventmanager.h>
 #include <core/interfaces.h>
 #include <sdk/gamerules.h>
