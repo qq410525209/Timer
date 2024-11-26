@@ -1,8 +1,18 @@
 #include "ctimer.h"
 #include <utils/utils.h>
+#include <queue>
+#include <core/forwards.h>
 
 CUtlVector<CTimerBase*> g_NonPersistentTimers;
 CUtlVector<CTimerBase*> g_PersistentTimers;
+std::queue<std::unique_ptr<IFrameAction>> g_RequestFrameQueue;
+
+static void ProcessRequestFrameQueue(std::queue<std::unique_ptr<IFrameAction>>& queue) {
+	while (!queue.empty()) {
+		queue.front()->Execute();
+		queue.pop();
+	}
+}
 
 static void ProcessTimerList(CUtlVector<CTimerBase*>& timers) {
 	for (int i = timers.Count() - 1; i >= 0; i--) {
@@ -23,16 +33,11 @@ static void ProcessTimerList(CUtlVector<CTimerBase*>& timers) {
 	}
 }
 
-void UTIL::ProcessTimers() {
-	::ProcessTimerList(g_PersistentTimers);
-	::ProcessTimerList(g_NonPersistentTimers);
-}
-
-void UTIL::RemoveNonPersistentTimers() {
+void RemoveNonPersistentTimers() {
 	g_NonPersistentTimers.PurgeAndDeleteElements();
 }
 
-void UTIL::AddTimer(CTimerBase* timer, bool preserveMapChange) {
+void UTIL::TIMER::AddTimer(CTimerBase* timer, bool preserveMapChange) {
 	if (preserveMapChange) {
 		g_PersistentTimers.AddToTail(timer);
 	} else {
@@ -40,7 +45,7 @@ void UTIL::AddTimer(CTimerBase* timer, bool preserveMapChange) {
 	}
 }
 
-void UTIL::RemoveTimer(CTimerBase* timer) {
+void UTIL::TIMER::RemoveTimer(CTimerBase* timer) {
 	FOR_EACH_VEC(g_PersistentTimers, i) {
 		if (g_PersistentTimers.Element(i) == timer) {
 			g_PersistentTimers.Remove(i);
@@ -55,3 +60,18 @@ void UTIL::RemoveTimer(CTimerBase* timer) {
 		}
 	}
 }
+
+void UTIL::TIMER::AddFrameAction(std::unique_ptr<IFrameAction> action) {
+	g_RequestFrameQueue.push(std::move(action));
+}
+
+class CProcessTimer : CCoreForward {
+private:
+	virtual void OnServerGamePostSimulate(IGameSystem* pGameEvent) override {
+		::ProcessRequestFrameQueue(g_RequestFrameQueue);
+		::ProcessTimerList(g_PersistentTimers);
+		::ProcessTimerList(g_NonPersistentTimers);
+	}
+};
+
+CProcessTimer g_ProcessTimer;

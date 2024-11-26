@@ -18,6 +18,8 @@ public:
 
 	virtual void OnGameFrame(ISource2Server* pServer, bool simulating, bool bFirstTick, bool bLastTick) {}
 
+	virtual void OnServerGamePostSimulate(IGameSystem* pGameEvent) {}
+
 	virtual void OnClientConnected(ISource2GameClients* pClient, CPlayerSlot slot, const char* pszName, uint64 xuid, const char* pszNetworkID,
 								   const char* pszAddress, bool bFakePlayer) {}
 

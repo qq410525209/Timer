@@ -76,7 +76,9 @@ void MEM::CALL::CEntityInstance_AcceptInput(CEntityInstance* pEnt, const char* p
 // clang-format off
 SH_DECL_HOOK1_void(IGameSystem, ServerGamePostSimulate, SH_NOATTRIB, false, const EventServerGamePostSimulate_t*);
 static void Hook_OnServerGamePostSimulate(const EventServerGamePostSimulate_t* a2) {
-	UTIL::ProcessTimers();
+	for (auto p = CCoreForward::m_pFirst; p; p = p->m_pNext) {
+		p->OnServerGamePostSimulate(META_IFACEPTR(IGameSystem));
+	}
 }
 
 SH_DECL_HOOK3_void(ISource2Server, GameFrame, SH_NOATTRIB, false, bool, bool, bool);

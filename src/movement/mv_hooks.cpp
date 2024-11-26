@@ -199,7 +199,7 @@ static void Hook_OnProcessMovement(CCSPlayer_MovementServices* ms, CMoveData* mv
 }
 
 static void Hook_OnPhysicsSimulate(CCSPlayerController* pController) {
-	if (pController->m_bIsHLTV()) {
+	if (!pController || pController->m_bIsHLTV()) {
 		return;
 	}
 

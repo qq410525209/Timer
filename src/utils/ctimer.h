@@ -23,9 +23,6 @@ public:
 	bool useRealTime {};
 };
 
-extern CUtlVector<CTimerBase*> g_NonPersistentTimers;
-extern CUtlVector<CTimerBase*> g_PersistentTimers;
-
 template<typename... Args>
 class CTimer : public CTimerBase {
 public:
@@ -43,9 +40,46 @@ public:
 	}
 };
 
+class IFrameAction {
+public:
+	virtual void Execute() = 0;
+};
+
+template<typename... Args>
+class CFrameAction : public IFrameAction {
+public:
+	using Fn = void(__cdecl*)(Args... args);
+
+	Fn m_fn;
+	std::tuple<Args...> m_args;
+
+	explicit CFrameAction(Fn fn, Args... args) : m_fn(fn), m_args(std::make_tuple(std::move(args)...)) {}
+
+	virtual void Execute() override {
+		std::apply(m_fn, m_args);
+	}
+};
+
 namespace UTIL {
-	void ProcessTimers();
-	void RemoveNonPersistentTimers();
-	void AddTimer(CTimerBase* timer, bool preserveMapChange = true);
-	void RemoveTimer(CTimerBase* timer);
+	namespace TIMER {
+		void AddTimer(CTimerBase* timer, bool preserveMapChange = true);
+		void RemoveTimer(CTimerBase* timer);
+		void AddFrameAction(std::unique_ptr<IFrameAction> action);
+	} // namespace TIMER
+
+	/* Creates a timer for the given function, the function must return a f64 that represents the interval in seconds; 0 or less to stop the timer */
+	template<typename... Args>
+	CTimer<Args...>* StartTimer(typename CTimer<Args...>::Fn fn, Args... args, f64 initialDelay, bool preserveMapChange = true,
+								bool useRealTime = false) {
+		auto timer = new CTimer<Args...>(useRealTime, initialDelay, fn, args...);
+		TIMER::AddTimer(timer, preserveMapChange);
+		return timer;
+	}
+
+	/* Request a frame action for the given function. */
+	template<typename... Args>
+	void RequestFrame(typename CFrameAction<Args...>::Fn fn, Args... args) {
+		auto pFrameAction = std::make_unique<CFrameAction<Args...>>(fn, args...);
+		TIMER::AddFrameAction(std::move(pFrameAction));
+	}
 } // namespace UTIL
