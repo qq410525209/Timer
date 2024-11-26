@@ -1,6 +1,7 @@
 #pragma once
 
 #include <movement/movement.h>
+#include <list>
 
 class CSurfPlayer;
 class CSurfTimerService;
