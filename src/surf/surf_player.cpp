@@ -51,3 +51,17 @@ void CSurfPlayer::EnableGodMode() {
 		pawn->m_bTakesDamage(false);
 	}
 }
+
+void CSurfPlayer::HideLegs() {
+	CCSPlayerPawn* pawn = this->GetPlayerPawn();
+	if (!pawn) {
+		return;
+	}
+
+	Color& ogColor = pawn->m_clrRender();
+	if (this->m_bHideLegs && ogColor.a() == 255) {
+		pawn->m_clrRender(Color(255, 255, 255, 254));
+	} else if (!this->m_bHideLegs && ogColor.a() != 255) {
+		pawn->m_clrRender(Color(255, 255, 255, 255));
+	}
+}

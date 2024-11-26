@@ -6,13 +6,19 @@ class CSurfPlayer : public CMovementPlayer {
 public:
 	using CMovementPlayer::CMovementPlayer;
 
+#pragma region rampfix
 	bool didTPM {};
 	bool overrideTPM {};
 	Vector tpmVelocity = vec3_invalid;
 	Vector tpmOrigin = vec3_invalid;
 	Vector lastValidPlane = vec3_origin;
+#pragma endregion
 
+	bool m_bHideLegs {};
+
+public:
 	void EnableGodMode();
+	void HideLegs();
 };
 
 class CSurfPlayerManager : public CMovementPlayerManager {
