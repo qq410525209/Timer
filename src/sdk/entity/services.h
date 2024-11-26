@@ -37,7 +37,7 @@ public:
 	SCHEMA_FIELD(Vector, m_vecLastMovementImpulses);
 	SCHEMA_FIELD(QAngle, m_vecOldViewAngles);
 
-	SCHEMA_FIELD_POINTER(CInButtonState, m_nButtons);
+	SCHEMA_FIELD_POINTER(CInButton, m_nButtons);
 	SCHEMA_FIELD_POINTER(uint32_t, m_pButtonPressedCmdNumber);
 	SCHEMA_FIELD_POINTER(float, m_arrForceSubtickMoveWhen);
 };

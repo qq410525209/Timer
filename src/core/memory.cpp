@@ -69,6 +69,14 @@ void MEM::CALL::CEntityInstance_AcceptInput(CEntityInstance* pEnt, const char* p
 	CALL_SIG("CEntityInstance_AcceptInput", CEntityInstance_AcceptInput, pEnt, pInputName, pActivator, pCaller, value, nOutputID);
 }
 
+CBaseEntity* MEM::CALL::CreateEntityByName(const char* pszName) {
+	CALL_SIG("CBaseEntity::CreateEntityByName", CreateEntityByName, pszName, -1);
+}
+
+void MEM::CALL::DispatchSpawn(CBaseEntity* pEnt, CEntityKeyValues* pInitKeyValue) {
+	CALL_SIG("CBaseEntity::DispatchSpawn", DispatchSpawn, pEnt, pInitKeyValue);
+}
+
 #pragma endregion
 
 #pragma region hooks

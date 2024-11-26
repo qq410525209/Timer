@@ -30,8 +30,8 @@ public:
 public:
 	// forwards
 	// clang-format off
-	virtual void OnServiceSetup() {}
-	virtual void OnPhysicsSimulatePost() {}
+	virtual void Reset() {}
+	virtual void OnServiceStartup() {}
 
 	// clang-format on
 
@@ -71,7 +71,7 @@ private:
 
 		if (!service) {
 			service.reset(new T(this));
-			reinterpret_cast<CSurfBaseService*>(service.get())->OnServiceSetup();
+			reinterpret_cast<CSurfBaseService*>(service.get())->OnServiceStartup();
 			m_Services.push_back(reinterpret_cast<CSurfBaseService*>(service.get()));
 		}
 	}

@@ -37,4 +37,5 @@ namespace UTIL {
 	void GetPlayerAiming(CCSPlayerPawnBase* pPlayer, CGameTrace& ret);
 
 	CBaseEntity* FindEntityByClassname(CEntityInstance* start, const char* name);
+	CBaseEntity* CreateBeam(Vector& from, Vector& to, CBaseEntity* owner = nullptr);
 } // namespace UTIL

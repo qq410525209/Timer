@@ -11,6 +11,7 @@ class CBasePlayerController;
 class CCSPlayerController;
 class CCSPlayerPawn;
 class CEntityInstance;
+class CEntityKeyValues;
 
 class GameSessionConfiguration_t {};
 
@@ -36,6 +37,8 @@ namespace MEM {
 		void SnapViewAngles(CBasePlayerPawn* pawn, const QAngle& angle);
 		void CEntityInstance_AcceptInput(CEntityInstance* pEnt, const char* pInputName, CEntityInstance* pActivator, CEntityInstance* pCaller,
 										 variant_t* value, int nOutputID);
+		CBaseEntity* CreateEntityByName(const char* pszName);
+		void DispatchSpawn(CBaseEntity* pEnt, CEntityKeyValues* pInitKeyValue);
 	} // namespace CALL
 
 	namespace MODULE {

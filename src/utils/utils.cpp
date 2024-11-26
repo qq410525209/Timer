@@ -181,3 +181,26 @@ CBaseEntity* UTIL::FindEntityByClassname(CEntityInstance* start, const char* nam
 
 	return static_cast<CBaseEntity*>(iter.Next());
 }
+
+CBaseEntity* UTIL::CreateBeam(Vector& from, Vector& to, CBaseEntity* owner) {
+	CBeam* beam = (CBeam*)MEM::CALL::CreateEntityByName("beam");
+	if (!beam) {
+		return nullptr;
+	}
+
+	beam->Teleport(&from, nullptr, nullptr);
+
+	Color color(0, 255, 0, 255);
+	beam->m_clrRender(color);
+	beam->m_fWidth(1.5f);
+	beam->m_vecEndPos(to);
+	beam->m_fadeMinDist(-1.0f);
+
+	if (owner != nullptr) {
+		beam->m_hOwnerEntity(owner->GetRefEHandle());
+	}
+
+	beam->DispatchSpawn();
+
+	return beam;
+}

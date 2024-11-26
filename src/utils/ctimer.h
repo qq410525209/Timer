@@ -42,6 +42,8 @@ public:
 
 class IFrameAction {
 public:
+	virtual ~IFrameAction() {}
+
 	virtual void Execute() = 0;
 };
 

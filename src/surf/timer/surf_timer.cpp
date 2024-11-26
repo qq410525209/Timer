@@ -8,8 +8,8 @@ CCMD_CALLBACK(Command_StartTimer) {
 		return;
 	}
 
-	auto& timerService = player->m_pTimerService;
-	timerService->DoTimerStart();
+	auto& pTimerService = player->m_pTimerService;
+	pTimerService->DoTimerStart();
 }
 
 CCMD_CALLBACK(Command_EndTimer) {
@@ -18,8 +18,27 @@ CCMD_CALLBACK(Command_EndTimer) {
 		return;
 	}
 
-	auto& timerService = player->m_pTimerService;
-	timerService->DoTimerEnd();
+	auto& pTimerService = player->m_pTimerService;
+	pTimerService->DoTimerEnd();
+}
+
+CSurfTimerPlugin g_SurfTimerPlugin;
+
+void CSurfTimerPlugin::OnPluginStart() {
+	CONCMD::RegConsoleCmd("sm_r", Command_StartTimer);
+	CONCMD::RegConsoleCmd("sm_end", Command_EndTimer);
+}
+
+void CSurfTimerPlugin::OnPhysicsSimulatePost(CCSPlayerController* pController) {
+	CSurfPlayer* player = SURF::GetPlayerManager()->ToPlayer(pController);
+	if (!player) {
+		return;
+	}
+
+	auto& pTimerService = player->m_pTimerService;
+	if (player->IsAlive() && pTimerService->m_bTimerRunning && !pTimerService->m_bPaused) {
+		pTimerService->m_fCurrentTime += ENGINE_FIXED_TICK_INTERVAL;
+	}
 }
 
 void CSurfTimerService::DoTimerStart(bool playSound) {
@@ -60,20 +79,4 @@ void CSurfTimerService::DoTimerEnd() {
 	this->m_bTimerRunning = false;
 	this->m_fLastEndTime = UTIL::GetServerGlobals()->curtime;
 	// this->PlayTimerEndSound();
-}
-
-void CSurfTimerService::OnServiceSetup() {
-	static bool registered = false;
-	if (!registered) {
-		CONCMD::RegConsoleCmd("sm_r", Command_StartTimer);
-		CONCMD::RegConsoleCmd("sm_end", Command_EndTimer);
-	}
-
-	registered = true;
-}
-
-void CSurfTimerService::OnPhysicsSimulatePost() {
-	if (this->GetPlayer()->IsAlive() && this->m_bTimerRunning && !this->m_bPaused) {
-		this->m_fCurrentTime += ENGINE_FIXED_TICK_INTERVAL;
-	}
 }

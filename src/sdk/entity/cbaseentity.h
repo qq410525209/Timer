@@ -92,6 +92,7 @@ public:
 	SCHEMA_FIELD(float, m_flGravityScale);
 	SCHEMA_FIELD(float, m_flWaterLevel);
 	SCHEMA_FIELD(int, m_fEffects);
+	SCHEMA_FIELD(CHandle<CBaseEntity>, m_hOwnerEntity);
 
 	int entindex() {
 		return m_pEntity->m_EHandle.GetEntryIndex();
@@ -141,6 +142,8 @@ public:
 	void AcceptInput(const char* pInputName, variant_t value = variant_t(""), CEntityInstance* pActivator = nullptr,
 					 CEntityInstance* pCaller = nullptr);
 
+	void DispatchSpawn(CEntityKeyValues* pInitKeyValue = nullptr);
+
 	Vector GetAbsOrigin();
 };
 
@@ -148,9 +151,10 @@ class CBaseModelEntity : public CBaseEntity {
 public:
 	DECLARE_SCHEMA_CLASS(CBaseModelEntity);
 
-	SCHEMA_FIELD(CCollisionProperty, m_Collision)
-	SCHEMA_FIELD(Color, m_clrRender)
-	SCHEMA_FIELD(uint8, m_nRenderMode)
+	SCHEMA_FIELD(CCollisionProperty, m_Collision);
+	SCHEMA_FIELD(Color, m_clrRender);
+	SCHEMA_FIELD(uint8, m_nRenderMode);
+	SCHEMA_FIELD(float, m_fadeMinDist);
 };
 
 class CBaseViewModel : public CBaseModelEntity {
@@ -177,4 +181,12 @@ public:
 class CBasePlayerWeapon : public CEconEntity {
 public:
 	DECLARE_SCHEMA_CLASS(CBasePlayerWeapon);
+};
+
+class CBeam : public CBaseModelEntity {
+public:
+	DECLARE_SCHEMA_CLASS(CBeam);
+
+	SCHEMA_FIELD(float, m_fWidth);
+	SCHEMA_FIELD(Vector, m_vecEndPos);
 };

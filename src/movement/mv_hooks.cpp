@@ -46,7 +46,7 @@ static void Hook_OnMovementServicesRunCmds(CPlayer_MovementServices* pMovementSe
 		buttons_state = baseCmd->mutable_buttons_pb();
 	}
 
-	CInButtonState* button = (CInButtonState*)buttons_state;
+	CInButton* button = (CInButton*)buttons_state;
 
 	bool block = false;
 	for (auto p = CMovementForward::m_pFirst; p; p = p->m_pNext) {
@@ -78,7 +78,7 @@ static void Hook_OnMovementServicesRunCmds(CPlayer_MovementServices* pMovementSe
 		if (baseCmd->has_buttons_pb()) {
 			CInButtonStatePB* buttons_pb = baseCmd->mutable_buttons_pb();
 			if (buttons_pb) {
-				buttons_pb->set_buttonstate1(button->pressed);
+				buttons_pb->set_buttonstate1(button->pressing);
 				buttons_pb->set_buttonstate2(button->changed);
 				buttons_pb->set_buttonstate3(button->scroll);
 			}
@@ -220,11 +220,6 @@ static void Hook_OnPhysicsSimulate(CCSPlayerController* pController) {
 	SurfPlugin()->simulatingPhysics = false;
 
 	FORWARD_POST(CMovementForward, OnPhysicsSimulatePost, pController);
-
-	CSurfPlayer* player = SURF::GetPlayerManager()->ToPlayer(pController);
-	for (const auto& service : player->m_Services) {
-		service->OnPhysicsSimulatePost();
-	}
 }
 
 void MOVEMENT::SetupHooks() {

@@ -5,6 +5,10 @@ void CBaseEntity::AcceptInput(const char* pInputName, variant_t value, CEntityIn
 	MEM::CALL::CEntityInstance_AcceptInput(this, pInputName, pActivator, pCaller, &value, 0);
 }
 
+void CBaseEntity::DispatchSpawn(CEntityKeyValues* pInitKeyValue) {
+	MEM::CALL::DispatchSpawn(this, pInitKeyValue);
+}
+
 Vector CBaseEntity::GetAbsOrigin() {
 	auto pBodyComponent = m_CBodyComponent();
 	if (!pBodyComponent) {
