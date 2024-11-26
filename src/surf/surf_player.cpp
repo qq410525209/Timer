@@ -1,6 +1,13 @@
 #include "surf_player.h"
+#include <surf/surf.h>
 
 CSurfPlayerManager g_SurfPlayerManager;
+
+template<>
+CSurfForward* CBaseForward<CSurfForward>::m_pFirst = nullptr;
+
+template<>
+CSurfBaseService* CBaseForward<CSurfBaseService>::m_pFirst = nullptr;
 
 CSurfPlayerManager* SURF::GetPlayerManager() {
 	return &g_SurfPlayerManager;
@@ -40,6 +47,12 @@ CSurfPlayer* CSurfPlayerManager::ToPlayer(CPlayerUserId userID) const {
 
 CSurfPlayer* CSurfPlayerManager::ToPlayer(CSteamID steamid, bool validate) const {
 	return static_cast<CSurfPlayer*>(CPlayerManager::ToPlayer(steamid, validate));
+}
+
+void CSurfPlayer::Init(int iSlot) {
+	CMovementPlayer::Init(iSlot);
+
+	FORWARD_POST(CSurfBaseService, Init, this);
 }
 
 void CSurfPlayer::EnableGodMode() {

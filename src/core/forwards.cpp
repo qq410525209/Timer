@@ -1,4 +1,4 @@
 #include "forwards.h"
 
 template<>
-CCoreForward* CForwardBase<CCoreForward>::m_pFirst = nullptr;
+CCoreForward* CBaseForward<CCoreForward>::m_pFirst = nullptr;

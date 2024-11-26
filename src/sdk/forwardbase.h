@@ -1,23 +1,23 @@
 #pragma once
 
 template<typename T>
-class CForwardBase {
+class CBaseForward {
 public:
-	CForwardBase();
-	~CForwardBase();
+	CBaseForward();
+	~CBaseForward();
 
 	static T* m_pFirst;
 	T* m_pNext;
 };
 
 template<typename T>
-CForwardBase<T>::CForwardBase() {
+CBaseForward<T>::CBaseForward() {
 	m_pNext = m_pFirst;
 	m_pFirst = static_cast<T*>(this);
 }
 
 template<typename T>
-CForwardBase<T>::~CForwardBase() {
+CBaseForward<T>::~CBaseForward() {
 	if (this == m_pFirst) {
 		m_pFirst = static_cast<T*>(m_pNext);
 		return;

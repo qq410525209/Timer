@@ -12,7 +12,7 @@
 		p->forwardFn(__VA_ARGS__); \
 	}
 
-class CCoreForward : public CForwardBase<CCoreForward> {
+class CCoreForward : public CBaseForward<CCoreForward> {
 public:
 	virtual void OnPluginStart() {}
 

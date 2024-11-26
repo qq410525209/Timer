@@ -6,6 +6,8 @@ class CSurfPlayer : public CMovementPlayer {
 public:
 	using CMovementPlayer::CMovementPlayer;
 
+	virtual void Init(int iSlot);
+
 #pragma region rampfix
 	bool didTPM {};
 	bool overrideTPM {};
