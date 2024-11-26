@@ -1,5 +1,5 @@
-#include "surf_player.h"
-#include <surf/surf.h>
+#include <surf/timer/surf_timer.h>
+#include <surf/zones/surf_zones.h>
 
 CSurfPlayerManager g_SurfPlayerManager;
 
@@ -52,7 +52,8 @@ CSurfPlayer* CSurfPlayerManager::ToPlayer(CSteamID steamid, bool validate) const
 void CSurfPlayer::Init(int iSlot) {
 	CMovementPlayer::Init(iSlot);
 
-	FORWARD_POST(CSurfBaseService, Init, this);
+	InitService(m_pTimerService);
+	InitService(m_pZoneService);
 }
 
 void CSurfPlayer::EnableGodMode() {

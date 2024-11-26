@@ -2,6 +2,7 @@
 
 #include <core/gamedata.h>
 #include <core/memory.h>
+#include <cs2surf.h>
 
 static void Hook_OnMovementServicesRunCmds(CPlayer_MovementServices* pMovementServices, CUserCmd* pUserCmd) {
 	CCSPlayerPawn* pawn = pMovementServices->GetPawn();
@@ -122,8 +123,17 @@ static void Hook_OnCategorizePosition(CCSPlayer_MovementServices* ms, CMoveData*
 	MEM::SDKCall<void>(MOVEMENT::TRAMPOLINE::g_fnCategorizePosition, ms, mv, bStayOnGround);
 
 	CMovementPlayer* player = MOVEMENT::GetPlayerManager()->ToPlayer(ms);
-	bool oldOnGround = !!(player->GetPlayerPawn()->m_fFlags() & FL_ONGROUND);
-	bool ground = !!(player->GetPlayerPawn()->m_fFlags() & FL_ONGROUND);
+	if (!player) {
+		return;
+	}
+
+	auto playerPawn = player->GetPlayerPawn();
+	if (!playerPawn) {
+		return;
+	}
+
+	bool oldOnGround = !!(playerPawn->m_fFlags() & FL_ONGROUND);
+	bool ground = !!(playerPawn->m_fFlags() & FL_ONGROUND);
 	if (oldOnGround != ground) {
 		if (ground) {
 			player->RegisterLanding(mv->m_vecVelocity);
@@ -186,12 +196,31 @@ static void Hook_OnProcessMovement(CCSPlayer_MovementServices* ms, CMoveData* mv
 	FORWARD_POST(CMovementForward, OnProcessMovementPost, ms, mv);
 }
 
+static void Hook_OnPhysicsSimulate(CCSPlayerController* pController) {
+	SurfPlugin()->simulatingPhysics = true;
+
+	bool block = false;
+	for (auto p = CMovementForward::m_pFirst; p; p = p->m_pNext) {
+		if (!p->OnPhysicsSimulate(pController)) {
+			block = true;
+		}
+	}
+	if (block) {
+		return;
+	}
+
+	MEM::SDKCall<void>(MOVEMENT::TRAMPOLINE::g_fnPhysicsSimulate, pController);
+
+	FORWARD_POST(CMovementForward, OnPhysicsSimulatePost, pController);
+}
+
 void MOVEMENT::SetupHooks() {
 	HOOK_SIG("CPlayer_MovementServices::RunCmds", Hook_OnMovementServicesRunCmds, MOVEMENT::TRAMPOLINE::g_fnMovementServicesRunCmds);
 	HOOK_SIG("CCSPlayer_MovementServices::TryPlayerMove", Hook_OnTryPlayerMove, MOVEMENT::TRAMPOLINE::g_fnTryPlayerMove);
 	HOOK_SIG("CCSPlayer_MovementServices::CategorizePosition", Hook_OnCategorizePosition, MOVEMENT::TRAMPOLINE::g_fnCategorizePosition);
 	HOOK_SIG("CCSPlayer_MovementServices::OnJump", Hook_OnJump, MOVEMENT::TRAMPOLINE::g_fnJump);
 	HOOK_SIG("CCSPlayer_MovementServices::ProcessMovement", Hook_OnProcessMovement, MOVEMENT::TRAMPOLINE::g_fnProcessMovement);
+	HOOK_SIG("CCSPlayerController::PhysicsSimulate", Hook_OnPhysicsSimulate, MOVEMENT::TRAMPOLINE::g_fnPhysicsSimulate);
 }
 
 // copy from cs2kz.

@@ -33,6 +33,7 @@ public:
 	virtual bool IsInGame() const;
 	virtual bool IsFakeClient() const;
 	virtual bool IsSourceTV() const;
+	virtual bool IsAlive() const;
 	virtual bool IsValidClient() const;
 	virtual const char* GetName() const;
 	virtual const char* GetIpAddress() const;

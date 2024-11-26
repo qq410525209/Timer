@@ -62,6 +62,11 @@ bool CPlayer::IsSourceTV() const {
 	return client ? client->IsHLTV() : false;
 }
 
+bool CPlayer::IsAlive() const {
+	auto pawn = GetPlayerPawn();
+	return pawn ? pawn->IsAlive() : false;
+}
+
 bool CPlayer::IsValidClient() const {
 	if (!UTIL::IsPlayerSlot(m_iSlot)) {
 		return false;

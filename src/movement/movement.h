@@ -198,6 +198,12 @@ public:
 
 	virtual void OnProcessMovementPost(CCSPlayer_MovementServices* ms, const CMoveData* mv) {}
 
+	virtual bool OnPhysicsSimulate(CCSPlayerController* pController) {
+		return true;
+	}
+
+	virtual void OnPhysicsSimulatePost(CCSPlayerController* pController) {}
+
 public:
 	virtual void OnStartTouchGround(CMovementPlayer* player) {}
 
@@ -213,6 +219,7 @@ namespace MOVEMENT {
 		inline void* g_fnCategorizePosition;
 		inline void* g_fnJump;
 		inline void* g_fnProcessMovement;
+		inline void* g_fnPhysicsSimulate;
 	} // namespace TRAMPOLINE
 
 	void SetupHooks();
