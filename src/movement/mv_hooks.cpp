@@ -197,6 +197,10 @@ static void Hook_OnProcessMovement(CCSPlayer_MovementServices* ms, CMoveData* mv
 }
 
 static void Hook_OnPhysicsSimulate(CCSPlayerController* pController) {
+	if (pController->m_bIsHLTV()) {
+		return;
+	}
+
 	SurfPlugin()->simulatingPhysics = true;
 
 	bool block = false;
@@ -211,7 +215,12 @@ static void Hook_OnPhysicsSimulate(CCSPlayerController* pController) {
 
 	MEM::SDKCall<void>(MOVEMENT::TRAMPOLINE::g_fnPhysicsSimulate, pController);
 
+	SurfPlugin()->simulatingPhysics = false;
+
 	FORWARD_POST(CMovementForward, OnPhysicsSimulatePost, pController);
+
+	CMovementPlayer* player = MOVEMENT::GetPlayerManager()->ToPlayer(pController);
+	player->OnPhysicsSimulatePost();
 }
 
 void MOVEMENT::SetupHooks() {

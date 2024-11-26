@@ -2,7 +2,7 @@
 
 #include <surf/surf_player.h>
 
-class CSurfTimerService : CSurfBaseService, CMovementForward, CCoreForward {
+class CSurfTimerService : CSurfBaseService {
 public:
 	using CSurfBaseService::CSurfBaseService;
 
@@ -22,8 +22,9 @@ public:
 	void DoTimerStart(bool playSound = true);
 	void DoTimerEnd();
 
-private:
-	virtual void OnPluginStart() override;
+public:
+	virtual void OnPhysicsSimulatePost() override;
 
-	virtual void OnPhysicsSimulatePost(CCSPlayerController* pController) override;
+private:
+	virtual void OnServiceSetup() override;
 };

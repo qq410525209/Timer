@@ -2,8 +2,39 @@
 
 #include <movement/movement.h>
 
+class CSurfPlayer;
 class CSurfTimerService;
 class CSurfZoneService;
+class CSurfHudService;
+
+class CSurfForward : public CBaseForward<CSurfForward> {
+public:
+	bool OnTimerStart(CSurfPlayer* player) {
+		return true;
+	}
+
+	bool OnTimerEnd(CSurfPlayer* player) {
+		return true;
+	}
+};
+
+class CSurfBaseService : public CBaseForward<CSurfBaseService> {
+public:
+	CSurfBaseService(CSurfPlayer* player) : m_pPlayer(player) {}
+
+	CSurfPlayer* GetPlayer() {
+		return m_pPlayer;
+	}
+
+public:
+	// forwards
+	virtual void OnServiceSetup() {}
+
+	virtual void OnPhysicsSimulatePost() {}
+
+public:
+	CSurfPlayer* m_pPlayer;
+};
 
 class CSurfPlayer : public CMovementPlayer {
 public:
@@ -25,28 +56,34 @@ public:
 #pragma region service
 
 private:
-	template<typename T>
 	struct CSurfServiceDeleter {
-		void operator()(T* ptr) const {
+		void operator()(void* ptr) const {
 			g_pMemAlloc->Free(ptr);
 		}
 	};
 
 	template<typename T>
-	void InitService(std::unique_ptr<T, CSurfServiceDeleter<T>>& service) {
+	void InitService(std::unique_ptr<T, CSurfServiceDeleter>& service) {
+		static_assert(std::is_base_of<CSurfBaseService, T>::value, "T must be derived from CSurfBaseService");
+
 		if (!service) {
 			service.reset(new T(this));
+			reinterpret_cast<CSurfBaseService*>(service.get())->OnServiceSetup();
 		}
 	}
 
 public:
-	std::unique_ptr<CSurfTimerService, CSurfServiceDeleter<CSurfTimerService>> m_pTimerService;
-	std::unique_ptr<CSurfZoneService, CSurfServiceDeleter<CSurfZoneService>> m_pZoneService;
+	std::unique_ptr<CSurfTimerService, CSurfServiceDeleter> m_pTimerService;
+	std::unique_ptr<CSurfZoneService, CSurfServiceDeleter> m_pZoneService;
+	std::unique_ptr<CSurfHudService, CSurfServiceDeleter> m_pHudService;
 #pragma endregion
 
 public:
 	void EnableGodMode();
 	void HideLegs();
+
+public:
+	virtual void OnPhysicsSimulatePost() override;
 };
 
 class CSurfPlayerManager : public CMovementPlayerManager {
@@ -77,29 +114,11 @@ public:
 	}
 };
 
-class CSurfForward : public CBaseForward<CSurfForward> {
-public:
-	bool OnTimerStart(CSurfPlayer* player) {
-		return true;
-	}
-
-	bool OnTimerEnd(CSurfPlayer* player) {
-		return true;
-	}
-};
-
-class CSurfBaseService {
-public:
-	CSurfBaseService(CSurfPlayer* player) : m_pPlayer(player) {}
-
-	CSurfPlayer* GetPlayer() {
-		return m_pPlayer;
-	}
-
-private:
-	CSurfPlayer* m_pPlayer;
-};
-
 namespace SURF {
 	extern CSurfPlayerManager* GetPlayerManager();
-}
+
+	void FormatTime(f64 time, char* output, u32 length, bool precise = true);
+	CUtlString FormatTime(f64 time, bool precise = true);
+	void FormatDiffTime(f64 time, char* output, u32 length, bool precise = true);
+	CUtlString FormatDiffTime(f64 time, bool precise = true);
+} // namespace SURF

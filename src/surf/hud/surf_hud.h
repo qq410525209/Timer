@@ -2,10 +2,9 @@
 
 #include <surf/surf_player.h>
 
-class CSurfZoneService : CSurfBaseService {
+class CSurfHudService : CSurfBaseService {
 public:
 	using CSurfBaseService::CSurfBaseService;
 
-private:
-	virtual void OnServiceSetup() override;
+	virtual void OnPhysicsSimulatePost() override;
 };

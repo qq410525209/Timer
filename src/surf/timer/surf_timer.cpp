@@ -62,12 +62,17 @@ void CSurfTimerService::DoTimerEnd() {
 	// this->PlayTimerEndSound();
 }
 
-void CSurfTimerService::OnPluginStart() {
-	CONCMD::RegConsoleCmd("sm_r", Command_StartTimer);
-	CONCMD::RegConsoleCmd("sm_end", Command_EndTimer);
+void CSurfTimerService::OnServiceSetup() {
+	static bool registered = false;
+	if (!registered) {
+		CONCMD::RegConsoleCmd("sm_r", Command_StartTimer);
+		CONCMD::RegConsoleCmd("sm_end", Command_EndTimer);
+	}
+
+	registered = true;
 }
 
-void CSurfTimerService::OnPhysicsSimulatePost(CCSPlayerController* pController) {
+void CSurfTimerService::OnPhysicsSimulatePost() {
 	if (this->GetPlayer()->IsAlive() && this->m_bTimerRunning && !this->m_bPaused) {
 		this->m_fCurrentTime += ENGINE_FIXED_TICK_INTERVAL;
 	}
