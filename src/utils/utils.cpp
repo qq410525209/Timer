@@ -116,7 +116,7 @@ CBasePlayerController* UTIL::GetController(CBaseEntity* entity) {
 }
 
 CBasePlayerController* UTIL::GetController(CPlayerSlot slot) {
-	if (!GameEntitySystem() || slot.Get() < 0 || slot.Get() > MAXPLAYERS) {
+	if (!GameEntitySystem() || !IsPlayerSlot(slot)) {
 		return nullptr;
 	}
 	CBaseEntity* ent = static_cast<CBaseEntity*>(GameEntitySystem()->GetEntityInstance(CEntityIndex(slot.Get() + 1)));
@@ -128,7 +128,7 @@ CBasePlayerController* UTIL::GetController(CPlayerSlot slot) {
 
 bool UTIL::IsPlayerSlot(CPlayerSlot slot) {
 	int iSlot = slot.Get();
-	return iSlot >= 0 && iSlot < MAXPLAYERS;
+	return iSlot >= 0 && iSlot < GetGlobals()->maxClients;
 }
 
 CUtlVector<CServerSideClient*>* UTIL::GetClientList() {

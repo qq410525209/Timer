@@ -120,8 +120,6 @@ public:
 public:
 	virtual void Reset() override;
 
-	virtual void OnPhysicsSimulatePost() {}
-
 public:
 	virtual CCSPlayer_MovementServices* GetMoveServices();
 	virtual void GetBBoxBounds(bbox_t& bounds);

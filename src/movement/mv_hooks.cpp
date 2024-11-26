@@ -4,6 +4,8 @@
 #include <core/memory.h>
 #include <cs2surf.h>
 
+#include <surf/surf_player.h>
+
 static void Hook_OnMovementServicesRunCmds(CPlayer_MovementServices* pMovementServices, CUserCmd* pUserCmd) {
 	CCSPlayerPawn* pawn = pMovementServices->GetPawn();
 	if (!pawn) {
@@ -219,8 +221,10 @@ static void Hook_OnPhysicsSimulate(CCSPlayerController* pController) {
 
 	FORWARD_POST(CMovementForward, OnPhysicsSimulatePost, pController);
 
-	CMovementPlayer* player = MOVEMENT::GetPlayerManager()->ToPlayer(pController);
-	player->OnPhysicsSimulatePost();
+	CSurfPlayer* player = SURF::GetPlayerManager()->ToPlayer(pController);
+	for (const auto& service : player->m_Services) {
+		service->OnPhysicsSimulatePost();
+	}
 }
 
 void MOVEMENT::SetupHooks() {

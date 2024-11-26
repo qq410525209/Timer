@@ -18,21 +18,23 @@ public:
 	}
 };
 
-class CSurfBaseService : public CBaseForward<CSurfBaseService> {
+class CSurfBaseService {
 public:
 	CSurfBaseService(CSurfPlayer* player) : m_pPlayer(player) {}
 
-	CSurfPlayer* GetPlayer() {
+	CSurfPlayer* GetPlayer() const {
 		return m_pPlayer;
 	}
 
 public:
 	// forwards
+	// clang-format off
 	virtual void OnServiceSetup() {}
-
 	virtual void OnPhysicsSimulatePost() {}
 
-public:
+	// clang-format on
+
+private:
 	CSurfPlayer* m_pPlayer;
 };
 
@@ -69,6 +71,7 @@ private:
 		if (!service) {
 			service.reset(new T(this));
 			reinterpret_cast<CSurfBaseService*>(service.get())->OnServiceSetup();
+			m_Services.push_back(reinterpret_cast<CSurfBaseService*>(service.get()));
 		}
 	}
 
@@ -77,13 +80,11 @@ public:
 	std::unique_ptr<CSurfZoneService, CSurfServiceDeleter> m_pZoneService;
 	std::unique_ptr<CSurfHudService, CSurfServiceDeleter> m_pHudService;
 #pragma endregion
+	std::list<CSurfBaseService*> m_Services;
 
 public:
 	void EnableGodMode();
 	void HideLegs();
-
-public:
-	virtual void OnPhysicsSimulatePost() override;
 };
 
 class CSurfPlayerManager : public CMovementPlayerManager {

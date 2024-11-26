@@ -7,9 +7,6 @@ CSurfPlayerManager g_SurfPlayerManager;
 template<>
 CSurfForward* CBaseForward<CSurfForward>::m_pFirst = nullptr;
 
-template<>
-CSurfBaseService* CBaseForward<CSurfBaseService>::m_pFirst = nullptr;
-
 CSurfPlayerManager* SURF::GetPlayerManager() {
 	return &g_SurfPlayerManager;
 }
@@ -80,11 +77,6 @@ void CSurfPlayer::HideLegs() {
 	} else if (!this->m_bHideLegs && ogColor.a() != 255) {
 		pawn->m_clrRender(Color(255, 255, 255, 255));
 	}
-}
-
-void CSurfPlayer::OnPhysicsSimulatePost() {
-	m_pTimerService->OnPhysicsSimulatePost();
-	m_pHudService->OnPhysicsSimulatePost();
 }
 
 void SURF::FormatTime(f64 time, char* output, u32 length, bool precise) {
