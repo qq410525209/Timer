@@ -59,29 +59,27 @@ public:
 #pragma region service
 
 private:
-	struct CSurfServiceDeleter {
+	struct ServiceDeleter {
 		void operator()(void* ptr) const {
 			g_pMemAlloc->Free(ptr);
 		}
 	};
 
 	template<typename T>
-	void InitService(std::unique_ptr<T, CSurfServiceDeleter>& service) {
+	void InitService(std::unique_ptr<T, ServiceDeleter>& service) {
 		static_assert(std::is_base_of<CSurfBaseService, T>::value, "T must be derived from CSurfBaseService");
 
 		if (!service) {
 			service.reset(new T(this));
 			reinterpret_cast<CSurfBaseService*>(service.get())->OnServiceStartup();
-			m_Services.push_back(reinterpret_cast<CSurfBaseService*>(service.get()));
 		}
 	}
 
 public:
-	std::unique_ptr<CSurfTimerService, CSurfServiceDeleter> m_pTimerService;
-	std::unique_ptr<CSurfZoneService, CSurfServiceDeleter> m_pZoneService;
-	std::unique_ptr<CSurfHudService, CSurfServiceDeleter> m_pHudService;
+	std::unique_ptr<CSurfTimerService, ServiceDeleter> m_pTimerService;
+	std::unique_ptr<CSurfZoneService, ServiceDeleter> m_pZoneService;
+	std::unique_ptr<CSurfHudService, ServiceDeleter> m_pHudService;
 #pragma endregion
-	std::list<CSurfBaseService*> m_Services;
 
 public:
 	void EnableGodMode();
