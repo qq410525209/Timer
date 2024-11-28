@@ -22,6 +22,8 @@ public:
 class CSurfZonePlugin : CMovementForward, CCoreForward {
 private:
 	void DrawEditZone(CCSPlayerPawnBase* pawn);
+	void CreateZonePoints(const Vector& vecMin, const Vector& vecMax, Vector out[8]);
+	void DrawZone(const Vector points[8], bool flat = false);
 
 private:
 	virtual void OnPluginStart() override;

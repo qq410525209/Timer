@@ -31,6 +31,25 @@ void CSurfZonePlugin::DrawEditZone(CCSPlayerPawnBase* pawn) {
 	Vector& aimPos = tr.m_vEndPos;
 }
 
+void CSurfZonePlugin::CreateZonePoints(const Vector& vecMin, const Vector& vecMax, Vector out[8]) {
+	out[0] = vecMin;
+	out[7] = vecMax;
+
+	for (int i = 1; i < 7; i++) {
+		out[i].x = (i & 4) ? vecMax.x : vecMin.x;
+		out[i].y = (i & 2) ? vecMax.y : vecMin.y;
+		out[i].z = (i & 1) ? vecMax.z : vecMin.z;
+	}
+}
+
+void CSurfZonePlugin::DrawZone(const Vector points[8], bool flat) {
+	static constexpr const int pairs[][2] = {{0, 2}, {2, 6}, {6, 4}, {4, 0}, {0, 1}, {3, 1}, {3, 2}, {3, 7}, {5, 1}, {5, 4}, {6, 7}, {7, 5}};
+
+	for (int i = 0; i < (flat ? 4 : 12); i++) {
+		// TE_SetupBeamPoints(points[pairs[i][0]], points[pairs[i][1]]);
+	}
+}
+
 void CSurfZoneService::Reset() {
 	m_iEditStep = EditStep_None;
 }
