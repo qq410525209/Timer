@@ -45,6 +45,9 @@ add_library(${PROJECT_NAME} SHARED ${SDK_CONVAR} ${LIBMODULE_SOURCES} ${ENTITY2_
 
 if(WIN32)
 	target_link_options(${PROJECT_NAME} PRIVATE "ntdll.lib")
+else()
+	find_package(OpenSSL REQUIRED)
+	target_link_libraries(${PROJECT_NAME} PRIVATE OpenSSL::SSL OpenSSL::Crypto)
 endif()
 
 target_link_libraries(${PROJECT_NAME} PRIVATE ${SURFTIMER_LIBS})
