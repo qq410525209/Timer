@@ -1,26 +1,26 @@
 #include <core/concmdmanager.h>
 #include "surf_zones.h"
+#include <utils/utils.h>
 
 CCMD_CALLBACK(Command_Zones) {}
 
-CCMD_CALLBACK(Command_Drawme) {
-	auto player = SURF::GetPlayerManager()->ToPlayer(pController);
+CCMD_CALLBACK(Command_EditZone) {
+	CSurfPlayer* player = SURF::GetPlayerManager()->ToPlayer(pController);
 	if (!player) {
 		return;
 	}
 
-	auto pawn = pController->GetPlayerPawn();
-	auto pos = pawn->GetAbsOrigin();
-	auto mins = pawn->m_pCollision()->m_vecMins() + pos;
-	auto maxs = pawn->m_pCollision()->m_vecMaxs() + pos;
-
-	Vector points[8];
-	player->m_pZoneService->CreateZonePoints(mins, maxs, points);
-	player->m_pZoneService->CreateZone(points, false, player->m_pZoneService->m_vecTestBeam);
-	player->m_pZoneService->m_bCanDraw = true;
+	auto& pZoneService = player->m_pZoneService;
+	pZoneService->m_bEditing = true;
+	pZoneService->m_iEditStep = EditStep_None;
+	trace_t tr;
+	UTIL::GetPlayerAiming(pController->GetPlayerPawn(), tr);
+	Vector& aimPos = tr.m_vEndPos;
+	auto pBeam = UTIL::CreateBeam(tr.m_vEndPos, tr.m_vEndPos);
+	pZoneService->m_vTestBeam.emplace_back(pBeam->GetRefEHandle());
 }
 
 void RegisterCommand() {
 	CONCMD::RegConsoleCmd("sm_zones", Command_Zones);
-	CONCMD::RegConsoleCmd("sm_drawme", Command_Drawme);
+	CONCMD::RegConsoleCmd("sm_editzone", Command_EditZone);
 }
