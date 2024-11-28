@@ -22,11 +22,18 @@ void CSurfZonePlugin::OnPlayerRunCmdPost(CCSPlayerPawn* pawn, const CInButton* b
 	}
 
 	auto& pZoneService = player->m_pZoneService;
-	this->DrawEditZone(pawn);
+	if (pZoneService->m_bCanDraw) {
+		auto pos = pawn->GetAbsOrigin();
+		auto mins = pawn->m_pCollision()->m_vecMins() + pos;
+		auto maxs = pawn->m_pCollision()->m_vecMaxs() + pos;
+		pZoneService->UpdateZone(pZoneService->m_vecTestBeam, mins, maxs);
+	}
+
+	/*this->DrawEditZone(pawn);
 
 	auto iEditStep = pZoneService->m_iEditStep;
 	if (iEditStep > EditStep_None && iEditStep < EditStep_Final) {
-	}
+	}*/
 }
 
 void CSurfZonePlugin::DrawEditZone(CCSPlayerPawnBase* pawn) {
@@ -35,7 +42,7 @@ void CSurfZonePlugin::DrawEditZone(CCSPlayerPawnBase* pawn) {
 	Vector& aimPos = tr.m_vEndPos;
 }
 
-void CSurfZonePlugin::CreateZonePoints(const Vector& vecMin, const Vector& vecMax, Vector out[8]) {
+void CSurfZoneService::CreateZonePoints(const Vector& vecMin, const Vector& vecMax, Vector out[8]) {
 	out[0] = vecMin;
 	out[7] = vecMax;
 
@@ -46,14 +53,24 @@ void CSurfZonePlugin::CreateZonePoints(const Vector& vecMin, const Vector& vecMa
 	}
 }
 
-void CSurfZonePlugin::DrawZone(const Vector points[8], bool flat) {
-	static constexpr const int pairs[][2] = {{0, 2}, {2, 6}, {6, 4}, {4, 0}, {0, 1}, {3, 1}, {3, 2}, {3, 7}, {5, 1}, {5, 4}, {6, 7}, {7, 5}};
-
+void CSurfZoneService::CreateZone(const Vector points[8], bool flat, std::vector<CHandle<CBeam>>& out) {
 	for (int i = 0; i < (flat ? 4 : 12); i++) {
-		UTIL::CreateBeam(points[pairs[i][0]], points[pairs[i][1]]);
+		CBeam* beam = (CBeam*)UTIL::CreateBeam(points[m_iZonePairs[i][0]], points[m_iZonePairs[i][1]]);
+		out.emplace_back(beam->GetRefEHandle());
+	}
+}
+
+void CSurfZoneService::UpdateZone(const std::vector<CHandle<CBeam>>& vBeams, const Vector& vecMin, const Vector& vecMax) {
+	Vector points[8];
+	CreateZonePoints(vecMin, vecMax, points);
+	for (int i = 0; i < vBeams.size(); i++) {
+		auto pBeam = vBeams[i].Get();
+		pBeam->Teleport(&points[m_iZonePairs[i][0]], nullptr, nullptr);
+		pBeam->m_vecEndPos(points[m_iZonePairs[i][1]]);
 	}
 }
 
 void CSurfZoneService::Reset() {
 	m_iEditStep = EditStep_None;
+	m_bCanDraw = false;
 }

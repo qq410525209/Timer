@@ -15,15 +15,22 @@ public:
 	using CSurfBaseService::CSurfBaseService;
 
 	ZoneEditStep m_iEditStep = EditStep_None;
+	bool m_bCanDraw {};
+	std::vector<CHandle<CBeam>> m_vecTestBeam;
 
 	virtual void Reset() override;
+
+	static constexpr const int m_iZonePairs[][2] = {{0, 2}, {2, 6}, {6, 4}, {4, 0}, {0, 1}, {3, 1}, {3, 2}, {3, 7}, {5, 1}, {5, 4}, {6, 7}, {7, 5}};
+
+public:
+	void CreateZonePoints(const Vector& vecMin, const Vector& vecMax, Vector out[8]);
+	void CreateZone(const Vector points[8], bool flat, std::vector<CHandle<CBeam>>& out);
+	void UpdateZone(const std::vector<CHandle<CBeam>>& vBeams, const Vector& vecMin, const Vector& vecMax);
 };
 
 class CSurfZonePlugin : CMovementForward, CCoreForward {
 public:
 	void DrawEditZone(CCSPlayerPawnBase* pawn);
-	void CreateZonePoints(const Vector& vecMin, const Vector& vecMax, Vector out[8]);
-	void DrawZone(const Vector points[8], bool flat = false);
 
 private:
 	virtual void OnPluginStart() override;
