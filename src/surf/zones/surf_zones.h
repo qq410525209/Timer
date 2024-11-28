@@ -19,7 +19,6 @@ public:
 	virtual void Reset() override;
 };
 
-
 class CSurfZonePlugin : CMovementForward, CCoreForward {
 public:
 	void DrawEditZone(CCSPlayerPawnBase* pawn);
