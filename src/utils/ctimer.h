@@ -26,7 +26,7 @@ public:
 template<typename... Args>
 class CTimer : public CTimerBase {
 public:
-	using Fn = std::function<f64(Args... args)>;
+	using Fn = std::function<f64(Args...)>;
 
 	Fn m_fn;
 	std::tuple<Args...> m_args;
