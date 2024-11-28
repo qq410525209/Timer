@@ -19,8 +19,9 @@ public:
 	virtual void Reset() override;
 };
 
+
 class CSurfZonePlugin : CMovementForward, CCoreForward {
-private:
+public:
 	void DrawEditZone(CCSPlayerPawnBase* pawn);
 	void CreateZonePoints(const Vector& vecMin, const Vector& vecMax, Vector out[8]);
 	void DrawZone(const Vector points[8], bool flat = false);
@@ -30,3 +31,5 @@ private:
 	virtual void OnPlayerRunCmdPost(CCSPlayerPawn* pawn, const CInButton* buttons, const float (&vec)[3], const float (&angles)[3], const int& weapon,
 									const int& cmdnum, const int& tickcount, const int& seed, const int (&mouse)[2]) override;
 };
+
+CSurfZonePlugin* SurfZonePlugin();

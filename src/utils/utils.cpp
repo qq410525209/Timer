@@ -182,7 +182,7 @@ CBaseEntity* UTIL::FindEntityByClassname(CEntityInstance* start, const char* nam
 	return static_cast<CBaseEntity*>(iter.Next());
 }
 
-CBaseEntity* UTIL::CreateBeam(Vector& from, Vector& to, Color color, float width, CBaseEntity* owner) {
+CBaseEntity* UTIL::CreateBeam(const Vector& from, const Vector& to, Color color, float width, CBaseEntity* owner) {
 	CBeam* beam = (CBeam*)MEM::CALL::CreateEntityByName("beam");
 	if (!beam) {
 		return nullptr;

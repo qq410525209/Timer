@@ -4,6 +4,10 @@
 
 CSurfZonePlugin g_SurfZonePlugin;
 
+CSurfZonePlugin* SurfZonePlugin() {
+	return &g_SurfZonePlugin;
+}
+
 extern void RegisterCommand();
 
 void CSurfZonePlugin::OnPluginStart() {
@@ -46,7 +50,7 @@ void CSurfZonePlugin::DrawZone(const Vector points[8], bool flat) {
 	static constexpr const int pairs[][2] = {{0, 2}, {2, 6}, {6, 4}, {4, 0}, {0, 1}, {3, 1}, {3, 2}, {3, 7}, {5, 1}, {5, 4}, {6, 7}, {7, 5}};
 
 	for (int i = 0; i < (flat ? 4 : 12); i++) {
-		// TE_SetupBeamPoints(points[pairs[i][0]], points[pairs[i][1]]);
+		UTIL::CreateBeam(points[pairs[i][0]], points[pairs[i][1]]);
 	}
 }
 
