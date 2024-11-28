@@ -26,13 +26,13 @@ public:
 template<typename... Args>
 class CTimer : public CTimerBase {
 public:
-	using Fn = f64(__cdecl*)(Args... args);
+	using Fn = std::function<f64(Args... args)>;
 
 	Fn m_fn;
 	std::tuple<Args...> m_args;
 
 	explicit CTimer(bool useRealTime, f32 initialDelay, Fn fn, Args... args)
-		: CTimerBase(initialDelay, useRealTime), m_fn(fn), m_args(std::make_tuple(std::move(args)...)) {}
+		: CTimerBase(initialDelay, useRealTime), m_fn(std::move(fn)), m_args(std::make_tuple(std::move(args)...)) {}
 
 	bool Execute() override {
 		interval = std::apply(m_fn, m_args);
@@ -50,12 +50,12 @@ public:
 template<typename... Args>
 class CFrameAction : public IFrameAction {
 public:
-	using Fn = void(__cdecl*)(Args... args);
+	using Fn = std::function<void(Args...)>;
 
 	Fn m_fn;
 	std::tuple<Args...> m_args;
 
-	explicit CFrameAction(Fn fn, Args... args) : m_fn(fn), m_args(std::make_tuple(std::move(args)...)) {}
+	explicit CFrameAction(Fn fn, Args... args) : m_fn(std::move(fn)), m_args(std::make_tuple(std::move(args)...)) {}
 
 	virtual void Execute() override {
 		std::apply(m_fn, m_args);
@@ -71,10 +71,31 @@ namespace UTIL {
 
 	/* Creates a timer for the given function, the function must return a f64 that represents the interval in seconds; 0 or less to stop the timer */
 	template<typename... Args>
-	CTimer<Args...>* StartTimer(typename CTimer<Args...>::Fn fn, Args... args, f64 initialDelay, bool preserveMapChange = true,
-								bool useRealTime = false) {
-		auto timer = new CTimer<Args...>(useRealTime, initialDelay, fn, args...);
-		TIMER::AddTimer(timer, preserveMapChange);
+	CTimer<Args...>* StartTimer(typename CTimer<Args...>::Fn fn, f64 initialDelay, Args... args) {
+		auto timer = new CTimer<Args...>(false, initialDelay, fn, args...);
+		TIMER::AddTimer(timer);
+		return timer;
+	}
+
+	/* The timer will be removed on map changed */
+	template<typename... Args>
+	CTimer<Args...>* StartTimer_NoMapChange(typename CTimer<Args...>::Fn fn, f64 initialDelay, Args... args) {
+		auto timer = new CTimer<Args...>(false, initialDelay, fn, args...);
+		TIMER::AddTimer(timer, false);
+		return timer;
+	}
+
+	template<typename... Args>
+	CTimer<Args...>* StartTimer_UseRealTime(typename CTimer<Args...>::Fn fn, f64 initialDelay, Args... args) {
+		auto timer = new CTimer<Args...>(true, initialDelay, fn, args...);
+		TIMER::AddTimer(timer);
+		return timer;
+	}
+
+	template<typename... Args>
+	CTimer<Args...>* StartTimer_UseRealTimeWithNoMapChange(typename CTimer<Args...>::Fn fn, f64 initialDelay, Args... args) {
+		auto timer = new CTimer<Args...>(true, initialDelay, fn, args...);
+		TIMER::AddTimer(timer, false);
 		return timer;
 	}
 
