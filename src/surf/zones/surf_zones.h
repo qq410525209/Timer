@@ -33,6 +33,7 @@ public:
 	void CreateZone3D(const Vector points[8], std::vector<CHandle<CBeam>>& out);
 	void UpdateZone2D(const std::vector<CHandle<CBeam>>& vBeams, const Vector& vecMin, const Vector& vecMax);
 	void UpdateZone3D(const std::vector<CHandle<CBeam>>& vBeams, const Vector& vecMin, const Vector& vecMax);
+	CBaseEntity* CreateNormalZone(const Vector& vecMins, const Vector& vecMaxs);
 };
 
 class CSurfZonePlugin : CMovementForward, CCoreForward {

@@ -151,7 +151,7 @@ class CBaseModelEntity : public CBaseEntity {
 public:
 	DECLARE_SCHEMA_CLASS(CBaseModelEntity);
 
-	SCHEMA_FIELD(CCollisionProperty, m_Collision);
+	SCHEMA_FIELD_POINTER(CCollisionProperty, m_Collision);
 	SCHEMA_FIELD(Color, m_clrRender);
 	SCHEMA_FIELD(uint8, m_nRenderMode);
 	SCHEMA_FIELD(float, m_fadeMinDist);
@@ -189,4 +189,16 @@ public:
 
 	SCHEMA_FIELD(float, m_fWidth);
 	SCHEMA_FIELD(Vector, m_vecEndPos);
+};
+
+class CBaseToggle : public CBaseModelEntity {
+public:
+	DECLARE_SCHEMA_CLASS(CBaseToggle);
+
+	SCHEMA_FIELD(float, m_flWait);
+};
+
+class CBaseTrigger : public CBaseToggle {
+public:
+	DECLARE_SCHEMA_CLASS(CBaseTrigger);
 };

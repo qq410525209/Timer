@@ -112,6 +112,7 @@ inline constexpr uint64_t hash_64_fnv1a_const(const char* const str, const uint6
 					if (!IsStruct) { \
 						((CEntityInstance*)this)->NetworkStateChanged(m_key.offset, arrayIndex, -1); \
 					} else { \
+						CALL_VIRTUAL(void, 1, this, m_key.offset + varOffset, 0xFFFFFFFF, 0xFFFFFFFF); \
 					} \
 				} \
 			} \

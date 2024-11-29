@@ -2,13 +2,16 @@
 #include <utils/print.h>
 #include <utils/utils.h>
 
+extern void RegisterCommand();
+extern void Hook_OnStartTouchPost(CBaseEntity* pOther);
+extern void Hook_OnTouchPost(CBaseEntity* pOther);
+extern void Hook_OnEndTouchPost(CBaseEntity* pOther);
+
 CSurfZonePlugin g_SurfZonePlugin;
 
 CSurfZonePlugin* SurfZonePlugin() {
 	return &g_SurfZonePlugin;
 }
-
-extern void RegisterCommand();
 
 void CSurfZonePlugin::OnPluginStart() {
 	RegisterCommand();
@@ -25,7 +28,7 @@ void CSurfZonePlugin::OnPlayerRunCmdPost(CCSPlayerPawn* pawn, const CInButton* b
 }
 
 void CSurfZonePlugin::OnResourcePrecache(IEntityResourceManifest* pResourceManifest) {
-	pResourceManifest->AddResource("models/props/cs_office/vending_machine.mdl");
+	pResourceManifest->AddResource("models/props/cs_office/vending_machine.vmdl");
 }
 
 void CSurfZoneService::EditZone(CCSPlayerPawnBase* pawn, const CInButton* buttons) {
@@ -42,6 +45,7 @@ void CSurfZoneService::EditZone(CCSPlayerPawnBase* pawn, const CInButton* button
 				case EditStep_First: {
 					this->m_vecEditingMins = aim;
 					Vector points2D[4] = {aim};
+					this->m_vTestBeam.clear();
 					this->CreateZone2D(points2D, this->m_vTestBeam);
 					break;
 				}
@@ -64,6 +68,7 @@ void CSurfZoneService::EditZone(CCSPlayerPawnBase* pawn, const CInButton* button
 					UTIL::PrintChat(pController, "Confirmed!\n");
 					UTIL::PrintChat(pController, "mins: %f %f %f\n", this->m_vecEditingMins.x, this->m_vecEditingMins.y, this->m_vecEditingMins.z);
 					UTIL::PrintChat(pController, "maxs: %f %f %f\n", this->m_vecEditingMaxs.x, this->m_vecEditingMaxs.y, this->m_vecEditingMaxs.z);
+					this->CreateNormalZone(this->m_vecEditingMins, this->m_vecEditingMaxs);
 					this->Reset();
 					return;
 				}
@@ -131,8 +136,10 @@ void CSurfZoneService::UpdateZone2D(const std::vector<CHandle<CBeam>>& vBeams, c
 	CreatePoints2D(vecMin, vecMax, points);
 	for (int i = 0; i < vBeams.size(); i++) {
 		auto pBeam = vBeams[i].Get();
-		pBeam->Teleport(&points[m_iZonePairs2D[i][0]], nullptr, nullptr);
-		pBeam->m_vecEndPos(points[m_iZonePairs2D[i][1]]);
+		auto& vecStart = points[m_iZonePairs2D[i][0]];
+		auto& vecEnd = points[m_iZonePairs2D[i][1]];
+		pBeam->Teleport(&vecStart, nullptr, nullptr);
+		pBeam->m_vecEndPos(vecEnd);
 	}
 }
 
@@ -141,12 +148,71 @@ void CSurfZoneService::UpdateZone3D(const std::vector<CHandle<CBeam>>& vBeams, c
 	CreatePoints3D(vecMin, vecMax, points);
 	for (int i = 0; i < vBeams.size(); i++) {
 		auto pBeam = vBeams[i].Get();
-		pBeam->Teleport(&points[m_iZonePairs3D[i][0]], nullptr, nullptr);
-		pBeam->m_vecEndPos(points[m_iZonePairs3D[i][1]]);
+		auto& vecStart = points[m_iZonePairs3D[i][0]];
+		auto& vecEnd = points[m_iZonePairs3D[i][1]];
+		pBeam->Teleport(&vecStart, nullptr, nullptr);
+		pBeam->m_vecEndPos(vecEnd);
 	}
+}
+
+CBaseEntity* CSurfZoneService::CreateNormalZone(const Vector& vecMins, const Vector& vecMaxs) {
+	auto pZone = (CBaseTrigger*)MEM::CALL::CreateEntityByName("trigger_multiple");
+	if (!pZone) {
+		SURF_ASSERT(false);
+		return nullptr;
+	}
+
+	Vector vecCenter = (vecMins + vecMaxs) / 2.0;
+
+	CEntityKeyValues* pKV = new CEntityKeyValues();
+	pKV->SetVector("origin", vecCenter);
+	pKV->SetInt("spawnflags", 1);
+	// pKV->SetString("model", "models/props/cs_office/vending_machine.vmdl");
+	pKV->SetString("targetname", "surf_zone_1");
+
+	pZone->DispatchSpawn(pKV);
+
+	pZone->Teleport(&vecCenter, nullptr, nullptr);
+	// this->GetPlayer()->GetPlayerPawn()->Teleport(&vecCenter, nullptr, nullptr);
+
+	// pZone->m_fEffects(32);
+	// pZone->NetworkStateChanged();
+	// pZone->NetworkStateChanged(0x3d8);
+	// pZone->NetworkStateChanged(0x600);
+	// pZone->m_pCollision()->m_vecMins(vecMins);
+	// pZone->NetworkStateChanged(0x600 + 0x40);
+	//
+	// pZone->m_pCollision()->m_vecMaxs(vecMaxs);
+	// pZone->NetworkStateChanged(0x600 + 0x4c);
+
+	// pZone->m_Collision()->m_vecMins(vecMins);
+	// pZone->m_Collision()->m_vecMaxs(vecMaxs);
+
+	auto fn = libmem::SignScan("48 89 5C 24 ? 48 89 74 24 ? 57 48 83 EC ? F2 0F 10 02 49 8B F0", LIB::server);
+	auto ret = MEM::SDKCall<void*>(fn, pZone->m_Collision(), &vecMaxs, &vecMins);
+
+	// pZone->m_pCollision()->m_CollisionGroup(2);
+	// pZone->m_pCollision()->m_collisionAttribute().m_nCollisionGroup(2);
+	pZone->m_pCollision()->m_nSolidType(SOLID_VPHYSICS);
+	pZone->m_pCollision()->m_usSolidFlags(FSOLID_TRIGGER | FSOLID_TRIGGER_TOUCH_PLAYER);
+	pZone->m_flWait(0.0f);
+	// pZone->AcceptInput("Enable");
+	pZone->CollisionRulesChanged();
+	//
+	//*(void**)((char*)pZone + 0x2a8) = &Hook_OnStartTouchPost;
+
+	static int iStartTouchOffset = GAMEDATA::GetOffset("CBaseEntity::StartTouch");
+	libmem::VmtHook(pZone, iStartTouchOffset, Hook_OnStartTouchPost);
+
+	static int iTouchOffset = GAMEDATA::GetOffset("CBaseEntity::Touch");
+	libmem::VmtHook(pZone, iTouchOffset, Hook_OnTouchPost);
+
+	static int iEndTouchOffset = GAMEDATA::GetOffset("CBaseEntity::EndTouch");
+	libmem::VmtHook(pZone, iEndTouchOffset, Hook_OnEndTouchPost);
 }
 
 void CSurfZoneService::Reset() {
 	m_iEditStep = EditStep_None;
 	m_bEditing = false;
+	m_vTestBeam.clear();
 }

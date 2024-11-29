@@ -17,6 +17,7 @@ CCMD_CALLBACK(Command_EditZone) {
 	UTIL::GetPlayerAiming(pController->GetPlayerPawn(), tr);
 	Vector& aimPos = tr.m_vEndPos;
 	auto pBeam = UTIL::CreateBeam(tr.m_vEndPos, tr.m_vEndPos);
+	pZoneService->m_vTestBeam.clear();
 	pZoneService->m_vTestBeam.emplace_back(pBeam->GetRefEHandle());
 }
 

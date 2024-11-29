@@ -25,6 +25,9 @@ class GameSessionConfiguration_t {};
 #define HOOK_VMT(gdOffsetKey, pModule, fnHook, fnTrampoline) \
 	SURF_ASSERT(MEM::VmtHookEx(GAMEDATA::GetOffset(gdOffsetKey), pModule.get(), gdOffsetKey, fnHook, fnTrampoline));
 
+#define DETOUR_VMT(gdOffsetKey, pModule, fnHook, fnTrampoline) \
+	SURF_ASSERT(MEM::VmtHookEx(GAMEDATA::GetOffset(gdOffsetKey), pModule.get(), gdOffsetKey, fnHook, fnTrampoline, true));
+
 namespace MEM {
 	namespace CALL {
 		void SwitchTeam(CCSPlayerController* controller, int team);

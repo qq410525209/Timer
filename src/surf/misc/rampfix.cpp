@@ -82,7 +82,7 @@ bool CRampfix::OnTryPlayerMove(CCSPlayer_MovementServices* ms, CMoveData* mv, Ve
 	}
 
 	CTraceFilterPlayerMovementCS filter;
-	MEM::CALL::InitPlayerMovementTraceFilter(filter, pawn, pawn->m_Collision().m_collisionAttribute().m_nInteractsWith(),
+	MEM::CALL::InitPlayerMovementTraceFilter(filter, pawn, pawn->m_Collision()->m_collisionAttribute().m_nInteractsWith(),
 											 COLLISION_GROUP_PLAYER_MOVEMENT);
 
 	bool potentiallyStuck {};
@@ -295,7 +295,7 @@ bool CRampfix::OnCategorizePosition(CCSPlayer_MovementServices* ms, CMoveData* m
 	}
 
 	CTraceFilterPlayerMovementCS filter;
-	MEM::CALL::InitPlayerMovementTraceFilter(filter, pawn, pawn->m_Collision().m_collisionAttribute().m_nInteractsWith(),
+	MEM::CALL::InitPlayerMovementTraceFilter(filter, pawn, pawn->m_Collision()->m_collisionAttribute().m_nInteractsWith(),
 											 COLLISION_GROUP_PLAYER_MOVEMENT);
 
 	trace_t trace;
