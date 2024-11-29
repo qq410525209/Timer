@@ -21,9 +21,12 @@ void CSurfZonePlugin::OnPlayerRunCmdPost(CCSPlayerPawn* pawn, const CInButton* b
 		return;
 	}
 
-	auto& pZoneService = player->m_pZoneService;
-	auto& iEditStep = pZoneService->m_iEditStep;
-	if (pZoneService->m_bEditing) {
+	player->m_pZoneService->EditZone(pawn, buttons);
+}
+
+void CSurfZoneService::EditZone(CCSPlayerPawnBase* pawn, const CInButton* buttons) {
+	auto& iEditStep = this->m_iEditStep;
+	if (this->m_bEditing) {
 		trace_t tr;
 		UTIL::GetPlayerAiming(pawn, tr);
 		Vector& aim = tr.m_vEndPos;
@@ -33,56 +36,54 @@ void CSurfZonePlugin::OnPlayerRunCmdPost(CCSPlayerPawn* pawn, const CInButton* b
 
 			switch (iEditStep) {
 				case EditStep_First: {
-					pZoneService->m_vecEditingMins = aim;
+					this->m_vecEditingMins = aim;
 					Vector points2D[4] = {aim};
-					pZoneService->CreateZone2D(points2D, pZoneService->m_vTestBeam);
+					this->CreateZone2D(points2D, this->m_vTestBeam);
 					break;
 				}
 				case EditStep_Second: {
-					pZoneService->m_vecEditingMaxs = aim;
+					this->m_vecEditingMaxs = aim;
 					Vector points3D[8];
-					pZoneService->CreatePoints3D(pZoneService->m_vecEditingMins, aim, points3D);
-					pZoneService->m_vTestBeam.clear();
-					pZoneService->CreateZone3D(points3D, pZoneService->m_vTestBeam);
+					this->CreatePoints3D(this->m_vecEditingMins, aim, points3D);
+					this->m_vTestBeam.clear();
+					this->CreateZone3D(points3D, this->m_vTestBeam);
 					break;
 				}
 				case EditStep_Third: {
-					pZoneService->m_vecEditingMaxs.z = aim.z;
-					auto pController = player->GetController();
+					this->m_vecEditingMaxs.z = aim.z;
+					auto pController = pawn->GetController();
 					UTIL::PrintChat(pController, "The last step! Confirmed?");
 					break;
 				}
 				case EditStep_Final: {
-					auto pController = player->GetController();
+					auto pController = pawn->GetController();
 					UTIL::PrintChat(pController, "Confirmed!\n");
-					UTIL::PrintChat(pController, "mins: %f %f %f\n", pZoneService->m_vecEditingMins.x, pZoneService->m_vecEditingMins.y,
-									pZoneService->m_vecEditingMins.z);
-					UTIL::PrintChat(pController, "maxs: %f %f %f\n", pZoneService->m_vecEditingMaxs.x, pZoneService->m_vecEditingMaxs.y,
-									pZoneService->m_vecEditingMaxs.z);
-					pZoneService->Reset();
+					UTIL::PrintChat(pController, "mins: %f %f %f\n", this->m_vecEditingMins.x, this->m_vecEditingMins.y, this->m_vecEditingMins.z);
+					UTIL::PrintChat(pController, "maxs: %f %f %f\n", this->m_vecEditingMaxs.x, this->m_vecEditingMaxs.y, this->m_vecEditingMaxs.z);
+					this->Reset();
 					return;
 				}
 			}
 		}
 
-		switch (pZoneService->m_iEditStep) {
+		switch (this->m_iEditStep) {
 			case EditStep_None: {
-				auto pBeam = pZoneService->m_vTestBeam[0].Get();
+				auto pBeam = this->m_vTestBeam[0].Get();
 				pBeam->Teleport(&aim, nullptr, nullptr);
 				pBeam->m_vecEndPos(aim);
 				break;
 			}
 			case EditStep_First: {
-				pZoneService->UpdateZone2D(pZoneService->m_vTestBeam, pZoneService->m_vecEditingMins, aim);
+				this->UpdateZone2D(this->m_vTestBeam, this->m_vecEditingMins, aim);
 				break;
 			}
 			case EditStep_Second: {
-				pZoneService->m_vecEditingMaxs.z = aim.z;
-				pZoneService->UpdateZone3D(pZoneService->m_vTestBeam, pZoneService->m_vecEditingMins, pZoneService->m_vecEditingMaxs);
+				this->m_vecEditingMaxs.z = aim.z;
+				this->UpdateZone3D(this->m_vTestBeam, this->m_vecEditingMins, this->m_vecEditingMaxs);
 				break;
 			}
 			case EditStep_Third: {
-				pZoneService->UpdateZone3D(pZoneService->m_vTestBeam, pZoneService->m_vecEditingMins, pZoneService->m_vecEditingMaxs);
+				this->UpdateZone3D(this->m_vTestBeam, this->m_vecEditingMins, this->m_vecEditingMaxs);
 				break;
 			}
 		}

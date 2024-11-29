@@ -26,6 +26,7 @@ public:
 	static constexpr const int m_iZonePairs3D[][2] = {{0, 2}, {2, 6}, {6, 4}, {4, 0}, {0, 1}, {3, 1}, {3, 2}, {3, 7}, {5, 1}, {5, 4}, {6, 7}, {7, 5}};
 
 public:
+	void EditZone(CCSPlayerPawnBase* pawn, const CInButton* buttons);
 	void CreatePoints2D(const Vector& vecMin, const Vector& vecMax, Vector out[4]);
 	void CreatePoints3D(const Vector& vecMin, const Vector& vecMax, Vector out[8]);
 	void CreateZone2D(const Vector points[4], std::vector<CHandle<CBeam>>& out);
