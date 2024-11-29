@@ -24,6 +24,10 @@ void CSurfZonePlugin::OnPlayerRunCmdPost(CCSPlayerPawn* pawn, const CInButton* b
 	player->m_pZoneService->EditZone(pawn, buttons);
 }
 
+void CSurfZonePlugin::OnResourcePrecache(IEntityResourceManifest* pResourceManifest) {
+	pResourceManifest->AddResource("models/props/cs_office/vending_machine.mdl");
+}
+
 void CSurfZoneService::EditZone(CCSPlayerPawnBase* pawn, const CInButton* buttons) {
 	auto& iEditStep = this->m_iEditStep;
 	if (this->m_bEditing) {

@@ -8,6 +8,7 @@
 #include <core/gamedata.h>
 #include <core/cvarmanager.h>
 #include <core/logger.h>
+#include <core/gamesystem.h>
 
 #include <movement/movement.h>
 
@@ -33,6 +34,7 @@ bool CSurfPlugin::Load(PluginId id, ISmmAPI* ismm, char* error, size_t maxlen, b
 	MEM::MODULE::Setup();
 	MEM::SetupHooks();
 	MOVEMENT::SetupHooks();
+	GS::Setup();
 
 	FORWARD_POST(CCoreForward, OnPluginStart);
 

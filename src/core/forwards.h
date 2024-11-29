@@ -6,6 +6,7 @@
 #include <sdk/usercmd.h>
 #include <sdk/entity/ccsplayerpawn.h>
 #include <sdk/entity/services.h>
+#include <sdk/entity/entityresource.h>
 
 #define FORWARD_POST(forwardClass, forwardFn, ...) \
 	for (auto p = forwardClass::m_pFirst; p; p = p->m_pNext) { \
@@ -50,4 +51,6 @@ public:
 	}
 
 	virtual void OnWeaponDropPost(CCSPlayer_WeaponServices* pService, CBasePlayerWeapon* pWeapon, const int& iDropType, const Vector* targetPos) {}
+
+	virtual void OnResourcePrecache(IEntityResourceManifest* pResourceManifest) {};
 };

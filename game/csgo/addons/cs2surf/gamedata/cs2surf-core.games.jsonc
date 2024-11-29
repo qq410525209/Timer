@@ -99,6 +99,8 @@
 				"opcode_length": 7,
 				"dereference": true
 			}
+		},
+		"GetGameSystemFactory": {
 		}
 	},
 	"Signature": {
@@ -150,7 +152,7 @@
 		"CBaseEntity::CreateEntityByName": {
 			"library": "server",
 			"windows": "48 83 EC 48 C6 44 24 30 00",
-			"linux": "48 8D 05 2A 2A 2A 2A 55 48 89 FA"
+			"linux": "48 8D 05 ? ? ? ? 55 48 89 FA"
 		},
 		// chicken
 		// classname
@@ -171,6 +173,11 @@
 			"library": "server",
 			"windows": "48 89 5C 24 ? 48 89 74 24 ? 57 48 83 EC ? 49 8B F0 48 8B D9 48 8B 0D",
 			"linux": "55 48 89 E5 41 57 49 89 FF 41 56 48 8D 7D C0"
+		},
+		"IGameSystem_InitAllSystems_pFirst": {
+			"library": "server",
+			"windows": "48 8B 3D ? ? ? ? 48 85 FF 0F 84 ? ? ? ? BE",
+			"linux": "4C 8B 35 ? ? ? ? 4D 85 F6 75 ? E9"
 		},
 		// Client cmd out of sync (delta %i)
 		// sv_runcmds xref
