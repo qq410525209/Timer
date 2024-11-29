@@ -101,6 +101,19 @@
 			}
 		},
 		"GetGameSystemFactory": {
+			"signature": "IGameSystem_InitAllSystems_pFirst",
+			"windows": {
+				"offset_func": 0,
+				"offset_opcode": 3,
+				"opcode_length": 7,
+				"dereference": false
+			},
+			"linux": {
+				"offset_func": 0,
+				"offset_opcode": 3,
+				"opcode_length": 7,
+				"dereference": false
+			}
 		}
 	},
 	"Signature": {
