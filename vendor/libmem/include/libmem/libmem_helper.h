@@ -45,7 +45,11 @@ namespace libmem {
 		}
 
 		Module mod;
-		std::vector<libmem::Module> modules = EnumModules().value();
+		std::vector<libmem::Module> modules;
+		auto value = EnumModules();
+		if (value) {
+			modules = value.value();
+		}
 
 		// dont get our own server.dll module.
 		constexpr const char* libServer = MODULE_PREFIX "server" MODULE_EXT;

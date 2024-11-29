@@ -104,6 +104,7 @@ namespace LIB {
 	constexpr inline const char* soundsystem = FILLMODULE("soundsystem");
 	constexpr inline const char* resourcesystem = FILLMODULE("resourcesystem");
 	constexpr inline const char* steamnetworkingsockets = FILLMODULE("steamnetworkingsockets");
+	constexpr inline const char* worldrenderer = FILLMODULE("worldrenderer");
 } // namespace LIB
 
 #pragma endregion
