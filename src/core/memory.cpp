@@ -77,6 +77,10 @@ void MEM::CALL::DispatchSpawn(CBaseEntity* pEnt, CEntityKeyValues* pInitKeyValue
 	CALL_SIG("CBaseEntity::DispatchSpawn", DispatchSpawn, pEnt, pInitKeyValue);
 }
 
+CBaseTrigger* MEM::CALL::CreateAABBTrigger(const Vector& center, const Vector& mins, const Vector& maxs) {
+	CALL_SIG("CBaseTrigger::CreateAABBTrigger", CreateAABBTrigger, &center, &mins, &maxs);
+}
+
 #pragma endregion
 
 #pragma region hooks

@@ -12,6 +12,7 @@ class CCSPlayerController;
 class CCSPlayerPawn;
 class CEntityInstance;
 class CEntityKeyValues;
+class CBaseTrigger;
 
 class GameSessionConfiguration_t {};
 
@@ -42,6 +43,7 @@ namespace MEM {
 										 variant_t* value, int nOutputID);
 		CBaseEntity* CreateEntityByName(const char* pszName);
 		void DispatchSpawn(CBaseEntity* pEnt, CEntityKeyValues* pInitKeyValue);
+		CBaseTrigger* CreateAABBTrigger(const Vector& center, const Vector& mins, const Vector& maxs);
 	} // namespace CALL
 
 	namespace MODULE {

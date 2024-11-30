@@ -155,10 +155,7 @@ CBaseEntity* CSurfZoneService::CreateNormalZone(const Vector& vecMins, const Vec
 	Vector vecCenter = (vecMins + vecMaxs) / 2.0;
 	Vector mins(vecMins), maxs(vecMaxs);
 	FillBoxMinMax(mins, maxs);
-	auto testFN = libmem::SignScan("48 8B C4 48 89 50 ? 55 41 55", LIB::server);
-	auto pZone = MEM::SDKCall<CBaseTrigger*>(testFN, &vecCenter, &mins, &maxs);
-
-	// auto pZone = (CBaseTrigger*)MEM::CALL::CreateEntityByName("trigger_physics");
+	auto pZone = MEM::CALL::CreateAABBTrigger(vecCenter, mins, maxs);
 	if (!pZone) {
 		SURF_ASSERT(false);
 		return nullptr;
@@ -173,39 +170,9 @@ CBaseEntity* CSurfZoneService::CreateNormalZone(const Vector& vecMins, const Vec
 	static int iEndTouchOffset = GAMEDATA::GetOffset("CBaseEntity::EndTouch");
 	libmem::VmtHook(pZone, iEndTouchOffset, Hook_OnEndTouchPost);
 
+	pZone->m_pEntity->m_name = GameEntitySystem()->AllocPooledString("surf_zone");
+
 	return pZone;
-
-	// CEntityKeyValues* pKV = new CEntityKeyValues();
-	// pKV->SetVector("origin", vecCenter);
-	// pKV->SetInt("spawnflags", 1);
-	//// pKV->SetString("model", "models/props/cs_office/vending_machine.vmdl");
-	// pKV->SetString("targetname", "surf_zone_1");
-
-	// pZone->DispatchSpawn(pKV);
-
-	static auto setmodel = libmem::SignScan("48 89 5C 24 ? 48 89 7C 24 ? 55 48 8B EC 48 83 EC ? 48 8B F9 4C 8B C2", LIB::server);
-	MEM::SDKCall<void*>(setmodel, pZone, "models/props/cs_office/vending_machine.vmdl");
-
-	pZone->Teleport(&vecCenter, nullptr, nullptr);
-	this->GetPlayer()->GetPlayerPawn()->Teleport(&vecCenter, nullptr, nullptr);
-
-	// auto fn = libmem::SignScan("48 81 C1 00 06 00 00 E9 04 8F 4A 00", LIB::server);
-	// auto ret = MEM::SDKCall<void*>(fn, pZone, &testMins, &testMaxs);
-
-	/*pZone->m_Collision()->m_nSolidType(SOLID_BSP);
-	pZone->m_Collision()->m_CollisionGroup(5);
-	pZone->m_Collision()->m_collisionAttribute().m_nCollisionGroup(5);
-	pZone->m_Collision()->m_vecSpecifiedSurroundingMaxs(vecMaxs);
-	pZone->m_Collision()->m_vecSpecifiedSurroundingMins(vecMins);
-	pZone->m_Collision()->m_vecSurroundingMaxs(vecMaxs);
-	pZone->m_Collision()->m_vecSurroundingMins(vecMins);
-	pZone->m_Collision()->m_nSurroundType(USE_OBB_COLLISION_BOUNDS);
-	pZone->m_Collision()->m_usSolidFlags(FSOLID_TRIGGER);*/
-
-	// pZone->m_flWait(0.0f);
-	pZone->AcceptInput("Enable");
-	// pZone->CollisionRulesChanged();
-	// pZone->NetworkStateChanged();
 }
 
 void CSurfZoneService::FillBoxMinMax(Vector& vecMin, Vector& vecMax) {

@@ -6,8 +6,7 @@ void Hook_OnStartTouchPost(CBaseEntity* pSelf, CBaseEntity* pOther) {
 	UTIL::PrintChatAll("start touch!\n");
 }
 
-void Hook_OnTouchPost(CBaseEntity* pSelf, CBaseEntity* pOther) {
-}
+void Hook_OnTouchPost(CBaseEntity* pSelf, CBaseEntity* pOther) {}
 
 void Hook_OnEndTouchPost(CBaseEntity* pSelf, CBaseEntity* pOther) {
 	UTIL::PrintChatAll("end touch!\n");
