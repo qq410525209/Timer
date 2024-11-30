@@ -36,7 +36,7 @@ GS_EVENT_MEMBER(CGameSystem, BuildGameSessionManifest) {
 
 void CGameSystem::Shutdown() {
 	LOG::Print("CGameSystem::Shutdown\n");
-	delete sm_Factory;
+	g_pMemAlloc->Free(sm_Factory);
 }
 
 void CGameSystem::SetGameSystemGlobalPtrs(void* pValue) {

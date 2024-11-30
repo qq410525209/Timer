@@ -110,14 +110,9 @@ CBaseEntity* CSurfZoneService::CreateNormalZone(const Vector& vecMins, const Vec
 		return nullptr;
 	}
 
-	static int iStartTouchOffset = GAMEDATA::GetOffset("CBaseEntity::StartTouch");
-	libmem::VmtHook(pZone, iStartTouchOffset, Hook_OnStartTouchPost);
-
-	static int iTouchOffset = GAMEDATA::GetOffset("CBaseEntity::Touch");
-	libmem::VmtHook(pZone, iTouchOffset, Hook_OnTouchPost);
-
-	static int iEndTouchOffset = GAMEDATA::GetOffset("CBaseEntity::EndTouch");
-	libmem::VmtHook(pZone, iEndTouchOffset, Hook_OnEndTouchPost);
+	MEM::SDKHOOK::StartTouchPost(pZone, Hook_OnStartTouchPost);
+	MEM::SDKHOOK::TouchPost(pZone, Hook_OnTouchPost);
+	MEM::SDKHOOK::EndTouchPost(pZone, Hook_OnEndTouchPost);
 
 	pZone->m_pEntity->m_name = GameEntitySystem()->AllocPooledString("surf_zone");
 

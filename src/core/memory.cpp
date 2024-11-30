@@ -352,3 +352,18 @@ void MEM::MODULE::Setup() {
 }
 
 #pragma endregion
+
+void MEM::SDKHOOK::StartTouchPost(CBaseEntity* pEnt, HookTouch_t pFn) {
+	static int iStartTouchOffset = GAMEDATA::GetOffset("CBaseEntity::StartTouch");
+	libmem::VmtHook(pEnt, iStartTouchOffset, pFn);
+}
+
+void MEM::SDKHOOK::TouchPost(CBaseEntity* pEnt, HookTouch_t pFn) {
+	static int iTouchOffset = GAMEDATA::GetOffset("CBaseEntity::Touch");
+	libmem::VmtHook(pEnt, iTouchOffset, pFn);
+}
+
+void MEM::SDKHOOK::EndTouchPost(CBaseEntity* pEnt, HookTouch_t pFn) {
+	static int iEndTouchOffset = GAMEDATA::GetOffset("CBaseEntity::EndTouch");
+	libmem::VmtHook(pEnt, iEndTouchOffset, pFn);
+}

@@ -6,6 +6,7 @@ set(SDK_ROOT ${CMAKE_CURRENT_LIST_DIR}/hl2sdk-cs2 CACHE STRING "SDK root directo
 set(SDK_CONVAR ${SDK_ROOT}/tier1/convar.cpp CACHE STRING "SDK convar source")
 set(SDK_MEMOVERRIDE ${SDK_ROOT}/public/tier0/memoverride.cpp CACHE STRING "SDK memory override source")
 set(MM_ROOT ${CMAKE_CURRENT_LIST_DIR}/metamod-source CACHE STRING "Metamod root directory")
+set(DUMP_ROOT ${CMAKE_CURRENT_LIST_DIR}/dumps CACHE STRING "Dumps directory")
 
 if(WIN32)
 	add_definitions(-DCOMPILER_MSVC -DCOMPILER_MSVC64 -D_WIN32 -D_WINDOWS -D_CRT_SECURE_NO_WARNINGS=1 -D_CRT_SECURE_NO_DEPRECATE=1 -D_CRT_NONSTDC_NO_DEPRECATE=1 -D_HAS_EXCEPTIONS=0)
@@ -74,14 +75,19 @@ add_definitions(-DMETA_IS_SOURCE2)
 
 if(WIN32)
 	file(GLOB SHARED_LIBS
-		"${SDK_ROOT}/lib/public/win64/*.lib"
 		"${SDK_ROOT}/lib/public/win64/2015/*.lib"
+		"${SDK_ROOT}/lib/public/win64/interfaces.lib"
+		"${SDK_ROOT}/lib/public/win64/mathlib.lib"
+		"${SDK_ROOT}/lib/public/win64/steam_api64.lib"
+		"${SDK_ROOT}/lib/public/win64/tier1.lib"
+		"${DUMP_ROOT}/lib/tier0/*.lib"
 	)
 else()
 	file(GLOB SHARED_LIBS
 		"${SDK_ROOT}/lib/linux64/*.a"
-		"${SDK_ROOT}/lib/linux64/*.so"
+		"${SDK_ROOT}/lib/linux64/libsteam_api.so"
 		"${SDK_ROOT}/lib/linux64/release/*.a"
+		"${DUMP_ROOT}/lib/tier0/*.so"
 	)
 endif()
 
