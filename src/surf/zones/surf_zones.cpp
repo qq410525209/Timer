@@ -7,41 +7,14 @@ extern void Hook_OnStartTouchPost(CBaseEntity* pSelf, CBaseEntity* pOther);
 extern void Hook_OnTouchPost(CBaseEntity* pSelf, CBaseEntity* pOther);
 extern void Hook_OnEndTouchPost(CBaseEntity* pSelf, CBaseEntity* pOther);
 
-Vector g_testVec1;
-Vector g_testVec2;
-
 CSurfZonePlugin g_SurfZonePlugin;
 
 CSurfZonePlugin* SurfZonePlugin() {
 	return &g_SurfZonePlugin;
 }
 
-void* g_tram1;
-
-void* TEST(CCollisionProperty* a1, Vector* a2, Vector* a3) {
-	auto outer = a1->GetOuter();
-	if (strstr(outer->GetClassname(), "trigger_")) {
-		return nullptr;
-	}
-	auto ret = MEM::SDKCall<void*>(g_tram1, a1, a2, a3);
-	return ret;
-}
-
 void CSurfZonePlugin::OnPluginStart() {
 	RegisterCommand();
-
-	// auto fn = libmem::SignScan("48 89 5C 24 ? 48 89 74 24 ? 57 48 83 EC ? F2 0F 10 02 49 8B F0", LIB::server);
-	// libmem::HookFunc(fn, TEST, g_tram1);
-
-	// auto fn = libmem::SignScan("40 53 48 83 EC ? 48 8B 49 ? 48 8B DA 48 8B 01 FF 50 ? 48 85 C0 74 ? 48 8B 0B", LIB::server);
-	// libmem::HookFunc(fn, TEST, g_tram1);
-
-	/*auto fn = libmem::SignScan("48 89 5C 24 ? 48 89 7C 24 ? 55 48 8B EC 48 83 EC ? 48 8B F9 4C 8B C2", LIB::server);
-	libmem::HookFunc(fn, TEST, g_tram1);*/
-	/*auto fn4 = libmem::SignScan("48 8D 55 ? 48 89 5D ? E8 ? ? ? ? 48 C7 45", LIB::server);
-	for (int i = 0; i < 13; i++) {
-		libmem::StoreToAddress((void*)((char*)fn4 + i), 0x90);
-	}*/
 }
 
 void CSurfZonePlugin::OnPlayerRunCmdPost(CCSPlayerPawn* pawn, const CInButton* buttons, const float (&vec)[3], const float (&angles)[3],
@@ -52,18 +25,6 @@ void CSurfZonePlugin::OnPlayerRunCmdPost(CCSPlayerPawn* pawn, const CInButton* b
 	}
 
 	player->m_pZoneService->EditZone(pawn, buttons);
-}
-
-#include <core/logger.h>
-
-void CSurfZonePlugin::OnResourcePrecache(IEntityResourceManifest* pResourceManifest) {
-	pResourceManifest->AddResource("models/props/cs_office/vending_machine.vmdl");
-	/*void* ret = nullptr;
-	const char* test = "models/props/cs_office/vending_machine.vmdl";
-	auto ret2 = vmt::CallVirtual<void*>(12, IFACE::pGameModelInfo, IFACE::pGameModelInfo, ret, test);
-	if (ret) {
-		LOG::Print("fuckl");
-	}*/
 }
 
 void CSurfZoneService::EditZone(CCSPlayerPawnBase* pawn, const CInButton* buttons) {
@@ -190,14 +151,12 @@ void CSurfZoneService::UpdateZone3D(const std::vector<CHandle<CBeam>>& vBeams, c
 	}
 }
 
-#include <utils/ctimer.h>
-
 CBaseEntity* CSurfZoneService::CreateNormalZone(const Vector& vecMins, const Vector& vecMaxs) {
 	Vector vecCenter = (vecMins + vecMaxs) / 2.0;
-	auto testMins = Vector(-100.0f, -100.5417f, -100.000019f);
-	auto testMaxs = Vector(100.000029f, 100.000011f, 100.000664f);
+	Vector mins(vecMins), maxs(vecMaxs);
+	FillBoxMinMax(mins, maxs);
 	auto testFN = libmem::SignScan("48 8B C4 48 89 50 ? 55 41 55", LIB::server);
-	auto pZone = MEM::SDKCall<CBaseTrigger*>(testFN, &vecCenter, &testMins, &testMaxs);
+	auto pZone = MEM::SDKCall<CBaseTrigger*>(testFN, &vecCenter, &mins, &maxs);
 
 	// auto pZone = (CBaseTrigger*)MEM::CALL::CreateEntityByName("trigger_physics");
 	if (!pZone) {
@@ -216,9 +175,6 @@ CBaseEntity* CSurfZoneService::CreateNormalZone(const Vector& vecMins, const Vec
 
 	return pZone;
 
-	g_testVec1 = vecMins;
-	g_testVec2 = vecMaxs;
-
 	// CEntityKeyValues* pKV = new CEntityKeyValues();
 	// pKV->SetVector("origin", vecCenter);
 	// pKV->SetInt("spawnflags", 1);
@@ -233,16 +189,8 @@ CBaseEntity* CSurfZoneService::CreateNormalZone(const Vector& vecMins, const Vec
 	pZone->Teleport(&vecCenter, nullptr, nullptr);
 	this->GetPlayer()->GetPlayerPawn()->Teleport(&vecCenter, nullptr, nullptr);
 
-	// auto testMins = Vector(-100.0f, -100.5417f, -100.000019f);
-	// auto testMaxs = Vector(100.000029f, 100.000011f, 100.000664f);
-	// auto& testMins = vecMins;
-	// auto& testMaxs = vecMaxs;
-
-	static auto activate = libmem::SignScan("4C 8B DC 53 56 48 81 EC", LIB::server);
-	MEM::SDKCall<void*>(activate, pZone);
-
-	auto fn = libmem::SignScan("48 81 C1 00 06 00 00 E9 04 8F 4A 00", LIB::server);
-	auto ret = MEM::SDKCall<void*>(fn, pZone, &testMins, &testMaxs);
+	// auto fn = libmem::SignScan("48 81 C1 00 06 00 00 E9 04 8F 4A 00", LIB::server);
+	// auto ret = MEM::SDKCall<void*>(fn, pZone, &testMins, &testMaxs);
 
 	/*pZone->m_Collision()->m_nSolidType(SOLID_BSP);
 	pZone->m_Collision()->m_CollisionGroup(5);
@@ -258,6 +206,30 @@ CBaseEntity* CSurfZoneService::CreateNormalZone(const Vector& vecMins, const Vec
 	pZone->AcceptInput("Enable");
 	// pZone->CollisionRulesChanged();
 	// pZone->NetworkStateChanged();
+}
+
+void CSurfZoneService::FillBoxMinMax(Vector& vecMin, Vector& vecMax) {
+	if (vecMin.x > vecMax.x) {
+		std::swap((float&)vecMin.x, (float&)vecMax.x);
+	}
+	if (vecMin.y > vecMax.y) {
+		std::swap((float&)vecMin.y, (float&)vecMax.y);
+	}
+	if (vecMin.z > vecMax.z) {
+		std::swap((float&)vecMin.z, (float&)vecMax.z);
+	}
+
+	// Calculate the size of the original bounding box
+	Vector size(vecMax.x - vecMin.x, vecMax.y - vecMin.y, vecMax.z - vecMin.z);
+
+	// Generate new mins and maxs centered at (0, 0, 0)
+	vecMin.x = -size.x / 2;
+	vecMin.y = -size.y / 2;
+	vecMin.z = -size.z / 2;
+
+	vecMax.x = size.x / 2;
+	vecMax.y = size.y / 2;
+	vecMax.z = size.z / 2;
 }
 
 void CSurfZoneService::Reset() {

@@ -41,6 +41,7 @@ public:
 	SCHEMA_FIELD(Vector, m_vecSurroundingMins);
 	SCHEMA_FIELD(SurroundingBoundsType_t, m_nSurroundType);
 	SCHEMA_FIELD(uint8, m_nEnablePhysics);
+	SCHEMA_FIELD(float, m_flBoundingRadius);
 
 	CBaseModelEntity* GetOuter() {
 		return *(CBaseModelEntity**)((char*)this + 8);

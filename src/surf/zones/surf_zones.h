@@ -34,6 +34,7 @@ public:
 	void UpdateZone2D(const std::vector<CHandle<CBeam>>& vBeams, const Vector& vecMin, const Vector& vecMax);
 	void UpdateZone3D(const std::vector<CHandle<CBeam>>& vBeams, const Vector& vecMin, const Vector& vecMax);
 	CBaseEntity* CreateNormalZone(const Vector& vecMins, const Vector& vecMaxs);
+	void FillBoxMinMax(Vector& vecMin, Vector& vecMax);
 };
 
 class CSurfZonePlugin : CMovementForward, CCoreForward {
@@ -41,7 +42,6 @@ private:
 	virtual void OnPluginStart() override;
 	virtual void OnPlayerRunCmdPost(CCSPlayerPawn* pawn, const CInButton* buttons, const float (&vec)[3], const float (&angles)[3], const int& weapon,
 									const int& cmdnum, const int& tickcount, const int& seed, const int (&mouse)[2]) override;
-	virtual void OnResourcePrecache(IEntityResourceManifest* pResourceManifest) override;
 };
 
 CSurfZonePlugin* SurfZonePlugin();
