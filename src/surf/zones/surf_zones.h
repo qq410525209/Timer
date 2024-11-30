@@ -10,15 +10,35 @@ enum ZoneEditStep {
 	EditStep_Final   // 4 - confirm
 };
 
-class CSurfZoneService : CSurfBaseService {
+class CSurfZoneService;
+
+struct CZoneEditProperty {
+	void Init(CSurfZoneService* outer) {
+		m_pOuter = outer;
+		m_bEnabled = false;
+		m_iStep = EditStep_None;
+		m_vecMins = Vector();
+		m_vecMaxs = Vector();
+		m_vBeam.clear();
+	}
+
+	CSurfZoneService* m_pOuter;
+	bool m_bEnabled;
+	ZoneEditStep m_iStep;
+	Vector m_vecMins;
+	Vector m_vecMaxs;
+	std::vector<CHandle<CBeam>> m_vBeam;
+
+	void StartEditZone();
+	void CreateEditZone(const Vector& playerAim);
+	void UpdateZone(const Vector& playerAim);
+};
+
+class CSurfZoneService : public CSurfBaseService {
 public:
 	using CSurfBaseService::CSurfBaseService;
 
-	ZoneEditStep m_iEditStep;
-	bool m_bEditing;
-	Vector m_vecEditingMins;
-	Vector m_vecEditingMaxs;
-	std::vector<CHandle<CBeam>> m_vTestBeam;
+	CZoneEditProperty m_ZoneEdit;
 
 	virtual void Reset() override;
 

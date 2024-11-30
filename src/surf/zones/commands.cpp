@@ -11,14 +11,7 @@ CCMD_CALLBACK(Command_EditZone) {
 	}
 
 	auto& pZoneService = player->m_pZoneService;
-	pZoneService->m_bEditing = true;
-	pZoneService->m_iEditStep = EditStep_None;
-	trace_t tr;
-	UTIL::GetPlayerAiming(pController->GetPlayerPawn(), tr);
-	Vector& aimPos = tr.m_vEndPos;
-	auto pBeam = UTIL::CreateBeam(tr.m_vEndPos, tr.m_vEndPos);
-	pZoneService->m_vTestBeam.clear();
-	pZoneService->m_vTestBeam.emplace_back(pBeam->GetRefEHandle());
+	pZoneService->m_ZoneEdit.StartEditZone();
 }
 
 void RegisterCommand() {
