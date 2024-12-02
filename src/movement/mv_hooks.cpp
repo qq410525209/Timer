@@ -26,7 +26,7 @@ static void Hook_OnMovementServicesRunCmds(CPlayer_MovementServices* pMovementSe
 	int32_t mouse[2] = {0, 0};
 
 	float vec[3] = {0.0f, 0.0f, 0.0f};
-	float angles[3] = {0.0f, 0.0f, 0.0f};
+	QAngle viewAngles = {0.0f, 0.0f, 0.0f};
 
 	CInButtonStatePB* buttons_state = nullptr;
 	CBaseUserCmdPB* baseCmd = pUserCmd->mutable_base();
@@ -40,17 +40,17 @@ static void Hook_OnMovementServicesRunCmds(CPlayer_MovementServices* pMovementSe
 		vec[0] = baseCmd->leftmove();
 		vec[1] = baseCmd->forwardmove();
 		vec[2] = baseCmd->upmove();
-		angles[0] = baseCmd->viewangles().x();
-		angles[1] = baseCmd->viewangles().y();
-		angles[2] = baseCmd->viewangles().z();
+		viewAngles.x = baseCmd->viewangles().x();
+		viewAngles.y = baseCmd->viewangles().y();
+		viewAngles.z = baseCmd->viewangles().z();
 		buttons_state = baseCmd->mutable_buttons_pb();
 	}
 
-	CInButton* button = (CInButton*)buttons_state;
+	CPlayerButton* button = (CPlayerButton*)buttons_state;
 
 	bool block = false;
 	for (auto p = CMovementForward::m_pFirst; p; p = p->m_pNext) {
-		if (!p->OnPlayerRunCmd(pawn, button, vec, angles, weapon, cmdnum, tickcount, seed, mouse)) {
+		if (!p->OnPlayerRunCmd(pawn, button, vec, viewAngles, weapon, cmdnum, tickcount, seed, mouse)) {
 			block = true;
 		}
 	}
@@ -69,16 +69,16 @@ static void Hook_OnMovementServicesRunCmds(CPlayer_MovementServices* pMovementSe
 		if (baseCmd->has_viewangles()) {
 			CMsgQAngle* viewangles = baseCmd->mutable_viewangles();
 			if (viewangles) {
-				viewangles->set_x(angles[0]);
-				viewangles->set_y(angles[1]);
-				viewangles->set_z(angles[2]);
+				viewangles->set_x(viewAngles.x);
+				viewangles->set_y(viewAngles.y);
+				viewangles->set_z(viewAngles.z);
 			}
 		}
 
 		if (baseCmd->has_buttons_pb()) {
 			CInButtonStatePB* buttons_pb = baseCmd->mutable_buttons_pb();
 			if (buttons_pb) {
-				buttons_pb->set_buttonstate1(button->pressing);
+				buttons_pb->set_buttonstate1(button->down);
 				buttons_pb->set_buttonstate2(button->changed);
 				buttons_pb->set_buttonstate3(button->scroll);
 			}
@@ -91,7 +91,7 @@ static void Hook_OnMovementServicesRunCmds(CPlayer_MovementServices* pMovementSe
 
 	MEM::SDKCall<void>(MOVEMENT::TRAMPOLINE::g_fnMovementServicesRunCmds, pMovementServices, pUserCmd);
 
-	FORWARD_POST(CMovementForward, OnPlayerRunCmdPost, pawn, button, vec, angles, weapon, cmdnum, tickcount, seed, mouse);
+	FORWARD_POST(CMovementForward, OnPlayerRunCmdPost, pawn, button, vec, viewAngles, weapon, cmdnum, tickcount, seed, mouse);
 }
 
 static void Hook_OnTryPlayerMove(CCSPlayer_MovementServices* ms, CMoveData* mv, Vector* pFirstDest, trace_t* pFirstTrace) {
@@ -176,6 +176,10 @@ static void Hook_OnJump(CCSPlayer_MovementServices* ms, CMoveData* mv) {
 
 static void Hook_OnProcessMovement(CCSPlayer_MovementServices* ms, CMoveData* mv) {
 	CMovementPlayer* player = MOVEMENT::GetPlayerManager()->ToPlayer(ms);
+	if (!player) {
+		return;
+	}
+
 	player->currentMoveData = mv;
 	player->moveDataPre = CMoveData(*mv);
 	player->processingMovement = true;

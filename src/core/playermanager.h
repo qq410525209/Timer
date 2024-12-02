@@ -58,7 +58,7 @@ public:
 	}
 
 private:
-	int m_iSlot;
+	int m_iSlot = -1;
 	CSteamID unauthenticatedSteamID = k_steamIDNil;
 };
 
@@ -82,7 +82,7 @@ public:
 	// included fake players
 	virtual std::vector<CPlayer*> GetOnlinePlayers() const;
 
-private:
+protected:
 	virtual void OnClientDisconnect(ISource2GameClients* pClient, CPlayerSlot slot, ENetworkDisconnectionReason reason, const char* pszName,
 									uint64 xuid, const char* pszNetworkID) override;
 

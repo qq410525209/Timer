@@ -18,7 +18,7 @@ void CSurfZonePlugin::OnPluginStart() {
 	RegisterCommand();
 }
 
-void CSurfZonePlugin::OnPlayerRunCmdPost(CCSPlayerPawn* pawn, const CInButton* buttons, const float (&vec)[3], const float (&angles)[3],
+void CSurfZonePlugin::OnPlayerRunCmdPost(CCSPlayerPawn* pawn, const CPlayerButton* buttons, const float (&vec)[3], const QAngle& viewAngles,
 										 const int& weapon, const int& cmdnum, const int& tickcount, const int& seed, const int (&mouse)[2]) {
 	CSurfPlayer* player = SURF::GetPlayerManager()->ToPlayer(pawn);
 	if (!player) {
@@ -56,7 +56,7 @@ void CSurfZoneService::AddZone(const Vector& vecMin, const Vector& vecMax) {
 	SurfZonePlugin()->m_hZones[hRefZone] = cache;
 }
 
-void CSurfZoneService::EditZone(CCSPlayerPawnBase* pawn, const CInButton* buttons) {
+void CSurfZoneService::EditZone(CCSPlayerPawnBase* pawn, const CPlayerButton* buttons) {
 	auto& iEditStep = m_ZoneEdit.m_iStep;
 	if (m_ZoneEdit.m_bEnabled) {
 		trace_t tr;

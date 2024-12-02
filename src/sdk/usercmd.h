@@ -29,26 +29,26 @@ enum InputBitMask_t : uint64_t {
 
 class CSGOUserCmdPB;
 
-class CInButton {
+class CPlayerButton {
 	void** vtable;
 	[[maybe_unused]] uint8_t unk[16];
 
 public:
-	uint64_t pressing;
+	uint64_t down;
 	uint64_t changed;
 	uint64_t scroll;
 
 public:
 	bool Released(InputBitMask_t mask) const {
-		return !(pressing & mask) && (changed & mask);
+		return !(down & mask) && (changed & mask);
 	}
 
 	bool Pressed(InputBitMask_t mask) const {
-		return (pressing & mask) && (changed & mask);
+		return (down & mask) && (changed & mask);
 	}
 };
 
-static_assert(sizeof(CInButton) == sizeof(CInButtonStatePB));
+static_assert(sizeof(CPlayerButton) == sizeof(CInButtonStatePB));
 
 class CUserCmdBase {
 public:
@@ -74,7 +74,7 @@ class CUserCmd : public CUserCmdBaseHost<CSGOUserCmdPB> {};
 
 class PlayerCommand : public CUserCmd {
 public:
-	CInButton m_Buttons;
+	CPlayerButton m_Buttons;
 
 	// Not part of the player message
 	uint32_t unknown[4];

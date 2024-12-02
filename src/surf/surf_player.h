@@ -19,12 +19,9 @@ public:
 	}
 
 public:
-	// forwards
-	// clang-format off
 	virtual void Reset() {}
-	virtual void OnServiceStartup() {}
 
-	// clang-format on
+	virtual void OnServiceStartup() {}
 
 private:
 	CSurfPlayer* m_pPlayer;
@@ -79,6 +76,11 @@ public:
 	virtual CSurfPlayer* ToPlayer(CPlayerUserId userID) const override;
 	virtual CSurfPlayer* ToPlayer(CSteamID steamid, bool validate = false) const override;
 
+	// fake players are excluded
+	virtual std::vector<CPlayer*> GetOnlinePlayers() const override {
+		return CMovementPlayerManager::GetOnlinePlayers();
+	}
+
 	// Safe
 	CSurfPlayer* ToSurfPlayer(CMovementPlayer* player) {
 		return static_cast<CSurfPlayer*>(player);
@@ -88,6 +90,12 @@ public:
 	CSurfPlayer* ToSurfPlayer(CPlayer* player) {
 		return static_cast<CSurfPlayer*>(player);
 	}
+
+protected:
+	virtual void OnClientDisconnect(ISource2GameClients* pClient, CPlayerSlot slot, ENetworkDisconnectionReason reason, const char* pszName,
+									uint64 xuid, const char* pszNetworkID) override;
+
+	virtual void OnClientActive(ISource2GameClients* pClient, CPlayerSlot slot, bool bLoadGame, const char* pszName, uint64 xuid) override;
 };
 
 namespace SURF {

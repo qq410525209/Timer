@@ -3,6 +3,7 @@
 #include <surf/zones/surf_zones.h>
 #include <surf/misc/surf_misc.h>
 #include <surf/hud/surf_hud.h>
+#include <utils/utils.h>
 
 CSurfPlayerManager g_SurfPlayerManager;
 
@@ -44,6 +45,29 @@ CSurfPlayer* CSurfPlayerManager::ToPlayer(CPlayerUserId userID) const {
 
 CSurfPlayer* CSurfPlayerManager::ToPlayer(CSteamID steamid, bool validate) const {
 	return static_cast<CSurfPlayer*>(CPlayerManager::ToPlayer(steamid, validate));
+}
+
+void CSurfPlayerManager::OnClientDisconnect(ISource2GameClients* pClient, CPlayerSlot slot, ENetworkDisconnectionReason reason, const char* pszName,
+											uint64 xuid, const char* pszNetworkID) {
+	if (xuid == 0) {
+		return;
+	}
+
+	CMovementPlayerManager::OnClientDisconnect(pClient, slot, reason, pszName, xuid, pszNetworkID);
+}
+
+void CSurfPlayerManager::OnClientActive(ISource2GameClients* pClient, CPlayerSlot slot, bool bLoadGame, const char* pszName, uint64 xuid) {
+	if (xuid == 0) {
+		int iSlot = slot.Get();
+		auto& pPlayer = m_pPlayers[iSlot];
+		if (pPlayer) {
+			pPlayer.reset();
+		}
+
+		return;
+	}
+
+	CMovementPlayerManager::OnClientActive(pClient, slot, bLoadGame, pszName, xuid);
 }
 
 void CSurfPlayer::Init(int iSlot) {

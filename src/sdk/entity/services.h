@@ -3,6 +3,13 @@
 #include <sdk/schema.h>
 #include <sdk/usercmd.h>
 
+class CInButtonState {
+public:
+	DECLARE_SCHEMA_CLASS(CInButtonState);
+
+	SCHEMA_FIELD_POINTER(uint64, m_pButtonStates);
+};
+
 class CPlayerPawnComponent {
 public:
 	DECLARE_SCHEMA_CLASS(CPlayerPawnComponent);
@@ -37,7 +44,7 @@ public:
 	SCHEMA_FIELD(Vector, m_vecLastMovementImpulses);
 	SCHEMA_FIELD(QAngle, m_vecOldViewAngles);
 
-	SCHEMA_FIELD_POINTER(CInButton, m_nButtons);
+	SCHEMA_FIELD_POINTER(CInButtonState, m_nButtons);
 	SCHEMA_FIELD_POINTER(uint32_t, m_pButtonPressedCmdNumber);
 	SCHEMA_FIELD_POINTER(float, m_arrForceSubtickMoveWhen);
 };

@@ -55,7 +55,7 @@ public:
 
 public:
 	void AddZone(const Vector& vecMin, const Vector& vecMax);
-	void EditZone(CCSPlayerPawnBase* pawn, const CInButton* buttons);
+	void EditZone(CCSPlayerPawnBase* pawn, const CPlayerButton* buttons);
 	void CreateZone(const Vector& vecMin, const Vector& vecMax, std::array<CHandle<CBeam>, 12>& out);
 	CBaseEntity* CreateNormalZone(const Vector& vecMins, const Vector& vecMaxs);
 
@@ -74,8 +74,8 @@ public:
 
 private:
 	virtual void OnPluginStart() override;
-	virtual void OnPlayerRunCmdPost(CCSPlayerPawn* pawn, const CInButton* buttons, const float (&vec)[3], const float (&angles)[3], const int& weapon,
-									const int& cmdnum, const int& tickcount, const int& seed, const int (&mouse)[2]) override;
+	virtual void OnPlayerRunCmdPost(CCSPlayerPawn* pawn, const CPlayerButton* buttons, const float (&vec)[3], const QAngle& viewAngles,
+									const int& weapon, const int& cmdnum, const int& tickcount, const int& seed, const int (&mouse)[2]) override;
 };
 
 CSurfZonePlugin* SurfZonePlugin();

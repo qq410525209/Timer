@@ -1,25 +1,52 @@
 #include "surf_replay.h"
+#include <utils/print.h>
 
 CSurfReplayPlugin g_SurfReplay;
 
-bool CSurfReplayPlugin::OnPlayerRunCmd(CCSPlayerPawn* pawn, CInButton* buttons, float (&vec)[3], float (&angles)[3], int& weapon, int& cmdnum,
-									   int& tickcount, int& seed, int (&mouse)[2]) {
+CSurfReplayPlugin* GetReplayPlugin() {
+	return &g_SurfReplay;
+}
+
+extern void DoPlayback(CCSPlayerPawn* botPawn, CCSBot* pBot);
+
+void CSurfReplayPlugin::OnPlayerRunCmdPost(CCSPlayerPawn* pawn, const CPlayerButton* buttons, const float (&vec)[3], const QAngle& viewAngles,
+										   const int& weapon, const int& cmdnum, const int& tickcount, const int& seed, const int (&mouse)[2]) {
 	if (!pawn->IsAlive()) {
-		return true;
+		return;
 	}
 
-	auto bBot = pawn->IsBot();
-	if (bBot) {
+	if (pawn->IsBot()) {
+		DoPlayback(pawn, pawn->m_pBot());
+	} else {
+		CSurfPlayer* player = SURF::GetPlayerManager()->ToPlayer(pawn);
+		if (!player) {
+			return;
+		}
+
+		auto& pReplayService = player->m_pReplayService;
+		if (pReplayService->m_bEnabled) {
+			pReplayService->DoRecord(pawn, buttons, viewAngles);
+		}
+	}
+}
+
+bool CSurfReplayPlugin::OnEnterZone(const ZoneCache_t& zone, CSurfPlayer* player) {
+	if (zone.m_iType == ZoneType::Zone_End) {
+		player->m_pReplayService->SaveRecord();
 	}
 
 	return true;
 }
 
-void CSurfReplayPlugin::OnPlayerRunCmdPost(CCSPlayerPawn* pawn, const CInButton* buttons, const float (&vec)[3], const float (&angles)[3],
-										   const int& weapon, const int& cmdnum, const int& tickcount, const int& seed, const int (&mouse)[2]) {
-	if (!pawn->IsAlive()) {
-		return;
+bool CSurfReplayPlugin::OnLeaveZone(const ZoneCache_t& zone, CSurfPlayer* player) {
+	if (zone.m_iType == ZoneType::Zone_Start) {
+		player->m_pReplayService->StartRecord();
 	}
+
+	return true;
 }
 
-void CSurfReplayService::Reset() {}
+void CSurfReplayService::Reset() {
+	m_bEnabled = false;
+	m_vReplayFrames.clear();
+}
