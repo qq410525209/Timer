@@ -14,20 +14,30 @@ void DoPlayback(CCSPlayerPawn* pBotPawn, CCSBot* pBot) {
 	}
 
 	auto& frame = aFrames.at(currentTick);
-	pBot->m_buttonFlags(frame.buttons);
 	pBotPawn->m_angEyeAngles(frame.ang);
-	pBotPawn->m_fFlags(pBotPawn->m_fFlags() ^= frame.flags);
+
+	auto botFlags = pBotPawn->m_fFlags();
+	pBotPawn->m_fFlags(botFlags ^= frame.flags);
+
+	pBot->m_buttonFlags(frame.buttons);
 	pBotPawn->SetMoveType(frame.mt);
 
-	Vector& currentPos = pBotPawn->GetOrigin();
+	if ((GetReplayPlugin()->m_iLastReplayFlag[slot] & FL_ONGROUND) && !(botFlags & FL_ONGROUND)) {
+		static auto fn = libmem::SignScan("48 81 C1 80 0F 00 00 E9 F4 56 01 00", LIB::server);
+		MEM::SDKCall<void*>(fn, pBotPawn, PlayerAnimEvent_t::PLAYERANIMEVENT_JUMP, 0);
+	}
+
+	Vector& currentPos = pBotPawn->GetAbsOrigin();
 	if (currentTick == 0 || currentPos.DistTo(frame.pos) > 15000.0) {
 		static Vector zeroVel {0.0f, 0.0f, 0.0f};
 		pBotPawn->SetMoveType(MoveType_t::MOVETYPE_NOCLIP);
 		pBotPawn->Teleport(&frame.pos, nullptr, &zeroVel);
 	} else {
-		Vector calculatedVelocity = (frame.pos - currentPos) * ENGINE_FIXED_TICK_RATE;
+		constexpr auto replay_tickrate = ENGINE_FIXED_TICK_RATE;
+		Vector calculatedVelocity = (frame.pos - currentPos) * replay_tickrate;
 		pBotPawn->Teleport(nullptr, nullptr, &calculatedVelocity);
 	}
 
 	currentTick++;
+	GetReplayPlugin()->m_iLastReplayFlag[slot] = botFlags;
 }
