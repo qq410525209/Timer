@@ -4,8 +4,9 @@
 
 CSurfHudPlugin g_SurfHudPlugin;
 
-void CSurfHudPlugin::OnPhysicsSimulatePost(CCSPlayerController* pController) {
-	CSurfPlayer* player = SURF::GetPlayerManager()->ToPlayer(pController);
+void CSurfHudPlugin::OnPlayerRunCmdPost(CCSPlayerPawn* pawn, const CInButton* buttons, const float (&vec)[3], const float (&angles)[3],
+										const int& weapon, const int& cmdnum, const int& tickcount, const int& seed, const int (&mouse)[2]) {
+	CSurfPlayer* player = SURF::GetPlayerManager()->ToPlayer(pawn);
 	if (!player) {
 		return;
 	}
