@@ -7,7 +7,7 @@ void CSurfReplayService::StartRecord() {
 void CSurfReplayService::DoRecord(CCSPlayerPawn* pawn, const CPlayerButton* buttons, const QAngle& viewAngles) {
 	ReplayFrame_t frame;
 	frame.ang = viewAngles;
-	GetPlayer()->GetOrigin(frame.pos);
+	frame.pos = pawn->GetAbsOrigin();
 	frame.buttons = buttons->down;
 	frame.flags = pawn->m_fFlags();
 	frame.mt = pawn->m_MoveType();
@@ -16,6 +16,8 @@ void CSurfReplayService::DoRecord(CCSPlayerPawn* pawn, const CPlayerButton* butt
 }
 
 void CSurfReplayService::SaveRecord() {
-	GetReplayPlugin()->m_umTrackReplays[0] = m_vReplayFrames;
+	auto plugin = GetReplayPlugin();
+	plugin->m_umTrackReplays[0] = m_vReplayFrames;
 	m_vReplayFrames.clear();
+	m_bEnabled = false;
 }

@@ -144,7 +144,8 @@ public:
 
 	void DispatchSpawn(CEntityKeyValues* pInitKeyValue = nullptr);
 
-	Vector GetAbsOrigin();
+	Vector& GetAbsOrigin();
+	Vector& GetOrigin();
 };
 
 class CBaseModelEntity : public CBaseEntity {

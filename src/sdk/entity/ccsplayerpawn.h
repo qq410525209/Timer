@@ -4,6 +4,7 @@
 
 class CCSPlayer_ViewModelServices;
 class CCSBot;
+class CCSPlayerController;
 
 class CCSPlayerPawnBase : public CBasePlayerPawn {
 public:
@@ -40,6 +41,8 @@ public:
 	DECLARE_SCHEMA_CLASS(CBot);
 
 	SCHEMA_FIELD(uint64_t, m_buttonFlags);
+	SCHEMA_FIELD(CCSPlayerPawn*, m_pPlayer);
+	SCHEMA_FIELD(CCSPlayerController*, m_pController);
 };
 
 class CCSBot : public CBot {

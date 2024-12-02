@@ -164,6 +164,10 @@ static void Hook_OnJump(CCSPlayer_MovementServices* ms, CMoveData* mv) {
 	MEM::SDKCall<void>(MOVEMENT::TRAMPOLINE::g_fnJump, ms, mv);
 
 	CMovementPlayer* player = MOVEMENT::GetPlayerManager()->ToPlayer(ms);
+	if (!player) {
+		return;
+	}
+
 	Vector oldOutWishVel = mv->m_outWishVel;
 	MoveType_t oldMoveType = player->GetPlayerPawn()->m_MoveType();
 	if (mv->m_outWishVel != oldOutWishVel) {
@@ -177,7 +181,7 @@ static void Hook_OnJump(CCSPlayer_MovementServices* ms, CMoveData* mv) {
 static void Hook_OnProcessMovement(CCSPlayer_MovementServices* ms, CMoveData* mv) {
 	CMovementPlayer* player = MOVEMENT::GetPlayerManager()->ToPlayer(ms);
 	if (!player) {
-		return;
+		return MEM::SDKCall<void>(MOVEMENT::TRAMPOLINE::g_fnProcessMovement, ms, mv);
 	}
 
 	player->currentMoveData = mv;
@@ -204,7 +208,7 @@ static void Hook_OnProcessMovement(CCSPlayer_MovementServices* ms, CMoveData* mv
 
 static void Hook_OnPhysicsSimulate(CCSPlayerController* pController) {
 	if (!pController || pController->m_bIsHLTV()) {
-		return;
+		return MEM::SDKCall<void>(MOVEMENT::TRAMPOLINE::g_fnPhysicsSimulate, pController);
 	}
 
 	SurfPlugin()->simulatingPhysics = true;

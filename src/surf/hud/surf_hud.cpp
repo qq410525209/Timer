@@ -13,6 +13,10 @@ void CSurfHudPlugin::OnPlayerRunCmdPost(CCSPlayerPawn* pawn, const CPlayerButton
 
 	CUtlString sTime = SURF::FormatTime(player->m_pTimerService->m_fCurrentTime);
 	auto timerController = player->GetController();
+	if (!timerController) {
+		return;
+	}
+
 	const char* name = timerController->GetPlayerName();
 	UTIL::PrintAlert(timerController, "name: %s, time: %s", name, sTime.Get());
 }

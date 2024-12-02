@@ -33,6 +33,7 @@ public:
 	std::array<uint32_t, MAXPLAYERS> m_iCurrentTick;
 
 private:
+	virtual void OnPluginStart() override;
 	virtual void OnPlayerRunCmdPost(CCSPlayerPawn* pawn, const CPlayerButton* buttons, const float (&vec)[3], const QAngle& viewAngles,
 									const int& weapon, const int& cmdnum, const int& tickcount, const int& seed, const int (&mouse)[2]) override;
 

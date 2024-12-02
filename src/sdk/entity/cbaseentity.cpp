@@ -9,16 +9,32 @@ void CBaseEntity::DispatchSpawn(CEntityKeyValues* pInitKeyValue) {
 	MEM::CALL::DispatchSpawn(this, pInitKeyValue);
 }
 
-Vector CBaseEntity::GetAbsOrigin() {
+Vector& CBaseEntity::GetAbsOrigin() {
+	static Vector null(0.0f, 0.0f, 0.0f);
 	auto pBodyComponent = m_CBodyComponent();
 	if (!pBodyComponent) {
-		return Vector(0.0f, 0.0f, 0.0f);
+		return null;
 	}
 
 	auto pNode = pBodyComponent->m_pSceneNode();
 	if (!pNode) {
-		return Vector(0.0f, 0.0f, 0.0f);
+		return null;
 	}
 
 	return pNode->m_vecAbsOrigin();
+}
+
+Vector& CBaseEntity::GetOrigin() {
+	static Vector null(0.0f, 0.0f, 0.0f);
+	auto pBodyComponent = m_CBodyComponent();
+	if (!pBodyComponent) {
+		return null;
+	}
+
+	auto pNode = pBodyComponent->m_pSceneNode();
+	if (!pNode) {
+		return null;
+	}
+
+	return pNode->m_vecOrigin();
 }

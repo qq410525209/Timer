@@ -1,5 +1,6 @@
 #include "surf_replay.h"
 #include <utils/print.h>
+#include <core/concmdmanager.h>
 
 CSurfReplayPlugin g_SurfReplay;
 
@@ -8,6 +9,8 @@ CSurfReplayPlugin* GetReplayPlugin() {
 }
 
 extern void DoPlayback(CCSPlayerPawn* botPawn, CCSBot* pBot);
+
+void CSurfReplayPlugin::OnPluginStart() {}
 
 void CSurfReplayPlugin::OnPlayerRunCmdPost(CCSPlayerPawn* pawn, const CPlayerButton* buttons, const float (&vec)[3], const QAngle& viewAngles,
 										   const int& weapon, const int& cmdnum, const int& tickcount, const int& seed, const int (&mouse)[2]) {
