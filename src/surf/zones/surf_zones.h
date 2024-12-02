@@ -13,14 +13,8 @@ enum ZoneEditStep {
 class CSurfZoneService;
 
 struct CZoneEditProperty {
-	void Init(CSurfZoneService* outer) {
-		m_pOuter = outer;
-		m_bEnabled = false;
-		m_iStep = EditStep_None;
-		m_vecMins = Vector();
-		m_vecMaxs = Vector();
-		m_vBeam.clear();
-	}
+	void Init(CSurfZoneService* outer);
+	void Reset();
 
 	CSurfZoneService* m_pOuter;
 	bool m_bEnabled;
@@ -29,9 +23,22 @@ struct CZoneEditProperty {
 	Vector m_vecMaxs;
 	std::vector<CHandle<CBeam>> m_vBeam;
 
+	static constexpr const int m_iZonePairs2D[][2] = {{0, 1}, {1, 2}, {2, 3}, {3, 0}};
+	static constexpr const int m_iZonePairs3D[][2] = {{0, 2}, {2, 6}, {6, 4}, {4, 0}, {0, 1}, {3, 1}, {3, 2}, {3, 7}, {5, 1}, {5, 4}, {6, 7}, {7, 5}};
+
 	void StartEditZone();
 	void CreateEditZone(const Vector& playerAim);
 	void UpdateZone(const Vector& playerAim);
+	void CreateZone2D(const Vector points[4], std::vector<CHandle<CBeam>>& out);
+	void CreateZone3D(const Vector points[8], std::vector<CHandle<CBeam>>& out);
+	void UpdateZone2D(const std::vector<CHandle<CBeam>>& vBeams, const Vector& vecMin, const Vector& vecMax);
+	void UpdateZone3D(const std::vector<CHandle<CBeam>>& vBeams, const Vector& vecMin, const Vector& vecMax);
+	void ClearBeams();
+};
+
+struct ZoneCache_t {
+	CHandle<CBaseTrigger> m_hZone {};
+	std::array<CHandle<CBeam>, 12> m_aBeams {};
 };
 
 class CSurfZoneService : public CSurfBaseService {
@@ -39,22 +46,20 @@ public:
 	using CSurfBaseService::CSurfBaseService;
 
 	CZoneEditProperty m_ZoneEdit;
+	std::vector<ZoneCache_t> m_hZones;
 
 	virtual void Reset() override;
 
-	static constexpr const int m_iZonePairs2D[][2] = {{0, 1}, {1, 2}, {2, 3}, {3, 0}};
-	static constexpr const int m_iZonePairs3D[][2] = {{0, 2}, {2, 6}, {6, 4}, {4, 0}, {0, 1}, {3, 1}, {3, 2}, {3, 7}, {5, 1}, {5, 4}, {6, 7}, {7, 5}};
+public:
+	void AddZone(const Vector& vecMin, const Vector& vecMax);
+	void EditZone(CCSPlayerPawnBase* pawn, const CInButton* buttons);
+	void CreateZone(const Vector& vecMin, const Vector& vecMax, std::array<CHandle<CBeam>, 12>& out);
+	CBaseEntity* CreateNormalZone(const Vector& vecMins, const Vector& vecMaxs);
 
 public:
-	void EditZone(CCSPlayerPawnBase* pawn, const CInButton* buttons);
-	void CreatePoints2D(const Vector& vecMin, const Vector& vecMax, Vector out[4]);
-	void CreatePoints3D(const Vector& vecMin, const Vector& vecMax, Vector out[8]);
-	void CreateZone2D(const Vector points[4], std::vector<CHandle<CBeam>>& out);
-	void CreateZone3D(const Vector points[8], std::vector<CHandle<CBeam>>& out);
-	void UpdateZone2D(const std::vector<CHandle<CBeam>>& vBeams, const Vector& vecMin, const Vector& vecMax);
-	void UpdateZone3D(const std::vector<CHandle<CBeam>>& vBeams, const Vector& vecMin, const Vector& vecMax);
-	CBaseEntity* CreateNormalZone(const Vector& vecMins, const Vector& vecMaxs);
-	void FillBoxMinMax(Vector& vecMin, Vector& vecMax);
+	static void CreatePoints2D(const Vector& vecMin, const Vector& vecMax, Vector out[4]);
+	static void CreatePoints3D(const Vector& vecMin, const Vector& vecMax, Vector out[8]);
+	static void FillBoxMinMax(Vector& vecMin, Vector& vecMax, bool resize = false);
 };
 
 class CSurfZonePlugin : CMovementForward, CCoreForward {
