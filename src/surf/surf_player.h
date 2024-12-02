@@ -8,17 +8,6 @@ class CSurfTimerService;
 class CSurfZoneService;
 class CSurfHudService;
 
-class CSurfForward : public CBaseForward<CSurfForward> {
-public:
-	bool OnTimerStart(CSurfPlayer* player) {
-		return true;
-	}
-
-	bool OnTimerEnd(CSurfPlayer* player) {
-		return true;
-	}
-};
-
 class CSurfBaseService {
 public:
 	CSurfBaseService(CSurfPlayer* player) : m_pPlayer(player) {}

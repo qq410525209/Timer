@@ -1,6 +1,7 @@
 #include "surf_timer.h"
 #include <core/concmdmanager.h>
 #include <utils/utils.h>
+#include <surf/api.h>
 
 CCMD_CALLBACK(Command_StartTimer) {
 	CSurfPlayer* player = SURF::GetPlayerManager()->ToPlayer(pController);
@@ -39,6 +40,22 @@ void CSurfTimerPlugin::OnPhysicsSimulatePost(CCSPlayerController* pController) {
 	if (player->IsAlive() && pTimerService->m_bTimerRunning && !pTimerService->m_bPaused) {
 		pTimerService->m_fCurrentTime += ENGINE_FIXED_TICK_INTERVAL;
 	}
+}
+
+bool CSurfTimerPlugin::OnEnterZone(const ZoneCache_t& zone, CSurfPlayer* player) {
+	if (zone.m_iType == ZoneType::Zone_End) {
+		player->m_pTimerService->DoTimerEnd();
+	}
+
+	return true;
+}
+
+bool CSurfTimerPlugin::OnStayZone(const ZoneCache_t& zone, CSurfPlayer* player) {
+	if (zone.m_iType == ZoneType::Zone_Start) {
+		player->m_pTimerService->DoTimerStart();
+	}
+
+	return true;
 }
 
 void CSurfTimerService::DoTimerStart(bool playSound) {

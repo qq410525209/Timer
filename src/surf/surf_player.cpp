@@ -4,9 +4,6 @@
 
 CSurfPlayerManager g_SurfPlayerManager;
 
-template<>
-CSurfForward* CBaseForward<CSurfForward>::m_pFirst = nullptr;
-
 CSurfPlayerManager* SURF::GetPlayerManager() {
 	return &g_SurfPlayerManager;
 }

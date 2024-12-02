@@ -1,11 +1,13 @@
 #pragma once
 
-#include <surf/surf_player.h>
+#include <surf/api.h>
 
-class CSurfTimerPlugin : CMovementForward, CCoreForward {
+class CSurfTimerPlugin : CSurfForward, CMovementForward, CCoreForward {
 private:
 	virtual void OnPluginStart() override;
 	virtual void OnPhysicsSimulatePost(CCSPlayerController* pController) override;
+	virtual bool OnEnterZone(const ZoneCache_t& zone, CSurfPlayer* player) override;
+	virtual bool OnStayZone(const ZoneCache_t& zone, CSurfPlayer* player) override;
 };
 
 class CSurfTimerService : CSurfBaseService {
