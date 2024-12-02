@@ -5,19 +5,19 @@
 #include <core/patch.h>
 #include <utils/utils.h>
 
-CSurfMisc g_SurfMisc;
+CSurfMiscPlugin g_SurfMisc;
 
 extern void HookEvents();
 extern void RegisterCommands();
 
-void CSurfMisc::OnPluginStart() {
+void CSurfMiscPlugin::OnPluginStart() {
 	HookEvents();
 	RegisterCommands();
 
 	PATCH::DoMovementUnlocker();
 }
 
-void CSurfMisc::OnActivateServer(CNetworkGameServerBase* pGameServer) {
+void CSurfMiscPlugin::OnActivateServer(CNetworkGameServerBase* pGameServer) {
 	static bool cvTweaked {};
 	if (!cvTweaked) {
 		cvTweaked = true;
@@ -41,18 +41,46 @@ void CSurfMisc::OnActivateServer(CNetworkGameServerBase* pGameServer) {
 	IFACE::pEngine->ServerCommand("mp_restartgame 1");
 }
 
-void CSurfMisc::OnWeaponDropPost(CCSPlayer_WeaponServices* pService, CBasePlayerWeapon* pWeapon, const int& iDropType, const Vector* targetPos) {
+void CSurfMiscPlugin::OnWeaponDropPost(CCSPlayer_WeaponServices* pService, CBasePlayerWeapon* pWeapon, const int& iDropType,
+									   const Vector* targetPos) {
 	pWeapon->AcceptInput("kill");
 }
 
-bool CSurfMisc::OnProcessMovement(CCSPlayer_MovementServices* ms, CMoveData* mv) {
+bool CSurfMiscPlugin::OnProcessMovement(CCSPlayer_MovementServices* ms, CMoveData* mv) {
 	CSurfPlayer* player = SURF::GetPlayerManager()->ToPlayer(ms);
 	if (!player) {
 		return true;
 	}
 
-	player->EnableGodMode();
-	player->HideLegs();
+	auto& pMiscService = player->m_pMiscService;
+	pMiscService->EnableGodMode();
+	pMiscService->HideLegs();
 
 	return true;
 }
+
+void CSurfMiscService::EnableGodMode() {
+	CCSPlayerPawn* pawn = this->GetPlayer()->GetPlayerPawn();
+	if (!pawn) {
+		return;
+	}
+	if (pawn->m_bTakesDamage()) {
+		pawn->m_bTakesDamage(false);
+	}
+}
+
+void CSurfMiscService::HideLegs() {
+	CCSPlayerPawn* pawn = this->GetPlayer()->GetPlayerPawn();
+	if (!pawn) {
+		return;
+	}
+
+	Color& ogColor = pawn->m_clrRender();
+	if (this->m_bHideLegs && ogColor.a() == 255) {
+		pawn->m_clrRender(Color(255, 255, 255, 254));
+	} else if (!this->m_bHideLegs && ogColor.a() != 255) {
+		pawn->m_clrRender(Color(255, 255, 255, 255));
+	}
+}
+
+void CSurfMiscService::Reset() {}

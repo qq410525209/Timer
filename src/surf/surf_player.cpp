@@ -1,5 +1,7 @@
+#include <surf/replay/surf_replay.h>
 #include <surf/timer/surf_timer.h>
 #include <surf/zones/surf_zones.h>
+#include <surf/misc/surf_misc.h>
 #include <surf/hud/surf_hud.h>
 
 CSurfPlayerManager g_SurfPlayerManager;
@@ -50,30 +52,8 @@ void CSurfPlayer::Init(int iSlot) {
 	InitService(m_pTimerService);
 	InitService(m_pZoneService);
 	InitService(m_pHudService);
-}
-
-void CSurfPlayer::EnableGodMode() {
-	CCSPlayerPawn* pawn = this->GetPlayerPawn();
-	if (!pawn) {
-		return;
-	}
-	if (pawn->m_bTakesDamage()) {
-		pawn->m_bTakesDamage(false);
-	}
-}
-
-void CSurfPlayer::HideLegs() {
-	CCSPlayerPawn* pawn = this->GetPlayerPawn();
-	if (!pawn) {
-		return;
-	}
-
-	Color& ogColor = pawn->m_clrRender();
-	if (this->m_bHideLegs && ogColor.a() == 255) {
-		pawn->m_clrRender(Color(255, 255, 255, 254));
-	} else if (!this->m_bHideLegs && ogColor.a() != 255) {
-		pawn->m_clrRender(Color(255, 255, 255, 255));
-	}
+	InitService(m_pReplayService);
+	InitService(m_pMiscService);
 }
 
 void SURF::FormatTime(f64 time, char* output, u32 length, bool precise) {

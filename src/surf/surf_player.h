@@ -7,6 +7,8 @@ class CSurfPlayer;
 class CSurfTimerService;
 class CSurfZoneService;
 class CSurfHudService;
+class CSurfReplayService;
+class CSurfMiscService;
 
 class CSurfBaseService {
 public:
@@ -34,19 +36,6 @@ public:
 
 	virtual void Init(int iSlot);
 
-public:
-#pragma region rampfix
-	bool didTPM {};
-	bool overrideTPM {};
-	Vector tpmVelocity = vec3_invalid;
-	Vector tpmOrigin = vec3_invalid;
-	Vector lastValidPlane = vec3_origin;
-#pragma endregion
-
-	bool m_bHideLegs {};
-
-#pragma region service
-
 private:
 	struct ServiceDeleter {
 		void operator()(void* ptr) const {
@@ -69,11 +58,8 @@ public:
 	std::unique_ptr<CSurfTimerService, ServiceDeleter> m_pTimerService;
 	std::unique_ptr<CSurfZoneService, ServiceDeleter> m_pZoneService;
 	std::unique_ptr<CSurfHudService, ServiceDeleter> m_pHudService;
-#pragma endregion
-
-public:
-	void EnableGodMode();
-	void HideLegs();
+	std::unique_ptr<CSurfReplayService, ServiceDeleter> m_pReplayService;
+	std::unique_ptr<CSurfMiscService, ServiceDeleter> m_pMiscService;
 };
 
 class CSurfPlayerManager : public CMovementPlayerManager {

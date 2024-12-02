@@ -1,6 +1,7 @@
 #include <surf/surf_player.h>
 #include <pch.h>
 #include <utils/utils.h>
+#include <surf/misc/surf_misc.h>
 
 // copy from cs2kz
 
@@ -27,7 +28,7 @@ bool CRampfix::OnProcessMovement(CCSPlayer_MovementServices* ms, CMoveData* mv) 
 		return true;
 	}
 
-	player->didTPM = false;
+	player->m_pMiscService->didTPM = false;
 
 	return true;
 }
@@ -38,8 +39,9 @@ void CRampfix::OnProcessMovementPost(CCSPlayer_MovementServices* ms, const CMove
 		return;
 	}
 
-	if (!player->didTPM) {
-		player->lastValidPlane = vec3_origin;
+	auto& pMiscService = player->m_pMiscService;
+	if (!pMiscService->didTPM) {
+		pMiscService->lastValidPlane = vec3_origin;
 	}
 }
 
@@ -50,8 +52,9 @@ bool CRampfix::OnTryPlayerMove(CCSPlayer_MovementServices* ms, CMoveData* mv, Ve
 		return true;
 	}
 
-	player->overrideTPM = false;
-	player->didTPM = true;
+	auto& pMiscService = player->m_pMiscService;
+	pMiscService->overrideTPM = false;
+	pMiscService->didTPM = true;
 
 	f32 timeLeft = UTIL::GetGlobals()->frametime;
 
@@ -105,8 +108,8 @@ bool CRampfix::OnTryPlayerMove(CCSPlayer_MovementServices* ms, CMoveData* mv, Ve
 				break;
 			}
 
-			if (player->lastValidPlane.Length() > FLT_EPSILON
-				&& (!MOVEMENT::IsValidMovementTrace(pm, bounds, &filter) || pm.m_vHitNormal.Dot(player->lastValidPlane) < RAMP_BUG_THRESHOLD
+			if (pMiscService->lastValidPlane.Length() > FLT_EPSILON
+				&& (!MOVEMENT::IsValidMovementTrace(pm, bounds, &filter) || pm.m_vHitNormal.Dot(pMiscService->lastValidPlane) < RAMP_BUG_THRESHOLD
 					|| (potentiallyStuck && pm.m_flFraction == 0.0f))) {
 				// We hit a plane that will significantly change our velocity. Make sure that this plane is significant
 				// enough.
@@ -117,11 +120,11 @@ bool CRampfix::OnTryPlayerMove(CCSPlayer_MovementServices* ms, CMoveData* mv, Ve
 					for (u32 j = 0; j < 3 && !success; j++) {
 						for (u32 k = 0; k < 3 && !success; k++) {
 							if (i == 0 && j == 0 && k == 0) {
-								offsetDirection = player->lastValidPlane;
+								offsetDirection = pMiscService->lastValidPlane;
 							} else {
 								offsetDirection = {offsets[i], offsets[j], offsets[k]};
 								// Check if this random offset is even valid.
-								if (player->lastValidPlane.Dot(offsetDirection) <= 0.0f) {
+								if (pMiscService->lastValidPlane.Dot(offsetDirection) <= 0.0f) {
 									continue;
 								}
 								trace_t test;
@@ -142,10 +145,10 @@ bool CRampfix::OnTryPlayerMove(CCSPlayer_MovementServices* ms, CMoveData* mv, Ve
 								// Try until we hit a similar plane.
 								// clang-format off
 								validPlane = pierce.m_flFraction < 1.0f && pierce.m_flFraction > 0.1f 
-											 && pierce.m_vHitNormal.Dot(player->lastValidPlane) >= RAMP_BUG_THRESHOLD;
+											 && pierce.m_vHitNormal.Dot(pMiscService->lastValidPlane) >= RAMP_BUG_THRESHOLD;
 
 								hitNewPlane = pm.m_vHitNormal.Dot(pierce.m_vHitNormal) < NEW_RAMP_THRESHOLD 
-											  && player->lastValidPlane.Dot(pierce.m_vHitNormal) > NEW_RAMP_THRESHOLD;
+											  && pMiscService->lastValidPlane.Dot(pierce.m_vHitNormal) > NEW_RAMP_THRESHOLD;
 								// clang-format on
 								goodTrace = CloseEnough(pierce.m_flFraction, 1.0f, FLT_EPSILON) || validPlane;
 								if (goodTrace) {
@@ -162,20 +165,20 @@ bool CRampfix::OnTryPlayerMove(CCSPlayer_MovementServices* ms, CMoveData* mv, Ve
 								pm.m_vEndPos = test.m_vEndPos;
 								if (pierce.m_vHitNormal.Length() > 0.0f) {
 									pm.m_vHitNormal = pierce.m_vHitNormal;
-									player->lastValidPlane = pierce.m_vHitNormal;
+									pMiscService->lastValidPlane = pierce.m_vHitNormal;
 								} else {
 									pm.m_vHitNormal = test.m_vHitNormal;
-									player->lastValidPlane = test.m_vHitNormal;
+									pMiscService->lastValidPlane = test.m_vHitNormal;
 								}
 								success = true;
-								player->overrideTPM = true;
+								pMiscService->overrideTPM = true;
 							}
 						}
 					}
 				}
 			}
 			if (pm.m_vHitNormal.Length() > 0.99f) {
-				player->lastValidPlane = pm.m_vHitNormal;
+				pMiscService->lastValidPlane = pm.m_vHitNormal;
 			}
 			potentiallyStuck = pm.m_flFraction == 0.0f;
 		}
@@ -246,8 +249,8 @@ bool CRampfix::OnTryPlayerMove(CCSPlayer_MovementServices* ms, CMoveData* mv, Ve
 			}
 		}
 	}
-	player->tpmOrigin = pm.m_vEndPos;
-	player->tpmVelocity = velocity;
+	pMiscService->tpmOrigin = pm.m_vEndPos;
+	pMiscService->tpmVelocity = velocity;
 
 	return true;
 }
@@ -260,12 +263,14 @@ void CRampfix::OnTryPlayerMovePost(CCSPlayer_MovementServices* ms, const CMoveDa
 
 	Vector velocity;
 	player->GetVelocity(velocity);
+	auto& pMiscService = player->m_pMiscService;
 	bool velocityHeavilyModified =
-		player->tpmVelocity.Normalized().Dot(velocity.Normalized()) < RAMP_BUG_THRESHOLD
-		|| (player->tpmVelocity.Length() > 50.0f && velocity.Length() / player->tpmVelocity.Length() < RAMP_BUG_VELOCITY_THRESHOLD);
-	if (player->overrideTPM && velocityHeavilyModified && player->tpmOrigin != vec3_invalid && player->tpmVelocity != vec3_invalid) {
-		player->SetOrigin(player->tpmOrigin);
-		player->SetVelocity(player->tpmVelocity);
+		pMiscService->tpmVelocity.Normalized().Dot(velocity.Normalized()) < RAMP_BUG_THRESHOLD
+		|| (pMiscService->tpmVelocity.Length() > 50.0f && velocity.Length() / pMiscService->tpmVelocity.Length() < RAMP_BUG_VELOCITY_THRESHOLD);
+	if (pMiscService->overrideTPM && velocityHeavilyModified && pMiscService->tpmOrigin != vec3_invalid
+		&& pMiscService->tpmVelocity != vec3_invalid) {
+		player->SetOrigin(pMiscService->tpmOrigin);
+		player->SetVelocity(pMiscService->tpmVelocity);
 	}
 }
 
@@ -276,9 +281,11 @@ bool CRampfix::OnCategorizePosition(CCSPlayer_MovementServices* ms, CMoveData* m
 		return true;
 	}
 
+	auto& pMiscService = player->m_pMiscService;
+
 	// Already on the ground?
 	// If we are already colliding on a standable valid plane, we don't want to do the check.
-	if (bStayOnGround || player->lastValidPlane.Length() < EPSILON || player->lastValidPlane.z > 0.7f) {
+	if (bStayOnGround || pMiscService->lastValidPlane.Length() < EPSILON || pMiscService->lastValidPlane.z > 0.7f) {
 		return true;
 	}
 
@@ -311,8 +318,8 @@ bool CRampfix::OnCategorizePosition(CCSPlayer_MovementServices* ms, CMoveData* m
 	}
 
 	// Is this something that you should be able to actually stand on?
-	if (trace.m_flFraction < 0.95f && trace.m_vHitNormal.z > 0.7f && player->lastValidPlane.Dot(trace.m_vHitNormal) < RAMP_BUG_THRESHOLD) {
-		origin += player->lastValidPlane * 0.0625f;
+	if (trace.m_flFraction < 0.95f && trace.m_vHitNormal.z > 0.7f && pMiscService->lastValidPlane.Dot(trace.m_vHitNormal) < RAMP_BUG_THRESHOLD) {
+		origin += pMiscService->lastValidPlane * 0.0625f;
 		groundOrigin = origin;
 		groundOrigin.z -= 2.0f;
 		MEM::CALL::TracePlayerBBox(origin, groundOrigin, bounds, &filter, trace);
@@ -320,7 +327,7 @@ bool CRampfix::OnCategorizePosition(CCSPlayer_MovementServices* ms, CMoveData* m
 			return true;
 		}
 
-		if (trace.m_flFraction == 1.0f || player->lastValidPlane.Dot(trace.m_vHitNormal) >= RAMP_BUG_THRESHOLD) {
+		if (trace.m_flFraction == 1.0f || pMiscService->lastValidPlane.Dot(trace.m_vHitNormal) >= RAMP_BUG_THRESHOLD) {
 			player->SetOrigin(origin);
 		}
 	}
