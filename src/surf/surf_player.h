@@ -91,11 +91,9 @@ public:
 		return static_cast<CSurfPlayer*>(player);
 	}
 
-protected:
-	virtual void OnClientDisconnect(ISource2GameClients* pClient, CPlayerSlot slot, ENetworkDisconnectionReason reason, const char* pszName,
-									uint64 xuid, const char* pszNetworkID) override;
-
-	virtual void OnClientActive(ISource2GameClients* pClient, CPlayerSlot slot, bool bLoadGame, const char* pszName, uint64 xuid) override;
+private:
+	virtual void OnClientConnected(ISource2GameClients* pClient, CPlayerSlot slot, const char* pszName, uint64 xuid, const char* pszNetworkID,
+								   const char* pszAddress, bool bFakePlayer) override;
 };
 
 namespace SURF {

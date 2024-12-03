@@ -1,4 +1,5 @@
 #include <surf/replay/surf_replay.h>
+#include <utils/utils.h>
 
 void DoPlayback(CCSPlayerPawn* pBotPawn, CCSBot* pBot) {
 	auto& aFrames = GetReplayPlugin()->m_umTrackReplays[0];
@@ -7,8 +8,8 @@ void DoPlayback(CCSPlayerPawn* pBotPawn, CCSBot* pBot) {
 		return;
 	}
 
-	auto slot = pBotPawn->GetEntityIndex().Get() - 1;
-	auto& currentTick = GetReplayPlugin()->m_iCurrentTick[slot];
+	auto slot = pBotPawn->GetController()->GetPlayerSlot();
+	auto& currentTick = GetReplayPlugin()->m_iCurrentTick.at(slot);
 	if (currentTick >= iFrameSize) {
 		currentTick = 0;
 	}
@@ -22,7 +23,7 @@ void DoPlayback(CCSPlayerPawn* pBotPawn, CCSBot* pBot) {
 	pBot->m_buttonFlags(frame.buttons);
 	pBotPawn->SetMoveType(frame.mt);
 
-	if ((GetReplayPlugin()->m_iLastReplayFlag[slot] & FL_ONGROUND) && !(botFlags & FL_ONGROUND)) {
+	if ((GetReplayPlugin()->m_iLastReplayFlag.at(slot) & FL_ONGROUND) && !(botFlags & FL_ONGROUND)) {
 		static auto fn = libmem::SignScan("48 81 C1 80 0F 00 00 E9 F4 56 01 00", LIB::server);
 		MEM::SDKCall<void*>(fn, pBotPawn, PlayerAnimEvent_t::PLAYERANIMEVENT_JUMP, 0);
 	}
@@ -39,5 +40,5 @@ void DoPlayback(CCSPlayerPawn* pBotPawn, CCSBot* pBot) {
 	}
 
 	currentTick++;
-	GetReplayPlugin()->m_iLastReplayFlag[slot] = botFlags;
+	GetReplayPlugin()->m_iLastReplayFlag.at(slot) = botFlags;
 }

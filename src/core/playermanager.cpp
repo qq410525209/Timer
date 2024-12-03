@@ -198,12 +198,17 @@ std::vector<CPlayer*> CPlayerManager::GetOnlinePlayers() const {
 
 void CPlayerManager::OnClientDisconnect(ISource2GameClients* pClient, CPlayerSlot slot, ENetworkDisconnectionReason reason, const char* pszName,
 										uint64 xuid, const char* pszNetworkID) {
-	this->ToPlayer(slot)->Reset();
+	auto player = this->ToPlayer(slot);
+	if (player) {
+		player->Reset();
+	}
 }
 
 void CPlayerManager::OnClientActive(ISource2GameClients* pClient, CPlayerSlot slot, bool bLoadGame, const char* pszName, uint64 xuid) {
 	int iSlot = slot.Get();
 	CPlayer* player = m_pPlayers[iSlot].get();
-	player->Init(iSlot);
-	player->SetUnauthenticatedSteamID(xuid);
+	if (player) {
+		player->Init(iSlot);
+		player->SetUnauthenticatedSteamID(xuid);
+	}
 }

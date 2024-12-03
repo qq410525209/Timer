@@ -47,27 +47,17 @@ CSurfPlayer* CSurfPlayerManager::ToPlayer(CSteamID steamid, bool validate) const
 	return static_cast<CSurfPlayer*>(CPlayerManager::ToPlayer(steamid, validate));
 }
 
-void CSurfPlayerManager::OnClientDisconnect(ISource2GameClients* pClient, CPlayerSlot slot, ENetworkDisconnectionReason reason, const char* pszName,
-											uint64 xuid, const char* pszNetworkID) {
-	if (xuid == 0) {
-		return;
-	}
-
-	CMovementPlayerManager::OnClientDisconnect(pClient, slot, reason, pszName, xuid, pszNetworkID);
-}
-
-void CSurfPlayerManager::OnClientActive(ISource2GameClients* pClient, CPlayerSlot slot, bool bLoadGame, const char* pszName, uint64 xuid) {
-	if (xuid == 0) {
+void CSurfPlayerManager::OnClientConnected(ISource2GameClients* pClient, CPlayerSlot slot, const char* pszName, uint64 xuid, const char* pszNetworkID,
+										   const char* pszAddress, bool bFakePlayer) {
+	if (bFakePlayer) {
 		int iSlot = slot.Get();
 		auto& pPlayer = m_pPlayers[iSlot];
 		if (pPlayer) {
 			pPlayer.reset();
 		}
-
-		return;
 	}
 
-	CMovementPlayerManager::OnClientActive(pClient, slot, bLoadGame, pszName, xuid);
+	//CMovementPlayerManager::OnClientConnected(pClient, slot, pszName, xuid, pszNetworkID, pszAddress, bFakePlayer);
 }
 
 void CSurfPlayer::Init(int iSlot) {
