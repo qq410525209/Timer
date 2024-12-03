@@ -62,6 +62,7 @@ namespace MEM {
 		inline void* g_fnCreateGameEvent;
 		inline void* g_fnFireGameEvent;
 		inline void* g_fnWeaponDrop;
+		inline void* g_fnTakeDamage;
 	} // namespace TRAMPOLINE
 
 	namespace SDKHOOK {

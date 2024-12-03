@@ -10,6 +10,13 @@ public:
 	SCHEMA_FIELD_POINTER(uint64, m_pButtonStates);
 };
 
+class CTakeDamageInfo {
+public:
+	DECLARE_SCHEMA_STRUCT(CTakeDamageInfo);
+
+	SCHEMA_FIELD_POINTER(CHandle<CBaseEntity>, m_hAttacker);
+};
+
 class CPlayerPawnComponent {
 public:
 	DECLARE_SCHEMA_CLASS(CPlayerPawnComponent);
@@ -102,4 +109,9 @@ public:
 class CCSPlayer_WeaponServices : public CPlayer_WeaponServices {
 public:
 	DECLARE_SCHEMA_CLASS(CCSPlayer_WeaponServices);
+};
+
+class CCSPlayer_DamageReactServices : public CPlayerPawnComponent {
+public:
+	DECLARE_SCHEMA_CLASS(CCSPlayer_DamageReactServices);
 };

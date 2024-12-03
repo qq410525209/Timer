@@ -2,6 +2,8 @@
 #include <core/interfaces.h>
 #include <sdk/gamerules.h>
 #include <utils/utils.h>
+#include <utils/ctimer.h>
+#include <sdk/entity/ccsplayercontroller.h>
 
 static void OnPlayerDeath(const char* szName, bool bDontBroadcast) {}
 
@@ -24,7 +26,33 @@ static void OnPlayerTeam(IGameEvent* pEvent, const char* szName, bool bDontBroad
 	pEvent->SetBool("silent", true);
 }
 
-static void OnPlayerSpawm(const char* szName, bool bDontBroadcast) {}
+static void OnPlayerSpawm(IGameEvent* pEvent, const char* szName, bool bDontBroadcast) {
+	auto pController = (CCSPlayerController*)pEvent->GetPlayerController("userid");
+	if (!pController) {
+		return;
+	}
+
+	CHandle<CCSPlayerController> hController = pController->GetRefEHandle();
+
+	UTIL::RequestFrame([hController]() {
+		CCSPlayerController* pController = hController.Get();
+		if (!pController) {
+			return;
+		}
+
+		if (!pController->m_bPawnIsAlive()) {
+			return;
+		}
+
+		CBasePlayerPawn* pPawn = pController->GetCurrentPawn();
+		if (!pPawn || !pPawn->IsAlive()) {
+			return;
+		}
+
+		pPawn->m_Collision()->m_CollisionGroup(COLLISION_GROUP_DEBRIS);
+		pPawn->CollisionRulesChanged();
+	});
+}
 
 void HookEvents() {
 	EVENT::HookEvent("player_death", ::OnPlayerDeath);

@@ -53,4 +53,10 @@ public:
 	virtual void OnWeaponDropPost(CCSPlayer_WeaponServices* pService, CBasePlayerWeapon* pWeapon, const int& iDropType, const Vector* targetPos) {}
 
 	virtual void OnResourcePrecache(IEntityResourceManifest* pResourceManifest) {};
+
+	virtual bool OnTakeDamage(CCSPlayerPawn* pVictim, CTakeDamageInfo* info) {
+		return true;
+	}
+
+	virtual void OnTakeDamagePost(CCSPlayerPawn* pVictim, CTakeDamageInfo* info) {}
 };

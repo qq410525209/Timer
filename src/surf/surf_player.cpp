@@ -57,7 +57,7 @@ void CSurfPlayerManager::OnClientConnected(ISource2GameClients* pClient, CPlayer
 		}
 	}
 
-	//CMovementPlayerManager::OnClientConnected(pClient, slot, pszName, xuid, pszNetworkID, pszAddress, bFakePlayer);
+	// CMovementPlayerManager::OnClientConnected(pClient, slot, pszName, xuid, pszNetworkID, pszAddress, bFakePlayer);
 }
 
 void CSurfPlayer::Init(int iSlot) {

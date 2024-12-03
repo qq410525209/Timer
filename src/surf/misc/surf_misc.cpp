@@ -53,20 +53,26 @@ bool CSurfMiscPlugin::OnProcessMovement(CCSPlayer_MovementServices* ms, CMoveDat
 	}
 
 	auto& pMiscService = player->m_pMiscService;
-	pMiscService->EnableGodMode();
 	pMiscService->HideLegs();
 
 	return true;
 }
 
-void CSurfMiscService::EnableGodMode() {
-	CCSPlayerPawn* pawn = this->GetPlayer()->GetPlayerPawn();
-	if (!pawn) {
-		return;
+bool CSurfMiscPlugin::OnTakeDamage(CCSPlayerPawn* pVictim, CTakeDamageInfo* info) {
+	if (pVictim->IsBot()) {
+		return false;
 	}
-	if (pawn->m_bTakesDamage()) {
-		pawn->m_bTakesDamage(false);
+
+	auto pAttacker = info->m_hAttacker()->Get();
+	if (pAttacker->GetEntityIndex().Get() == 0) {
+		return false;
 	}
+
+	if (pAttacker->IsPawn()) {
+		return false;
+	}
+
+	return true;
 }
 
 void CSurfMiscService::HideLegs() {

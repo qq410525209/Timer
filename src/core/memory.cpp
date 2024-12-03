@@ -270,6 +270,25 @@ static bool Hook_OnWeaponDrop(CCSPlayer_WeaponServices* pService, CBasePlayerWea
 	return ret;
 }
 
+static int Hook_OnTakeDamage(CCSPlayer_DamageReactServices* pService, CTakeDamageInfo* info) {
+	auto pVictim = pService->GetPawn();
+	bool block = false;
+	for (auto p = CCoreForward::m_pFirst; p; p = p->m_pNext) {
+		if (!p->OnTakeDamage(pVictim, info)) {
+			block = true;
+		}
+	}
+	if (block) {
+		return 1;
+	}
+
+	auto ret = MEM::SDKCall<int>(MEM::TRAMPOLINE::g_fnWeaponDrop, pService, info);
+
+	FORWARD_POST(CCoreForward, OnTakeDamagePost, pVictim, info);
+
+	return ret;
+}
+
 #pragma endregion
 
 #pragma region setup
@@ -277,6 +296,7 @@ static bool Hook_OnWeaponDrop(CCSPlayer_WeaponServices* pService, CBasePlayerWea
 static bool SetupDetours() {
 	// clang-format off
 	HOOK_SIG("CCSPlayer_WeaponServices::Weapon_Drop", Hook_OnWeaponDrop, MEM::TRAMPOLINE::g_fnWeaponDrop);
+	HOOK_SIG("CCSPlayerPawn::OnTakeDamage", Hook_OnTakeDamage, MEM::TRAMPOLINE::g_fnTakeDamage)
 	// clang-format on
 
 	return true;

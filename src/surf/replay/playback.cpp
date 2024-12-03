@@ -15,18 +15,13 @@ void DoPlayback(CCSPlayerPawn* pBotPawn, CCSBot* pBot) {
 	}
 
 	auto& frame = aFrames.at(currentTick);
-	pBotPawn->m_angEyeAngles(frame.ang);
+	MEM::CALL::SnapViewAngles(pBotPawn, frame.ang);
 
 	auto botFlags = pBotPawn->m_fFlags();
 	pBotPawn->m_fFlags(botFlags ^= frame.flags);
 
 	pBot->m_buttonFlags(frame.buttons);
 	pBotPawn->SetMoveType(frame.mt);
-
-	if ((GetReplayPlugin()->m_iLastReplayFlag.at(slot) & FL_ONGROUND) && !(botFlags & FL_ONGROUND)) {
-		static auto fn = libmem::SignScan("48 81 C1 80 0F 00 00 E9 F4 56 01 00", LIB::server);
-		MEM::SDKCall<void*>(fn, pBotPawn, PlayerAnimEvent_t::PLAYERANIMEVENT_JUMP, 0);
-	}
 
 	Vector& currentPos = pBotPawn->GetAbsOrigin();
 	if (currentTick == 0 || currentPos.DistTo(frame.pos) > 15000.0) {
@@ -40,5 +35,4 @@ void DoPlayback(CCSPlayerPawn* pBotPawn, CCSBot* pBot) {
 	}
 
 	currentTick++;
-	GetReplayPlugin()->m_iLastReplayFlag.at(slot) = botFlags;
 }

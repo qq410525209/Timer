@@ -31,7 +31,6 @@ public:
 	std::unordered_map<uint32_t, std::vector<ReplayFrame_t>> m_umTrackReplays;
 	std::unordered_map<uint32_t, std::vector<ReplayFrame_t>> m_umStageReplays;
 	std::array<uint32_t, MAXPLAYERS> m_iCurrentTick;
-	std::array<uint32_t, MAXPLAYERS> m_iLastReplayFlag;
 
 private:
 	virtual void OnPluginStart() override;
