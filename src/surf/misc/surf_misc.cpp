@@ -52,6 +52,9 @@ bool CSurfMiscPlugin::OnProcessMovement(CCSPlayer_MovementServices* ms, CMoveDat
 		return true;
 	}
 
+	// legacy csgo duck fix
+	ms->m_flDuckSpeed(CS_PLAYER_DUCK_SPEED_IDEAL);
+
 	auto& pMiscService = player->m_pMiscService;
 	pMiscService->HideLegs();
 
