@@ -5,11 +5,32 @@
 #include <utils/ctimer.h>
 #include <sdk/entity/ccsplayercontroller.h>
 
-static void OnPlayerDeath(const char* szName, bool bDontBroadcast) {}
+static void OnPlayerDeath(IGameEvent* pEvent, const char* szName, bool bDontBroadcast) {
+	auto pController = (CCSPlayerController*)pEvent->GetPlayerController("userid");
+	if (!pController) {
+		return;
+	}
 
-static void OnRoundPrestart(const char* szName, bool bDontBroadcast) {}
+	CHandle<CCSPlayerController> hController = pController->GetRefEHandle();
 
-static void OnRoundStart(const char* szName, bool bDontBroadcast) {
+	UTIL::RequestFrame([hController]() {
+		CCSPlayerController* pController = hController.Get();
+		if (!pController) {
+			return;
+		}
+
+		CBasePlayerPawn* pPawn = pController->GetCurrentPawn();
+		if (!pPawn || pPawn->IsAlive()) {
+			return;
+		}
+
+		pPawn->m_clrRender(Color(255, 255, 255, 0));
+	});
+}
+
+static void OnRoundPrestart(IGameEvent* pEvent, const char* szName, bool bDontBroadcast) {}
+
+static void OnRoundStart(IGameEvent* pEvent, const char* szName, bool bDontBroadcast) {
 	IFACE::pEngine->ServerCommand("sv_full_alltalk 1");
 
 	CCSGameRules* gameRules = UTIL::GetGameRules();
@@ -49,8 +70,8 @@ static void OnPlayerSpawm(IGameEvent* pEvent, const char* szName, bool bDontBroa
 			return;
 		}
 
-		pPawn->m_Collision()->m_CollisionGroup(COLLISION_GROUP_DEBRIS);
-		pPawn->CollisionRulesChanged();
+		pPawn->SetCollisionGroup(COLLISION_GROUP_DEBRIS);
+		pPawn->m_clrRender(Color(255, 255, 255, 255));
 	});
 }
 

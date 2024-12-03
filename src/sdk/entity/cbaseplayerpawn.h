@@ -32,4 +32,6 @@ public:
 	}
 
 	void CommitSuicide(bool bExplode, bool bForce);
+
+	void SetCollisionGroup(StandardCollisionGroups_t group);
 };
