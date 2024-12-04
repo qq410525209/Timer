@@ -13,6 +13,7 @@ include_directories(
 	./vendor/libmem/include
 	./vendor/libmodule
 	./vendor/nlohmann
+	./vendor/fmt/include
 )
 
 if(WIN32)
@@ -45,7 +46,7 @@ file(GLOB_RECURSE SDK_SOURCES
 file(GLOB_RECURSE PROTOBUF_SOURCES "${SURFTIMER_SRC}/sdk/protobuf/*.pb.cc" "${SURFTIMER_SRC}/sdk/protobuf/*.pb.h")
 file(GLOB_RECURSE SURFTIMER_SOURCES "${SURFTIMER_SRC}/*.cpp" "${SURFTIMER_SRC}/*.h")
 
-add_definitions(-DHV_STATICLIB -DHAVE_MEMOVERRIDE_NEW_DELETE)
+add_definitions(-DHV_STATICLIB -DHAVE_MEMOVERRIDE_NEW_DELETE -DFMT_HEADER_ONLY)
 
 add_library(${PROJECT_NAME} SHARED ${LIBMODULE_SOURCES} ${SDK_SOURCES} ${PROTOBUF_SOURCES} ${SURFTIMER_SOURCES})
 
