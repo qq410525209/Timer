@@ -174,6 +174,7 @@ public:
 					 CEntityInstance* pCaller = nullptr);
 
 	void DispatchSpawn(CEntityKeyValues* pInitKeyValue = nullptr);
+	void SetParent(CBaseEntity* pParent);
 
 	Vector& GetAbsOrigin();
 	Vector& GetOrigin();

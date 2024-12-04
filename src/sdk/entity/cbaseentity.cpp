@@ -9,6 +9,10 @@ void CBaseEntity::DispatchSpawn(CEntityKeyValues* pInitKeyValue) {
 	MEM::CALL::DispatchSpawn(this, pInitKeyValue);
 }
 
+void CBaseEntity::SetParent(CBaseEntity* pParent) {
+	MEM::CALL::SetParent(this, pParent);
+}
+
 Vector& CBaseEntity::GetAbsOrigin() {
 	static Vector null(0.0f, 0.0f, 0.0f);
 	auto pBodyComponent = m_CBodyComponent();

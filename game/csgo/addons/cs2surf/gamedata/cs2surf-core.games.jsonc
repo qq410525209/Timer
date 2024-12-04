@@ -179,6 +179,13 @@
 			"windows": "48 8B C4 48 89 50 ? 55 41 55",
 			"linux": "55 48 8D 05 ? ? ? ? 48 89 E5 41 57 41 56 49 89 FE 41 55 49 89 F5 41 54 53 48 89 D3"
 		},
+		// Entity %s(%s) is ambiguously parented to %s, because there is more than one entity by that name.
+		// return 的函数就是SetParent
+		"CBaseEntity::SetParent": {
+			"library": "server",
+			"windows": "4D 8B D9 48 85 D2",
+			"linux": "48 85 F6 74 ? 48 8B 47 10 F6 40 31 02 75 ? 48 8B 46 10 F6 40 31 02 75 ? B8 ? ? ? ?"
+		},
 		// #SFUI_Notice_YouDroppedWeapon
 		// sub_CD4DC0(a1, v7, 1, 0)
 		"CCSPlayer_WeaponServices::Weapon_Drop": {

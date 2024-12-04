@@ -46,6 +46,7 @@ namespace MEM {
 		CBaseEntity* CreateEntityByName(const char* pszName);
 		void DispatchSpawn(CBaseEntity* pEnt, CEntityKeyValues* pInitKeyValue);
 		CBaseTrigger* CreateAABBTrigger(const Vector& center, const Vector& mins, const Vector& maxs);
+		void SetParent(CBaseEntity* pEnt, CBaseEntity* pParent);
 	} // namespace CALL
 
 	namespace MODULE {

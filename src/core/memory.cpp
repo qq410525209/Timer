@@ -83,6 +83,10 @@ CBaseTrigger* MEM::CALL::CreateAABBTrigger(const Vector& center, const Vector& m
 	CALL_SIG("CBaseTrigger::CreateAABBTrigger", CreateAABBTrigger, &center, &mins, &maxs);
 }
 
+void MEM::CALL::SetParent(CBaseEntity* pEnt, CBaseEntity* pParent) {
+	CALL_SIG("CBaseEntity::SetParent", SetParent, pEnt, pParent, 0, 0);
+}
+
 #pragma endregion
 
 #pragma region hooks

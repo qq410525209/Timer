@@ -113,13 +113,7 @@ void CWorldTextMenu::Display(CCSPlayerPawnBase* pPawn, int iPageIndex) {
 	CBaseViewModel* pViewModel = (CBaseViewModel*)MEM::CALL::CreateEntityByName("csgo_viewmodel");
 	pPawn->m_pViewModelServices()->SetViewModel(1, pViewModel);
 
-	static auto fnSetParent = [](CBaseEntity* pThis, CBaseEntity* parent) {
-		static void* fn = libmem::SignScan("4D 8B D9 48 85 D2", LIB::server);
-		MEM::SDKCall<void>(fn, pThis, parent, 0, 0);
-	};
-
-	fnSetParent(pMenuEntity, pViewModel);
-
+	pMenuEntity->SetParent(pViewModel);
 	pMenuEntity->m_hOwnerEntity(pViewModel->GetRefEHandle());
 
 	auto formatItem = [](int iItemIndex, const std::string& sItem) { return !sItem.empty() ? fmt::format("{}.{}", iItemIndex, sItem) : ""; };
@@ -187,7 +181,7 @@ void CWorldTextMenu::Display(CCSPlayerPawnBase* pPawn, int iPageIndex) {
 	bgPos += rig + dwn;
 	pMenuBackground->Teleport(&bgPos, &bgAng, nullptr);
 
-	fnSetParent(pMenuBackground, pViewModel);
+	pMenuBackground->SetParent(pViewModel);
 	pMenuBackground->m_hOwnerEntity(pViewModel->GetRefEHandle());
 
 	pMenuBackground->Enable();
