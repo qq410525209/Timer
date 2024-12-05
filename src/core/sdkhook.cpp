@@ -14,14 +14,17 @@ SDKHOOK_POSTBIND(SDKHook_Teleport, SDKHOOK_PRE(HookTeleport_t));
 SDKHOOK_POSTBIND(SDKHook_TeleportPost, SDKHOOK_POST(HookTeleport_t));
 
 static bool IsVMTHooked(void* pVtable, uint32_t iOffset) {
-	auto range = SDKHOOK::m_ummVtableHooks.equal_range(pVtable);
-	return std::ranges::any_of(range.first, range.second, [iOffset](const auto& pair) { return pair.second == iOffset; });
+	if (auto it = SDKHOOK::m_umVFuncHookMarks.find(pVtable); it != SDKHOOK::m_umVFuncHookMarks.end()) {
+		return std::ranges::find(it->second, iOffset) != it->second.end();
+	}
+	return false;
 }
 
 static void Hook_OnStartTouch(CBaseEntity* pEnt, void* pCallback, bool post) {
-	static HookTouch_t pTrampoline = nullptr;
 	HookTouch_t pHook = [](CBaseEntity* pSelf, CBaseEntity* pOther) {
 		void* vtable = *(void**)pSelf;
+		HookTouch_t pTrampoline = (HookTouch_t)SDKHOOK::m_umSDKHookTrampolines[SDKHook_StartTouch][vtable];
+		SURF_ASSERT(pTrampoline);
 
 		bool block = false;
 		const auto& preHooks = SDKHOOK::m_umSDKHooks[SDKHook_StartTouch][vtable];
@@ -51,15 +54,16 @@ static void Hook_OnStartTouch(CBaseEntity* pEnt, void* pCallback, bool post) {
 	}
 
 	if (!IsVMTHooked(pVtable, iOffset)) {
-		libmem::VmtHookEx(pEnt, iOffset, pHook, (void*&)pTrampoline);
-		SDKHOOK::m_ummVtableHooks.insert({pVtable, iOffset});
+		libmem::VmtHookEx(pEnt, iOffset, pHook, SDKHOOK::m_umSDKHookTrampolines[SDKHook_StartTouch][pVtable]);
+		SDKHOOK::m_umVFuncHookMarks[pVtable].insert(iOffset);
 	}
 }
 
 static void Hook_OnTouch(CBaseEntity* pEnt, void* pCallback, bool post) {
-	static HookTouch_t pTrampoline = nullptr;
 	HookTouch_t pHook = [](CBaseEntity* pSelf, CBaseEntity* pOther) {
 		void* vtable = *(void**)pSelf;
+		HookTouch_t pTrampoline = (HookTouch_t)SDKHOOK::m_umSDKHookTrampolines[SDKHook_Touch][vtable];
+		SURF_ASSERT(pTrampoline);
 
 		bool block = false;
 		const auto& preHooks = SDKHOOK::m_umSDKHooks[SDKHook_Touch][vtable];
@@ -89,15 +93,16 @@ static void Hook_OnTouch(CBaseEntity* pEnt, void* pCallback, bool post) {
 	}
 
 	if (!IsVMTHooked(pVtable, iOffset)) {
-		libmem::VmtHookEx(pEnt, iOffset, pHook, (void*&)pTrampoline);
-		SDKHOOK::m_ummVtableHooks.insert({pVtable, iOffset});
+		libmem::VmtHookEx(pEnt, iOffset, pHook, SDKHOOK::m_umSDKHookTrampolines[SDKHook_Touch][pVtable]);
+		SDKHOOK::m_umVFuncHookMarks[pVtable].insert(iOffset);
 	}
 }
 
 static void Hook_OnEndTouch(CBaseEntity* pEnt, void* pCallback, bool post) {
-	static HookTouch_t pTrampoline = nullptr;
 	HookTouch_t pHook = [](CBaseEntity* pSelf, CBaseEntity* pOther) {
 		void* vtable = *(void**)pSelf;
+		HookTouch_t pTrampoline = (HookTouch_t)SDKHOOK::m_umSDKHookTrampolines[SDKHook_EndTouch][vtable];
+		SURF_ASSERT(pTrampoline);
 
 		bool block = false;
 		const auto& preHooks = SDKHOOK::m_umSDKHooks[SDKHook_EndTouch][vtable];
@@ -127,15 +132,16 @@ static void Hook_OnEndTouch(CBaseEntity* pEnt, void* pCallback, bool post) {
 	}
 
 	if (!IsVMTHooked(pVtable, iOffset)) {
-		libmem::VmtHookEx(pEnt, iOffset, pHook, (void*&)pTrampoline);
-		SDKHOOK::m_ummVtableHooks.insert({pVtable, iOffset});
+		libmem::VmtHookEx(pEnt, iOffset, pHook, SDKHOOK::m_umSDKHookTrampolines[SDKHook_EndTouch][pVtable]);
+		SDKHOOK::m_umVFuncHookMarks[pVtable].insert(iOffset);
 	}
 }
 
 static void Hook_OnTeleport(CBaseEntity* pEnt, void* pCallback, bool post) {
-	static HookTeleport_t pTrampoline = nullptr;
 	HookTeleport_t pHook = [](CBaseEntity* pSelf, const Vector* newPosition, const QAngle* newAngles, const Vector* newVelocity) {
 		void* vtable = *(void**)pSelf;
+		HookTeleport_t pTrampoline = (HookTeleport_t)SDKHOOK::m_umSDKHookTrampolines[SDKHook_Teleport][vtable];
+		SURF_ASSERT(pTrampoline);
 
 		bool block = false;
 		const auto& preHooks = SDKHOOK::m_umSDKHooks[SDKHook_Teleport][vtable];
@@ -165,8 +171,8 @@ static void Hook_OnTeleport(CBaseEntity* pEnt, void* pCallback, bool post) {
 	}
 
 	if (!IsVMTHooked(pVtable, iOffset)) {
-		libmem::VmtHookEx(pEnt, iOffset, pHook, (void*&)pTrampoline);
-		SDKHOOK::m_ummVtableHooks.insert({pVtable, iOffset});
+		libmem::VmtHookEx(pEnt, iOffset, pHook, SDKHOOK::m_umSDKHookTrampolines[SDKHook_Teleport][pVtable]);
+		SDKHOOK::m_umVFuncHookMarks[pVtable].insert(iOffset);
 	}
 }
 

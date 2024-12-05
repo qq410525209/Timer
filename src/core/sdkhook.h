@@ -48,7 +48,8 @@ namespace SDKHOOK {
 	template<SDKHookType T>
 	bool HookEntity(CBaseEntity* pEnt, typename SDKHookBindings<T>::Type pFn);
 
-	// vtable -> [vfunc_offset]
-	inline std::unordered_multimap<void*, uint32_t> m_ummVtableHooks;
+	// vtable for key
+	inline std::unordered_map<void*, std::set<uint32_t>> m_umVFuncHookMarks;
 	inline std::unordered_map<void*, std::set<void*>> m_umSDKHooks[SDKHookType::MAX_TYPE];
+	inline std::unordered_map<void*, void*> m_umSDKHookTrampolines[SDKHookType::MAX_TYPE];
 } // namespace SDKHOOK
