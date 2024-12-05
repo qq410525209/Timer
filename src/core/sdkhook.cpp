@@ -1,6 +1,5 @@
 #include "sdkhook.h"
 #include <libmem/libmem_helper.h>
-#include <ranges>
 
 #define SDKHOOK_POSTBIND(eType, fnType) template bool SDKHOOK::HookEntity<eType>(CBaseEntity * pEnt, fnType pFn);
 
@@ -15,7 +14,7 @@ SDKHOOK_POSTBIND(SDKHook_TeleportPost, SDKHOOK_POST(HookTeleport_t));
 
 static bool IsVMTHooked(void* pVtable, uint32_t iOffset) {
 	if (auto it = SDKHOOK::m_umVFuncHookMarks.find(pVtable); it != SDKHOOK::m_umVFuncHookMarks.end()) {
-		return std::ranges::find(it->second, iOffset) != it->second.end();
+		return it->second.contains(iOffset);
 	}
 	return false;
 }
