@@ -137,6 +137,8 @@ namespace libmem {
 
 		org_func = vmt.GetOriginal<void*>(fnindex);
 		vmt.Hook(fnindex, (Address)hook_func);
+
+		return (void*)vfunc_ptr;
 	}
 
 	template<size_t nOffset = 0, typename... Args>

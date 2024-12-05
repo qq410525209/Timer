@@ -8,32 +8,21 @@
 #include <sdk/entity/ccsplayerpawn.h>
 #include <utils/ctimer.h>
 #include <utils/utils.h>
+#include <utils/typehelper.h>
 
 #include <cs2surf.h>
 
 PLUGIN_GLOBALVARS();
 
-template<typename T>
-struct ReturnType;
-
-template<typename Ret, typename... Args>
-struct ReturnType<Ret (*)(Args...)> {
-	using type = Ret;
-};
-
 #define CALL_SIG(sig, fnCurrent, ...) \
 	static auto fnSig = GAMEDATA::GetMemSig(sig); \
 	SURF_ASSERT(fnSig); \
-	using FunctionType = decltype(&fnCurrent); \
-	using ReturnTypeValue = ReturnType<FunctionType>::type; \
-	return MEM::SDKCall<ReturnTypeValue>(fnSig, __VA_ARGS__);
+	return MEM::SDKCall<FunctionTraits<decltype(&fnCurrent)>::ReturnType>(fnSig, __VA_ARGS__);
 
 #define CALL_ADDRESS(sig, fnCurrent, ...) \
 	static auto fnSig = GAMEDATA::GetAddress(sig); \
 	SURF_ASSERT(fnSig); \
-	using FunctionType = decltype(&fnCurrent); \
-	using ReturnTypeValue = ReturnType<FunctionType>::type; \
-	return MEM::SDKCall<ReturnTypeValue>(fnSig, __VA_ARGS__);
+	return MEM::SDKCall<FunctionTraits<decltype(&fnCurrent)>::ReturnType>(fnSig, __VA_ARGS__);
 
 #pragma region calls
 
@@ -371,6 +360,7 @@ void MEM::MODULE::Setup() {
 
 	server = std::make_shared<libmodule::CModule>();
 	server->InitFromMemory(libmem::GetModule(LIB::server).base);
+	SURF_ASSERT(server->GetModuleBase().GetPtr());
 
 	schemasystem = std::make_shared<libmodule::CModule>();
 	schemasystem->InitFromName(LIB::schemasystem, true);
@@ -380,18 +370,3 @@ void MEM::MODULE::Setup() {
 }
 
 #pragma endregion
-
-void MEM::SDKHOOK::StartTouchPost(CBaseEntity* pEnt, HookTouch_t pFn) {
-	static int iStartTouchOffset = GAMEDATA::GetOffset("CBaseEntity::StartTouch");
-	libmem::VmtHook(pEnt, iStartTouchOffset, pFn);
-}
-
-void MEM::SDKHOOK::TouchPost(CBaseEntity* pEnt, HookTouch_t pFn) {
-	static int iTouchOffset = GAMEDATA::GetOffset("CBaseEntity::Touch");
-	libmem::VmtHook(pEnt, iTouchOffset, pFn);
-}
-
-void MEM::SDKHOOK::EndTouchPost(CBaseEntity* pEnt, HookTouch_t pFn) {
-	static int iEndTouchOffset = GAMEDATA::GetOffset("CBaseEntity::EndTouch");
-	libmem::VmtHook(pEnt, iEndTouchOffset, pFn);
-}

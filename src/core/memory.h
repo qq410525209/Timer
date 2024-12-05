@@ -16,8 +16,6 @@ class CBaseTrigger;
 
 class GameSessionConfiguration_t {};
 
-using HookTouch_t = void (*)(CBaseEntity* pSelf, CBaseEntity* pOther);
-
 #define HOOK_SIG(sig, fnHook, fnTrampoline) \
 	static auto fn##fnHook = GAMEDATA::GetMemSig(sig); \
 	SURF_ASSERT(fn##fnHook); \
@@ -65,12 +63,6 @@ namespace MEM {
 		inline void* g_fnWeaponDrop;
 		inline void* g_fnTakeDamage;
 	} // namespace TRAMPOLINE
-
-	namespace SDKHOOK {
-		void StartTouchPost(CBaseEntity* pEnt, HookTouch_t pFn);
-		void TouchPost(CBaseEntity* pEnt, HookTouch_t pFn);
-		void EndTouchPost(CBaseEntity* pEnt, HookTouch_t pFn);
-	} // namespace SDKHOOK
 
 	void SetupHooks();
 

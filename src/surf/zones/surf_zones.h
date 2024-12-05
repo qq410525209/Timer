@@ -68,6 +68,7 @@ public:
 class CSurfZonePlugin : CMovementForward, CCoreForward {
 public:
 	std::unordered_map<CZoneHandle, ZoneCache_t> m_hZones;
+	Vector m_vecTestStartZone = {0.0f, 0.0f, 0.0f};
 
 public:
 	std::optional<ZoneCache_t> FindZone(CBaseEntity* pEnt);

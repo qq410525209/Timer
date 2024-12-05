@@ -2,6 +2,7 @@
 #include <utils/print.h>
 #include <utils/utils.h>
 #include <surf/api.h>
+#include <core/sdkhook.h>
 
 extern void RegisterCommand();
 void Trigger_OnStartTouchPost(CBaseEntity* pSelf, CBaseEntity* pOther);
@@ -84,6 +85,9 @@ void CSurfZoneService::CreateZone(const Vector& vecMin, const Vector& vecMax, st
 
 CBaseEntity* CSurfZoneService::CreateNormalZone(const Vector& vecMins, const Vector& vecMaxs) {
 	Vector vecCenter = (vecMins + vecMaxs) / 2.0;
+	if (g_SurfZonePlugin.m_vecTestStartZone.Length() == 0) {
+		g_SurfZonePlugin.m_vecTestStartZone = vecCenter;
+	}
 	Vector mins(vecMins), maxs(vecMaxs);
 	FillBoxMinMax(mins, maxs, true);
 	auto pZone = MEM::CALL::CreateAABBTrigger(vecCenter, mins, maxs);
@@ -92,9 +96,9 @@ CBaseEntity* CSurfZoneService::CreateNormalZone(const Vector& vecMins, const Vec
 		return nullptr;
 	}
 
-	MEM::SDKHOOK::StartTouchPost(pZone, Trigger_OnStartTouchPost);
-	MEM::SDKHOOK::TouchPost(pZone, Trigger_OnTouchPost);
-	MEM::SDKHOOK::EndTouchPost(pZone, Trigger_OnEndTouchPost);
+	SDKHOOK::HookEntity<SDKHook_StartTouchPost>(pZone, Trigger_OnStartTouchPost);
+	SDKHOOK::HookEntity<SDKHook_TouchPost>(pZone, Trigger_OnTouchPost);
+	SDKHOOK::HookEntity<SDKHook_EndTouchPost>(pZone, Trigger_OnEndTouchPost);
 
 	pZone->m_pEntity->m_name = GameEntitySystem()->AllocPooledString("surf_zone");
 

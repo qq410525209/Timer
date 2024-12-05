@@ -14,7 +14,17 @@ CCMD_CALLBACK(Command_EditZone) {
 	pZoneService->m_ZoneEdit.StartEditZone();
 }
 
+CCMD_CALLBACK(Command_TPStart) {
+	CSurfPlayer* player = SURF::GetPlayerManager()->ToPlayer(pController);
+	if (!player) {
+		return;
+	}
+
+	player->GetPlayerPawn()->Teleport(&SurfZonePlugin()->m_vecTestStartZone, nullptr, nullptr);
+}
+
 void RegisterCommand() {
 	CONCMD::RegConsoleCmd("sm_zones", Command_Zones);
 	CONCMD::RegConsoleCmd("sm_editzone", Command_EditZone);
+	CONCMD::RegConsoleCmd("sm_r", Command_TPStart);
 }
