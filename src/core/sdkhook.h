@@ -2,6 +2,7 @@
 
 #include <pch.h>
 #include <utils/typehelper.h>
+#include <list>
 
 // ======================== //
 using SDKHookRet_Pre = bool;

@@ -8,7 +8,22 @@ enum class EMenuType {
 };
 
 class CBaseMenu;
-using MenuHandler = std::function<void(CBaseMenu* pMenu, CBasePlayerController* pController, int iSelectedItem)>;
+
+class CMenuHandle {
+public:
+	bool IsValid() const {
+		return (m_pMenu != nullptr);
+	}
+
+	void Free();
+
+	CBaseMenu* m_pMenu = nullptr;
+};
+
+using MenuHandler = std::function<void(CMenuHandle& hMenu, CBasePlayerController* pController, int iSelectedItem)>;
+
+#define MENU_CALLBACK(cb) void cb(CMenuHandle& hMenu, CBasePlayerController* pController, int iSelectedItem)
+#define MENU_CALLBACK_L() [](CMenuHandle & hMenu, CBasePlayerController * pController, int iSelectedItem)
 
 class CBaseMenu {
 	static const size_t PAGE_SIZE = 6;
@@ -18,7 +33,9 @@ public:
 		AllocatePage();
 	}
 
-	virtual ~CBaseMenu() {}
+	virtual ~CBaseMenu() {
+		m_pFnMenuHandler = nullptr;
+	}
 
 	virtual void SetTitle(const std::string_view& sTitle) {
 		m_sTitle = sTitle;
@@ -40,12 +57,6 @@ public:
 		m_vItems.back().emplace_back(sItem);
 	}
 
-	virtual void OnItemSelect(CBasePlayerController* pController, int iSelectedItem) {
-		if (m_pFnMenuHandler) {
-			m_pFnMenuHandler(this, pController, iSelectedItem);
-		}
-	};
-
 	virtual std::string GetItem(int iPageIndex, int iItemIndex);
 
 public:
@@ -66,9 +77,9 @@ private:
 public:
 	std::string m_sTitle;
 	std::vector<std::vector<std::string>> m_vItems;
+	MenuHandler m_pFnMenuHandler;
 
 protected:
-	MenuHandler m_pFnMenuHandler;
 	CBaseMenu* m_pLast;
 	CBaseMenu* m_pNext;
 };
@@ -106,16 +117,15 @@ public:
 
 private:
 	void ResetMenu() {
-		if (m_pCurrentMenu) {
-			delete m_pCurrentMenu;
-			m_pCurrentMenu = nullptr;
+		if (m_pCurrentMenu.IsValid()) {
+			delete m_pCurrentMenu.m_pMenu;
 		}
 
 		m_iCurrentPage = 0;
 	}
 
 public:
-	CBaseMenu* m_pCurrentMenu = nullptr;
+	CMenuHandle m_pCurrentMenu;
 	int m_iCurrentPage;
 };
 
@@ -127,8 +137,12 @@ public:
 		}
 	}
 
-	CMenuPlayer* ToMenuPlayer(CPlayer* pPlayer) {
-		return static_cast<CMenuPlayer*>(pPlayer);
+	virtual CMenuPlayer* ToPlayer(CBasePlayerController* controller) const override {
+		return static_cast<CMenuPlayer*>(CPlayerManager::ToPlayer(controller));
+	}
+
+	virtual CMenuPlayer* ToPlayer(CBasePlayerPawn* pawn) const override {
+		return static_cast<CMenuPlayer*>(CPlayerManager::ToPlayer(pawn));
 	}
 
 private:
@@ -137,6 +151,13 @@ private:
 private:
 	virtual void OnPluginStart() override;
 };
+
+inline void CMenuHandle::Free() {
+	if (m_pMenu) {
+		delete m_pMenu;
+		m_pMenu = nullptr;
+	}
+}
 
 namespace MENU {
 	extern CMenuManager* GetManager();

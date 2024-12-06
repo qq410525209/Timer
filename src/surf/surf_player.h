@@ -36,7 +36,7 @@ public:
 private:
 	struct ServiceDeleter {
 		void operator()(void* ptr) const {
-			g_pMemAlloc->Free(ptr);
+			delete reinterpret_cast<CSurfBaseService*>(ptr);
 		}
 	};
 

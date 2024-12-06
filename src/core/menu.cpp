@@ -80,6 +80,8 @@ CWorldTextMenu::CWorldTextMenu(MenuHandler pFnHandler, std::string sTitle) : CBa
 }
 
 CWorldTextMenu::~CWorldTextMenu() {
+	CBaseMenu::~CBaseMenu();
+
 	auto pWorldText = m_hWorldText.Get();
 	if (pWorldText) {
 		pWorldText->Kill();
@@ -92,15 +94,13 @@ CWorldTextMenu::~CWorldTextMenu() {
 }
 
 void CWorldTextMenu::Display(CCSPlayerPawnBase* pPawn, int iPageIndex) {
-	CPlayer* pPlayer = GetPlayerManager()->ToPlayer(pPawn);
-	if (!pPlayer) {
+	CMenuPlayer* pMenuPlayer = MENU::GetManager()->ToPlayer(pPawn);
+	if (!pMenuPlayer) {
 		SURF_ASSERT(false);
 		return;
 	}
 
-	CMenuPlayer* pMenuPlayer = MENU::GetManager()->ToMenuPlayer(pPlayer);
-
-	pMenuPlayer->m_pCurrentMenu = this;
+	pMenuPlayer->m_pCurrentMenu.m_pMenu = this;
 	pMenuPlayer->m_iCurrentPage = iPageIndex;
 
 	CPointWorldText* pMenuEntity = this->m_hWorldText.Get();
@@ -109,8 +109,11 @@ void CWorldTextMenu::Display(CCSPlayerPawnBase* pPawn, int iPageIndex) {
 		return;
 	}
 
-	CBaseViewModel* pViewModel = (CBaseViewModel*)MEM::CALL::CreateEntityByName("csgo_viewmodel");
-	pPawn->m_pViewModelServices()->SetViewModel(1, pViewModel);
+	CBaseViewModel* pViewModel = pPawn->m_pViewModelServices()->GetViewModel(1);
+	if (!pViewModel) {
+		pViewModel = (CBaseViewModel*)MEM::CALL::CreateEntityByName("csgo_viewmodel");
+		pPawn->m_pViewModelServices()->SetViewModel(1, pViewModel);
+	}
 
 	pMenuEntity->SetParent(pViewModel);
 	pMenuEntity->m_hOwnerEntity(pViewModel->GetRefEHandle());
@@ -212,17 +215,17 @@ CMenuManager* MENU::GetManager() {
 }
 
 void CMenuManager::OnMenuItemSelect(CCSPlayerController* pController, const std::vector<std::string>& vArgs) {
-	CPlayer* pPlayer = GetPlayerManager()->ToPlayer(pController);
-	if (!pPlayer) {
+	CMenuPlayer* pMenuPlayer = MENU::GetManager()->ToPlayer(pController);
+	if (!pMenuPlayer) {
 		SURF_ASSERT(false);
 		return;
 	}
 
-	CMenuPlayer* pMenuPlayer = MENU::GetManager()->ToMenuPlayer(pPlayer);
-	auto& pMenu = pMenuPlayer->m_pCurrentMenu;
-	if (!pMenu) {
+	if (!pMenuPlayer->m_pCurrentMenu.IsValid()) {
 		return;
 	}
+
+	auto& pMenu = pMenuPlayer->m_pCurrentMenu.m_pMenu;
 
 	int num = -1;
 	if (vArgs.size() > 0) {
@@ -236,7 +239,10 @@ void CMenuManager::OnMenuItemSelect(CCSPlayerController* pController, const std:
 		case 4:
 		case 5:
 		case 6: {
-			pMenu->OnItemSelect(pController, num);
+			if (pMenu->m_pFnMenuHandler) {
+				pMenu->m_pFnMenuHandler(pMenuPlayer->m_pCurrentMenu, pController, num);
+			}
+
 			break;
 		}
 		case 7: {
@@ -256,7 +262,6 @@ void CMenuManager::OnMenuItemSelect(CCSPlayerController* pController, const std:
 		case 9: {
 			// prev, next menu not impl yet.
 			delete pMenu;
-			pMenu = nullptr;
 			break;
 		}
 	}

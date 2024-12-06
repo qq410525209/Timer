@@ -49,11 +49,6 @@ void CSurfZoneService::AddZone(const Vector& vecMin, const Vector& vecMax) {
 	ZoneCache_t cache;
 	this->CreateZone(mins, maxs, cache.m_aBeams);
 
-#ifdef _ZONE_DEBUG
-	static ZoneType type = Zone_Start;
-	cache.m_iType = type;
-	type = ZoneType(type + 1);
-#endif
 	SurfZonePlugin()->m_hZones[hRefZone] = cache;
 }
 
