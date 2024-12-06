@@ -2,6 +2,23 @@
 
 class CSurfZoneService;
 
+enum ZoneTrack {
+	Track_Main,
+	Track_Bonus,
+	TRACKS_SIZE
+};
+
+enum ZoneType {
+	Zone_Start,
+	Zone_End,
+	Zone_Stage,
+	Zone_Checkpoint,
+	Zone_Stop,     // stops the player's timer
+	Zone_Teleport, // teleports to a defined point
+	Zone_Mark,     // do nothing, mainly used for marking trigger;
+	ZONETYPES_SIZE
+};
+
 enum ZoneEditStep {
 	EditStep_None,   // 0 - nothing
 	EditStep_First,  // 1 - wait for E tap to setup first coord
@@ -10,7 +27,13 @@ enum ZoneEditStep {
 	EditStep_Final   // 4 - confirm
 };
 
-struct CZoneEditProperty {
+struct ZoneData_t {
+	ZoneTrack m_iTrack;
+	ZoneType m_iType;
+	int m_iValue;
+};
+
+struct CZoneEditProperty : ZoneData_t {
 	void Init(CSurfZoneService* outer);
 	void Reset();
 

@@ -40,6 +40,50 @@ std::optional<ZoneCache_t> CSurfZonePlugin::FindZone(CBaseEntity* pEnt) {
 	return std::nullopt;
 }
 
+int CSurfZonePlugin::GetZoneCount(ZoneTrack track, ZoneType type) {
+	int count = 0;
+	for (const auto& pair : m_hZones) {
+		const auto& cache = pair.second;
+		if (cache.m_iTrack == track && cache.m_iType == type) {
+			count++;
+		}
+	}
+
+	return count;
+}
+
+std::string CSurfZonePlugin::GetZoneNameByTrack(ZoneTrack track) {
+	switch (track) {
+		case ZoneTrack::Track_Main:
+			return "主线";
+		case ZoneTrack::Track_Bonus:
+			return "奖励";
+	}
+
+	return "undefined track";
+}
+
+std::string CSurfZonePlugin::GetZoneNameByType(ZoneType type) {
+	switch (type) {
+		case Zone_Start:
+			return "起点";
+		case Zone_End:
+			return "终点";
+		case Zone_Stage:
+			return "关卡";
+		case Zone_Checkpoint:
+			return "检查点";
+		case Zone_Stop:
+			return "停止";
+		case Zone_Teleport:
+			return "传送区域";
+		case Zone_Mark:
+			return "标记区域";
+		default:
+			return "未知类型";
+	}
+}
+
 void CSurfZoneService::AddZone(const Vector& vecMin, const Vector& vecMax) {
 	auto pZone = this->CreateNormalZone(vecMin, vecMax);
 	CZoneHandle hRefZone = pZone->GetRefEHandle();
@@ -48,6 +92,9 @@ void CSurfZoneService::AddZone(const Vector& vecMin, const Vector& vecMax) {
 	FillBoxMinMax(mins, maxs);
 	ZoneCache_t cache;
 	this->CreateZone(mins, maxs, cache.m_aBeams);
+	cache.m_iTrack = m_ZoneEdit.m_iTrack;
+	cache.m_iType = m_ZoneEdit.m_iType;
+	cache.m_iValue = m_ZoneEdit.m_iValue;
 
 	SurfZonePlugin()->m_hZones[hRefZone] = cache;
 }

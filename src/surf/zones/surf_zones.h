@@ -3,35 +3,15 @@
 #include <surf/surf_player.h>
 #include <surf/zones/edit.h>
 
-enum ZoneTrack {
-	Track_Main,
-	Track_Bonus,
-	TRACKS_SIZE
-};
-
-enum ZoneType {
-	Zone_Start,
-	Zone_End,
-	Zone_Stage,
-	Zone_Checkpoint,
-	Zone_Stop,     // stops the player's timer
-	Zone_Teleport, // teleports to a defined point
-	Zone_Mark,     // do nothing, mainly used for marking trigger;
-	ZONETYPES_SIZE
-};
-
-struct ZoneCache_t {
+struct ZoneCache_t : ZoneData_t {
 	ZoneCache_t() {
 		m_aBeams.fill(CEntityHandle());
 		m_iTrack = (ZoneTrack)-1;
 		m_iType = (ZoneType)-1;
-		m_iData = -1;
+		m_iValue = -1;
 	}
 
 	std::array<CHandle<CBeam>, 12> m_aBeams;
-	ZoneTrack m_iTrack;
-	ZoneType m_iType;
-	int m_iData;
 };
 
 class CZoneHandle : public CHandle<CBaseTrigger> {
@@ -72,6 +52,11 @@ public:
 
 public:
 	std::optional<ZoneCache_t> FindZone(CBaseEntity* pEnt);
+	int GetZoneCount(ZoneTrack track, ZoneType type);
+
+public:
+	static std::string GetZoneNameByTrack(ZoneTrack track);
+	static std::string GetZoneNameByType(ZoneType type);
 
 private:
 	virtual void OnPluginStart() override;

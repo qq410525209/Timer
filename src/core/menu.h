@@ -17,17 +17,16 @@ public:
 
 	void Free();
 
+public:
 	CBaseMenu* m_pMenu = nullptr;
 };
 
-using MenuHandler = std::function<void(CMenuHandle& hMenu, CBasePlayerController* pController, int iSelectedItem)>;
+using MenuHandler = std::function<void(CMenuHandle& hMenu, CBasePlayerController* pController, int iItem)>;
 
-#define MENU_CALLBACK(cb) void cb(CMenuHandle& hMenu, CBasePlayerController* pController, int iSelectedItem)
-#define MENU_CALLBACK_L() [](CMenuHandle & hMenu, CBasePlayerController * pController, int iSelectedItem)
+#define MENU_CALLBACK(cb)    void cb(CMenuHandle& hMenu, CBasePlayerController* pController, int iItem)
+#define MENU_CALLBACK_L(...) [__VA_ARGS__](CMenuHandle & hMenu, CBasePlayerController * pController, int iItem)
 
 class CBaseMenu {
-	static const size_t PAGE_SIZE = 6;
-
 public:
 	CBaseMenu(MenuHandler pFnHandler, std::string sTitle = "") : m_pFnMenuHandler(pFnHandler), m_sTitle(sTitle) {
 		AllocatePage();
@@ -75,6 +74,7 @@ private:
 	}
 
 public:
+	static const size_t PAGE_SIZE = 6;
 	std::string m_sTitle;
 	std::vector<std::vector<std::string>> m_vItems;
 	MenuHandler m_pFnMenuHandler;

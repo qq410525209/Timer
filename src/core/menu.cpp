@@ -240,7 +240,8 @@ void CMenuManager::OnMenuItemSelect(CCSPlayerController* pController, const std:
 		case 5:
 		case 6: {
 			if (pMenu->m_pFnMenuHandler) {
-				pMenu->m_pFnMenuHandler(pMenuPlayer->m_pCurrentMenu, pController, num);
+				int iItemIndex = (pMenuPlayer->m_iCurrentPage * CBaseMenu::PAGE_SIZE) + num - 1;
+				pMenu->m_pFnMenuHandler(pMenuPlayer->m_pCurrentMenu, pController, iItemIndex);
 			}
 
 			break;
