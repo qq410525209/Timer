@@ -5,12 +5,21 @@
 
 CUtlVector<CTimerBase*> g_NonPersistentTimers;
 CUtlVector<CTimerBase*> g_PersistentTimers;
-std::queue<std::unique_ptr<IFrameAction>> g_RequestFrameQueue;
 
-static void ProcessRequestFrameQueue(std::queue<std::unique_ptr<IFrameAction>>& queue) {
-	while (!queue.empty()) {
-		queue.front()->Execute();
-		queue.pop();
+std::mutex g_FrameMutex;
+std::queue<std::unique_ptr<IFrameAction>> g_FrameQueue;
+std::queue<std::unique_ptr<IFrameAction>> g_FrameActions;
+
+static void ProcessFrameActions() {
+	if (g_FrameQueue.size()) {
+		g_FrameMutex.lock();
+		std::swap(g_FrameQueue, g_FrameActions);
+		g_FrameMutex.unlock();
+
+		while (!g_FrameActions.empty()) {
+			g_FrameActions.front()->Execute();
+			g_FrameActions.pop();
+		}
 	}
 }
 
@@ -62,13 +71,15 @@ void UTIL::TIMER::RemoveTimer(CTimerBase* timer) {
 }
 
 void UTIL::TIMER::AddFrameAction(std::unique_ptr<IFrameAction> action) {
-	g_RequestFrameQueue.push(std::move(action));
+	g_FrameMutex.lock();
+	g_FrameQueue.push(std::move(action));
+	g_FrameMutex.unlock();
 }
 
 class CProcessTimer : CCoreForward {
 private:
 	virtual void OnServerGamePostSimulate(IGameSystem* pGameEvent) override {
-		::ProcessRequestFrameQueue(g_RequestFrameQueue);
+		::ProcessFrameActions();
 		::ProcessTimerList(g_PersistentTimers);
 		::ProcessTimerList(g_NonPersistentTimers);
 	}
