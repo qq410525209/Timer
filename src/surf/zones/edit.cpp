@@ -10,8 +10,8 @@ void CZoneEditProperty::Init(CSurfZoneService* outer) {
 void CZoneEditProperty::Reset() {
 	m_bEnabled = false;
 	m_iStep = EditStep_None;
-	m_vecMins = Vector();
-	m_vecMaxs = Vector();
+
+	ZoneData_t::Reset();
 
 	this->ClearBeams();
 }

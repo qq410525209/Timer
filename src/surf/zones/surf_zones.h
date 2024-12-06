@@ -4,11 +4,10 @@
 #include <surf/zones/edit.h>
 
 struct ZoneCache_t : ZoneData_t {
+	using ZoneData_t::ZoneData_t;
+
 	ZoneCache_t() {
 		m_aBeams.fill(CEntityHandle());
-		m_iTrack = (ZoneTrack)-1;
-		m_iType = (ZoneType)-1;
-		m_iValue = -1;
 	}
 
 	std::array<CHandle<CBeam>, 12> m_aBeams;

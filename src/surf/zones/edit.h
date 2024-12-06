@@ -28,20 +28,36 @@ enum ZoneEditStep {
 };
 
 struct ZoneData_t {
+	ZoneData_t() {
+		Reset();
+	}
+
+	void Reset() {
+		m_iTrack = (ZoneTrack)-1;
+		m_iType = (ZoneType)-1;
+		m_iValue = -1;
+		m_vecMins = Vector();
+		m_vecMaxs = Vector();
+		m_vecDestination = Vector();
+	}
+
 	ZoneTrack m_iTrack;
 	ZoneType m_iType;
 	int m_iValue;
+	Vector m_vecMins;
+	Vector m_vecMaxs;
+	Vector m_vecDestination;
 };
 
 struct CZoneEditProperty : ZoneData_t {
+	using ZoneData_t::ZoneData_t;
+
 	void Init(CSurfZoneService* outer);
 	void Reset();
 
 	CSurfZoneService* m_pOuter;
 	bool m_bEnabled;
 	ZoneEditStep m_iStep;
-	Vector m_vecMins;
-	Vector m_vecMaxs;
 	std::vector<CHandle<CBeam>> m_vBeam;
 
 	static constexpr const int m_iZonePairs2D[][2] = {{0, 1}, {1, 2}, {2, 3}, {3, 0}};
