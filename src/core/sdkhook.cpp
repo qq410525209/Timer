@@ -19,6 +19,12 @@ static bool IsVMTHooked(void* pVtable, uint32_t iOffset) {
 	return false;
 }
 
+static void AddHooks(std::list<void*>& hookList, void* pCallback) {
+	if (std::find(hookList.begin(), hookList.end(), pCallback) == hookList.end()) {
+		hookList.emplace_back(pCallback);
+	}
+}
+
 static void Hook_OnStartTouch(CBaseEntity* pEnt, void* pCallback, bool post) {
 	HookTouch_t pHook = [](CBaseEntity* pSelf, CBaseEntity* pOther) {
 		void* vtable = *(void**)pSelf;
@@ -46,11 +52,7 @@ static void Hook_OnStartTouch(CBaseEntity* pEnt, void* pCallback, bool post) {
 
 	static int iOffset = GAMEDATA::GetOffset("CBaseEntity::StartTouch");
 	void* pVtable = *(void**)pEnt;
-	if (post) {
-		SDKHOOK::m_umSDKHooks[SDKHook_StartTouch][pVtable].insert(pCallback);
-	} else {
-		SDKHOOK::m_umSDKHooks[SDKHook_StartTouchPost][pVtable].insert(pCallback);
-	}
+	AddHooks(SDKHOOK::m_umSDKHooks[post ? SDKHook_StartTouchPost : SDKHook_StartTouch][pVtable], pCallback);
 
 	if (!IsVMTHooked(pVtable, iOffset)) {
 		libmem::VmtHookEx(pEnt, iOffset, pHook, SDKHOOK::m_umSDKHookTrampolines[SDKHook_StartTouch][pVtable]);
@@ -85,11 +87,7 @@ static void Hook_OnTouch(CBaseEntity* pEnt, void* pCallback, bool post) {
 
 	static int iOffset = GAMEDATA::GetOffset("CBaseEntity::Touch");
 	void* pVtable = *(void**)pEnt;
-	if (post) {
-		SDKHOOK::m_umSDKHooks[SDKHook_Touch][pVtable].insert(pCallback);
-	} else {
-		SDKHOOK::m_umSDKHooks[SDKHook_TouchPost][pVtable].insert(pCallback);
-	}
+	AddHooks(SDKHOOK::m_umSDKHooks[post ? SDKHook_TouchPost : SDKHook_Touch][pVtable], pCallback);
 
 	if (!IsVMTHooked(pVtable, iOffset)) {
 		libmem::VmtHookEx(pEnt, iOffset, pHook, SDKHOOK::m_umSDKHookTrampolines[SDKHook_Touch][pVtable]);
@@ -124,11 +122,7 @@ static void Hook_OnEndTouch(CBaseEntity* pEnt, void* pCallback, bool post) {
 
 	static int iOffset = GAMEDATA::GetOffset("CBaseEntity::EndTouch");
 	void* pVtable = *(void**)pEnt;
-	if (post) {
-		SDKHOOK::m_umSDKHooks[SDKHook_EndTouch][pVtable].insert(pCallback);
-	} else {
-		SDKHOOK::m_umSDKHooks[SDKHook_EndTouchPost][pVtable].insert(pCallback);
-	}
+	AddHooks(SDKHOOK::m_umSDKHooks[post ? SDKHook_EndTouchPost : SDKHook_EndTouch][pVtable], pCallback);
 
 	if (!IsVMTHooked(pVtable, iOffset)) {
 		libmem::VmtHookEx(pEnt, iOffset, pHook, SDKHOOK::m_umSDKHookTrampolines[SDKHook_EndTouch][pVtable]);
@@ -163,11 +157,7 @@ static void Hook_OnTeleport(CBaseEntity* pEnt, void* pCallback, bool post) {
 
 	static int iOffset = GAMEDATA::GetOffset("Teleport");
 	void* pVtable = *(void**)pEnt;
-	if (post) {
-		SDKHOOK::m_umSDKHooks[SDKHook_Teleport][pVtable].insert(pCallback);
-	} else {
-		SDKHOOK::m_umSDKHooks[SDKHook_TeleportPost][pVtable].insert(pCallback);
-	}
+	AddHooks(SDKHOOK::m_umSDKHooks[post ? SDKHook_TeleportPost : SDKHook_Teleport][pVtable], pCallback);
 
 	if (!IsVMTHooked(pVtable, iOffset)) {
 		libmem::VmtHookEx(pEnt, iOffset, pHook, SDKHOOK::m_umSDKHookTrampolines[SDKHook_Teleport][pVtable]);
