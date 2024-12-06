@@ -59,4 +59,8 @@ public:
 	}
 
 	virtual void OnTakeDamagePost(CCSPlayerPawn* pVictim, CTakeDamageInfo* info) {}
+
+	virtual void OnEntitySpawned(CEntityInstance* pEntity) {}
+
+	virtual void OnEntityDeleted(CEntityInstance* pEntity) {}
 };

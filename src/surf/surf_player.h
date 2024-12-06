@@ -57,6 +57,9 @@ public:
 	std::unique_ptr<CSurfHudService, ServiceDeleter> m_pHudService;
 	std::unique_ptr<CSurfReplayService, ServiceDeleter> m_pReplayService;
 	std::unique_ptr<CSurfMiscService, ServiceDeleter> m_pMiscService;
+
+public:
+	bool m_bJustTeleported;
 };
 
 class CSurfPlayerManager : public CMovementPlayerManager {
@@ -94,6 +97,7 @@ public:
 private:
 	virtual void OnClientConnected(ISource2GameClients* pClient, CPlayerSlot slot, const char* pszName, uint64 xuid, const char* pszNetworkID,
 								   const char* pszAddress, bool bFakePlayer) override;
+	virtual void OnEntitySpawned(CEntityInstance* pEntity) override;
 };
 
 namespace SURF {

@@ -12,6 +12,11 @@
 
 #include <cs2surf.h>
 
+class CEntListener : public IEntityListener {
+	virtual void OnEntitySpawned(CEntityInstance* pEntity) override;
+	virtual void OnEntityDeleted(CEntityInstance* pEntity) override;
+} g_EntityListener;
+
 PLUGIN_GLOBALVARS();
 
 #define CALL_SIG(sig, fnCurrent, ...) \
@@ -166,6 +171,8 @@ static void Hook_ClientCommand(CPlayerSlot slot, const CCommand& args) {
 SH_DECL_HOOK3_void(INetworkServerService, StartupServer, SH_NOATTRIB, 0, const GameSessionConfiguration_t &, ISource2WorldSession *, const char *);
 static void Hook_StartupServer(const GameSessionConfiguration_t& config, ISource2WorldSession*, const char*) {
 	SurfPlugin()->AddonInit();
+	GameEntitySystem()->RemoveListenerEntity(&g_EntityListener);
+	GameEntitySystem()->AddListenerEntity(&g_EntityListener);
 
 	for (auto p = CCoreForward::m_pFirst; p; p = p->m_pNext) {
 		p->OnStartupServer(META_IFACEPTR(INetworkServerService), config);
@@ -284,6 +291,18 @@ static int Hook_OnTakeDamage(CCSPlayer_DamageReactServices* pService, CTakeDamag
 	FORWARD_POST(CCoreForward, OnTakeDamagePost, pVictim, info);
 
 	return ret;
+}
+
+void CEntListener::OnEntitySpawned(CEntityInstance* pEntity) {
+	if (pEntity) {
+		FORWARD_POST(CCoreForward, OnEntitySpawned, pEntity);
+	}
+}
+
+void CEntListener::OnEntityDeleted(CEntityInstance* pEntity) {
+	if (pEntity) {
+		FORWARD_POST(CCoreForward, OnEntityDeleted, pEntity);
+	}
 }
 
 #pragma endregion

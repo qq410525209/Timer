@@ -4,6 +4,8 @@
 #include <surf/misc/surf_misc.h>
 #include <surf/hud/surf_hud.h>
 #include <utils/utils.h>
+#include <utils/ctimer.h>
+#include <core/sdkhook.h>
 
 CSurfPlayerManager g_SurfPlayerManager;
 
@@ -47,6 +49,32 @@ CSurfPlayer* CSurfPlayerManager::ToPlayer(CSteamID steamid, bool validate) const
 	return static_cast<CSurfPlayer*>(CPlayerManager::ToPlayer(steamid, validate));
 }
 
+static bool Hook_OnPlayerTeleport(CBaseEntity* pSelf, const Vector* newPosition, const QAngle* newAngles, const Vector* newVelocity) {
+	CSurfPlayer* pPlayer = SURF::GetPlayerManager()->ToPlayer((CBasePlayerPawn*)pSelf);
+	if (!pPlayer) {
+		return true;
+	}
+
+	pPlayer->m_bJustTeleported = true;
+
+	return true;
+}
+
+static void Hook_OnPlayerTeleportPost(CBaseEntity* pSelf, const Vector* newPosition, const QAngle* newAngles, const Vector* newVelocity) {
+	auto hPlayerHandle = pSelf->GetRefEHandle();
+	UTIL::RequestFrame([hPlayerHandle] {
+		UTIL::RequestFrame([hPlayerHandle] {
+			CBasePlayerPawn* pPawn = (CBasePlayerPawn*)hPlayerHandle.Get();
+			if (pPawn) {
+				CSurfPlayer* pPlayer = SURF::GetPlayerManager()->ToPlayer(pPawn);
+				if (pPlayer) {
+					pPlayer->m_bJustTeleported = false;
+				}
+			}
+		});
+	});
+}
+
 void CSurfPlayerManager::OnClientConnected(ISource2GameClients* pClient, CPlayerSlot slot, const char* pszName, uint64 xuid, const char* pszNetworkID,
 										   const char* pszAddress, bool bFakePlayer) {
 	if (bFakePlayer) {
@@ -57,7 +85,16 @@ void CSurfPlayerManager::OnClientConnected(ISource2GameClients* pClient, CPlayer
 		}
 	}
 
+	// base not impl yet.
 	// CMovementPlayerManager::OnClientConnected(pClient, slot, pszName, xuid, pszNetworkID, pszAddress, bFakePlayer);
+}
+
+void CSurfPlayerManager::OnEntitySpawned(CEntityInstance* pEntity) {
+	auto pszClassname = pEntity->GetClassname();
+	if (!V_stricmp(pszClassname, "player")) {
+		SDKHOOK::HookEntity<SDKHook_Teleport>((CBaseEntity*)pEntity, Hook_OnPlayerTeleport);
+		SDKHOOK::HookEntity<SDKHook_TeleportPost>((CBaseEntity*)pEntity, Hook_OnPlayerTeleportPost);
+	}
 }
 
 void CSurfPlayer::Init(int iSlot) {
@@ -68,6 +105,8 @@ void CSurfPlayer::Init(int iSlot) {
 	InitService(m_pHudService);
 	InitService(m_pReplayService);
 	InitService(m_pMiscService);
+
+	m_bJustTeleported = false;
 }
 
 void SURF::FormatTime(f64 time, char* output, u32 length, bool precise) {
