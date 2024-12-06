@@ -2,7 +2,6 @@
 #include <core/memory.h>
 #include <core/concmdmanager.h>
 #include <utils/utils.h>
-#include <utils/print.h>
 #include <sdk/entity/cbaseentity.h>
 
 #include <fmt/format.h>
@@ -206,24 +205,6 @@ std::string CBaseMenu::GetItem(int iPageIndex, int iItemIndex) {
 	return "";
 }
 
-#include <utils/print.h>
-
-CCMD_CALLBACK(MENU_TEST) {
-	auto menu = MENU::Create([](CBaseMenu* pMenu, CBasePlayerController* pController, int iSelectedItem) {
-		UTIL::PrintChat(pController, "selected %d\n", iSelectedItem);
-	});
-
-	menu->SetTitle("Menu Test");
-	menu->AddItem("fuck valve");
-	menu->AddItem("fuck valve");
-	menu->AddItem("fuck valve");
-	menu->AddItem("fuck valve");
-	menu->AddItem("fuck valve");
-	menu->AddItem("fuck valve");
-	menu->AddItem("fuck valve2");
-	menu->Display(pController->GetPlayerPawn());
-}
-
 CMenuManager g_MenuManager;
 
 CMenuManager* MENU::GetManager() {
@@ -282,7 +263,6 @@ void CMenuManager::OnMenuItemSelect(CCSPlayerController* pController, const std:
 }
 
 void CMenuManager::OnPluginStart() {
-	CONCMD::RegConsoleCmd("sm_mtest", MENU_TEST);
 	CONCMD::RegConsoleCmd("sm_menu_select", OnMenuItemSelect);
 }
 

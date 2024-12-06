@@ -4,7 +4,6 @@
 #include <surf/misc/surf_misc.h>
 #include <surf/hud/surf_hud.h>
 #include <utils/utils.h>
-#include <utils/ctimer.h>
 #include <core/sdkhook.h>
 
 CSurfPlayerManager g_SurfPlayerManager;

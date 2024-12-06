@@ -6,7 +6,6 @@
 #include <sdk/usercmd.h>
 #include <sdk/entity/services.h>
 #include <sdk/entity/ccsplayerpawn.h>
-#include <utils/ctimer.h>
 #include <utils/utils.h>
 #include <utils/typehelper.h>
 

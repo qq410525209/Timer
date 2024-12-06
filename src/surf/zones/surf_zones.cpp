@@ -1,13 +1,15 @@
 #include "surf_zones.h"
-#include <utils/print.h>
 #include <utils/utils.h>
 #include <surf/api.h>
 #include <core/sdkhook.h>
 
 extern void RegisterCommand();
+bool Trigger_OnStartTouch(CBaseEntity* pSelf, CBaseEntity* pOther);
 void Trigger_OnStartTouchPost(CBaseEntity* pSelf, CBaseEntity* pOther);
 void Trigger_OnTouchPost(CBaseEntity* pSelf, CBaseEntity* pOther);
 void Trigger_OnEndTouchPost(CBaseEntity* pSelf, CBaseEntity* pOther);
+
+#define _ZONE_DEBUG
 
 CSurfZonePlugin g_SurfZonePlugin;
 
@@ -37,8 +39,6 @@ std::optional<ZoneCache_t> CSurfZonePlugin::FindZone(CBaseEntity* pEnt) {
 
 	return std::nullopt;
 }
-
-#define _ZONE_DEBUG
 
 void CSurfZoneService::AddZone(const Vector& vecMin, const Vector& vecMax) {
 	auto pZone = this->CreateNormalZone(vecMin, vecMax);
@@ -96,6 +96,7 @@ CBaseEntity* CSurfZoneService::CreateNormalZone(const Vector& vecMins, const Vec
 		return nullptr;
 	}
 
+	SDKHOOK::HookEntity<SDKHook_StartTouch>(pZone, Trigger_OnStartTouch);
 	SDKHOOK::HookEntity<SDKHook_StartTouchPost>(pZone, Trigger_OnStartTouchPost);
 	SDKHOOK::HookEntity<SDKHook_TouchPost>(pZone, Trigger_OnTouchPost);
 	SDKHOOK::HookEntity<SDKHook_EndTouchPost>(pZone, Trigger_OnEndTouchPost);
@@ -155,6 +156,43 @@ void CSurfZoneService::Reset() {
 	m_ZoneEdit.Init(this);
 }
 
+bool Trigger_OnStartTouch(CBaseEntity* pSelf, CBaseEntity* pOther) {
+	if (!pOther->IsPawn()) {
+		return true;
+	}
+
+	// if not our zone, ignore endtouch fix
+	auto res = SurfZonePlugin()->FindZone(pSelf);
+	if (!res.has_value()) {
+		return true;
+	}
+
+	auto player = SURF::GetPlayerManager()->ToPlayer((CBasePlayerPawn*)pOther);
+	if (!player) {
+		return true;
+	}
+
+	if (player->m_bJustTeleported) {
+		auto hTrigger = pSelf->GetRefEHandle();
+		auto hPlayer = pOther->GetRefEHandle();
+		UTIL::RequestFrame([hTrigger, hPlayer] {
+			auto pTrigger = (CBaseEntity*)hTrigger.Get();
+			if (!pTrigger) {
+				return;
+			}
+			auto pPlayer = (CBaseEntity*)hPlayer.Get();
+			if (!pPlayer) {
+				return;
+			}
+
+			Trigger_OnStartTouchPost(pTrigger, pPlayer);
+		});
+		return false;
+	}
+
+	return true;
+}
+
 void Trigger_OnStartTouchPost(CBaseEntity* pSelf, CBaseEntity* pOther) {
 	if (!pOther->IsPawn()) {
 		return;
@@ -172,7 +210,10 @@ void Trigger_OnStartTouchPost(CBaseEntity* pSelf, CBaseEntity* pOther) {
 
 	auto& zone = res.value();
 	FORWARD_POST(CSurfForward, OnEnterZone, zone, player);
+
+#ifdef _ZONE_DEBUG
 	UTIL::PrintChatAll("start touch! self: %s, other: %s\n", pSelf->m_pEntity->m_name, pOther->GetClassname());
+#endif
 }
 
 void Trigger_OnTouchPost(CBaseEntity* pSelf, CBaseEntity* pOther) {
@@ -212,5 +253,7 @@ void Trigger_OnEndTouchPost(CBaseEntity* pSelf, CBaseEntity* pOther) {
 	auto& zone = res.value();
 	FORWARD_POST(CSurfForward, OnLeaveZone, zone, player);
 
+#ifdef _ZONE_DEBUG
 	UTIL::PrintChatAll("end touch!\n");
+#endif
 }

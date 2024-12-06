@@ -2,7 +2,6 @@
 #include <core/interfaces.h>
 #include <sdk/gamerules.h>
 #include <utils/utils.h>
-#include <utils/ctimer.h>
 #include <sdk/entity/ccsplayercontroller.h>
 
 static void OnPlayerDeath(IGameEvent* pEvent, const char* szName, bool bDontBroadcast) {
