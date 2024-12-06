@@ -262,7 +262,7 @@ void CMenuManager::OnMenuItemSelect(CCSPlayerController* pController, const std:
 		}
 		case 9: {
 			// prev, next menu not impl yet.
-			delete pMenu;
+			pMenuPlayer->m_pCurrentMenu.Free();
 			break;
 		}
 	}
