@@ -26,7 +26,7 @@ public: // rampfix
 	Vector lastValidPlane = vec3_origin;
 
 public:
-	bool m_bHideLegs {};
+	bool m_bHideLegs = true;
 
 public:
 	void HideLegs();
