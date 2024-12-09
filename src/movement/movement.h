@@ -141,6 +141,8 @@ public:
 	CMoveData moveDataPost;
 	Vector landingVelocity;
 	bool jumped {};
+
+	float m_fCurrentMaxSpeed = 260.0f;
 };
 
 class CMovementPlayerManager : public CPlayerManager {
@@ -222,6 +224,7 @@ namespace MOVEMENT {
 		inline void* g_fnJump;
 		inline void* g_fnProcessMovement;
 		inline void* g_fnPhysicsSimulate;
+		inline void* g_fnGetMaxSpeed;
 	} // namespace TRAMPOLINE
 
 	void SetupHooks();
