@@ -20,6 +20,5 @@ void CSurfHudPlugin::OnPlayerRunCmdPost(CCSPlayerPawn* pawn, const CPlayerButton
 	const char* name = timerController->GetPlayerName();
 	Vector vel;
 	player->GetVelocity(vel);
-	Vector2D velxy = {vel.x, vel.y};
-	UTIL::PrintAlert(timerController, "time: %s, vel: %.3f", sTime.Get(), (float)velxy.Length());
+	UTIL::PrintAlert(timerController, "time: %s, vel: %.3f", sTime.Get(), (float)vel.Length2D());
 }
