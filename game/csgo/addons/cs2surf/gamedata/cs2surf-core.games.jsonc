@@ -166,7 +166,7 @@
 		"snd_cast": {
 			"library": "server",
 			"windows": "48 8B 0D ? ? ? ? F3 0F 11 4C 24 ? F3 0F 11 44 24 ? 44 89 7C 24 ? 44 88 7C 24",
-			"linux": "48 8D 05 ? ? ? ? 48 8B 38 48 85 FF 74 ? 48 8D 05 ? ? ? ? 48 8D 95"
+			"linux": "48 8D 05 ? ? ? ? 4C 8D 8D ? ? ? ? 4C 8D B5"
 		},
 		// Function with 5 arguments next to sv_walkable_normal references
 		"TracePlayerBBox": {
