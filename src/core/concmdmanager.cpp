@@ -66,6 +66,47 @@ void CONCMD::RegAdminCmd(std::string cmd, ConCmd_Callback cb, AdminFlag adminFla
 	g_pCVar->RegisterConCommand(&command, 4);
 }
 
+static void ParseCommandArgs(const std::string& sRaw, std::vector<std::string>& vArgs) {
+	std::string currentArg;
+	bool inQuotes = false;
+
+	size_t start = sRaw.find(' ');
+	if (start == std::string::npos) {
+		return;
+	}
+
+	++start;
+
+	while (start < sRaw.size() && sRaw[start] == ' ') {
+		++start;
+	}
+
+	size_t rawSize = sRaw.size();
+	for (size_t i = start; i < rawSize; ++i) {
+		char c = sRaw[i];
+
+		if (c == '"') {
+			inQuotes = !inQuotes;
+
+			if (!inQuotes) {
+				vArgs.emplace_back(std::move(currentArg));
+				currentArg = "";
+			}
+		} else if (c == ' ' && !inQuotes) {
+			if (!currentArg.empty()) {
+				vArgs.emplace_back(std::move(currentArg));
+				currentArg = "";
+			}
+		} else {
+			currentArg += c;
+		}
+	}
+
+	if (!currentArg.empty()) {
+		vArgs.emplace_back(std::move(currentArg));
+	}
+}
+
 static void HandleSrvCommand(const CCommand& pCommand, const std::wstring& wCommand) {
 	auto it = g_manager.m_umSrvCmds.find(wCommand);
 	if (it == g_manager.m_umSrvCmds.end()) {
@@ -94,24 +135,8 @@ static void HandleConCommand(CCSPlayerController* pController, const CCommand& p
 
 	if (sayCommand) {
 		if (spaceFound) {
-			std::string sSayContent(pCommand.Arg(1));
-			size_t start = sSayContent.find(' ') + 1;
-			size_t contentSize = sSayContent.size();
-			while (start < contentSize) {
-				if (sSayContent[start] == ' ') {
-					++start;
-					continue;
-				}
-
-				size_t end = sSayContent.find(' ', start);
-				if (end == std::string::npos) {
-					vArgs.emplace_back(sSayContent.substr(start));
-					break;
-				}
-
-				vArgs.emplace_back(sSayContent.substr(start, end - start));
-				start = end + 1;
-			}
+			std::string sRawContent(pCommand.ArgS());
+			ParseCommandArgs(sRawContent, vArgs);
 		}
 	} else {
 		for (int i = 1; i < pCommand.ArgC(); i++) {
