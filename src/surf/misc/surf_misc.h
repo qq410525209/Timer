@@ -11,7 +11,15 @@ private:
 								  const Vector* targetPos) override;
 	virtual bool OnProcessMovement(CCSPlayer_MovementServices* ms, CMoveData* mv) override;
 	virtual bool OnTakeDamage(CCSPlayerPawn* pVictim, CTakeDamageInfo* info) override;
+
+public:
+	void FindTriggers();
+
+public:
+	std::vector<CHandle<CBaseTrigger>> m_vTriggers;
 };
+
+extern CSurfMiscPlugin* SurfMiscPlugin();
 
 class CSurfMiscService : CSurfBaseService {
 	using CSurfBaseService::CSurfBaseService;
@@ -27,6 +35,7 @@ public: // rampfix
 
 public:
 	bool m_bHideLegs = true;
+	bool m_bShowTrigger = false;
 
 public:
 	void HideLegs();

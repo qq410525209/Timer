@@ -3,6 +3,7 @@
 #include <sdk/gamerules.h>
 #include <utils/utils.h>
 #include <sdk/entity/ccsplayercontroller.h>
+#include <surf/misc/surf_misc.h>
 
 static void OnPlayerDeath(IGameEvent* pEvent, const char* szName, bool bDontBroadcast) {
 	auto pController = (CCSPlayerController*)pEvent->GetPlayerController("userid");
@@ -40,6 +41,8 @@ static void OnRoundStart(IGameEvent* pEvent, const char* szName, bool bDontBroad
 		gameRules->m_fRoundStartTime().SetTime(0.0f);
 		gameRules->m_flGameStartTime().SetTime(0.0f);
 	}
+
+	SurfMiscPlugin()->FindTriggers();
 }
 
 static void OnPlayerTeam(IGameEvent* pEvent, const char* szName, bool bDontBroadcast) {

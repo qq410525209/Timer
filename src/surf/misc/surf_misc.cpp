@@ -7,6 +7,10 @@
 
 CSurfMiscPlugin g_SurfMisc;
 
+CSurfMiscPlugin* SurfMiscPlugin() {
+	return &g_SurfMisc;
+}
+
 extern void HookEvents();
 extern void RegisterCommands();
 
@@ -76,6 +80,25 @@ bool CSurfMiscPlugin::OnTakeDamage(CCSPlayerPawn* pVictim, CTakeDamageInfo* info
 	}
 
 	return true;
+}
+
+void CSurfMiscPlugin::FindTriggers() {
+	m_vTriggers.clear();
+
+	CBaseEntity* pEnt = nullptr;
+	while ((pEnt = UTIL::FindEntityByClassname(pEnt, "trigger_multiple")) != nullptr) {
+		m_vTriggers.emplace_back(pEnt->GetRefEHandle());
+	}
+
+	pEnt = nullptr;
+	while ((pEnt = UTIL::FindEntityByClassname(pEnt, "trigger_teleport")) != nullptr) {
+		m_vTriggers.emplace_back(pEnt->GetRefEHandle());
+	}
+
+	pEnt = nullptr;
+	while ((pEnt = UTIL::FindEntityByClassname(pEnt, "trigger_push")) != nullptr) {
+		m_vTriggers.emplace_back(pEnt->GetRefEHandle());
+	}
 }
 
 void CSurfMiscService::HideLegs() {

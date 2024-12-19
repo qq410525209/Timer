@@ -42,6 +42,8 @@ bool CSurfPlugin::Load(PluginId id, ISmmAPI* ismm, char* error, size_t maxlen, b
 	MOVEMENT::SetupHooks();
 	GS::Setup();
 
+	g_SMAPI->AddListener(this, this);
+
 	FORWARD_POST(CCoreForward, OnPluginStart);
 
 	return true;
@@ -49,6 +51,11 @@ bool CSurfPlugin::Load(PluginId id, ISmmAPI* ismm, char* error, size_t maxlen, b
 
 void CSurfPlugin::AllPluginsLoaded() {
 	g_pMultiAddonManager = (IMultiAddonManager*)g_SMAPI->MetaFactory(MULTIADDONMANAGER_INTERFACE, nullptr, nullptr);
+}
+
+void CSurfPlugin::OnLevelInit(char const* pMapName, char const* pMapEntities, char const* pOldLevel, char const* pLandmarkName, bool loadGame,
+							  bool background) {
+	FORWARD_POST(CCoreForward, OnLevelInit, pMapName);
 }
 
 void CSurfPlugin::AddonInit() {

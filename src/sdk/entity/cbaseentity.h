@@ -93,6 +93,9 @@ public:
 	DECLARE_SCHEMA_CLASS(CNetworkTransmitComponent);
 
 	SCHEMA_FIELD(uint8_t, m_nTransmitStateOwnedCounter);
+
+	// str -> "FL_FULL_EDICT_CHANGED", ^ if ( (m_fStateFlags & 2) != 0 )
+	SCHEMA_FIELD_CUSTOM(int, m_iStateFlags, 0x180);
 };
 
 class CBaseEntity : public CEntityInstance {

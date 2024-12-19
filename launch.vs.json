@@ -17,7 +17,8 @@
 				"+developer 5",
 				"+map de_dust2",
 				"+exec server.cfg",
-				"+sv_cheats 1"
+				"+sv_cheats 1",
+				"+host_workshop_map 3133346713"
 			]
 		},
 		{
@@ -28,14 +29,14 @@
 			"args": [
 				"-insecure",
 				"-dedicated",
-				"+hostport 27025",
+				"+hostport 27015",
 				"+game_mode 0",
 				"+game_type 0",
 				"+map de_dust2",
 				"+developer 5",
 				"+exec server.cfg",
 				"+sv_cheats 1",
-				"+host_workshop_map 3330050084"
+				"+host_workshop_map 3133346713"
 			]
 		}
 	]

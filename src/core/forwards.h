@@ -17,6 +17,12 @@ class CCoreForward : public CBaseForward<CCoreForward> {
 public:
 	virtual void OnPluginStart() {}
 
+	virtual void OnLevelInit(const char* pMapName) {}
+
+	virtual void OnStartupServer(INetworkServerService* pServerService, const GameSessionConfiguration_t& config) {}
+
+	virtual void OnActivateServer(CNetworkGameServerBase* pGameServer) {}
+
 	virtual void OnGameFrame(ISource2Server* pServer, bool simulating, bool bFirstTick, bool bLastTick) {}
 
 	virtual void OnServerGamePostSimulate(IGameSystem* pGameEvent) {}
@@ -37,14 +43,10 @@ public:
 
 	virtual void OnClientCommand(ISource2GameClients* pClient, CPlayerSlot slot, const CCommand& args) {}
 
-	virtual void OnStartupServer(INetworkServerService* pServerService, const GameSessionConfiguration_t& config) {}
-
 	virtual void OnDispatchConCommand(ICvar* pCvar, ConCommandHandle cmd, const CCommandContext& ctx, const CCommand& args) {}
 
 	virtual void OnPostEventAbstract(IGameEventSystem* pEventSystem, CSplitScreenSlot nSlot, int nClientCount, const uint64* clients,
 									 INetworkMessageInternal* pEvent, const CNetMessage* pData) {}
-
-	virtual void OnActivateServer(CNetworkGameServerBase* pGameServer) {}
 
 	virtual bool OnWeaponDrop(CCSPlayer_WeaponServices* pService, CBasePlayerWeapon* pWeapon, int& iDropType, Vector* targetPos) {
 		return true;
