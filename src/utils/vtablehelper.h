@@ -44,7 +44,7 @@ namespace SourceHook {
 		}
 	};
 
-#ifdef __linux
+#ifdef __linux__
 
 	template<>
 	struct MFI_Impl<2 * sizeof(void*)> // All of these have size==8/16
