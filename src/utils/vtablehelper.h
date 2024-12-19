@@ -315,6 +315,14 @@ namespace TOOLS {
 		SourceHook::GetFuncInfo(vfuncPtr, info);
 		return info.vtblindex;
 	}
+
+	template<typename X, typename Y>
+	int GetVtableIndex(X* pInstance, Y vfuncPtr) {
+		SourceHook::MemFuncInfo info {};
+		SourceHook::GetFuncInfo(pInstance, vfuncPtr, info);
+		return info.vtblindex;
+	}
 } // namespace TOOLS
 
-#define offsetof_vtable(vfuncPtr) TOOLS::GetVtableIndex(&vfuncPtr);
+#define offsetof_vtable(vfuncPtr)               TOOLS::GetVtableIndex(&vfuncPtr);
+#define offsetof_vtable_mi(pInstance, vfuncPtr) TOOLS::GetVtableIndex(pInstance, &vfuncPtr);
