@@ -27,7 +27,7 @@ void CShowTrigger::TransmitTriggers(const std::vector<CHandle<CBaseTrigger>>& vT
 
 		auto fnRmEffect = libmem::SignScan("4C 8B C2 48 8B D1 48 8B 0D 93 66 2D 01", LIB::server);
 		auto fnAddEffect = libmem::SignScan("4C 8B C2 48 8B D1 48 8B 0D D3 66 2C 01", LIB::server);
-		//MEM::SDKCall<void*>(fnAddEffect, pTrigger, EF_NOINTERP);
+		// MEM::SDKCall<void*>(fnAddEffect, pTrigger, EF_NOINTERP);
 
 		if ((test & 0x2000) != 0) {
 			MEM::SDKCall<void*>(fnRmEffect, pTrigger, 0x2000);
@@ -38,15 +38,15 @@ void CShowTrigger::TransmitTriggers(const std::vector<CHandle<CBaseTrigger>>& vT
 		if (bTransmit) {
 			iEffect &= ~(EF_NODRAW);
 			iStateFlags &= ~FL_EDICT_DONTSEND_S2;
-			//iStateFlags &= ~FL_FULL_EDICT_CHANGED_S2;
-			//iStateFlags |= (FL_EDICT_PVSCHECK_S2 | FL_EDICT_FULL_S2);
+			// iStateFlags &= ~FL_FULL_EDICT_CHANGED_S2;
+			// iStateFlags |= (FL_EDICT_PVSCHECK_S2 | FL_EDICT_FULL_S2);
 		} else {
 			iEffect |= (EF_NODRAW);
 			iStateFlags |= FL_EDICT_DONTSEND_S2;
-			//iStateFlags &= ~FL_EDICT_PVSCHECK_S2;
+			// iStateFlags &= ~FL_EDICT_PVSCHECK_S2;
 		}
 
-		//pTrigger->m_fEffects(iEffect);
+		// pTrigger->m_fEffects(iEffect);
 
 		// auto target = (uint*)((char*)pTrigger + 0x1c0);
 		//_InterlockedExchange(target, iStateFlags);
