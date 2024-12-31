@@ -12,6 +12,7 @@
 			"args": [
 				"-insecure",
 				"-dedicated",
+				"+hostport 27025",
 				"+game_mode 0",
 				"+game_type 0",
 				"+developer 5",

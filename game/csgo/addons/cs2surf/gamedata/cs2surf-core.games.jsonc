@@ -124,7 +124,7 @@
 				"dereference": false
 			},
 			"linux": {
-				"offset_func": 76,
+				"offset_func": 54,
 				"offset_opcode": 4,
 				"opcode_length": 8,
 				"dereference": false
@@ -139,7 +139,7 @@
 				"dereference": false
 			},
 			"linux": {
-				"offset_func": 54,
+				"offset_func": 76,
 				"offset_opcode": 4,
 				"opcode_length": 8,
 				"dereference": false

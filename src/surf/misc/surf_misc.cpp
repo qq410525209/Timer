@@ -2,7 +2,6 @@
 #include <surf/surf_player.h>
 #include <core/interfaces.h>
 #include <core/logger.h>
-#include <core/patch.h>
 #include <utils/utils.h>
 
 CSurfMiscPlugin g_SurfMisc;
@@ -17,8 +16,6 @@ extern void RegisterCommands();
 void CSurfMiscPlugin::OnPluginStart() {
 	HookEvents();
 	RegisterCommands();
-
-	PATCH::DoMovementUnlocker();
 }
 
 void CSurfMiscPlugin::OnActivateServer(CNetworkGameServerBase* pGameServer) {

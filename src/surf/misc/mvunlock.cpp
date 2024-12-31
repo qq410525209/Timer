@@ -1,7 +1,12 @@
-#include "patch.h"
 #include <core/memory.h>
 
-void PATCH::DoMovementUnlocker() {
+class CMovementUnlocker : CCoreForward {
+	virtual void OnPluginStart() override;
+};
+
+CMovementUnlocker g_MovementUnlocker;
+
+void CMovementUnlocker::OnPluginStart() {
 	static auto fn = GAMEDATA::GetMemSig("ServerMovementUnlock");
 	SURF_ASSERT(fn);
 
