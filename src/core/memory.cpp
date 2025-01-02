@@ -104,8 +104,7 @@ static bool Hook_ClientConnect(ISource2GameClients* pThis, CPlayerSlot slot, con
 }
 
 static void Hook_OnClientConnected(ISource2GameClients* pThis, CPlayerSlot slot, const char* pszName, uint64 xuid, const char* pszNetworkID,
-								   const char* pszAddress,
-								   bool bFakePlayer) {
+								   const char* pszAddress, bool bFakePlayer) {
 	for (auto p = CCoreForward::m_pFirst; p; p = p->m_pNext) {
 		p->OnClientConnected(pThis, slot, pszName, xuid, pszNetworkID, pszAddress, bFakePlayer);
 	}
@@ -183,8 +182,8 @@ static void Hook_DispatchConCommand(ICvar* pThis, ConCommandHandle cmd, const CC
 	MEM::SDKCall(MEM::TRAMPOLINE::g_fnDispatchConCommand, pThis, cmd, &ctx, &args);
 }
 
-static void Hook_PostEvent(IGameEventSystem* pThis, CSplitScreenSlot nSlot, bool bLocalOnly, int nClientCount, const uint64* clients, INetworkMessageInternal* pEvent,
-						   const CNetMessage* pData, unsigned long nSize, NetChannelBufType_t bufType) {
+static void Hook_PostEvent(IGameEventSystem* pThis, CSplitScreenSlot nSlot, bool bLocalOnly, int nClientCount, const uint64* clients,
+						   INetworkMessageInternal* pEvent, const CNetMessage* pData, unsigned long nSize, NetChannelBufType_t bufType) {
 	for (auto p = CCoreForward::m_pFirst; p; p = p->m_pNext) {
 		p->OnPostEventAbstract(pThis, nSlot, nClientCount, clients, pEvent, pData);
 	}
