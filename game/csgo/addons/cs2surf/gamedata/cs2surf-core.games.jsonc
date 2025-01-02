@@ -1,13 +1,5 @@
 {
 	"Offset": {
-		"CGameEventManager::CreateEvent": {
-			"windows": 6,
-			"linux": 7
-		},
-		"CGameEventManager::FireEvent": {
-			"windows": 7,
-			"linux": 8
-		},
 		"GameEntitySystem": {
 			"windows": 88,
 			"linux": 80
