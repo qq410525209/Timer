@@ -63,20 +63,7 @@ bool CSurfMiscPlugin::OnProcessMovement(CCSPlayer_MovementServices* ms, CMoveDat
 }
 
 bool CSurfMiscPlugin::OnTakeDamage(CCSPlayerPawn* pVictim, CTakeDamageInfo* info) {
-	if (pVictim->IsBot()) {
-		return false;
-	}
-
-	auto pAttacker = info->m_hAttacker()->Get();
-	if (pAttacker->GetEntityIndex().Get() == 0) {
-		return false;
-	}
-
-	if (pAttacker->IsPawn()) {
-		return false;
-	}
-
-	return true;
+	return false;
 }
 
 void CSurfMiscPlugin::FindTriggers() {
