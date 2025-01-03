@@ -82,6 +82,18 @@ void MEM::CALL::SetParent(CBaseEntity* pEnt, CBaseEntity* pParent) {
 
 #pragma region hooks
 
+void CEntListener::OnEntitySpawned(CEntityInstance* pEntity) {
+	if (pEntity) {
+		FORWARD_POST(CCoreForward, OnEntitySpawned, pEntity);
+	}
+}
+
+void CEntListener::OnEntityDeleted(CEntityInstance* pEntity) {
+	if (pEntity) {
+		FORWARD_POST(CCoreForward, OnEntityDeleted, pEntity);
+	}
+}
+
 static void Hook_OnServerGamePostSimulate(IGameSystem* pThis, const EventServerGamePostSimulate_t* a2) {
 	MEM::SDKCall(MEM::TRAMPOLINE::g_fnServerGamePostSimulate, pThis, a2);
 
@@ -287,16 +299,10 @@ static int Hook_OnTakeDamage(CCSPlayer_DamageReactServices* pService, CTakeDamag
 	return ret;
 }
 
-void CEntListener::OnEntitySpawned(CEntityInstance* pEntity) {
-	if (pEntity) {
-		FORWARD_POST(CCoreForward, OnEntitySpawned, pEntity);
-	}
-}
+static void Hook_OnClientSendSnapshotBefore(CServerSideClient* pClient, void* pFrameSnapshot) {
+	FORWARD_POST(CCoreForward, OnClientSendSnapshotBefore, pClient);
 
-void CEntListener::OnEntityDeleted(CEntityInstance* pEntity) {
-	if (pEntity) {
-		FORWARD_POST(CCoreForward, OnEntityDeleted, pEntity);
-	}
+	MEM::SDKCall(MEM::TRAMPOLINE::g_fnClientSendSnapshotBefore, pClient, pFrameSnapshot);
 }
 
 #pragma endregion
@@ -307,6 +313,7 @@ static bool SetupDetours() {
 	// clang-format off
 	HOOK_SIG("CCSPlayer_WeaponServices::Weapon_Drop", Hook_OnWeaponDrop, MEM::TRAMPOLINE::g_fnWeaponDrop);
 	HOOK_SIG("CCSPlayerPawn::OnTakeDamage", Hook_OnTakeDamage, MEM::TRAMPOLINE::g_fnTakeDamage);
+	HOOK_SIG("CServerSideClient::SendSnapshotBefore", Hook_OnClientSendSnapshotBefore, MEM::TRAMPOLINE::g_fnClientSendSnapshotBefore);
 	// clang-format on
 
 	return true;

@@ -94,6 +94,7 @@ namespace MEM {
 		inline void* g_fnActivateServer;
 		inline void* g_fnWeaponDrop;
 		inline void* g_fnTakeDamage;
+		inline void* g_fnClientSendSnapshotBefore;
 	} // namespace TRAMPOLINE
 
 	void SetupHooks();

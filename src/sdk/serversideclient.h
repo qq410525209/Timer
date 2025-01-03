@@ -386,8 +386,9 @@ public:
 	virtual ~CServerSideClient() = 0;
 
 public:
-	CPlayerBitVec m_VoiceStreams;       // 2952
-	CPlayerBitVec m_VoiceProximity;     // 2960
+	CPlayerBitVec m_VoiceStreams;   // 2952
+	CPlayerBitVec m_VoiceProximity; // 2960
+	void* m_Unk2952;
 	CCheckTransmitInfo m_PackInfo;      // 2968
 	CClientFrameManager m_FrameManager; // 3568
 
@@ -415,6 +416,10 @@ public:
 private:
 	[[maybe_unused]] char pad3984[8]; // 4008
 }; // sizeof 4016
+
+#ifdef _WIN32
+static_assert(offsetof(CServerSideClient, m_PackInfo) == 2960);
+#endif
 
 // not full class reversed
 class CHLTVClient : public CServerSideClientBase {

@@ -12,6 +12,7 @@ public:
 
 	SCHEMA_FIELD(CCSPlayer_ViewModelServices*, m_pViewModelServices);
 	SCHEMA_FIELD(QAngle, m_angEyeAngles);
+	SCHEMA_FIELD(CHandle<CCSPlayerController>, m_hOriginalController);
 
 	Vector GetEyePosition();
 };

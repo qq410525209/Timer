@@ -72,6 +72,7 @@ public:
 	SCHEMA_FIELD(CEntityInstance*, m_pOwner);
 	SCHEMA_FIELD(CGameSceneNode*, m_pParent);
 	SCHEMA_FIELD(CGameSceneNode*, m_pChild);
+	SCHEMA_FIELD(CGameSceneNode*, m_pNextSibling);
 	SCHEMA_FIELD(Vector, m_vecOrigin);
 	SCHEMA_FIELD(QAngle, m_angRotation);
 	SCHEMA_FIELD(QAngle, m_angAbsRotation);

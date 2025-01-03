@@ -34,6 +34,7 @@ public: // rampfix
 	Vector lastValidPlane = vec3_origin;
 
 public:
+	bool m_bHide = false;
 	bool m_bHideLegs = true;
 	bool m_bShowTrigger = false;
 

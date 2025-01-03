@@ -8,6 +8,8 @@
 #include <sdk/entity/services.h>
 #include <sdk/entity/entityresource.h>
 
+class CServerSideClient;
+
 #define FORWARD_POST(forwardClass, forwardFn, ...) \
 	for (auto p = forwardClass::m_pFirst; p; p = p->m_pNext) { \
 		p->forwardFn(__VA_ARGS__); \
@@ -26,6 +28,10 @@ public:
 	virtual void OnGameFrame(ISource2Server* pServer, bool simulating, bool bFirstTick, bool bLastTick) {}
 
 	virtual void OnServerGamePostSimulate(IGameSystem* pGameEvent) {}
+
+	virtual void OnEntitySpawned(CEntityInstance* pEntity) {}
+
+	virtual void OnEntityDeleted(CEntityInstance* pEntity) {}
 
 	virtual void OnClientConnected(ISource2GameClients* pClient, CPlayerSlot slot, const char* pszName, uint64 xuid, const char* pszNetworkID,
 								   const char* pszAddress, bool bFakePlayer) {}
@@ -62,7 +68,5 @@ public:
 
 	virtual void OnTakeDamagePost(CCSPlayerPawn* pVictim, CTakeDamageInfo* info) {}
 
-	virtual void OnEntitySpawned(CEntityInstance* pEntity) {}
-
-	virtual void OnEntityDeleted(CEntityInstance* pEntity) {}
+	virtual void OnClientSendSnapshotBefore(CServerSideClient* pClient) {}
 };
