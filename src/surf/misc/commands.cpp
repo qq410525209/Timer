@@ -50,6 +50,9 @@ static void Command_ShowTrigger(CCSPlayerController* pController, const std::vec
 	pMiscService->m_bShowTrigger = !pMiscService->m_bShowTrigger;
 
 	UTIL::PrintChat(pController, "[显示区域] %s\n", pMiscService->m_bShowTrigger ? "已打开" : "已关闭");
+	if (pMiscService->m_bShowTrigger) {
+		UTIL::PrintChat(pController, "请控制台输入 cl_debug_overlays_broadcast 1\n");
+	}
 
 	g_ShowTrigger.TransmitTriggers(SurfMiscPlugin()->m_vTriggers, pMiscService->m_bShowTrigger);
 }
