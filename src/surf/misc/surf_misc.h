@@ -9,11 +9,10 @@ private:
 	virtual void OnActivateServer(CNetworkGameServerBase* pGameServer) override;
 	virtual void OnWeaponDropPost(CCSPlayer_WeaponServices* pService, CBasePlayerWeapon* pWeapon, const int& iDropType,
 								  const Vector* targetPos) override;
+
+	virtual void OnEntitySpawned(CEntityInstance* pEntity) override;
 	virtual bool OnProcessMovement(CCSPlayer_MovementServices* ms, CMoveData* mv) override;
 	virtual bool OnTakeDamage(CCSPlayerPawn* pVictim, CTakeDamageInfo* info) override;
-
-public:
-	void FindTriggers();
 
 public:
 	std::vector<CHandle<CBaseTrigger>> m_vTriggers;
