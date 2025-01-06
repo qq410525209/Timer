@@ -13,6 +13,8 @@ void CBlockRadio::OnPluginStart() {
 													  "enemyspot",       "needbackup",  "takepoint", "sectorclear", "inposition"};
 
 	for (size_t i = 0; i < sizeof(blockedCommands) / sizeof(blockedCommands[0]); i++) {
+		// clang-format off
 		CONCMD::AddCommandListener(blockedCommands[i], CCMDLISTENER_CALLBACK_L() { return false; });
+		// clang-format on
 	}
 }
