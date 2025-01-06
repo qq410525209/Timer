@@ -56,6 +56,18 @@ void CSurfMiscPlugin::OnEntitySpawned(CEntityInstance* pEntity) {
 	}
 }
 
+void CSurfMiscPlugin::OnClientDisconnect(ISource2GameClients* pClient, CPlayerSlot slot, ENetworkDisconnectionReason reason, const char* pszName,
+										 uint64 xuid, const char* pszNetworkID) {
+	auto pController = dynamic_cast<CCSPlayerController*>(UTIL::GetController(slot));
+	if (!pController) {
+		return;
+	}
+
+	// Immediately remove the player off the list. We don't need to keep them around.
+	pController->m_LastTimePlayerWasDisconnectedForPawnsRemove().SetTime(0.01f);
+	pController->SwitchTeam(0);
+}
+
 bool CSurfMiscPlugin::OnProcessMovement(CCSPlayer_MovementServices* ms, CMoveData* mv) {
 	CSurfPlayer* player = SURF::GetPlayerManager()->ToPlayer(ms);
 	if (!player) {
