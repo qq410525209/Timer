@@ -53,6 +53,10 @@ void CHidePlugin::ClearEntityChildEntities(CEdictBitVec* pTransmitEntity, CEdict
 }
 
 void CHidePlugin::Set(CBasePlayerController* pOwner, CBaseEntity* pTarget, bool bShouldHide) {
+	if (!pOwner || !pTarget) {
+		return;
+	}
+
 	int iOwnerSlot = pOwner->GetPlayerSlot();
 	if (!UTIL::IsPlayerSlot(iOwnerSlot)) {
 		return;
@@ -86,6 +90,10 @@ void CHidePlugin::Remove(CBasePlayerController* pOwner, CBaseEntity* pTarget) {
 }
 
 void CHidePlugin::Reset(CBasePlayerController* pOwner) {
+	if (!pOwner) {
+		return;
+	}
+
 	int iOwnerSlot = pOwner->GetPlayerSlot();
 	if (!UTIL::IsPlayerSlot(iOwnerSlot)) {
 		return;

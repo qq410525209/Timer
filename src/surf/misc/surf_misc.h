@@ -34,6 +34,7 @@ public: // rampfix
 
 public:
 	bool m_bHide = false;
+	bool m_bHideWeapons = false;
 	bool m_bHideLegs = true;
 	bool m_bShowTrigger = false;
 
