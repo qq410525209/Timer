@@ -3,11 +3,16 @@
 #include <sdk/serversideclient.h>
 #include <sdk/entity/ccsplayercontroller.h>
 #include <utils/utils.h>
+#include <core/playermanager.h>
 
 CHidePlugin g_HidePlugin;
 
 CHidePlugin* HidePlugin() {
 	return &g_HidePlugin;
+}
+
+void SetMenuEntityTransmiter(CBaseEntity* pMenu, CBasePlayerController* pOwner) {
+	g_HidePlugin.SetExclude(pOwner, pMenu, true);
 }
 
 void CHidePlugin::ClearEntityTransmitInfo(CEdictBitVec* pTransmitEntity, CEdictBitVec* pTransmitAlways, CBaseEntity* pEntity) {
@@ -59,6 +64,20 @@ void CHidePlugin::Set(CBasePlayerController* pOwner, CBaseEntity* pTarget, bool 
 		m_vBlockTransmit.at(iOwnerSlot).Set(iTargetIdx);
 	} else {
 		m_vBlockTransmit.at(iOwnerSlot).Clear(iTargetIdx);
+	}
+}
+
+void CHidePlugin::SetExclude(CBasePlayerController* pExcludedOwner, CBaseEntity* pTarget, bool bShouldHide) {
+	if (!pExcludedOwner || !pTarget) {
+		return;
+	}
+
+	auto vOnlinePlayers = GetPlayerManager()->GetOnlinePlayers();
+	for (const auto& pPlayer : vOnlinePlayers) {
+		CCSPlayerController* pTargetController = pPlayer->GetController();
+		if (pTargetController && pTargetController->GetPlayerSlot() != pExcludedOwner->GetPlayerSlot()) {
+			this->Set(pTargetController, pTarget, bShouldHide);
+		}
 	}
 }
 

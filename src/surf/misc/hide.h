@@ -7,6 +7,7 @@ using CEdictBitVec = CBitVec<MAX_EDICTS>;
 class CHidePlugin : CCoreForward {
 public:
 	void Set(CBasePlayerController* pOwner, CBaseEntity* pTarget, bool bShouldHide);
+	void SetExclude(CBasePlayerController* pExcludedOwner, CBaseEntity* pTarget, bool bShouldHide);
 	void Remove(CBasePlayerController* pOwner, CBaseEntity* pTarget);
 	void Reset(CBasePlayerController* pOwner);
 
