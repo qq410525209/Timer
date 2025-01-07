@@ -7,7 +7,7 @@
 
 CHidePlugin g_HidePlugin;
 
-CHidePlugin* HidePlugin() {
+CHidePlugin* SURF::MISC::HidePlugin() {
 	return &g_HidePlugin;
 }
 

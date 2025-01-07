@@ -20,7 +20,7 @@ static void Command_Hide(CCSPlayerController* pController, const std::vector<std
 		if (pTargetController && pTargetController->GetPlayerSlot() != pController->GetPlayerSlot()) {
 			CCSPlayerPawn* pTargetPawn = pTargetController->GetPlayerPawn();
 			if (pTargetPawn) {
-				HidePlugin()->Set(pController, pTargetPawn, pMiscService->m_bHide);
+				SURF::MISC::HidePlugin()->Set(pController, pTargetPawn, pMiscService->m_bHide);
 			}
 		}
 	}
@@ -46,7 +46,7 @@ static void Command_HideWeapons(CCSPlayerController* pController, const std::vec
 
 	auto& pMiscService = player->m_pMiscService;
 	pMiscService->m_bHideWeapons = !pMiscService->m_bHideWeapons;
-	HidePlugin()->Set(pController, pViewModel, pMiscService->m_bHideWeapons);
+	SURF::MISC::HidePlugin()->Set(pController, pViewModel, pMiscService->m_bHideWeapons);
 
 	UTIL::PrintChat(pController, "[武器] %s\n", pMiscService->m_bHideWeapons ? "已隐藏" : "已显示");
 }
@@ -77,10 +77,10 @@ static void Command_ShowTrigger(CCSPlayerController* pController, const std::vec
 		UTIL::PrintChat(pController, "请控制台输入 cl_debug_overlays_broadcast 1\n");
 	}
 
-	g_ShowTrigger.TransmitTriggers(SurfMiscPlugin()->m_vTriggers, pMiscService->m_bShowTrigger);
+	SURF::MISC::ShowTriggerPlugin()->TransmitTriggers(SURF::MiscPlugin()->m_vTriggers, pMiscService->m_bShowTrigger);
 }
 
-void RegisterCommands() {
+void CSurfMiscPlugin::RegisterCommands() {
 	CONCMD::RegConsoleCmd("sm_hide", Command_Hide);
 	CONCMD::RegConsoleCmd("sm_hw", Command_HideWeapons);
 	CONCMD::RegConsoleCmd("sm_hideweapon", Command_HideWeapons);

@@ -6,12 +6,9 @@
 
 CSurfMiscPlugin g_SurfMisc;
 
-CSurfMiscPlugin* SurfMiscPlugin() {
+CSurfMiscPlugin* SURF::MiscPlugin() {
 	return &g_SurfMisc;
 }
-
-extern void HookEvents();
-extern void RegisterCommands();
 
 void CSurfMiscPlugin::OnPluginStart() {
 	HookEvents();

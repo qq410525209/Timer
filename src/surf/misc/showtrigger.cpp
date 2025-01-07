@@ -6,6 +6,10 @@
 
 CShowTrigger g_ShowTrigger;
 
+CShowTrigger* SURF::MISC::ShowTriggerPlugin() {
+	return &g_ShowTrigger;
+}
+
 enum DebugOverlayBits_t : uint64_t {
 	// MPropertyFriendlyName "Ent Text"
 	// MPropertyDescription "show text debug overlay for this entity"

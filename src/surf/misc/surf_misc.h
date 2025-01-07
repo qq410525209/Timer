@@ -15,11 +15,13 @@ private:
 	virtual bool OnProcessMovement(CCSPlayer_MovementServices* ms, CMoveData* mv) override;
 	virtual bool OnTakeDamage(CCSPlayerPawn* pVictim, CTakeDamageInfo* info) override;
 
+private:
+	void HookEvents();
+	void RegisterCommands();
+
 public:
 	std::vector<CHandle<CBaseTrigger>> m_vTriggers;
 };
-
-extern CSurfMiscPlugin* SurfMiscPlugin();
 
 class CSurfMiscService : CSurfBaseService {
 	using CSurfBaseService::CSurfBaseService;
@@ -42,3 +44,7 @@ public:
 public:
 	void HideLegs();
 };
+
+namespace SURF {
+	extern CSurfMiscPlugin* MiscPlugin();
+} // namespace SURF

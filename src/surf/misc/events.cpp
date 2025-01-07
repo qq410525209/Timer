@@ -75,7 +75,7 @@ static void OnPlayerSpawm(IGameEvent* pEvent, const char* szName, bool bDontBroa
 	});
 }
 
-void HookEvents() {
+void CSurfMiscPlugin::HookEvents() {
 	EVENT::HookEvent("player_death", ::OnPlayerDeath);
 	EVENT::HookEvent("round_prestart", ::OnRoundPrestart);
 	EVENT::HookEvent("round_start", ::OnRoundStart);

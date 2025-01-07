@@ -11,4 +11,8 @@ public:
 	void TransmitTriggers(const std::vector<CHandle<CBaseTrigger>>& vTriggers, bool bTransmit);
 };
 
-extern CShowTrigger g_ShowTrigger;
+namespace SURF {
+	namespace MISC {
+		extern CShowTrigger* ShowTriggerPlugin();
+	} // namespace MISC
+} // namespace SURF

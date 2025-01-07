@@ -2,6 +2,7 @@
 #include <core/concmdmanager.h>
 
 class CBlockRadio : CCoreForward {
+private:
 	virtual void OnPluginStart() override;
 };
 
