@@ -1,8 +1,6 @@
 #include "surf_global.h"
 #include <surf/api.h>
 #include <utils/utils.h>
-#include <hv/requests.h>
-#include <hv/hthread.h>
 #include <fmt/format.h>
 #include <regex>
 
@@ -15,13 +13,15 @@ CSurfGlobalAPIPlugin* SURF::GlobalPlugin() {
 void CSurfGlobalAPIPlugin::OnPluginStart() {
 	RegisterCommand();
 	ReadAPIKey();
-
-	// FIXME: should move to http auth callback
-	FORWARD_POST(CSurfGlobalForward, OnInit);
 }
 
 void CSurfGlobalAPIPlugin::OnActivateServer(CNetworkGameServerBase* pGameServer) {
 	Reset();
+
+	GetAuthStatus(HTTPRES_CALLBACK_L() {
+		SURF::GlobalPlugin()->m_sBearerToken = "";
+		FORWARD_POST(CSurfGlobalForward, OnInit);
+	});
 }
 
 void CSurfGlobalAPIPlugin::OnClientActive(ISource2GameClients* pClient, CPlayerSlot slot, bool bLoadGame, const char* pszName, uint64 xuid) {
@@ -90,66 +90,6 @@ void CSurfGlobalAPIPlugin::GlobalCheck(CBasePlayerController* pController) const
 	}
 
 	UTIL::Print(pController, sGC.c_str());
-}
-
-void CSurfGlobalAPIPlugin::CreateRequest(std::string sEndpointAlias, const GlobalAPIRequest& req, HttpResponseCallback cb) {
-	if (!m_umEndpoint.contains(sEndpointAlias)) {
-		return;
-	}
-
-	auto& sEndpoint = m_umEndpoint[sEndpointAlias];
-
-	switch (req.method) {
-		case HTTP_GET: {
-			HttpRequestPtr http_req(new HttpRequest);
-			http_req->method = HTTP_GET;
-
-			std::string fullUrl = sEndpoint;
-			if (!req.empty()) {
-				std::string queryString;
-				for (auto it = req.begin(); it != req.end(); ++it) {
-					if (!queryString.empty()) {
-						queryString += "&";
-					}
-					queryString += it.key() + "=" + it.value().dump();
-				}
-
-				fullUrl = sEndpoint + "?" + queryString;
-			}
-			http_req->url = fullUrl;
-
-			http_req->timeout = req.iTimeout;
-
-			if (req.bBearerToken) {
-				http_req->SetBearerTokenAuth(m_sBearerToken);
-			}
-
-			http_client_send_async(http_req, cb);
-			break;
-		}
-		case HTTP_POST: {
-			HttpRequestPtr http_req(new HttpRequest);
-			http_req->method = HTTP_POST;
-			http_req->url = sEndpoint;
-			http_req->timeout = req.iTimeout;
-
-			if (!req.empty()) {
-				std::string sBody = req.dump();
-				http_req->SetBody(sBody);
-			}
-
-			if (req.bBearerToken) {
-				http_req->SetBearerTokenAuth(m_sBearerToken);
-			}
-
-			http_req->SetHeader("Content-Type", "application/json");
-
-			http_client_send_async(http_req, cb);
-			break;
-		}
-		default:
-			break;
-	}
 }
 
 void CSurfGlobalAPIService::Reset() {

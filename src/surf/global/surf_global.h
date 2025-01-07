@@ -3,10 +3,18 @@
 #include <surf/surf_player.h>
 #include <hv/HttpMessage.h>
 
+#ifndef HTTPRES_CALLBACK
+#define HTTPRES_CALLBACK(fn) static void fn(const HttpResponsePtr& res)
+#endif
+
+#ifndef HTTPRES_CALLBACK_L
+#define HTTPRES_CALLBACK_L(...) [__VA_ARGS__](const HttpResponsePtr& res) -> void
+#endif
+
 struct GlobalAPIRequest : json {
 	int iTimeout = 10;
-	bool bBearerToken;
-	http_method method;
+	bool bBearerToken = true;
+	http_method method = HTTP_GET;
 };
 
 class CSurfGlobalAPIPlugin : CCoreForward {
@@ -25,7 +33,8 @@ public:
 	void GlobalCheck(CBasePlayerController* pController) const;
 
 public:
-	void CreateRequest(std::string sEndpointAlias, const GlobalAPIRequest& req, HttpResponseCallback cb);
+	void CreateRequest(std::string sEndpointAlias, const GlobalAPIRequest& req, HttpResponseCallback& cb);
+	void GetAuthStatus(HttpResponseCallback cb);
 
 public:
 	bool m_bAPIKeyCheck;
