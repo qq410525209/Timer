@@ -12,10 +12,10 @@
 #include <utils/print.h>
 
 #define JSON_GETTER(_json, key, ret) \
-	{ \
+	do { \
 		if (_json.contains(#key)) \
 			ret = _json[#key].get<decltype(ret)>(); \
-	}
+	} while (0)
 
 namespace UTIL {
 	namespace PATH {
