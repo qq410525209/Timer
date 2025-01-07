@@ -1,4 +1,7 @@
 {
-    "global_api": "",
-    "zone_helper": ""
+    "global_key": "",
+    "zone_helper_key": "",
+    "endpoints": {
+        "auth": "/auth"
+    }
 }

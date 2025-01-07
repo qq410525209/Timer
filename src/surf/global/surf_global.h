@@ -1,10 +1,18 @@
 #pragma once
 
 #include <surf/surf_player.h>
+#include <hv/HttpMessage.h>
+
+struct GlobalAPIRequest : json {
+	int iTimeout = 10;
+	bool bBearerToken;
+	http_method method;
+};
 
 class CSurfGlobalAPIPlugin : CCoreForward {
 private:
 	virtual void OnPluginStart() override;
+	virtual void OnActivateServer(CNetworkGameServerBase* pGameServer) override;
 	virtual void OnClientActive(ISource2GameClients* pClient, CPlayerSlot slot, bool bLoadGame, const char* pszName, uint64 xuid) override;
 
 private:
@@ -13,6 +21,11 @@ private:
 
 public:
 	void ReadAPIKey();
+	bool MapCheck() const;
+	void GlobalCheck(CBasePlayerController* pController) const;
+
+public:
+	void CreateRequest(std::string sEndpointAlias, const GlobalAPIRequest& req, HttpResponseCallback cb);
 
 public:
 	bool m_bAPIKeyCheck;
@@ -21,8 +34,10 @@ public:
 	bool m_bMapValidated;
 	int m_iMapWorkshopID;
 	int m_iCurrentMapWorkshopID;
+	std::string m_sBearerToken;
 	std::string m_sAPIKey;
 	std::string m_sZoneHelperKey;
+	std::unordered_map<std::string, std::string> m_umEndpoint;
 };
 
 class CSurfGlobalAPIService : CSurfBaseService {

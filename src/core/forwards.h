@@ -10,6 +10,10 @@
 
 class CServerSideClient;
 
+#define FORWARD_INIT(forwardClass) \
+	template<> \
+	forwardClass* CBaseForward<forwardClass>::m_pFirst = nullptr;
+
 #define FORWARD_POST(forwardClass, forwardFn, ...) \
 	for (auto p = forwardClass::m_pFirst; p; p = p->m_pNext) { \
 		p->forwardFn(__VA_ARGS__); \
