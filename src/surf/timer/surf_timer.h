@@ -36,4 +36,9 @@ public:
 
 namespace SURF {
 	extern CSurfTimerPlugin* TimerPlugin();
+
+	void FormatTime(f64 time, char* output, u32 length, bool precise = true);
+	CUtlString FormatTime(f64 time, bool precise = true);
+	void FormatDiffTime(f64 time, char* output, u32 length, bool precise = true);
+	CUtlString FormatDiffTime(f64 time, bool precise = true);
 } // namespace SURF

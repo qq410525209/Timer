@@ -23,13 +23,13 @@ void CSurfMiscPlugin::OnActivateServer(CNetworkGameServerBase* pGameServer) {
 		if (cvarHandle.IsValid()) {
 			g_pCVar->GetConVar(cvarHandle)->flags &= ~FCVAR_CHEAT;
 		} else {
-			LOG::PrintWarning("Warning: sv_infinite_ammo is not found!\n");
+			LOG::Warning("Warning: sv_infinite_ammo is not found!");
 		}
 		cvarHandle = g_pCVar->FindConVar("bot_stop");
 		if (cvarHandle.IsValid()) {
 			g_pCVar->GetConVar(cvarHandle)->flags &= ~FCVAR_CHEAT;
 		} else {
-			LOG::PrintWarning("Warning: bot_stop is not found!\n");
+			LOG::Warning("Warning: bot_stop is not found!");
 		}
 	}
 

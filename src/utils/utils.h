@@ -11,6 +11,12 @@
 #include <utils/ctimer.h>
 #include <utils/print.h>
 
+#define JSON_GETTER(_json, key, ret) \
+	{ \
+		if (_json.contains(#key)) \
+			ret = _json[#key].get<decltype(ret)>(); \
+	}
+
 namespace UTIL {
 	namespace PATH {
 		template<typename... Args>

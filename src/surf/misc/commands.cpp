@@ -5,7 +5,7 @@
 #include <surf/misc/showtrigger.h>
 #include <surf/misc/hide.h>
 
-static void Command_Hide(CCSPlayerController* pController, const std::vector<std::string>& vArgs) {
+CCMD_CALLBACK(Command_Hide) {
 	CSurfPlayer* player = SURF::GetPlayerManager()->ToPlayer(pController);
 	if (!player) {
 		return;
@@ -28,7 +28,7 @@ static void Command_Hide(CCSPlayerController* pController, const std::vector<std
 	UTIL::PrintChat(pController, "[其他玩家] %s\n", pMiscService->m_bHide ? "已隐藏" : "已显示");
 }
 
-static void Command_HideWeapons(CCSPlayerController* pController, const std::vector<std::string>& vArgs) {
+CCMD_CALLBACK(Command_HideWeapons) {
 	CSurfPlayer* player = SURF::GetPlayerManager()->ToPlayer(pController);
 	if (!player) {
 		return;
@@ -51,7 +51,7 @@ static void Command_HideWeapons(CCSPlayerController* pController, const std::vec
 	UTIL::PrintChat(pController, "[武器] %s\n", pMiscService->m_bHideWeapons ? "已隐藏" : "已显示");
 }
 
-static void Command_HideLegs(CCSPlayerController* pController, const std::vector<std::string>& vArgs) {
+CCMD_CALLBACK(Command_HideLegs) {
 	CSurfPlayer* player = SURF::GetPlayerManager()->ToPlayer(pController);
 	if (!player) {
 		return;
@@ -63,7 +63,7 @@ static void Command_HideLegs(CCSPlayerController* pController, const std::vector
 	UTIL::PrintChat(pController, "[腿部] %s\n", pMiscService->m_bHideLegs ? "已隐藏" : "已显示");
 }
 
-static void Command_ShowTrigger(CCSPlayerController* pController, const std::vector<std::string>& vArgs) {
+CCMD_CALLBACK(Command_ShowTrigger) {
 	CSurfPlayer* player = SURF::GetPlayerManager()->ToPlayer(pController);
 	if (!player) {
 		return;
