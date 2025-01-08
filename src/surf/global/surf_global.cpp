@@ -75,7 +75,6 @@ void CSurfGlobalAPIPlugin::OnApplyGameSettings(ISource2Server* pServer, KeyValue
 }
 
 void CSurfGlobalAPIPlugin::Reset() {
-	m_bAPIKeyCheck = false;
 	m_bBannedCommandsCheck = false;
 	m_bEnforcerOnFreshMap = false;
 	m_bMapValidated = false;
@@ -118,19 +117,32 @@ void CSurfGlobalAPIPlugin::GlobalCheck(CBasePlayerController* pController) const
 
 	// clang-format off
 	std::string sGC = fmt::format("[grey]API接入检测:\n[grey]API密钥 {}[grey] | 插件 {}[grey] | 参数设置 {}[grey] | 地图 {}[grey] | 你 {}",
-					GCArg(m_bAPIKeyCheck),
+					GCArg(!m_GlobalAuth.m_sToken.empty()),
 					GCArg(m_bBannedCommandsCheck),
 					GCArg(m_bEnforcerOnFreshMap),
 					GCArg(MapCheck()),
 					GCArg(bClientGloballyVerified));
+	
+	std::string sMapGC = fmt::format("[grey]地图数据上报API接入检测:\n[grey]API密钥 {}",
+					GCArg(!m_UpdaterAuth.m_sToken.empty()));
 	// clang-format on
 
 	if (!pController) {
 		std::regex pattern(R"(\[[^\]]*\])");
 		sGC = std::regex_replace(sGC, pattern, "");
+		sMapGC = std::regex_replace(sMapGC, pattern, "");
 	}
 
 	UTIL::Print(pController, sGC.c_str());
+	UTIL::Print(pController, sMapGC.c_str());
+}
+
+bool CSurfGlobalAPIPlugin::IsGlobalEnabled() const {
+	return !m_GlobalAuth.m_sToken.empty() && m_bBannedCommandsCheck && m_bEnforcerOnFreshMap && MapCheck();
+}
+
+bool CSurfGlobalAPIPlugin::IsGlobalUpdaterEnabled() const {
+	return !m_UpdaterAuth.m_sToken.empty();
 }
 
 void CSurfGlobalAPIService::Reset() {

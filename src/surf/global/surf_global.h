@@ -69,12 +69,13 @@ public:
 	void ReadAPIKey();
 	bool MapCheck() const;
 	void GlobalCheck(CBasePlayerController* pController) const;
+	bool IsGlobalEnabled() const;
+	bool IsGlobalUpdaterEnabled() const;
 
 public:
 	void CreateRequest(std::string sEndpointAlias, const GlobalAPIRequest& req, HttpResponseCallback& cb);
 
 public:
-	bool m_bAPIKeyCheck;
 	bool m_bBannedCommandsCheck;
 	bool m_bEnforcerOnFreshMap;
 	bool m_bMapValidated;
