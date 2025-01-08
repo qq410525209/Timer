@@ -1,10 +1,11 @@
 #include "surf_global.h"
 #include <hv/requests.h>
 #include <hv/hthread.h>
+#include <core/logger.h>
 
 void CSurfGlobalAPIPlugin::CreateRequest(std::string sEndpointAlias, const GlobalAPIRequest& req, HttpResponseCallback& cb) {
 	if (!m_umEndpoint.contains(sEndpointAlias)) {
-		SURF_ASSERT(false);
+		LOG::Warning("[SurfGlobalAPIPlugin::CreateRequest] Endpoint alias \'%s\' not exists!\n", sEndpointAlias.c_str());
 		return;
 	}
 
