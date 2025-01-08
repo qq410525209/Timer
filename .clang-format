@@ -27,6 +27,7 @@ KeepEmptyLinesAtTheStartOfBlocks: false
 LineEnding: LF
 MaxEmptyLinesToKeep: 1
 NamespaceIndentation: All
+FixNamespaceComments: true
 PointerAlignment: Left
 ReferenceAlignment: Left
 SeparateDefinitionBlocks: Always
