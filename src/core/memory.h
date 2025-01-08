@@ -76,6 +76,7 @@ namespace MEM {
 	} // namespace MODULE
 
 	namespace TRAMPOLINE {
+		inline void* g_fnApplyGameSettings;
 		inline void* g_fnGameFrame;
 		inline void* g_fnClientConnect;
 		inline void* g_fnClientConnected;

@@ -15,15 +15,6 @@ void CSurfGlobalAPIPlugin::OnPluginStart() {
 	ReadAPIKey();
 }
 
-void CSurfGlobalAPIPlugin::OnActivateServer(CNetworkGameServerBase* pGameServer) {
-	Reset();
-
-	GetAuthStatus(HTTPRES_CALLBACK_L() {
-		SURF::GlobalPlugin()->m_sBearerToken = "";
-		FORWARD_POST(CSurfGlobalForward, OnInit);
-	});
-}
-
 void CSurfGlobalAPIPlugin::OnClientActive(ISource2GameClients* pClient, CPlayerSlot slot, bool bLoadGame, const char* pszName, uint64 xuid) {
 	CSurfPlayer* pPlayer = SURF::GetPlayerManager()->ToPlayer(slot);
 	if (!pPlayer) {
@@ -33,13 +24,60 @@ void CSurfGlobalAPIPlugin::OnClientActive(ISource2GameClients* pClient, CPlayerS
 	pPlayer->m_pGlobalAPIService->CheckGlobalBan();
 }
 
+void CSurfGlobalAPIPlugin::OnApplyGameSettings(ISource2Server* pServer, KeyValues* pKV) {
+	Reset();
+
+	if (!pKV) {
+		return;
+	}
+
+	auto pGlobal = UTIL::GetGlobals();
+	if (!pGlobal) {
+		SURF_ASSERT(false);
+		return;
+	}
+
+	m_iMapWorkshopID = pKV->FindKey("launchoptions")->GetUint64("customgamemode");
+	m_sMapName = pKV->FindKey("launchoptions")->GetString("levelname", pGlobal->mapname.ToCStr());
+
+	SURF::GLOBALAPI::AUTH::GetGlobalToken(m_GlobalAuth.m_sKey, HTTPRES_CALLBACK_L() {
+		GAPIRES_CHECK(res, r);
+
+		JSON_GETTER(r.m_Data, token, SURF::GlobalPlugin()->m_GlobalAuth.m_sToken);
+
+		FORWARD_POST(CSurfGlobalForward, OnGlobalInit);
+	});
+
+	SURF::GLOBALAPI::AUTH::GetUpdaterToken(m_UpdaterAuth.m_sKey, HTTPRES_CALLBACK_L() {
+		GAPIRES_CHECK(res, r);
+
+		JSON_GETTER(r.m_Data, token, SURF::GlobalPlugin()->m_UpdaterAuth.m_sToken);
+
+		FORWARD_POST(CSurfGlobalForward, OnGlobalZoneHelperInit);
+	});
+
+	if (m_iMapWorkshopID != 0) {
+		SURF::GLOBALAPI::MAP::PullInfo(m_iMapWorkshopID, m_sMapName, HTTPRES_CALLBACK_L() {
+			GAPIRES_CHECK(res, r);
+
+			SURF::GlobalPlugin()->m_bMapValidated = true;
+
+			JSON_GETTER(r.m_Data, tier, SURF::GLOBALAPI::MAP::g_MapInfo.m_iTier);
+			JSON_GETTER(r.m_Data, maxvel, SURF::GLOBALAPI::MAP::g_MapInfo.m_fMaxvel);
+			JSON_GETTER(r.m_Data, limitpre, SURF::GLOBALAPI::MAP::g_MapInfo.m_bLimitPrespeed);
+
+			FORWARD_POST(CSurfGlobalForward, OnGlobalMapValidated);
+		});
+	}
+}
+
 void CSurfGlobalAPIPlugin::Reset() {
 	m_bAPIKeyCheck = false;
 	m_bBannedCommandsCheck = false;
 	m_bEnforcerOnFreshMap = false;
 	m_bMapValidated = false;
 	m_iMapWorkshopID = -1;
-	m_iCurrentMapWorkshopID = -1;
+	m_sMapName = "";
 }
 
 void CSurfGlobalAPIPlugin::ReadAPIKey() {
@@ -49,13 +87,13 @@ void CSurfGlobalAPIPlugin::ReadAPIKey() {
 		return;
 	}
 
-	JSON_GETTER(j, global_key, m_sAPIKey);
-	JSON_GETTER(j, zone_helper_key, m_sZoneHelperKey);
+	JSON_GETTER(j, global_key, m_GlobalAuth.m_sKey);
+	JSON_GETTER(j, updater_key, m_UpdaterAuth.m_sKey);
 
 	if (j.contains("endpoints")) {
 		auto& endpoints = j["endpoints"];
 		for (const auto& [name, endpoint] : endpoints.items()) {
-			m_umEndpoint[name] = SURF::GLOBAL::BaseUrl + endpoint.get<std::string>();
+			m_umEndpoint[name] = SURF::GLOBALAPI::BaseUrl + endpoint.get<std::string>();
 		}
 	}
 }

@@ -29,5 +29,9 @@ public:
 
 class CSurfGlobalForward : public CBaseForward<CSurfGlobalForward> {
 public:
-	virtual void OnInit() {}
+	virtual void OnGlobalInit() {}
+
+	virtual void OnGlobalZoneHelperInit() {}
+
+	virtual void OnGlobalMapValidated() {}
 };

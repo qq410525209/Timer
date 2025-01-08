@@ -317,6 +317,12 @@ static void Hook_OnClientSendSnapshotBefore(CServerSideClient* pClient, void* pF
 	MEM::SDKCall(MEM::TRAMPOLINE::g_fnClientSendSnapshotBefore, pClient, pFrameSnapshot);
 }
 
+static void Hook_OnApplyGameSettings(ISource2Server* pThis, KeyValues* pKV) {
+	MEM::SDKCall(MEM::TRAMPOLINE::g_fnApplyGameSettings, pThis, pKV);
+
+	FORWARD_POST(CCoreForward, OnApplyGameSettings, pThis, pKV);
+}
+
 #pragma endregion
 
 #pragma region setup
@@ -333,6 +339,7 @@ static bool SetupDetours() {
 
 static bool SetupVMTHooks() {
 	// clang-format off
+	HOOK_VMT(IFACE::pServer, ISource2Server::ApplyGameSettings, Hook_OnApplyGameSettings, MEM::TRAMPOLINE::g_fnApplyGameSettings);
 	HOOK_VMT(IFACE::pServer, ISource2Server::GameFrame, Hook_OnGameFrame, MEM::TRAMPOLINE::g_fnGameFrame);
 
 	HOOK_VMT(g_pSource2GameClients, ISource2GameClients::ClientConnect, Hook_ClientConnect, MEM::TRAMPOLINE::g_fnClientConnect);
