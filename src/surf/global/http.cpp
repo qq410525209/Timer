@@ -113,18 +113,48 @@ namespace SURF::GLOBALAPI {
 	namespace RECORD {}
 
 	namespace ZONE {
-		void Update(const std::string& map, const std::vector<zoneinfo_t>& vInfo, HttpResponseCallback cb) {
+		void Update(const std::string& map, const zoneinfo_t& info, HttpResponseCallback cb) {
 			auto pPlugin = GlobalPlugin();
 			GlobalAPIRequest req;
 			req.m_sCustomToken = pPlugin->m_UpdaterAuth.m_sToken;
 			req.m_iMethod = HTTP_POST;
 
-			json jArr = json::array();
-			for (const auto& info : vInfo) {
-				jArr.emplace_back(info.to_json(map));
+			req["map"] = map;
+			req["track"] = info.m_iTrack;
+			req["type"] = info.m_iType;
+			req["value"] = info.m_iValue;
+			req["mins_x"] = info.m_vecMins.x;
+			req["mins_y"] = info.m_vecMins.y;
+			req["mins_z"] = info.m_vecMins.z;
+			req["maxs_x"] = info.m_vecMaxs.x;
+			req["maxs_y"] = info.m_vecMaxs.y;
+			req["maxs_z"] = info.m_vecMaxs.z;
+
+			if (info.m_iDatabaseID != -1) {
+				req["id"] = info.m_iDatabaseID;
 			}
 
-			req["data"] = jArr;
+			if (info.m_vecDes.Length() != 0) {
+				req["des_x"] = info.m_vecDes.x;
+				req["des_y"] = info.m_vecDes.y;
+				req["des_z"] = info.m_vecDes.z;
+			}
+
+			if (info.m_iFlag != -1) {
+				req["flags"] = info.m_iFlag;
+			}
+
+			if (info.m_iHookHammerid != -1) {
+				req["hammerid"] = info.m_iHookHammerid;
+			}
+
+			if (!info.m_sHookName.empty()) {
+				req["hookname"] = info.m_sHookName;
+			}
+
+			if (info.m_fLimitSpeed != -1.0f) {
+				req["limitspeed"] = info.m_fLimitSpeed;
+			}
 
 			pPlugin->CreateRequest("zone_update", req, cb);
 		}

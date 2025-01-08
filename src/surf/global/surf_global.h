@@ -148,52 +148,10 @@ namespace SURF {
 				int m_iHookHammerid = -1;
 				std::string m_sHookName = std::string();
 				float m_fLimitSpeed = -1.0f;
-
-				json to_json(const std::string& map) const {
-					json j;
-					j["map"] = map;
-					j["track"] = m_iTrack;
-					j["type"] = m_iType;
-					j["value"] = m_iValue;
-					j["mins_x"] = m_vecMins.x;
-					j["mins_y"] = m_vecMins.y;
-					j["mins_z"] = m_vecMins.z;
-					j["maxs_x"] = m_vecMaxs.x;
-					j["maxs_y"] = m_vecMaxs.y;
-					j["maxs_z"] = m_vecMaxs.z;
-
-					if (m_iDatabaseID != -1) {
-						j["id"] = m_iDatabaseID;
-					}
-
-					if (m_vecDes.Length() != 0) {
-						j["des_x"] = m_vecDes.x;
-						j["des_y"] = m_vecDes.y;
-						j["des_z"] = m_vecDes.z;
-					}
-
-					if (m_iFlag != -1) {
-						j["flags"] = m_iFlag;
-					}
-
-					if (m_iHookHammerid != -1) {
-						j["hammerid"] = m_iHookHammerid;
-					}
-
-					if (!m_sHookName.empty()) {
-						j["hookname"] = m_sHookName;
-					}
-
-					if (m_fLimitSpeed != -1.0f) {
-						j["limitspeed"] = m_fLimitSpeed;
-					}
-
-					return j;
-				}
 			};
 
-			void Update(const std::string& map, const std::vector<zoneinfo_t>& vInfo, HttpResponseCallback cb);
+			void Update(const std::string& map, const zoneinfo_t& info, HttpResponseCallback cb);
 			void Pull(const std::string& map, HttpResponseCallback cb);
 		} // namespace ZONE
-	}     // namespace GLOBALAPI
+	} // namespace GLOBALAPI
 } // namespace SURF
