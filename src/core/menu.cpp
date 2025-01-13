@@ -8,8 +8,8 @@
 
 extern void SetMenuEntityTransmiter(CBaseEntity* pMenu, CBasePlayerController* pOwner);
 
-constexpr float g_fMenuOffsetX = -11.6f;
-constexpr float g_fMenuOffsetY = -6.1f;
+constexpr float g_fMenuOffsetX = -9.1f;
+constexpr float g_fMenuOffsetY = -4.6f;
 
 Vector CWorldTextMenu::GetAimPoint(const Vector& eyePosition, const QAngle& eyeAngles, float distanceToTarget) {
 	double pitch = eyeAngles.x * (M_PI / 180.0);
@@ -111,10 +111,10 @@ void CWorldTextMenu::Display(CCSPlayerPawnBase* pPawn, int iPageIndex) {
 		return;
 	}
 
-	CBaseViewModel* pViewModel = pPawn->m_pViewModelServices()->GetViewModel(1);
+	CBaseViewModel* pViewModel = pPawn->GetCustomViewModel();
 	if (!pViewModel) {
-		pViewModel = (CBaseViewModel*)MEM::CALL::CreateEntityByName("csgo_viewmodel");
-		pPawn->m_pViewModelServices()->SetViewModel(1, pViewModel);
+		SURF_ASSERT(false);
+		return;
 	}
 
 	pMenuEntity->SetParent(pViewModel);

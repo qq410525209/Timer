@@ -5,6 +5,8 @@ CBaseViewModel* CCSPlayer_ViewModelServices::GetViewModel(int iIndex) {
 }
 
 void CCSPlayer_ViewModelServices::SetViewModel(int iIndex, CBaseViewModel* pViewModel) {
+	static uint uOffset = schema::GetOffset("CCSPlayerPawnBase", "m_pViewModelServices").offset;
+	this->GetPawn()->NetworkStateChanged(uOffset);
 	m_hViewModel()[iIndex].Set(pViewModel);
-	this->GetPawn()->NetworkStateChanged();
+	pViewModel->m_nViewModelIndex(iIndex);
 }

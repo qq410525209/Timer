@@ -15,6 +15,8 @@ public:
 	SCHEMA_FIELD(CHandle<CCSPlayerController>, m_hOriginalController);
 
 	Vector GetEyePosition();
+
+	CBaseViewModel* GetCustomViewModel();
 };
 
 class CCSPlayerPawn : public CCSPlayerPawnBase {

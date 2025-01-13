@@ -207,6 +207,7 @@ public:
 class CBaseViewModel : public CBaseModelEntity {
 public:
 	DECLARE_SCHEMA_CLASS(CBaseViewModel);
+
 	SCHEMA_FIELD(int, m_nViewModelIndex);
 };
 
