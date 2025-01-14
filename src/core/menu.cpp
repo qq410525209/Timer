@@ -11,15 +11,8 @@ extern void SetMenuEntityTransmiter(CBaseEntity* pMenu, CBasePlayerController* p
 constexpr float g_fMenuOffsetX = -9.1f;
 constexpr float g_fMenuOffsetY = -4.6f;
 
-Vector CWorldTextMenu::GetAimPoint(const Vector& eyePosition, const QAngle& eyeAngles, float distanceToTarget) {
-	double pitch = eyeAngles.x * (M_PI / 180.0);
-	double yaw = eyeAngles.y * (M_PI / 180.0);
-
-	double targetX = eyePosition.x + distanceToTarget * std::cos(pitch) * std::cos(yaw);
-	double targetY = eyePosition.y + distanceToTarget * std::cos(pitch) * std::sin(yaw);
-	double targetZ = eyePosition.z - distanceToTarget * std::sin(pitch);
-
-	return Vector(targetX, targetY, targetZ);
+Vector CWorldTextMenu::GetAimPoint(const Vector& eyePosition, float distanceToTarget) {
+	return Vector(eyePosition.x + distanceToTarget, eyePosition.y, eyePosition.z);
 }
 
 CWorldTextMenu::CWorldTextMenu(MenuHandler pFnHandler, std::string sTitle) : CBaseMenu(pFnHandler, sTitle) {
@@ -151,14 +144,11 @@ void CWorldTextMenu::Display(CCSPlayerPawnBase* pPawn, int iPageIndex) {
 	SetMenuEntityTransmiter(pMenuEntity, pPawn->GetController());
 
 	Vector& vmPos = pViewModel->GetAbsOrigin();
-	QAngle& vmAng = pViewModel->GetAbsAngles();
-	Vector panelPos = GetAimPoint(vmPos, vmAng, 7.0f);
-	QAngle panelAng = vmAng;
-	panelAng.y -= 90.0f;
-	panelAng.z += 90.0f;
+	Vector panelPos = GetAimPoint(vmPos, 7.0f);
 
 	Vector rig;
 	Vector dwn;
+	static QAngle panelAng = {0.0f, -90.0f, 90.0f};
 	AngleVectors(panelAng, &rig, &dwn, nullptr);
 
 	rig *= g_fMenuOffsetX;
@@ -179,18 +169,14 @@ void CWorldTextMenu::Display(CCSPlayerPawnBase* pPawn, int iPageIndex) {
 	pMenuBackground->Enable();
 	SetMenuEntityTransmiter(pMenuBackground, pPawn->GetController());
 
-	Vector bgPos = GetAimPoint(vmPos, vmAng, 7.09f);
-	QAngle bgAng = vmAng;
-	bgAng.y -= 90.0f;
-	bgAng.z += 90.0f;
-
-	AngleVectors(bgAng, &rig, &dwn, nullptr);
+	Vector bgPos = GetAimPoint(vmPos, 7.09f);
+	AngleVectors(panelAng, &rig, &dwn, nullptr);
 
 	rig *= (g_fMenuOffsetX - 0.2f);
 	dwn *= (g_fMenuOffsetY + 1.64f);
 
 	bgPos += rig + dwn;
-	pMenuBackground->Teleport(&bgPos, &bgAng, nullptr);
+	pMenuBackground->Teleport(&bgPos, &panelAng, nullptr);
 }
 
 std::string CBaseMenu::GetItem(int iPageIndex, int iItemIndex) {

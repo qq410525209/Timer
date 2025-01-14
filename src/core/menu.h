@@ -92,7 +92,7 @@ public:
 	virtual void Display(CCSPlayerPawnBase* pPawn, int iPageIndex = 0) override;
 
 public:
-	static Vector GetAimPoint(const Vector& eyePosition, const QAngle& eyeAngles, float distanceToTarget = 100.0);
+	static Vector GetAimPoint(const Vector& eyePosition, float distanceToTarget = 100.0);
 
 private:
 	CHandle<CPointWorldText> m_hWorldText;

@@ -12,13 +12,16 @@ Vector CCSPlayerPawnBase::GetEyePosition() {
 }
 
 CBaseViewModel* CCSPlayerPawnBase::GetCustomViewModel() {
-	CBaseViewModel* pViewModel = m_pViewModelServices()->GetViewModel(1);
-	if (!pViewModel) {
-		pViewModel = (CBaseViewModel*)MEM::CALL::CreateEntityByName("predicted_viewmodel");
-		pViewModel->DispatchSpawn();
-		m_pViewModelServices()->SetViewModel(1, pViewModel);
-		pViewModel->m_hOwnerEntity(this->GetRefEHandle());
+	CBaseViewModel* pCustomViewModel = m_pViewModelServices()->GetViewModel(1);
+	if (!pCustomViewModel) {
+		pCustomViewModel = (CBaseViewModel*)MEM::CALL::CreateEntityByName("predicted_viewmodel");
+		pCustomViewModel->DispatchSpawn();
+		m_pViewModelServices()->SetViewModel(1, pCustomViewModel);
+		pCustomViewModel->m_hOwnerEntity(this->GetRefEHandle());
+	} else {
+		static QAngle nullAng;
+		pCustomViewModel->Teleport(nullptr, &nullAng, nullptr);
 	}
 
-	return pViewModel;
+	return pCustomViewModel;
 }
