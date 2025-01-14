@@ -19,8 +19,8 @@ CBaseViewModel* CCSPlayerPawnBase::GetCustomViewModel() {
 		m_pViewModelServices()->SetViewModel(1, pCustomViewModel);
 		pCustomViewModel->m_hOwnerEntity(this->GetRefEHandle());
 	} else {
-		static QAngle nullAng;
-		pCustomViewModel->Teleport(nullptr, &nullAng, nullptr);
+		static QAngle zeroAng;
+		pCustomViewModel->Teleport(nullptr, &zeroAng, nullptr);
 	}
 
 	return pCustomViewModel;

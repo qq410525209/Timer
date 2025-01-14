@@ -32,7 +32,7 @@ public:
 	using CSurfBaseService::CSurfBaseService;
 
 public:
-	void AddZone(const Vector& vecMin, const Vector& vecMax);
+	void AddZone(const Vector& vecMin, const Vector& vecMax, bool bUpload = true);
 	void EditZone(CCSPlayerPawnBase* pawn, const CPlayerButton* buttons);
 	void CreateZone(const Vector& vecMin, const Vector& vecMax, std::array<CHandle<CBeam>, 12>& out);
 	CBaseEntity* CreateNormalZone(const Vector& vecMins, const Vector& vecMaxs);
@@ -55,6 +55,8 @@ private:
 public:
 	std::optional<ZoneCache_t> FindZone(CBaseEntity* pEnt);
 	int GetZoneCount(ZoneTrack track, ZoneType type);
+	void ClearZones();
+	void RefreshZones();
 
 public:
 	static std::string GetZoneNameByTrack(ZoneTrack track);
@@ -65,7 +67,6 @@ private:
 
 public:
 	std::unordered_map<CZoneHandle, ZoneCache_t> m_hZones;
-	Vector m_vecTestStartZone = {0.0f, 0.0f, 0.0f};
 };
 
 namespace SURF {

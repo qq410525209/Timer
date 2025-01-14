@@ -55,9 +55,8 @@ void CZoneEditProperty::CreateEditZone(const Vector& playerAim) {
 		case EditStep_Final: {
 			auto pController = m_pOuter->GetPlayer()->GetController();
 			UTIL::PrintChat(pController, "Confirmed!\n");
-			Vector mins(this->m_vecMins), maxs(this->m_vecMaxs);
+			m_pOuter->AddZone(this->m_vecMins, this->m_vecMaxs);
 			this->Reset();
-			m_pOuter->AddZone(mins, maxs);
 			return;
 		}
 	}
@@ -129,7 +128,7 @@ void CZoneEditProperty::ClearBeams() {
 	for (const auto& hBeam : m_vBeam) {
 		auto pBeam = hBeam.Get();
 		if (pBeam) {
-			pBeam->AcceptInput("kill");
+			pBeam->Kill();
 		}
 	}
 	m_vBeam.clear();

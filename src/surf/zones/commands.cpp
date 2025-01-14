@@ -60,7 +60,10 @@ CCMD_CALLBACK(Command_Zones) {
 				OpenMenu_SelectZoneTrack(pController);
 				return;
 			case 1:
-				UTIL::PrintChat(pController, "SELECT 2\n");
+				UTIL::PrintChat(pController, "SELECT 编辑\n");
+				break;
+			case 2:
+				SURF::ZonePlugin()->RefreshZones();
 				break;
 		}
 
@@ -69,6 +72,7 @@ CCMD_CALLBACK(Command_Zones) {
 	menu->SetTitle("区域菜单");
 	menu->AddItem("添加");
 	menu->AddItem("编辑");
+	menu->AddItem("刷新");
 	menu->Display(player->GetPlayerPawn());
 }
 
@@ -88,7 +92,9 @@ CCMD_CALLBACK(Command_TPStart) {
 		return;
 	}
 
-	player->GetPlayerPawn()->Teleport(&SURF::ZonePlugin()->m_vecTestStartZone, nullptr, nullptr);
+	Vector testStart = {0.0f, 0.0f, 0.0f};
+
+	player->GetPlayerPawn()->Teleport(&testStart, nullptr, nullptr);
 }
 
 void CSurfZonePlugin::RegisterCommand() {

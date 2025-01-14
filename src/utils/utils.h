@@ -14,7 +14,7 @@
 #define JSON_GETTER(_json, key, ret) \
 	do { \
 		if (_json.contains(#key)) \
-			ret = _json[#key].get<decltype(ret)>(); \
+			_json.at(#key).get_to(ret); \
 	} while (0)
 
 namespace UTIL {

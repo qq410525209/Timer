@@ -1,7 +1,8 @@
 #include "surf_zones.h"
 #include <utils/utils.h>
-#include <surf/api.h>
 #include <core/sdkhook.h>
+#include <surf/api.h>
+#include <surf/global/surf_global.h>
 
 bool Trigger_OnStartTouch(CBaseEntity* pSelf, CBaseEntity* pOther);
 void Trigger_OnStartTouchPost(CBaseEntity* pSelf, CBaseEntity* pOther);
@@ -51,6 +52,38 @@ int CSurfZonePlugin::GetZoneCount(ZoneTrack track, ZoneType type) {
 	return count;
 }
 
+void CSurfZonePlugin::ClearZones() {
+	for (const auto& pair : m_hZones) {
+		CZoneHandle hZone = pair.first;
+		auto pZone = hZone.Get();
+		if (!pZone) {
+			continue;
+		}
+
+		pZone->Kill();
+	}
+
+	m_hZones.clear();
+}
+
+void CSurfZonePlugin::RefreshZones() {
+	ClearZones();
+
+	SURF::GLOBALAPI::ZONE::Pull(HTTPRES_CALLBACK_L() {
+		if (!res || res->status_code != HTTP_STATUS_OK) {
+			return;
+		}
+		GlobalAPIResponse r(res->body);
+		if (r.m_iCode != HTTP_STATUS_OK) {
+			return;
+		};
+
+		std::string dmp = r.m_Data.dump();
+
+		SURF_ASSERT(false);
+	});
+}
+
 std::string CSurfZonePlugin::GetZoneNameByTrack(ZoneTrack track) {
 	switch (track) {
 		case ZoneTrack::Track_Main:
@@ -83,19 +116,38 @@ std::string CSurfZonePlugin::GetZoneNameByType(ZoneType type) {
 	}
 }
 
-void CSurfZoneService::AddZone(const Vector& vecMin, const Vector& vecMax) {
+void CSurfZoneService::AddZone(const Vector& vecMin, const Vector& vecMax, bool bUpload) {
 	auto pZone = this->CreateNormalZone(vecMin, vecMax);
 	CZoneHandle hRefZone = pZone->GetRefEHandle();
 
-	Vector mins(vecMin), maxs(vecMax);
-	FillBoxMinMax(mins, maxs);
 	ZoneCache_t cache;
-	this->CreateZone(mins, maxs, cache.m_aBeams);
+	this->CreateZone(vecMin, vecMax, cache.m_aBeams);
 	cache.m_iTrack = m_ZoneEdit.m_iTrack;
 	cache.m_iType = m_ZoneEdit.m_iType;
 	cache.m_iValue = m_ZoneEdit.m_iValue;
 
 	SURF::ZonePlugin()->m_hZones[hRefZone] = cache;
+
+	if (bUpload) {
+		SURF::GLOBALAPI::ZONE::zoneinfo_t info;
+		info.m_vecMins = vecMin;
+		info.m_vecMaxs = vecMax;
+		info.m_iTrack = cache.m_iTrack;
+		info.m_iType = cache.m_iType;
+		info.m_iValue = cache.m_iValue;
+
+		SURF::GLOBALAPI::ZONE::Update(
+			info, HTTPRES_CALLBACK_L() {
+				if (!res || res->status_code != HTTP_STATUS_OK) {
+					return;
+				}
+				GlobalAPIResponse r(res->body);
+				if (r.m_iCode != HTTP_STATUS_OK) {
+					return;
+				};
+				UTIL::CPrintChatAll("更新区域成功!");
+			});
+	}
 }
 
 void CSurfZoneService::EditZone(CCSPlayerPawnBase* pawn, const CPlayerButton* buttons) {
@@ -126,9 +178,6 @@ void CSurfZoneService::CreateZone(const Vector& vecMin, const Vector& vecMax, st
 
 CBaseEntity* CSurfZoneService::CreateNormalZone(const Vector& vecMins, const Vector& vecMaxs) {
 	Vector vecCenter = (vecMins + vecMaxs) / 2.0;
-	if (g_SurfZonePlugin.m_vecTestStartZone.Length() == 0) {
-		g_SurfZonePlugin.m_vecTestStartZone = vecCenter;
-	}
 	Vector mins(vecMins), maxs(vecMaxs);
 	FillBoxMinMax(mins, maxs, true);
 	auto pZone = MEM::CALL::CreateAABBTrigger(vecCenter, mins, maxs);

@@ -33,9 +33,9 @@ CWorldTextMenu::CWorldTextMenu(MenuHandler pFnHandler, std::string sTitle) : CBa
 	pMenuKV->SetBool("enabled", false);
 	pMenuKV->SetFloat("world_units_per_pixel", (0.25 / 1000) * fontSize);
 	pMenuKV->SetFloat("depth_render_offset", 0.125);
-	pMenuKV->SetInt("justify_horizontal", 0); // 0代表左对齐
-	pMenuKV->SetInt("justify_vertical", 1);   // 1代表垂直居中
-	pMenuKV->SetInt("reorient_mode", 0);      // don't change
+	pMenuKV->SetInt("justify_horizontal", 0);
+	pMenuKV->SetInt("justify_vertical", 1);
+	pMenuKV->SetInt("reorient_mode", 0);
 	pMenuKV->SetInt("fullbright", 1);
 	pMenuKV->SetFloat("font_size", fontSize);
 	pMenuKV->SetString("font_name", "Consolas");
@@ -56,15 +56,14 @@ CWorldTextMenu::CWorldTextMenu(MenuHandler pFnHandler, std::string sTitle) : CBa
 		return;
 	}
 
-	// background
 	int bgFontSize = 80;
 	pBackgroundKV->SetColor("color", Color(50, 50, 50, 100));
 	pBackgroundKV->SetBool("enabled", false);
 	pBackgroundKV->SetFloat("world_units_per_pixel", (0.25 / 300) * bgFontSize);
 	pBackgroundKV->SetFloat("depth_render_offset", 0.125);
-	pBackgroundKV->SetInt("justify_horizontal", 0); // 0代表左对齐
-	pBackgroundKV->SetInt("justify_vertical", 1);   // 1代表垂直居中
-	pBackgroundKV->SetInt("reorient_mode", 0);      // don't change
+	pBackgroundKV->SetInt("justify_horizontal", 0);
+	pBackgroundKV->SetInt("justify_vertical", 1);
+	pBackgroundKV->SetInt("reorient_mode", 0);
 	pBackgroundKV->SetInt("fullbright", 1);
 	pBackgroundKV->SetFloat("font_size", bgFontSize);
 

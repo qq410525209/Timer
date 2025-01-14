@@ -16,19 +16,13 @@ void CSurfGlobalAPIPlugin::CreateRequest(std::string sEndpointAlias, const Globa
 			HttpRequestPtr http_req(new HttpRequest);
 			http_req->method = HTTP_GET;
 
-			std::string fullUrl = sEndpoint;
 			if (!req.empty()) {
-				std::string queryString;
 				for (auto it = req.begin(); it != req.end(); ++it) {
-					if (!queryString.empty()) {
-						queryString += "&";
-					}
-					queryString += it.key() + "=" + it.value().dump();
+					auto& val = it.value();
+					http_req->query_params[it.key()] = val.is_string() ? val.get<std::string>() : val.dump();
 				}
-
-				fullUrl = sEndpoint + "?" + queryString;
 			}
-			http_req->url = fullUrl;
+			http_req->url = sEndpoint;
 
 			http_req->timeout = req.m_iTimeout;
 
@@ -114,13 +108,13 @@ namespace SURF::GLOBALAPI {
 	namespace RECORD {}
 
 	namespace ZONE {
-		void Update(const std::string& map, const zoneinfo_t& info, HttpResponseCallback cb) {
+		void Update(const zoneinfo_t& info, HttpResponseCallback cb) {
 			auto pPlugin = GlobalPlugin();
 			GlobalAPIRequest req;
 			req.m_sCustomToken = pPlugin->m_UpdaterAuth.m_sToken;
 			req.m_iMethod = HTTP_POST;
 
-			req["map"] = map;
+			req["map"] = pPlugin->m_sMapName;
 			req["track"] = info.m_iTrack;
 			req["type"] = info.m_iType;
 			req["value"] = info.m_iValue;
@@ -160,11 +154,11 @@ namespace SURF::GLOBALAPI {
 			pPlugin->CreateRequest("zone_update", req, cb);
 		}
 
-		void Pull(const std::string& map, HttpResponseCallback cb) {
+		void Pull(HttpResponseCallback cb) {
 			auto pPlugin = GlobalPlugin();
 			GlobalAPIRequest req;
 
-			req["map"] = map;
+			req["map"] = pPlugin->m_sMapName;
 
 			pPlugin->CreateRequest("zone_pull", req, cb);
 		}

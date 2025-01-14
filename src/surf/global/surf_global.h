@@ -27,16 +27,18 @@ struct GlobalAPIRequest : json {
 };
 
 struct GlobalAPIResponse {
-	int m_iCode;
+	int m_iCode = -1;
 	std::string m_sMessage;
 	json m_Data;
-	uint64 m_iTimestamp;
+	uint64 m_iTimestamp = -1;
 
 	GlobalAPIResponse() = default;
 
 	GlobalAPIResponse(const std::string& body) {
-		json j = json::parse(body);
-		from_json(j);
+		if (!body.empty()) {
+			json j = json::parse(body);
+			from_json(j);
+		}
 	}
 
 	GlobalAPIResponse(const json& body) {
@@ -110,7 +112,7 @@ namespace SURF {
 	extern CSurfGlobalAPIPlugin* GlobalPlugin();
 
 	namespace GLOBALAPI {
-		inline constexpr const char* BaseUrl = "";
+		inline constexpr const char* BaseUrl = "http://localhost:3000";
 
 		namespace AUTH {
 			void GetGlobalToken(std::string global_key, HttpResponseCallback cb);
@@ -121,9 +123,9 @@ namespace SURF {
 
 		namespace MAP {
 			inline struct mapinfo_t {
-				int m_iTier;
-				float m_fMaxvel;
-				bool m_bLimitPrespeed;
+				int m_iTier = 0;
+				float m_fMaxvel = 3500.0f;
+				bool m_bLimitPrespeed = false;
 			} g_MapInfo;
 
 			void UpdateInfo(uint64 workshopID, std::string mapName, const mapinfo_t& info, HttpResponseCallback cb);
@@ -139,20 +141,20 @@ namespace SURF {
 		namespace ZONE {
 			struct zoneinfo_t {
 				int m_iDatabaseID = -1;
-				int m_iTrack;
-				int m_iType;
-				int m_iValue;
+				int m_iTrack = 0;
+				int m_iType = 0;
+				int m_iValue = 0;
 				Vector m_vecMins;
 				Vector m_vecMaxs;
-				Vector m_vecDes;
+				Vector m_vecDes = {0.0f, 0.0f, 0.0f};
 				int m_iFlag = -1;
 				int m_iHookHammerid = -1;
 				std::string m_sHookName = std::string();
 				float m_fLimitSpeed = -1.0f;
 			};
 
-			void Update(const std::string& map, const zoneinfo_t& info, HttpResponseCallback cb);
-			void Pull(const std::string& map, HttpResponseCallback cb);
+			void Update(const zoneinfo_t& info, HttpResponseCallback cb);
+			void Pull(HttpResponseCallback cb);
 		} // namespace ZONE
 	} // namespace GLOBALAPI
 } // namespace SURF

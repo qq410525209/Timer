@@ -14,19 +14,13 @@ void HTTP::Get(const std::string& url, const json& params, HttpResponseCallback 
 	HttpRequestPtr req(new HttpRequest);
 	req->method = HTTP_GET;
 
-	std::string fullUrl = url;
 	if (!params.empty()) {
-		std::string queryString;
 		for (auto it = params.begin(); it != params.end(); ++it) {
-			if (!queryString.empty()) {
-				queryString += "&";
-			}
-			queryString += it.key() + "=" + it.value().dump();
+			auto& val = it.value();
+			req->query_params[it.key()] = val.is_string() ? val.get<std::string>() : val.dump();
 		}
-
-		fullUrl = url + "?" + queryString;
 	}
-	req->url = fullUrl;
+	req->url = url;
 
 	req->timeout = 10;
 	http_client_send_async(req, cb);
