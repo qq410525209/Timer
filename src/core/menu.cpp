@@ -11,7 +11,7 @@ extern void SetMenuEntityTransmiter(CBaseEntity* pMenu, CBasePlayerController* p
 constexpr float g_fMenuOffsetX = -9.1f;
 constexpr float g_fMenuOffsetY = -4.6f;
 
-Vector CWorldTextMenu::GetAimPoint(const Vector& eyePosition, float distanceToTarget) {
+Vector CWorldTextMenu::GetRelativeOrigin(const Vector& eyePosition, float distanceToTarget) {
 	return Vector(eyePosition.x + distanceToTarget, eyePosition.y, eyePosition.z);
 }
 
@@ -144,7 +144,7 @@ void CWorldTextMenu::Display(CCSPlayerPawnBase* pPawn, int iPageIndex) {
 	SetMenuEntityTransmiter(pMenuEntity, pPawn->GetController());
 
 	Vector& vmPos = pViewModel->GetAbsOrigin();
-	Vector panelPos = GetAimPoint(vmPos, 7.0f);
+	Vector panelPos = GetRelativeOrigin(vmPos, 7.0f);
 
 	Vector rig;
 	Vector dwn;
@@ -169,7 +169,7 @@ void CWorldTextMenu::Display(CCSPlayerPawnBase* pPawn, int iPageIndex) {
 	pMenuBackground->Enable();
 	SetMenuEntityTransmiter(pMenuBackground, pPawn->GetController());
 
-	Vector bgPos = GetAimPoint(vmPos, 7.09f);
+	Vector bgPos = GetRelativeOrigin(vmPos, 7.09f);
 	AngleVectors(panelAng, &rig, &dwn, nullptr);
 
 	rig *= (g_fMenuOffsetX - 0.2f);
