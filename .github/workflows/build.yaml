@@ -50,7 +50,7 @@ jobs:
 
   build-linux:
     name: Linux
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
 
     steps:
       - uses: actions/checkout@v4
@@ -61,11 +61,6 @@ jobs:
       - name: Update version header
         run: |
           echo "#define VERSION_STRING \"${{ inputs.version }}\"" > ./src/version.h
-
-      - name: Install Clang 15
-        run: |
-          sudo apt update  
-          sudo apt install -y clang-15
 
       - name: Setup Ninja
         uses: seanmiddleditch/gha-setup-ninja@master
