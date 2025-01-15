@@ -16,6 +16,7 @@ private:
 	virtual bool OnTakeDamage(CCSPlayerPawn* pVictim, CTakeDamageInfo* info) override;
 
 private:
+	void TweakCvars();
 	void HookEvents();
 	void RegisterCommands();
 

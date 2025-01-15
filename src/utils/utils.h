@@ -5,6 +5,7 @@
 #include <string>
 #include <filesystem>
 
+#include <sdk/convars2.h>
 #include <sdk/serversideclient.h>
 #include <sdk/gamerules.h>
 
@@ -48,4 +49,13 @@ namespace UTIL {
 	CBaseEntity* FindEntityByClassname(CEntityInstance* start, const char* name);
 	CBaseEntity* CreateBeam(const Vector& from, const Vector& to, Color color = Color(0, 255, 0, 255), float width = 1.5f,
 							CBaseEntity* owner = nullptr);
+
+#pragma region ConVar
+	void UnlockConVars();
+	void UnlockConCommands();
+	void SendConVarValue(CPlayerSlot slot, const char* cvar, const char* value);
+	void SendConVarValue(CPlayerSlot slot, BaseConVar* cvar, const char* value);
+	void SendMultipleConVarValues(CPlayerSlot slot, const char** cvars, const char** values, u32 size);
+	void SendMultipleConVarValues(CPlayerSlot slot, BaseConVar** cvars, const char** values, u32 size);
+#pragma endregion
 } // namespace UTIL

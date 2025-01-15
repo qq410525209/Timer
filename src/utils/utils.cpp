@@ -7,6 +7,11 @@
 #include <sdk/entity/ccsplayerpawn.h>
 #include <cs2surf.h>
 #include <worldsize.h>
+#include <sdk/entity/recipientfilters.h>
+#include <public/networksystem/inetworkmessages.h>
+#include <usermessages.pb.h>
+
+#define FCVAR_FLAGS_TO_REMOVE (FCVAR_HIDDEN | FCVAR_DEVELOPMENTONLY | FCVAR_MISSING0 | FCVAR_MISSING1 | FCVAR_MISSING2 | FCVAR_MISSING3)
 
 std::string UTIL::GetWorkingDirectory() {
 	return PATH::Join(std::filesystem::current_path().string(), "..", "..", GAME_NAME, "addons", "cs2surf");
@@ -202,4 +207,97 @@ CBaseEntity* UTIL::CreateBeam(const Vector& from, const Vector& to, Color color,
 	beam->DispatchSpawn();
 
 	return beam;
+}
+
+void UTIL::UnlockConVars() {
+	if (!g_pCVar) {
+		return;
+	}
+
+	CConVarBaseData* pCvar = nullptr;
+	ConVarHandleS2 hCvarHandle(0);
+
+	// Can't use FindFirst/Next here as it would skip cvars with certain flags, so just loop through the handles
+	do {
+		pCvar = reinterpret_cast<ICvarS2*>(g_pCVar)->GetConVar(hCvarHandle);
+
+		hCvarHandle.SetConVarIndex(hCvarHandle.GetConVarIndex() + 1);
+
+		if (!pCvar || !(pCvar->IsFlagSet(FCVAR_FLAGS_TO_REMOVE))) {
+			continue;
+		}
+
+		pCvar->RemoveFlags(FCVAR_FLAGS_TO_REMOVE);
+	} while (pCvar);
+}
+
+void UTIL::UnlockConCommands() {
+	if (!g_pCVar) {
+		return;
+	}
+
+	ConCommand* pConCommand = nullptr;
+	ConCommand* pInvalidCommand = reinterpret_cast<ICvarS2*>(g_pCVar)->GetCommand(ConCommandHandle());
+	ConCommandHandle hConCommandHandle;
+	hConCommandHandle.Set(0);
+
+	do {
+		pConCommand = reinterpret_cast<ICvarS2*>(g_pCVar)->GetCommand(hConCommandHandle);
+
+		hConCommandHandle.Set(hConCommandHandle.Get() + 1);
+
+		if (!pConCommand || pConCommand == pInvalidCommand || !(pConCommand->GetFlags() & FCVAR_FLAGS_TO_REMOVE)) {
+			continue;
+		}
+
+		pConCommand->RemoveFlags(FCVAR_FLAGS_TO_REMOVE);
+	} while (pConCommand && pConCommand != pInvalidCommand);
+}
+
+void UTIL::SendConVarValue(CPlayerSlot slot, const char* conVar, const char* value) {
+	INetworkMessageInternal* netmsg = g_pNetworkMessages->FindNetworkMessagePartial("SetConVar");
+	auto msg = netmsg->AllocateMessage()->ToPB<CNETMsg_SetConVar>();
+	CMsg_CVars_CVar* cvar = msg->mutable_convars()->add_cvars();
+	cvar->set_name(conVar);
+	cvar->set_value(value);
+	CSingleRecipientFilter filter(slot.Get());
+	IFACE::pGameEventSystem->PostEventAbstract(0, false, &filter, netmsg, msg, 0);
+	delete msg;
+}
+
+void UTIL::SendConVarValue(CPlayerSlot slot, BaseConVar* conVar, const char* value) {
+	INetworkMessageInternal* netmsg = g_pNetworkMessages->FindNetworkMessagePartial("SetConVar");
+	auto msg = netmsg->AllocateMessage()->ToPB<CNETMsg_SetConVar>();
+	CMsg_CVars_CVar* cvar = msg->mutable_convars()->add_cvars();
+	cvar->set_name(conVar->GetName());
+	cvar->set_value(value);
+	CSingleRecipientFilter filter(slot.Get());
+	IFACE::pGameEventSystem->PostEventAbstract(0, false, &filter, netmsg, msg, 0);
+	delete msg;
+}
+
+void UTIL::SendMultipleConVarValues(CPlayerSlot slot, const char** cvars, const char** values, u32 size) {
+	INetworkMessageInternal* netmsg = g_pNetworkMessages->FindNetworkMessagePartial("SetConVar");
+	auto msg = netmsg->AllocateMessage()->ToPB<CNETMsg_SetConVar>();
+	for (u32 i = 0; i < size; i++) {
+		CMsg_CVars_CVar* cvar = msg->mutable_convars()->add_cvars();
+		cvar->set_name(cvars[i]);
+		cvar->set_value(values[i]);
+	}
+	CSingleRecipientFilter filter(slot.Get());
+	IFACE::pGameEventSystem->PostEventAbstract(0, false, &filter, netmsg, msg, 0);
+	delete msg;
+}
+
+void UTIL::SendMultipleConVarValues(CPlayerSlot slot, BaseConVar** conVar, const char** values, u32 size) {
+	INetworkMessageInternal* netmsg = g_pNetworkMessages->FindNetworkMessagePartial("SetConVar");
+	auto msg = netmsg->AllocateMessage()->ToPB<CNETMsg_SetConVar>();
+	for (u32 i = 0; i < size; i++) {
+		CMsg_CVars_CVar* cvar = msg->mutable_convars()->add_cvars();
+		cvar->set_name(conVar[i]->GetName());
+		cvar->set_value(values[i]);
+	}
+	CSingleRecipientFilter filter(slot.Get());
+	IFACE::pGameEventSystem->PostEventAbstract(0, false, &filter, netmsg, msg, 0);
+	delete msg;
 }

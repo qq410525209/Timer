@@ -2,6 +2,8 @@
 #include <surf/surf_player.h>
 #include <core/interfaces.h>
 #include <core/logger.h>
+#include <core/cvarmanager.h>
+#include <core/concmdmanager.h>
 #include <utils/utils.h>
 
 CSurfMiscPlugin g_SurfMisc;
@@ -11,28 +13,35 @@ CSurfMiscPlugin* SURF::MiscPlugin() {
 }
 
 void CSurfMiscPlugin::OnPluginStart() {
+	TweakCvars();
 	HookEvents();
 	RegisterCommands();
 }
 
-void CSurfMiscPlugin::OnActivateServer(CNetworkGameServerBase* pGameServer) {
-	static bool cvTweaked {};
-	if (!cvTweaked) {
-		cvTweaked = true;
-		auto cvarHandle = g_pCVar->FindConVar("sv_infinite_ammo");
-		if (cvarHandle.IsValid()) {
-			g_pCVar->GetConVar(cvarHandle)->flags &= ~FCVAR_CHEAT;
+void CSurfMiscPlugin::TweakCvars() {
+	static constexpr const char* tweakCvars[] = {"sv_infinite_ammo", "bot_stop"};
+	static constexpr const char* tweakCmds[] = {"sv_debug_overlays_broadcast"};
+
+	for (size_t i = 0; i < ARRAYSIZE(tweakCvars); i++) {
+		auto cvar = CVAR::Find(tweakCvars[i]);
+		if (cvar) {
+			cvar->RemoveFlags(FCVAR_CHEAT);
 		} else {
-			LOG::Warning("Warning: sv_infinite_ammo is not found!");
-		}
-		cvarHandle = g_pCVar->FindConVar("bot_stop");
-		if (cvarHandle.IsValid()) {
-			g_pCVar->GetConVar(cvarHandle)->flags &= ~FCVAR_CHEAT;
-		} else {
-			LOG::Warning("Warning: bot_stop is not found!");
+			LOG::Warning("Warning: %s is not found!\n", tweakCvars[i]);
 		}
 	}
 
+	for (size_t i = 0; i < ARRAYSIZE(tweakCmds); i++) {
+		auto pConCommand = CONCMD::Find(tweakCmds[i]);
+		if (pConCommand) {
+			pConCommand->RemoveFlags(FCVAR_CHEAT);
+		} else {
+			LOG::Warning("Warning: %s is not found!\n", tweakCvars[i]);
+		}
+	}
+}
+
+void CSurfMiscPlugin::OnActivateServer(CNetworkGameServerBase* pGameServer) {
 	IFACE::pEngine->ServerCommand("exec cs2surf.cfg");
 
 	m_vTriggers.clear();

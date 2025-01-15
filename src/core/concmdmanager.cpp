@@ -72,6 +72,15 @@ void CONCMD::AddCommandListener(std::string cmd, ConCmdListener_Callback cb) {
 	g_manager.m_umConCmdListeners[UTIL::ToWideString(cmd.c_str())].emplace_back(cb);
 }
 
+ConCommand* CONCMD::Find(const char* name) {
+	auto hConcmd = reinterpret_cast<ICvarS2*>(g_pCVar)->FindCommand(name);
+	if (!hConcmd.IsValid()) {
+		return nullptr;
+	}
+
+	return reinterpret_cast<ICvarS2*>(g_pCVar)->GetCommand(hConcmd);
+}
+
 static void ParseCommandArgs(const std::string& sRaw, std::vector<std::string>& vArgs) {
 	std::string currentArg;
 	bool inQuotes = false;

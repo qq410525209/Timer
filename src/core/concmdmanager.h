@@ -45,6 +45,7 @@ namespace CONCMD {
 	void RegAdminCmd(std::string cmd, ConCmd_Callback cb, AdminFlag adminFlags, std::string description = std::string(),
 					 int64_t cmdFlag = FCVAR_NONE);
 	void AddCommandListener(std::string cmd, ConCmdListener_Callback cb);
+	ConCommand* Find(const char* name);
 
 	extern CConCmdManager* GetManager();
 } // namespace CONCMD

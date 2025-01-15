@@ -41,6 +41,8 @@ bool CSurfPlugin::Load(PluginId id, ISmmAPI* ismm, char* error, size_t maxlen, b
 	MEM::SetupHooks();
 	MOVEMENT::SetupHooks();
 	GS::Setup();
+	UTIL::UnlockConVars();
+	UTIL::UnlockConCommands();
 
 	g_SMAPI->AddListener(this, this);
 
