@@ -13,7 +13,7 @@ static void OpenMenu_SelectZoneType(CBasePlayerController* pController) {
 		auto& pZoneService = player->m_pZoneService;
 		pZoneService->m_ZoneEdit.m_iType = (ZoneType)iItem;
 		pZoneService->m_ZoneEdit.m_iValue = SURF::ZonePlugin()->GetZoneCount(pZoneService->m_ZoneEdit.m_iTrack, (ZoneType)iItem);
-		UTIL::PrintChat(pController, "SELECT: %s, value: %d\n", CSurfZonePlugin::GetZoneNameByType((ZoneType)iItem).c_str(),
+		UTIL::PrintChat(pController, "SELECT: %s, value: %d\n", SURF::ZONE::GetZoneNameByType((ZoneType)iItem).c_str(),
 						pZoneService->m_ZoneEdit.m_iValue);
 		pZoneService->m_ZoneEdit.StartEditZone();
 
@@ -22,7 +22,7 @@ static void OpenMenu_SelectZoneType(CBasePlayerController* pController) {
 
 	menu->SetTitle("选择类型");
 	for (int i = ZoneType::Zone_Start; i < ZoneType::ZONETYPES_SIZE; i++) {
-		menu->AddItem(CSurfZonePlugin::GetZoneNameByType((ZoneType)i));
+		menu->AddItem(SURF::ZONE::GetZoneNameByType((ZoneType)i));
 	}
 	menu->Display(player->GetPlayerPawn());
 }
@@ -42,7 +42,7 @@ static void OpenMenu_SelectZoneTrack(CBasePlayerController* pController) {
 
 	menu->SetTitle("选择赛道");
 	for (int i = ZoneTrack::Track_Main; i < ZoneTrack::TRACKS_SIZE; i++) {
-		menu->AddItem(CSurfZonePlugin::GetZoneNameByTrack((ZoneTrack)i));
+		menu->AddItem(SURF::ZONE::GetZoneNameByTrack((ZoneTrack)i));
 	}
 	menu->Display(player->GetPlayerPawn());
 }

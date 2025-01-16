@@ -165,43 +165,43 @@ bool CConVarBaseData::ValueFromString<bool>(const char* val) {
 }
 
 template<>
-uint16_t CConVarBaseData::ValueFromString<uint16>(const char* val) {
+uint16 CConVarBaseData::ValueFromString<uint16>(const char* val) {
 	unsigned int ret;
 	sscanf(val, "%u", &ret);
 	return ret;
 }
 
 template<>
-int16_t CConVarBaseData::ValueFromString<int16>(const char* val) {
+int16 CConVarBaseData::ValueFromString<int16>(const char* val) {
 	int ret;
 	sscanf(val, "%d", &ret);
 	return ret;
 }
 
 template<>
-uint32_t CConVarBaseData::ValueFromString<uint32>(const char* val) {
-	uint32_t ret;
+uint32 CConVarBaseData::ValueFromString<uint32>(const char* val) {
+	uint32 ret;
 	sscanf(val, "%u", &ret);
 	return ret;
 }
 
 template<>
-int32_t CConVarBaseData::ValueFromString<int32>(const char* val) {
-	int32_t ret;
+int32 CConVarBaseData::ValueFromString<int32>(const char* val) {
+	int32 ret;
 	sscanf(val, "%d", &ret);
 	return ret;
 }
 
 template<>
-uint64_t CConVarBaseData::ValueFromString<uint64>(const char* val) {
-	uint64_t ret;
+uint64 CConVarBaseData::ValueFromString<uint64>(const char* val) {
+	uint64 ret;
 	sscanf(val, "%lu", (unsigned long*)&ret);
 	return ret;
 }
 
 template<>
-int64_t CConVarBaseData::ValueFromString<int64>(const char* val) {
-	int64_t ret;
+int64 CConVarBaseData::ValueFromString<int64>(const char* val) {
+	int64 ret;
 	sscanf(val, "%ld", (long*)&ret);
 	return ret;
 }

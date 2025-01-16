@@ -32,13 +32,30 @@ struct ZoneData_t {
 		Reset();
 	}
 
+	ZoneData_t(const ZoneData_t& other) {
+		m_iTrack = other.m_iTrack;
+		m_iType = other.m_iType;
+		m_iValue = other.m_iValue;
+		m_vecMins = other.m_vecMins;
+		m_vecMaxs = other.m_vecMaxs;
+		m_vecDestination = other.m_vecDestination;
+		m_iFlag = other.m_iFlag;
+		m_iHookHammerid = other.m_iHookHammerid;
+		m_sHookName = other.m_sHookName;
+		m_fLimitSpeed = other.m_fLimitSpeed;
+	}
+
 	void Reset() {
 		m_iTrack = (ZoneTrack)-1;
 		m_iType = (ZoneType)-1;
 		m_iValue = -1;
-		m_vecMins = Vector();
-		m_vecMaxs = Vector();
-		m_vecDestination = Vector();
+		m_vecMins = Vector(0.0f, 0.0f, 0.0f);
+		m_vecMaxs = Vector(0.0f, 0.0f, 0.0f);
+		m_vecDestination = Vector(0.0f, 0.0f, 0.0f);
+		m_iFlag = -1;
+		m_iHookHammerid = -1;
+		m_sHookName = std::string();
+		m_fLimitSpeed = -1.0f;
 	}
 
 	ZoneTrack m_iTrack;
@@ -47,6 +64,10 @@ struct ZoneData_t {
 	Vector m_vecMins;
 	Vector m_vecMaxs;
 	Vector m_vecDestination;
+	int m_iFlag;
+	int m_iHookHammerid;
+	std::string m_sHookName;
+	float m_fLimitSpeed;
 };
 
 struct CZoneEditProperty : ZoneData_t {

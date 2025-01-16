@@ -4,9 +4,11 @@
 #include <surf/zones/edit.h>
 
 struct ZoneCache_t : ZoneData_t {
-	using ZoneData_t::ZoneData_t;
+	ZoneCache_t() : ZoneData_t() {
+		m_aBeams.fill(CEntityHandle());
+	}
 
-	ZoneCache_t() {
+	ZoneCache_t(const ZoneData_t& other) : ZoneData_t(other) {
 		m_aBeams.fill(CEntityHandle());
 	}
 
@@ -32,15 +34,7 @@ public:
 	using CSurfBaseService::CSurfBaseService;
 
 public:
-	void AddZone(const Vector& vecMin, const Vector& vecMax, bool bUpload = true);
 	void EditZone(CCSPlayerPawnBase* pawn, const CPlayerButton* buttons);
-	void CreateZone(const Vector& vecMin, const Vector& vecMax, std::array<CHandle<CBeam>, 12>& out);
-	CBaseEntity* CreateNormalZone(const Vector& vecMins, const Vector& vecMaxs);
-
-public:
-	static void CreatePoints2D(const Vector& vecMin, const Vector& vecMax, Vector out[4]);
-	static void CreatePoints3D(const Vector& vecMin, const Vector& vecMax, Vector out[8]);
-	static void FillBoxMinMax(Vector& vecMin, Vector& vecMax, bool resize = false);
 
 public:
 	CZoneEditProperty m_ZoneEdit;
@@ -57,10 +51,9 @@ public:
 	int GetZoneCount(ZoneTrack track, ZoneType type);
 	void ClearZones();
 	void RefreshZones();
-
-public:
-	static std::string GetZoneNameByTrack(ZoneTrack track);
-	static std::string GetZoneNameByType(ZoneType type);
+	void AddZone(const ZoneData_t& data, bool bUpload = true);
+	void CreateZone(const Vector& vecMin, const Vector& vecMax, std::array<CHandle<CBeam>, 12>& out);
+	CBaseEntity* CreateNormalZone(const Vector& vecMins, const Vector& vecMaxs);
 
 private:
 	void RegisterCommand();
@@ -70,5 +63,20 @@ public:
 };
 
 namespace SURF {
-	CSurfZonePlugin* ZonePlugin();
+	extern CSurfZonePlugin* ZonePlugin();
+
+	namespace ZONE {
+		void CreatePoints2D(const Vector& vecMin, const Vector& vecMax, Vector out[4]);
+		void CreatePoints3D(const Vector& vecMin, const Vector& vecMax, Vector out[8]);
+		void FillBoxMinMax(Vector& vecMin, Vector& vecMax, bool resize = false);
+		std::string GetZoneNameByTrack(ZoneTrack track);
+		std::string GetZoneNameByType(ZoneType type);
+
+		namespace HOOK {
+			bool OnStartTouch(CBaseEntity* pSelf, CBaseEntity* pOther);
+			void OnStartTouchPost(CBaseEntity* pSelf, CBaseEntity* pOther);
+			void OnTouchPost(CBaseEntity* pSelf, CBaseEntity* pOther);
+			void OnEndTouchPost(CBaseEntity* pSelf, CBaseEntity* pOther);
+		} // namespace HOOK
+	} // namespace ZONE
 } // namespace SURF

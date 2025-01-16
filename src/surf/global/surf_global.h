@@ -1,6 +1,7 @@
 #pragma once
 
 #include <surf/surf_player.h>
+#include <surf/zones/edit.h>
 #include <hv/HttpMessage.h>
 
 #ifndef HTTPRES_CALLBACK
@@ -37,24 +38,16 @@ struct GlobalAPIResponse {
 	GlobalAPIResponse(const std::string& body) {
 		if (!body.empty()) {
 			json j = json::parse(body);
-			from_json(j);
+			FromJson(j);
 		}
 	}
 
 	GlobalAPIResponse(const json& body) {
-		from_json(body);
+		FromJson(body);
 	}
 
-	json to_json() const {
-		return json {{"code", this->m_iCode}, {"message", this->m_sMessage}, {"data", this->m_Data}, {"timestamp", this->m_iTimestamp}};
-	}
-
-	void from_json(const json& j) {
-		j.at("code").get_to(this->m_iCode);
-		j.at("message").get_to(this->m_sMessage);
-		j.at("data").get_to(this->m_Data);
-		j.at("timestamp").get_to(this->m_iTimestamp);
-	}
+	json ToJson() const;
+	void FromJson(const json& j);
 };
 
 class CSurfGlobalAPIPlugin : CCoreForward {
@@ -139,18 +132,15 @@ namespace SURF {
 		namespace RECORD {}
 
 		namespace ZONE {
-			struct zoneinfo_t {
+			struct zoneinfo_t : ZoneData_t {
+				zoneinfo_t();
+				zoneinfo_t(const ZoneData_t& other);
+
 				int m_iDatabaseID = -1;
-				int m_iTrack = 0;
-				int m_iType = 0;
-				int m_iValue = 0;
-				Vector m_vecMins;
-				Vector m_vecMaxs;
-				Vector m_vecDes = {0.0f, 0.0f, 0.0f};
-				int m_iFlag = -1;
-				int m_iHookHammerid = -1;
-				std::string m_sHookName = std::string();
-				float m_fLimitSpeed = -1.0f;
+				std::string m_sMap;
+
+				json ToJson() const;
+				void FromJson(const nlohmann::json& j);
 			};
 
 			void Update(const zoneinfo_t& info, HttpResponseCallback cb);
