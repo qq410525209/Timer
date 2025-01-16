@@ -13,7 +13,7 @@ void GlobalAPIResponse::FromJson(const json& j) {
 }
 
 namespace SURF::GLOBALAPI {
-	namespace ZONE {
+	namespace MAP {
 		zoneinfo_t::zoneinfo_t() : ZoneData_t() {
 			m_sMap = GlobalPlugin()->m_sMapName;
 		}
@@ -75,5 +75,5 @@ namespace SURF::GLOBALAPI {
 			JSON_GETTER(j, "hookname", m_sHookName);
 			JSON_GETTER(j, "limitspeed", m_fLimitSpeed);
 		}
-	} // namespace ZONE
+	} // namespace MAP
 } // namespace SURF::GLOBALAPI

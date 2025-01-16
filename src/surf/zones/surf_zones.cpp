@@ -67,7 +67,7 @@ void CSurfZonePlugin::ClearZones() {
 void CSurfZonePlugin::RefreshZones() {
 	ClearZones();
 
-	SURF::GLOBALAPI::ZONE::Pull(HTTPRES_CALLBACK_L() {
+	SURF::GLOBALAPI::MAP::PullZone(HTTPRES_CALLBACK_L() {
 		GAPIRES_CHECK(res, r);
 
 		auto vZones = r.m_Data.get<std::vector<json>>();
@@ -76,7 +76,7 @@ void CSurfZonePlugin::RefreshZones() {
 				continue;
 			}
 
-			SURF::GLOBALAPI::ZONE::zoneinfo_t info;
+			SURF::GLOBALAPI::MAP::zoneinfo_t info;
 			info.FromJson(j);
 
 			SURF::ZonePlugin()->AddZone(info, false);
@@ -92,8 +92,8 @@ void CSurfZonePlugin::AddZone(const ZoneData_t& data, bool bUpload) {
 	SURF::ZonePlugin()->m_hZones[hRefZone] = cache;
 
 	if (bUpload) {
-		SURF::GLOBALAPI::ZONE::zoneinfo_t info(data);
-		SURF::GLOBALAPI::ZONE::Update(
+		SURF::GLOBALAPI::MAP::zoneinfo_t info(data);
+		SURF::GLOBALAPI::MAP::UpdateZone(
 			info, HTTPRES_CALLBACK_L() {
 				if (!res || res->status_code != HTTP_STATUS_OK) {
 					return;

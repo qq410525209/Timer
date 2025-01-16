@@ -123,15 +123,7 @@ namespace SURF {
 
 			void UpdateInfo(uint64 workshopID, std::string mapName, const mapinfo_t& info, HttpResponseCallback cb);
 			void PullInfo(uint64 workshopID, std::string mapName, HttpResponseCallback cb);
-		} // namespace MAP
 
-		namespace STYLE {}
-
-		namespace PLAYER {}
-
-		namespace RECORD {}
-
-		namespace ZONE {
 			struct zoneinfo_t : ZoneData_t {
 				zoneinfo_t();
 				zoneinfo_t(const ZoneData_t& other);
@@ -143,8 +135,14 @@ namespace SURF {
 				void FromJson(const nlohmann::json& j);
 			};
 
-			void Update(const zoneinfo_t& info, HttpResponseCallback cb);
-			void Pull(HttpResponseCallback cb);
-		} // namespace ZONE
+			void UpdateZone(const zoneinfo_t& info, HttpResponseCallback cb);
+			void PullZone(HttpResponseCallback cb);
+		} // namespace MAP
+
+		namespace STYLE {}
+
+		namespace PLAYER {}
+
+		namespace RECORD {}
 	} // namespace GLOBALAPI
 } // namespace SURF

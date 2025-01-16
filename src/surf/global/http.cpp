@@ -99,16 +99,8 @@ namespace SURF::GLOBALAPI {
 
 			pPlugin->CreateRequest("map_info_pull", req, cb);
 		}
-	} // namespace MAP
 
-	namespace STYLE {}
-
-	namespace PLAYER {}
-
-	namespace RECORD {}
-
-	namespace ZONE {
-		void Update(const zoneinfo_t& info, HttpResponseCallback cb) {
+		void UpdateZone(const zoneinfo_t& info, HttpResponseCallback cb) {
 			auto pPlugin = GlobalPlugin();
 			GlobalAPIRequest req;
 			req.m_sCustomToken = pPlugin->m_UpdaterAuth.m_sToken;
@@ -120,7 +112,7 @@ namespace SURF::GLOBALAPI {
 			pPlugin->CreateRequest("map_zone_update", req, cb);
 		}
 
-		void Pull(HttpResponseCallback cb) {
+		void PullZone(HttpResponseCallback cb) {
 			auto pPlugin = GlobalPlugin();
 			GlobalAPIRequest req;
 
@@ -128,5 +120,11 @@ namespace SURF::GLOBALAPI {
 
 			pPlugin->CreateRequest("map_zone_pull", req, cb);
 		}
-	} // namespace ZONE
+	} // namespace MAP
+
+	namespace STYLE {}
+
+	namespace PLAYER {}
+
+	namespace RECORD {}
 } // namespace SURF::GLOBALAPI
