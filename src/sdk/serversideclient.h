@@ -94,8 +94,7 @@ public:
 		return m_Server;
 	}
 
-	virtual void Connect(int socket, const char* pszName, int nUserID, INetChannel* pNetChannel, bool bFakePlayer, bool bSplitClient,
-						 int iClientPlatform) = 0;
+	virtual void Connect(int socket, const char* pszName, int nUserID, INetChannel* pNetChannel, bool bFakePlayer, bool bSplitClient, int iClientPlatform) = 0;
 	virtual void Inactivate() = 0;
 	virtual void Reactivate(CPlayerSlot nSlot) = 0;
 	virtual void SetServer(CNetworkGameServer* pNetServer) = 0;

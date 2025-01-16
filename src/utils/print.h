@@ -13,8 +13,7 @@ enum MsgDest : int32_t {
 };
 
 namespace UTIL {
-	void ClientPrintFilter(IRecipientFilter* filter, int msg_dest, const char* msg_name, const char* param1, const char* param2, const char* param3,
-						   const char* param4);
+	void ClientPrintFilter(IRecipientFilter* filter, int msg_dest, const char* msg_name, const char* param1, const char* param2, const char* param3, const char* param4);
 	void SayChat(CBasePlayerController* pControler, const char* format, ...);
 	void PrintConsole(CBasePlayerController* pControler, const char* format, ...);
 	void PrintChat(CBasePlayerController* pControler, const char* format, ...);

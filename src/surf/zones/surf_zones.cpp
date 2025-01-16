@@ -13,8 +13,7 @@ void CSurfZonePlugin::OnPluginStart() {
 	RegisterCommand();
 }
 
-void CSurfZonePlugin::OnPlayerRunCmdPost(CCSPlayerPawn* pawn, const CPlayerButton* buttons, const float (&vec)[3], const QAngle& viewAngles,
-										 const int& weapon, const int& cmdnum, const int& tickcount, const int& seed, const int (&mouse)[2]) {
+void CSurfZonePlugin::OnPlayerRunCmdPost(CCSPlayerPawn* pawn, const CPlayerButton* buttons, const float (&vec)[3], const QAngle& viewAngles, const int& weapon, const int& cmdnum, const int& tickcount, const int& seed, const int (&mouse)[2]) {
 	CSurfPlayer* player = SURF::GetPlayerManager()->ToPlayer(pawn);
 	if (!player) {
 		return;
@@ -95,13 +94,7 @@ void CSurfZonePlugin::AddZone(const ZoneData_t& data, bool bUpload) {
 		SURF::GLOBALAPI::MAP::zoneinfo_t info(data);
 		SURF::GLOBALAPI::MAP::UpdateZone(
 			info, HTTPRES_CALLBACK_L() {
-				if (!res || res->status_code != HTTP_STATUS_OK) {
-					return;
-				}
-				GlobalAPIResponse r(res->body);
-				if (r.m_iCode != HTTP_STATUS_OK) {
-					return;
-				};
+				GAPIRES_CHECK(res, r);
 				UTIL::CPrintChatAll("更新区域成功!");
 			});
 	}

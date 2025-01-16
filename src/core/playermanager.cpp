@@ -196,8 +196,7 @@ std::vector<CPlayer*> CPlayerManager::GetOnlinePlayers() const {
 	return players;
 }
 
-void CPlayerManager::OnClientDisconnect(ISource2GameClients* pClient, CPlayerSlot slot, ENetworkDisconnectionReason reason, const char* pszName,
-										uint64 xuid, const char* pszNetworkID) {
+void CPlayerManager::OnClientDisconnect(ISource2GameClients* pClient, CPlayerSlot slot, ENetworkDisconnectionReason reason, const char* pszName, uint64 xuid, const char* pszNetworkID) {
 	CPlayer* player = this->ToPlayer(slot);
 	if (player) {
 		player->Reset();

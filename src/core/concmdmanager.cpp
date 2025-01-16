@@ -139,8 +139,7 @@ static void HandleSrvCommand(const CCommand& pCommand, const std::wstring& wComm
 	}
 }
 
-static bool HandleConCommand(CCSPlayerController* pController, const CCommand& pCommand, const std::wstring& wCommand, bool sayCommand,
-							 bool spaceFound) {
+static bool HandleConCommand(CCSPlayerController* pController, const CCommand& pCommand, const std::wstring& wCommand, bool sayCommand, bool spaceFound) {
 	auto bRegistedCmd = g_manager.m_umConCmds.contains(wCommand);
 	auto bListenedCmd = g_manager.m_umConCmdListeners.contains(wCommand);
 	if (!bRegistedCmd && !bListenedCmd) {

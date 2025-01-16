@@ -55,8 +55,7 @@ void CSurfPlugin::AllPluginsLoaded() {
 	g_pMultiAddonManager = (IMultiAddonManager*)g_SMAPI->MetaFactory(MULTIADDONMANAGER_INTERFACE, nullptr, nullptr);
 }
 
-void CSurfPlugin::OnLevelInit(char const* pMapName, char const* pMapEntities, char const* pOldLevel, char const* pLandmarkName, bool loadGame,
-							  bool background) {
+void CSurfPlugin::OnLevelInit(char const* pMapName, char const* pMapEntities, char const* pOldLevel, char const* pLandmarkName, bool loadGame, bool background) {
 	FORWARD_POST(CCoreForward, OnLevelInit, pMapName);
 }
 

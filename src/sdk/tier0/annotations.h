@@ -19,12 +19,10 @@
 #pragma warning(disable: 6308) // warning C6308: 'realloc' might return null pointer: assigning null pointer to 's_ppTestCases', which is passed as an
 							   // argument to 'realloc', will cause the original memory block to be leaked
 #pragma warning(disable: 6255) // warning C6255: _alloca indicates failure by raising a stack overflow exception. Consider using _malloca instead
-#pragma warning( \
-	disable: 6387) // warning C6387: 'argument 1' might be '0': this does not adhere to the specification for the function 'GetProcAddress'
+#pragma warning(disable: 6387) // warning C6387: 'argument 1' might be '0': this does not adhere to the specification for the function 'GetProcAddress'
 #pragma warning(disable: 6309) // warning C6309: Argument '1' is null: this does not adhere to function specification of 'GetProcAddress'
 #pragma warning(disable: 6011) // warning C6011: Dereferencing NULL pointer 'm_ppTestCases'
-#pragma warning( \
-	disable: 6211) // warning C6211: Leaking memory 'newKeyValue' due to an exception. Consider using a local catch block to clean up memory
+#pragma warning(disable: 6211) // warning C6211: Leaking memory 'newKeyValue' due to an exception. Consider using a local catch block to clean up memory
 #pragma warning(disable: 6031) // warning C6031: Return value ignored: '_getcwd'
 
 // These warnings are because /analyze doesn't like our use of constants, especially things like IsPC()

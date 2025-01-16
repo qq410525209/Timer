@@ -42,8 +42,7 @@ namespace CONCMD {
 
 	void RegServerCmd(std::string cmd, SrvCmd_Callback cb, std::string description = std::string(), int64_t cmdFlag = FCVAR_NONE);
 	void RegConsoleCmd(std::string cmd, ConCmd_Callback cb, std::string description = std::string(), int64_t cmdFlag = FCVAR_NONE);
-	void RegAdminCmd(std::string cmd, ConCmd_Callback cb, AdminFlag adminFlags, std::string description = std::string(),
-					 int64_t cmdFlag = FCVAR_NONE);
+	void RegAdminCmd(std::string cmd, ConCmd_Callback cb, AdminFlag adminFlags, std::string description = std::string(), int64_t cmdFlag = FCVAR_NONE);
 	void AddCommandListener(std::string cmd, ConCmdListener_Callback cb);
 	ConCommand* Find(const char* name);
 

@@ -59,8 +59,7 @@ public:
 
 class CSingleRecipientFilter : public IRecipientFilter {
 public:
-	CSingleRecipientFilter(int iRecipient, NetChannelBufType_t nBufType = BUF_RELIABLE, bool bInitMessage = false)
-		: m_nBufType(nBufType), m_bInitMessage(bInitMessage), m_iRecipient(iRecipient) {}
+	CSingleRecipientFilter(int iRecipient, NetChannelBufType_t nBufType = BUF_RELIABLE, bool bInitMessage = false) : m_nBufType(nBufType), m_bInitMessage(bInitMessage), m_iRecipient(iRecipient) {}
 
 	~CSingleRecipientFilter() override {}
 

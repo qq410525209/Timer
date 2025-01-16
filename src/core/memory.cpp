@@ -48,8 +48,7 @@ void MEM::CALL::TracePlayerBBox(const Vector& start, const Vector& end, const bb
 	CALL_SIG("TracePlayerBBox", TracePlayerBBox, &start, &end, &bounds, filter, &pm);
 }
 
-void MEM::CALL::InitPlayerMovementTraceFilter(CTraceFilterPlayerMovementCS& pFilter, CEntityInstance* pHandleEntity, uint64 interactWith,
-											  int collisionGroup) {
+void MEM::CALL::InitPlayerMovementTraceFilter(CTraceFilterPlayerMovementCS& pFilter, CEntityInstance* pHandleEntity, uint64 interactWith, int collisionGroup) {
 	CALL_SIG("InitPlayerMovementTraceFilter", InitPlayerMovementTraceFilter, &pFilter, pHandleEntity, interactWith, collisionGroup);
 }
 
@@ -57,8 +56,7 @@ void MEM::CALL::SnapViewAngles(CBasePlayerPawn* pawn, const QAngle& angle) {
 	CALL_SIG("SnapViewAngles", SnapViewAngles, pawn, &angle);
 }
 
-void MEM::CALL::CEntityInstance_AcceptInput(CEntityInstance* pEnt, const char* pInputName, CEntityInstance* pActivator, CEntityInstance* pCaller,
-											variant_t* value, int nOutputID) {
+void MEM::CALL::CEntityInstance_AcceptInput(CEntityInstance* pEnt, const char* pInputName, CEntityInstance* pActivator, CEntityInstance* pCaller, variant_t* value, int nOutputID) {
 	CALL_SIG("CEntityInstance_AcceptInput", CEntityInstance_AcceptInput, pEnt, pInputName, pActivator, pCaller, value, nOutputID);
 }
 
@@ -110,13 +108,11 @@ static void Hook_OnGameFrame(ISource2Server* pThis, bool simulating, bool bFirst
 	MEM::SDKCall(MEM::TRAMPOLINE::g_fnGameFrame, pThis, simulating, bFirstTick, bLastTick);
 }
 
-static bool Hook_ClientConnect(ISource2GameClients* pThis, CPlayerSlot slot, const char* pszName, uint64 xuid, const char* pszNetworkID, bool unk1,
-							   CBufferString* pRejectReason) {
+static bool Hook_ClientConnect(ISource2GameClients* pThis, CPlayerSlot slot, const char* pszName, uint64 xuid, const char* pszNetworkID, bool unk1, CBufferString* pRejectReason) {
 	return MEM::SDKCall<bool>(MEM::TRAMPOLINE::g_fnClientConnect, pThis, slot, pszName, xuid, pszNetworkID, unk1, pRejectReason);
 }
 
-static void Hook_OnClientConnected(ISource2GameClients* pThis, CPlayerSlot slot, const char* pszName, uint64 xuid, const char* pszNetworkID,
-								   const char* pszAddress, bool bFakePlayer) {
+static void Hook_OnClientConnected(ISource2GameClients* pThis, CPlayerSlot slot, const char* pszName, uint64 xuid, const char* pszNetworkID, const char* pszAddress, bool bFakePlayer) {
 	for (auto p = CCoreForward::m_pFirst; p; p = p->m_pNext) {
 		p->OnClientConnected(pThis, slot, pszName, xuid, pszNetworkID, pszAddress, bFakePlayer);
 	}
@@ -148,8 +144,7 @@ static void Hook_ClientActive(ISource2GameClients* pThis, CPlayerSlot slot, bool
 	MEM::SDKCall(MEM::TRAMPOLINE::g_fnClientActive, pThis, slot, bLoadGame, pszName, xuid);
 }
 
-static void Hook_ClientDisconnect(ISource2GameClients* pThis, CPlayerSlot slot, ENetworkDisconnectionReason reason, const char* pszName, uint64 xuid,
-								  const char* pszNetworkID) {
+static void Hook_ClientDisconnect(ISource2GameClients* pThis, CPlayerSlot slot, ENetworkDisconnectionReason reason, const char* pszName, uint64 xuid, const char* pszNetworkID) {
 	for (auto p = CCoreForward::m_pFirst; p; p = p->m_pNext) {
 		p->OnClientDisconnect(pThis, slot, reason, pszName, xuid, pszNetworkID);
 	}
@@ -206,8 +201,7 @@ static void Hook_DispatchConCommand(ICvar* pThis, ConCommandHandle cmd, const CC
 	MEM::SDKCall(MEM::TRAMPOLINE::g_fnDispatchConCommand, pThis, cmd, &ctx, &args);
 }
 
-static void Hook_PostEvent(IGameEventSystem* pThis, CSplitScreenSlot nSlot, bool bLocalOnly, int nClientCount, const uint64* clients,
-						   INetworkMessageInternal* pEvent, const CNetMessage* pData, unsigned long nSize, NetChannelBufType_t bufType) {
+static void Hook_PostEvent(IGameEventSystem* pThis, CSplitScreenSlot nSlot, bool bLocalOnly, int nClientCount, const uint64* clients, INetworkMessageInternal* pEvent, const CNetMessage* pData, unsigned long nSize, NetChannelBufType_t bufType) {
 	for (auto p = CCoreForward::m_pFirst; p; p = p->m_pNext) {
 		p->OnPostEventAbstract(pThis, nSlot, nClientCount, clients, pEvent, pData);
 	}

@@ -76,8 +76,7 @@ static void Hook_OnPlayerTeleportPost(CBaseEntity* pSelf, const Vector* newPosit
 	});
 }
 
-void CSurfPlayerManager::OnClientConnected(ISource2GameClients* pClient, CPlayerSlot slot, const char* pszName, uint64 xuid, const char* pszNetworkID,
-										   const char* pszAddress, bool bFakePlayer) {
+void CSurfPlayerManager::OnClientConnected(ISource2GameClients* pClient, CPlayerSlot slot, const char* pszName, uint64 xuid, const char* pszNetworkID, const char* pszAddress, bool bFakePlayer) {
 	if (bFakePlayer) {
 		int iSlot = slot.Get();
 		auto& pPlayer = m_pPlayers[iSlot];

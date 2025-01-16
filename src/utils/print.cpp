@@ -215,8 +215,7 @@ static bool CFormat(char* buffer, u64 buffer_size, const char* text) {
 	return true;
 }
 
-void UTIL::ClientPrintFilter(IRecipientFilter* filter, int msg_dest, const char* msg_name, const char* param1, const char* param2, const char* param3,
-							 const char* param4) {
+void UTIL::ClientPrintFilter(IRecipientFilter* filter, int msg_dest, const char* msg_name, const char* param1, const char* param2, const char* param3, const char* param4) {
 	INetworkMessageInternal* netmsg = g_pNetworkMessages->FindNetworkMessagePartial("TextMsg");
 	auto msg = netmsg->AllocateMessage()->ToPB<CUserMessageTextMsg>();
 	msg->set_dest(msg_dest);

@@ -23,8 +23,7 @@ namespace SURF::GLOBALAPI {
 		}
 
 		json zoneinfo_t::ToJson() const {
-			json j {{"map", m_sMap},         {"track", m_iTrack},     {"type", m_iType},       {"value", m_iValue},     {"mins_x", m_vecMins.x},
-					{"mins_y", m_vecMins.y}, {"mins_z", m_vecMins.z}, {"maxs_x", m_vecMaxs.x}, {"maxs_y", m_vecMaxs.y}, {"maxs_z", m_vecMaxs.z}};
+			json j {{"map", m_sMap}, {"track", m_iTrack}, {"type", m_iType}, {"value", m_iValue}, {"mins_x", m_vecMins.x}, {"mins_y", m_vecMins.y}, {"mins_z", m_vecMins.z}, {"maxs_x", m_vecMaxs.x}, {"maxs_y", m_vecMaxs.y}, {"maxs_z", m_vecMaxs.z}};
 
 			if (m_iDatabaseID != -1) {
 				j["id"] = m_iDatabaseID;

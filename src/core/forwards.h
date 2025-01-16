@@ -39,8 +39,7 @@ public:
 
 	virtual void OnEntityDeleted(CEntityInstance* pEntity) {}
 
-	virtual void OnClientConnected(ISource2GameClients* pClient, CPlayerSlot slot, const char* pszName, uint64 xuid, const char* pszNetworkID,
-								   const char* pszAddress, bool bFakePlayer) {}
+	virtual void OnClientConnected(ISource2GameClients* pClient, CPlayerSlot slot, const char* pszName, uint64 xuid, const char* pszNetworkID, const char* pszAddress, bool bFakePlayer) {}
 
 	virtual void OnClientFullyConnect(ISource2GameClients* pClient, CPlayerSlot slot) {}
 
@@ -48,8 +47,7 @@ public:
 
 	virtual void OnClientActive(ISource2GameClients* pClient, CPlayerSlot slot, bool bLoadGame, const char* pszName, uint64 xuid) {}
 
-	virtual void OnClientDisconnect(ISource2GameClients* pClient, CPlayerSlot slot, ENetworkDisconnectionReason reason, const char* pszName,
-									uint64 xuid, const char* pszNetworkID) {}
+	virtual void OnClientDisconnect(ISource2GameClients* pClient, CPlayerSlot slot, ENetworkDisconnectionReason reason, const char* pszName, uint64 xuid, const char* pszNetworkID) {}
 
 	virtual void OnClientVoice(ISource2GameClients* pClient, CPlayerSlot slot) {}
 
@@ -61,8 +59,7 @@ public:
 		return true;
 	}
 
-	virtual void OnPostEventAbstract(IGameEventSystem* pEventSystem, CSplitScreenSlot nSlot, int nClientCount, const uint64* clients,
-									 INetworkMessageInternal* pEvent, const CNetMessage* pData) {}
+	virtual void OnPostEventAbstract(IGameEventSystem* pEventSystem, CSplitScreenSlot nSlot, int nClientCount, const uint64* clients, INetworkMessageInternal* pEvent, const CNetMessage* pData) {}
 
 	virtual bool OnWeaponDrop(CCSPlayer_WeaponServices* pService, CBasePlayerWeapon* pWeapon, int& iDropType, Vector* targetPos) {
 		return true;

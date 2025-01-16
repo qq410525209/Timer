@@ -54,11 +54,9 @@ namespace MEM {
 		IGameEventListener2* GetLegacyGameEventListener(CPlayerSlot slot);
 		bool TraceShape(const Ray_t& ray, const Vector& vecStart, const Vector& vecEnd, const CTraceFilter& filter, CGameTrace* tr);
 		void TracePlayerBBox(const Vector& start, const Vector& end, const bbox_t& bounds, CTraceFilter* filter, trace_t& pm);
-		void InitPlayerMovementTraceFilter(CTraceFilterPlayerMovementCS& pFilter, CEntityInstance* pHandleEntity, uint64 interactWith,
-										   int collisionGroup);
+		void InitPlayerMovementTraceFilter(CTraceFilterPlayerMovementCS& pFilter, CEntityInstance* pHandleEntity, uint64 interactWith, int collisionGroup);
 		void SnapViewAngles(CBasePlayerPawn* pawn, const QAngle& angle);
-		void CEntityInstance_AcceptInput(CEntityInstance* pEnt, const char* pInputName, CEntityInstance* pActivator, CEntityInstance* pCaller,
-										 variant_t* value, int nOutputID);
+		void CEntityInstance_AcceptInput(CEntityInstance* pEnt, const char* pInputName, CEntityInstance* pActivator, CEntityInstance* pCaller, variant_t* value, int nOutputID);
 		CBaseEntity* CreateEntityByName(const char* pszName);
 		void DispatchSpawn(CBaseEntity* pEnt, CEntityKeyValues* pInitKeyValue);
 		CBaseTrigger* CreateAABBTrigger(const Vector& center, const Vector& mins, const Vector& maxs);
@@ -113,8 +111,7 @@ namespace MEM {
 	}
 
 	template<typename T>
-	inline bool VmtHookEx(uint32_t uIndex, libmodule::CModule* pModule, const char* className, T pFunc, void*& pOriginFunc,
-						  bool allInstance = false) {
+	inline bool VmtHookEx(uint32_t uIndex, libmodule::CModule* pModule, const char* className, T pFunc, void*& pOriginFunc, bool allInstance = false) {
 		if (!pModule) {
 			return false;
 		}

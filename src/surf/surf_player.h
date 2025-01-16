@@ -97,8 +97,7 @@ public:
 	}
 
 private:
-	virtual void OnClientConnected(ISource2GameClients* pClient, CPlayerSlot slot, const char* pszName, uint64 xuid, const char* pszNetworkID,
-								   const char* pszAddress, bool bFakePlayer) override;
+	virtual void OnClientConnected(ISource2GameClients* pClient, CPlayerSlot slot, const char* pszName, uint64 xuid, const char* pszNetworkID, const char* pszAddress, bool bFakePlayer) override;
 	virtual void OnEntitySpawned(CEntityInstance* pEntity) override;
 };
 

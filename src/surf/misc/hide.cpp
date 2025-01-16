@@ -133,15 +133,12 @@ void CHidePlugin::OnClientSendSnapshotBefore(CServerSideClient* pClient) {
 		if (pEnt->IsPawn()) {
 			CCSPlayerController* pController = static_cast<CCSPlayerPawn*>(pEnt)->m_hOriginalController().Get();
 			if (pController && pController->GetEntityIndex().Get() == iClientEntIndex) {
-				Plat_FatalErrorFunc("CHidePlugin::OnClientSendSnapshotBefore: hide self Pawn is not allowed. (Client slot: %d, Entity idx: %d)\n",
-									iClientSlot, iClientEntIndex);
+				Plat_FatalErrorFunc("CHidePlugin::OnClientSendSnapshotBefore: hide self Pawn is not allowed. (Client slot: %d, Entity idx: %d)\n", iClientSlot, iClientEntIndex);
 				DebuggerBreak();
 			}
 		} else if (pEnt->IsController()) {
 			if (static_cast<CCSPlayerController*>(pEnt)->GetEntityIndex().Get() == iClientEntIndex) {
-				Plat_FatalErrorFunc(
-					"CHidePlugin::OnClientSendSnapshotBefore: hide self Controller is not allowed. (Client slot: %d, Entity idx: %d)\n", iClientSlot,
-					iClientEntIndex);
+				Plat_FatalErrorFunc("CHidePlugin::OnClientSendSnapshotBefore: hide self Controller is not allowed. (Client slot: %d, Entity idx: %d)\n", iClientSlot, iClientEntIndex);
 				DebuggerBreak();
 			}
 		}

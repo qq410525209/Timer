@@ -6,8 +6,7 @@ class CSurfPlugin : public ISmmPlugin, public IMetamodListener {
 private:
 	virtual bool Load(PluginId id, ISmmAPI* ismm, char* error, size_t maxlen, bool late) override;
 	virtual void AllPluginsLoaded() override;
-	virtual void OnLevelInit(char const* pMapName, char const* pMapEntities, char const* pOldLevel, char const* pLandmarkName, bool loadGame,
-							 bool background) override;
+	virtual void OnLevelInit(char const* pMapName, char const* pMapEntities, char const* pOldLevel, char const* pLandmarkName, bool loadGame, bool background) override;
 	virtual const char* GetAuthor() override;
 	virtual const char* GetName() override;
 	virtual const char* GetDescription() override;

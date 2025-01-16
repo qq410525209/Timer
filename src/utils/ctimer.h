@@ -31,8 +31,7 @@ public:
 	Fn m_fn;
 	std::tuple<Args...> m_args;
 
-	explicit CTimer(bool useRealTime, f32 initialDelay, Fn fn, Args... args)
-		: CTimerBase(initialDelay, useRealTime), m_fn(std::move(fn)), m_args(std::make_tuple(std::move(args)...)) {}
+	explicit CTimer(bool useRealTime, f32 initialDelay, Fn fn, Args... args) : CTimerBase(initialDelay, useRealTime), m_fn(std::move(fn)), m_args(std::make_tuple(std::move(args)...)) {}
 
 	bool Execute() override {
 		interval = std::apply(m_fn, m_args);

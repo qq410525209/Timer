@@ -11,8 +11,7 @@
 //-----------------------------------------------------------------------------
 template<typename Tdst, typename Tsrc>
 FORCEINLINE Tdst size_cast(Tsrc val) {
-	static_assert(sizeof(Tdst) <= sizeof(uint64) && sizeof(Tsrc) <= sizeof(uint64),
-				  "Okay in my defense there weren't any types larger than 64-bits when this code was written.");
+	static_assert(sizeof(Tdst) <= sizeof(uint64) && sizeof(Tsrc) <= sizeof(uint64), "Okay in my defense there weren't any types larger than 64-bits when this code was written.");
 
 #ifdef DEBUG
 	if (sizeof(Tdst) < sizeof(Tsrc)) {
@@ -37,20 +36,17 @@ FORCEINLINE Tdst size_cast(Tsrc val) {
 // Ways the memory pool can grow when it needs to make a new blob.
 enum MemoryPoolGrowType_t {
 	UTLMEMORYPOOL_GROW_NONE = 0, // Don't allow new blobs.
-	UTLMEMORYPOOL_GROW_FAST =
-		1, // New blob size is numElements * (i+1)  (ie: the blocks it allocates get larger and larger each time it allocates one).
+	UTLMEMORYPOOL_GROW_FAST = 1, // New blob size is numElements * (i+1)  (ie: the blocks it allocates get larger and larger each time it allocates one).
 	UTLMEMORYPOOL_GROW_SLOW = 2, // New blob size is numElements.
 };
 
 class CUtlMemoryPoolBase {
 public:
-	DLL_CLASS_IMPORT CUtlMemoryPoolBase(int blockSize, int numElements, int nAlignment = 0, MemoryPoolGrowType_t growMode = UTLMEMORYPOOL_GROW_FAST,
-										const char* pszAllocOwner = NULL, MemAllocAttribute_t allocAttribute = MemAllocAttribute_Unk0);
+	DLL_CLASS_IMPORT CUtlMemoryPoolBase(int blockSize, int numElements, int nAlignment = 0, MemoryPoolGrowType_t growMode = UTLMEMORYPOOL_GROW_FAST, const char* pszAllocOwner = NULL, MemAllocAttribute_t allocAttribute = MemAllocAttribute_Unk0);
 	DLL_CLASS_IMPORT ~CUtlMemoryPoolBase();
 
 	// Resets the pool
-	DLL_CLASS_IMPORT void Init(int blockSize, int numElements, int nAlignment, MemoryPoolGrowType_t growMode, const char* pszAllocOwner,
-							   MemAllocAttribute_t allocAttribute);
+	DLL_CLASS_IMPORT void Init(int blockSize, int numElements, int nAlignment, MemoryPoolGrowType_t growMode, const char* pszAllocOwner, MemAllocAttribute_t allocAttribute);
 
 	DLL_CLASS_IMPORT void* Alloc();     // Allocate the element size you specified in the constructor.
 	DLL_CLASS_IMPORT void* AllocZero(); // Allocate the element size you specified in the constructor, zero the memory before construction
@@ -122,9 +118,7 @@ private:
 template<class T>
 class CUtlMemoryPool : public CUtlMemoryPoolBase {
 public:
-	CUtlMemoryPool(int numElements, MemoryPoolGrowType_t growMode = UTLMEMORYPOOL_GROW_FAST, const char* pszAllocOwner = MEM_ALLOC_CLASSNAME(T),
-				   MemAllocAttribute_t allocAttribute = MemAllocAttribute_Unk0)
-		: CUtlMemoryPoolBase(sizeof(T), numElements, alignof(T), growMode, pszAllocOwner, allocAttribute) {}
+	CUtlMemoryPool(int numElements, MemoryPoolGrowType_t growMode = UTLMEMORYPOOL_GROW_FAST, const char* pszAllocOwner = MEM_ALLOC_CLASSNAME(T), MemAllocAttribute_t allocAttribute = MemAllocAttribute_Unk0) : CUtlMemoryPoolBase(sizeof(T), numElements, alignof(T), growMode, pszAllocOwner, allocAttribute) {}
 
 	T* Alloc();
 	T* AllocZero();
@@ -419,8 +413,7 @@ public: \
 private: \
 	static CUtlMemoryPool<_class> s_Allocator
 
-#define DEFINE_FIXEDSIZE_ALLOCATOR(_class, _initsize, _grow) \
-	CUtlMemoryPool<_class> _class::s_Allocator(_initsize, _grow, #_class " CUtlMemoryPool", MemAllocAttribute_Unk2)
+#define DEFINE_FIXEDSIZE_ALLOCATOR(_class, _initsize, _grow) CUtlMemoryPool<_class> _class::s_Allocator(_initsize, _grow, #_class " CUtlMemoryPool", MemAllocAttribute_Unk2)
 
 #define DECLARE_FIXEDSIZE_ALLOCATOR_MT(_class) \
 \
@@ -443,8 +436,7 @@ public: \
 private: \
 	static CUtlMemoryPoolMT<_class> s_Allocator
 
-#define DEFINE_FIXEDSIZE_ALLOCATOR_MT(_class, _initsize, _grow) \
-	CUtlMemoryPoolMT<_class> _class::s_Allocator(_initsize, _grow, #_class " CUtlMemoryPoolMT", MemAllocAttribute_Unk2)
+#define DEFINE_FIXEDSIZE_ALLOCATOR_MT(_class, _initsize, _grow) CUtlMemoryPoolMT<_class> _class::s_Allocator(_initsize, _grow, #_class " CUtlMemoryPoolMT", MemAllocAttribute_Unk2)
 
 //-----------------------------------------------------------------------------
 // Macros that make it simple to make a class use a fixed-size allocator
@@ -474,8 +466,7 @@ private: \
 #define DEFINE_FIXEDSIZE_ALLOCATOR_EXTERNAL(_class, _allocator) CUtlMemoryPool<_class>* _class::s_pAllocator = _allocator
 
 template<int ITEM_SIZE, int ALIGNMENT, int CHUNK_SIZE, class CAllocator, bool GROWMODE, int COMPACT_THRESHOLD>
-inline CAlignedMemPool<ITEM_SIZE, ALIGNMENT, CHUNK_SIZE, CAllocator, GROWMODE, COMPACT_THRESHOLD>::CAlignedMemPool()
-	: m_pFirstFree(0), m_nFree(0), m_TimeLastCompact(0) {
+inline CAlignedMemPool<ITEM_SIZE, ALIGNMENT, CHUNK_SIZE, CAllocator, GROWMODE, COMPACT_THRESHOLD>::CAlignedMemPool() : m_pFirstFree(0), m_nFree(0), m_TimeLastCompact(0) {
 	// These COMPILE_TIME_ASSERT checks need to be in individual scopes to avoid build breaks
 	// on MacOS and Linux due to a gcc bug.
 	{
@@ -548,8 +539,7 @@ inline void CAlignedMemPool<ITEM_SIZE, ALIGNMENT, CHUNK_SIZE, CAllocator, GROWMO
 }
 
 template<int ITEM_SIZE, int ALIGNMENT, int CHUNK_SIZE, class CAllocator, bool GROWMODE, int COMPACT_THRESHOLD>
-inline int __cdecl CAlignedMemPool<ITEM_SIZE, ALIGNMENT, CHUNK_SIZE, CAllocator, GROWMODE, COMPACT_THRESHOLD>::CompareChunk(void* const* ppLeft,
-																															void* const* ppRight) {
+inline int __cdecl CAlignedMemPool<ITEM_SIZE, ALIGNMENT, CHUNK_SIZE, CAllocator, GROWMODE, COMPACT_THRESHOLD>::CompareChunk(void* const* ppLeft, void* const* ppRight) {
 	return size_cast<int>((intp)*ppLeft - (intp)*ppRight);
 }
 

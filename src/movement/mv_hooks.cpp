@@ -274,8 +274,7 @@ bool MOVEMENT::IsValidMovementTrace(trace_t& tr, bbox_t& bounds, CTraceFilterPla
 	}
 
 	// We hit something but no valid plane data?
-	if (tr.m_flFraction < 1.0f && fabs(tr.m_vHitNormal.x) < FLT_EPSILON && fabs(tr.m_vHitNormal.y) < FLT_EPSILON
-		&& fabs(tr.m_vHitNormal.z) < FLT_EPSILON) {
+	if (tr.m_flFraction < 1.0f && fabs(tr.m_vHitNormal.x) < FLT_EPSILON && fabs(tr.m_vHitNormal.y) < FLT_EPSILON && fabs(tr.m_vHitNormal.z) < FLT_EPSILON) {
 		return false;
 	}
 

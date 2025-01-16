@@ -120,9 +120,7 @@ public:
 		return nullptr;
 	}
 
-	CConVarBaseData()
-		: m_pszName("<undefined>"), m_defaultValue(nullptr), m_minValue(nullptr), m_maxValue(nullptr),
-		  m_pszHelpString("This convar is being accessed prior to ConVar_Register being called"), m_eVarType(EConVarType_Invalid) {}
+	CConVarBaseData() : m_pszName("<undefined>"), m_defaultValue(nullptr), m_minValue(nullptr), m_maxValue(nullptr), m_pszHelpString("This convar is being accessed prior to ConVar_Register being called"), m_eVarType(EConVarType_Invalid) {}
 
 	inline const char* GetName(void) const {
 		return m_pszName;
@@ -487,9 +485,7 @@ enum EConVarTypeS2 : int16 {
 
 static CConVarBaseData* GetInvalidConVar(EConVarType type) {
 	static CConVarBaseData* invalid_convar[EConVarTypeS2_MAX + 1] = {
-		new CConVarData<bool>(),  new CConVarData<int16>(),    new CConVarData<uint16>(), new CConVarData<int32>(),    new CConVarData<uint32>(),
-		new CConVarData<int64>(), new CConVarData<uint64>(),   new CConVarData<float>(),  new CConVarData<double>(),   new CConVarData<const char*>(),
-		new CConVarData<Color>(), new CConVarData<Vector2D>(), new CConVarData<Vector>(), new CConVarData<Vector4D>(), new CConVarData<QAngle>(),
+		new CConVarData<bool>(), new CConVarData<int16>(), new CConVarData<uint16>(), new CConVarData<int32>(), new CConVarData<uint32>(), new CConVarData<int64>(), new CConVarData<uint64>(), new CConVarData<float>(), new CConVarData<double>(), new CConVarData<const char*>(), new CConVarData<Color>(), new CConVarData<Vector2D>(), new CConVarData<Vector>(), new CConVarData<Vector4D>(), new CConVarData<QAngle>(),
 		new CConVarData<void*>() // EConVarTypeS2_MAX
 	};
 
@@ -519,8 +515,7 @@ public:
 		this->Register(name, flags & ~FCVAR_DEVELOPMENTONLY, description, setup);
 	}
 
-	ConVarS2(const char* name, int32 flags, const char* description, const T& value, bool min, const T& minValue, bool max, const T& maxValue,
-			 FnChangeCallback_t cb = nullptr) {
+	ConVarS2(const char* name, int32 flags, const char* description, const T& value, bool min, const T& minValue, bool max, const T& maxValue, FnChangeCallback_t cb = nullptr) {
 		this->Init(INVALID_CONVAR_HANDLE, TranslateConVarType<T>());
 
 		ConVarCreation_t setup;
@@ -653,8 +648,7 @@ private:
 		RegisterConVarS2(cvar);
 	}
 
-	inline void UpdateValue(const T& value, const CSplitScreenSlot& index, const CVValue_t* newValue, const CVValue_t* oldValue,
-							const char* szNewValue, const char* szOldValue) {
+	inline void UpdateValue(const T& value, const CSplitScreenSlot& index, const CVValue_t* newValue, const CVValue_t* oldValue, const char* szNewValue, const char* szOldValue) {
 		GetConVarData()->SetValue(value, index);
 
 		GetConVarData()->SetTimesChanged(GetConVarData()->GetTimesChanged() + 1);

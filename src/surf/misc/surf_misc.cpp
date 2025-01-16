@@ -50,8 +50,7 @@ void CSurfMiscPlugin::OnActivateServer(CNetworkGameServerBase* pGameServer) {
 	IFACE::pEngine->ServerCommand("mp_restartgame 1");
 }
 
-void CSurfMiscPlugin::OnWeaponDropPost(CCSPlayer_WeaponServices* pService, CBasePlayerWeapon* pWeapon, const int& iDropType,
-									   const Vector* targetPos) {
+void CSurfMiscPlugin::OnWeaponDropPost(CCSPlayer_WeaponServices* pService, CBasePlayerWeapon* pWeapon, const int& iDropType, const Vector* targetPos) {
 	pWeapon->AcceptInput("kill");
 }
 
@@ -62,8 +61,7 @@ void CSurfMiscPlugin::OnEntitySpawned(CEntityInstance* pEntity) {
 	}
 }
 
-void CSurfMiscPlugin::OnClientDisconnect(ISource2GameClients* pClient, CPlayerSlot slot, ENetworkDisconnectionReason reason, const char* pszName,
-										 uint64 xuid, const char* pszNetworkID) {
+void CSurfMiscPlugin::OnClientDisconnect(ISource2GameClients* pClient, CPlayerSlot slot, ENetworkDisconnectionReason reason, const char* pszName, uint64 xuid, const char* pszNetworkID) {
 	auto pController = dynamic_cast<CCSPlayerController*>(UTIL::GetController(slot));
 	if (!pController) {
 		return;

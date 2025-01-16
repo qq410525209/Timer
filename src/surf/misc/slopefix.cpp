@@ -12,8 +12,7 @@ CSlopeFix g_SlopeFix;
 void CSlopeFix::OnStartTouchGround(CMovementPlayer* player) {
 	CTraceFilterPlayerMovementCS filter;
 	auto playerPawn = player->GetPlayerPawn();
-	MEM::CALL::InitPlayerMovementTraceFilter(filter, playerPawn, playerPawn->m_Collision()->m_collisionAttribute().m_nInteractsWith(),
-											 COLLISION_GROUP_PLAYER_MOVEMENT);
+	MEM::CALL::InitPlayerMovementTraceFilter(filter, playerPawn, playerPawn->m_Collision()->m_collisionAttribute().m_nInteractsWith(), COLLISION_GROUP_PLAYER_MOVEMENT);
 
 	Vector ground = player->currentMoveData->m_vecAbsOrigin;
 	ground.z -= 2;

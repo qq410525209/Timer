@@ -16,8 +16,7 @@ private:
 	virtual bool OnProcessMovement(CCSPlayer_MovementServices* ms, CMoveData* mv) override;
 	virtual void OnProcessMovementPost(CCSPlayer_MovementServices* ms, const CMoveData* mv) override;
 	virtual bool OnTryPlayerMove(CCSPlayer_MovementServices* ms, CMoveData* mv, Vector* pFirstDest, trace_t* pFirstTrace) override;
-	virtual void OnTryPlayerMovePost(CCSPlayer_MovementServices* ms, const CMoveData* mv, const Vector* pFirstDest,
-									 const trace_t* pFirstTrace) override;
+	virtual void OnTryPlayerMovePost(CCSPlayer_MovementServices* ms, const CMoveData* mv, const Vector* pFirstDest, const trace_t* pFirstTrace) override;
 	virtual bool OnCategorizePosition(CCSPlayer_MovementServices* ms, CMoveData* mv, bool bStayOnGround) override;
 };
 
@@ -86,8 +85,7 @@ bool CRampfix::OnTryPlayerMove(CCSPlayer_MovementServices* ms, CMoveData* mv, Ve
 	}
 
 	CTraceFilterPlayerMovementCS filter;
-	MEM::CALL::InitPlayerMovementTraceFilter(filter, pawn, pawn->m_Collision()->m_collisionAttribute().m_nInteractsWith(),
-											 COLLISION_GROUP_PLAYER_MOVEMENT);
+	MEM::CALL::InitPlayerMovementTraceFilter(filter, pawn, pawn->m_Collision()->m_collisionAttribute().m_nInteractsWith(), COLLISION_GROUP_PLAYER_MOVEMENT);
 
 	bool potentiallyStuck {};
 
@@ -109,9 +107,7 @@ bool CRampfix::OnTryPlayerMove(CCSPlayer_MovementServices* ms, CMoveData* mv, Ve
 				break;
 			}
 
-			if (pMiscService->lastValidPlane.Length() > FLT_EPSILON
-				&& (!MOVEMENT::IsValidMovementTrace(pm, bounds, &filter) || pm.m_vHitNormal.Dot(pMiscService->lastValidPlane) < RAMP_BUG_THRESHOLD
-					|| (potentiallyStuck && pm.m_flFraction == 0.0f))) {
+			if (pMiscService->lastValidPlane.Length() > FLT_EPSILON && (!MOVEMENT::IsValidMovementTrace(pm, bounds, &filter) || pm.m_vHitNormal.Dot(pMiscService->lastValidPlane) < RAMP_BUG_THRESHOLD || (potentiallyStuck && pm.m_flFraction == 0.0f))) {
 				// We hit a plane that will significantly change our velocity. Make sure that this plane is significant
 				// enough.
 				Vector offsetDirection;
@@ -138,8 +134,7 @@ bool CRampfix::OnTryPlayerMove(CCSPlayer_MovementServices* ms, CMoveData* mv, Ve
 							f32 ratio {};
 							bool hitNewPlane {};
 							for (ratio = 0.25f; ratio <= 1.0f; ratio += 0.25f) {
-								MEM::CALL::TracePlayerBBox(start + offsetDirection * RAMP_PIERCE_DISTANCE * ratio,
-														   end + offsetDirection * RAMP_PIERCE_DISTANCE * ratio, bounds, &filter, pierce);
+								MEM::CALL::TracePlayerBBox(start + offsetDirection * RAMP_PIERCE_DISTANCE * ratio, end + offsetDirection * RAMP_PIERCE_DISTANCE * ratio, bounds, &filter, pierce);
 								if (!MOVEMENT::IsValidMovementTrace(pierce, bounds, &filter)) {
 									continue;
 								}
@@ -265,11 +260,8 @@ void CRampfix::OnTryPlayerMovePost(CCSPlayer_MovementServices* ms, const CMoveDa
 	Vector velocity;
 	player->GetVelocity(velocity);
 	auto& pMiscService = player->m_pMiscService;
-	bool velocityHeavilyModified =
-		pMiscService->tpmVelocity.Normalized().Dot(velocity.Normalized()) < RAMP_BUG_THRESHOLD
-		|| (pMiscService->tpmVelocity.Length() > 50.0f && velocity.Length() / pMiscService->tpmVelocity.Length() < RAMP_BUG_VELOCITY_THRESHOLD);
-	if (pMiscService->overrideTPM && velocityHeavilyModified && pMiscService->tpmOrigin != vec3_invalid
-		&& pMiscService->tpmVelocity != vec3_invalid) {
+	bool velocityHeavilyModified = pMiscService->tpmVelocity.Normalized().Dot(velocity.Normalized()) < RAMP_BUG_THRESHOLD || (pMiscService->tpmVelocity.Length() > 50.0f && velocity.Length() / pMiscService->tpmVelocity.Length() < RAMP_BUG_VELOCITY_THRESHOLD);
+	if (pMiscService->overrideTPM && velocityHeavilyModified && pMiscService->tpmOrigin != vec3_invalid && pMiscService->tpmVelocity != vec3_invalid) {
 		player->SetOrigin(pMiscService->tpmOrigin);
 		player->SetVelocity(pMiscService->tpmVelocity);
 	}
@@ -303,8 +295,7 @@ bool CRampfix::OnCategorizePosition(CCSPlayer_MovementServices* ms, CMoveData* m
 	}
 
 	CTraceFilterPlayerMovementCS filter;
-	MEM::CALL::InitPlayerMovementTraceFilter(filter, pawn, pawn->m_Collision()->m_collisionAttribute().m_nInteractsWith(),
-											 COLLISION_GROUP_PLAYER_MOVEMENT);
+	MEM::CALL::InitPlayerMovementTraceFilter(filter, pawn, pawn->m_Collision()->m_collisionAttribute().m_nInteractsWith(), COLLISION_GROUP_PLAYER_MOVEMENT);
 
 	trace_t trace;
 	Vector origin, groundOrigin;

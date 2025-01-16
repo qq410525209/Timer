@@ -183,8 +183,7 @@ public:
 		this->AcceptInput("kill");
 	}
 
-	void AcceptInput(const char* pInputName, variant_t value = variant_t(""), CEntityInstance* pActivator = nullptr,
-					 CEntityInstance* pCaller = nullptr);
+	void AcceptInput(const char* pInputName, variant_t value = variant_t(""), CEntityInstance* pActivator = nullptr, CEntityInstance* pCaller = nullptr);
 
 	void DispatchSpawn(CEntityKeyValues* pInitKeyValue = nullptr);
 	void SetParent(CBaseEntity* pParent);
