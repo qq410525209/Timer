@@ -4,9 +4,9 @@
     "endpoints": {
         "auth_status": "/auth/status",
         "auth_updater": "/auth/updater",
-        "map_info_update": "/map/info/update",
-        "map_info_pull": "/map/info/pull",
-        "zone_update": "/zone/update",
-        "zone_pull": "/zone/pull"
+        "map_info_update": "/map/info",
+        "map_info_pull": "/map/info",
+        "zone_update": "/map/zone",
+        "zone_pull": "/map/zone"
     }
 }
