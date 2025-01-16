@@ -56,24 +56,24 @@ namespace SURF::GLOBALAPI {
 		}
 
 		void zoneinfo_t::FromJson(const nlohmann::json& j) {
-			JSON_GETTER(j, "id", m_iDatabaseID);
-			JSON_GETTER(j, "map", m_sMap);
-			JSON_GETTER(j, "type", m_iType);
-			JSON_GETTER(j, "mins_x", m_vecMins.x);
-			JSON_GETTER(j, "mins_y", m_vecMins.y);
-			JSON_GETTER(j, "mins_z", m_vecMins.z);
-			JSON_GETTER(j, "maxs_x", m_vecMaxs.x);
-			JSON_GETTER(j, "maxs_y", m_vecMaxs.y);
-			JSON_GETTER(j, "maxs_z", m_vecMaxs.z);
-			JSON_GETTER(j, "des_x", m_vecDestination.x);
-			JSON_GETTER(j, "des_y", m_vecDestination.y);
-			JSON_GETTER(j, "des_z", m_vecDestination.z);
-			JSON_GETTER(j, "track", m_iTrack);
-			JSON_GETTER(j, "flags", m_iFlag);
-			JSON_GETTER(j, "value", m_iValue);
-			JSON_GETTER(j, "hammerid", m_iHookHammerid);
-			JSON_GETTER(j, "hookname", m_sHookName);
-			JSON_GETTER(j, "limitspeed", m_fLimitSpeed);
+			JSON_GETTER(j, id, m_iDatabaseID);
+			JSON_GETTER(j, map, m_sMap);
+			JSON_GETTER(j, type, m_iType);
+			JSON_GETTER(j, mins_x, m_vecMins.x);
+			JSON_GETTER(j, mins_y, m_vecMins.y);
+			JSON_GETTER(j, mins_z, m_vecMins.z);
+			JSON_GETTER(j, maxs_x, m_vecMaxs.x);
+			JSON_GETTER(j, maxs_y, m_vecMaxs.y);
+			JSON_GETTER(j, maxs_z, m_vecMaxs.z);
+			JSON_GETTER(j, des_x, m_vecDestination.x);
+			JSON_GETTER(j, des_y, m_vecDestination.y);
+			JSON_GETTER(j, des_z, m_vecDestination.z);
+			JSON_GETTER(j, track, m_iTrack);
+			JSON_GETTER(j, flags, m_iFlag);
+			JSON_GETTER(j, value, m_iValue);
+			JSON_GETTER(j, hammerid, m_iHookHammerid);
+			JSON_GETTER(j, hookname, m_sHookName);
+			JSON_GETTER(j, limitspeed, m_fLimitSpeed);
 		}
 	} // namespace MAP
 } // namespace SURF::GLOBALAPI
