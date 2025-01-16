@@ -117,7 +117,7 @@ namespace SURF::GLOBALAPI {
 			json jInfo = info.ToJson();
 			req.merge_patch(jInfo);
 
-			pPlugin->CreateRequest("zone_update", req, cb);
+			pPlugin->CreateRequest("map_zone_update", req, cb);
 		}
 
 		void Pull(HttpResponseCallback cb) {
@@ -126,7 +126,7 @@ namespace SURF::GLOBALAPI {
 
 			req["map"] = pPlugin->m_sMapName;
 
-			pPlugin->CreateRequest("zone_pull", req, cb);
+			pPlugin->CreateRequest("map_zone_pull", req, cb);
 		}
 	} // namespace ZONE
 } // namespace SURF::GLOBALAPI

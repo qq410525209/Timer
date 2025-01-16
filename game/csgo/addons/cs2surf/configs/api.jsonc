@@ -6,7 +6,7 @@
         "auth_updater": "/auth/updater",
         "map_info_update": "/map/info",
         "map_info_pull": "/map/info",
-        "zone_update": "/map/zone",
-        "zone_pull": "/map/zone"
+        "map_zone_update": "/map/zone",
+        "map_zone_pull": "/map/zone"
     }
 }
