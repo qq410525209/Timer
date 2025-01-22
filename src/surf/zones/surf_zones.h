@@ -51,7 +51,7 @@ public:
 	void ClearZones();
 	void RefreshZones();
 	void AddZone(const ZoneData_t& data, bool bUpload = true);
-	void CreateZone(const Vector& vecMin, const Vector& vecMax, std::array<CHandle<CBeam>, 12>& out);
+	void CreateBeams(const Vector& vecMin, const Vector& vecMax, std::array<CHandle<CBeam>, 12>& out);
 	CBaseEntity* CreateNormalZone(const Vector& vecMins, const Vector& vecMaxs);
 
 private:

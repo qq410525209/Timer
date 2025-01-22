@@ -87,7 +87,7 @@ void CSurfZonePlugin::AddZone(const ZoneData_t& data, bool bUpload) {
 	auto pZone = this->CreateNormalZone(data.m_vecMins, data.m_vecMaxs);
 	CZoneHandle hRefZone = pZone->GetRefEHandle();
 	ZoneCache_t cache(data);
-	SURF::ZonePlugin()->CreateZone(cache.m_vecMins, cache.m_vecMaxs, cache.m_aBeams);
+	SURF::ZonePlugin()->CreateBeams(cache.m_vecMins, cache.m_vecMaxs, cache.m_aBeams);
 	SURF::ZonePlugin()->m_hZones[hRefZone] = cache;
 
 	if (bUpload) {
@@ -117,7 +117,7 @@ void CSurfZoneService::EditZone(CCSPlayerPawnBase* pawn, const CPlayerButton* bu
 	}
 }
 
-void CSurfZonePlugin::CreateZone(const Vector& vecMin, const Vector& vecMax, std::array<CHandle<CBeam>, 12>& out) {
+void CSurfZonePlugin::CreateBeams(const Vector& vecMin, const Vector& vecMax, std::array<CHandle<CBeam>, 12>& out) {
 	Vector points[8];
 	SURF::ZONE::CreatePoints3D(vecMin, vecMax, points);
 	for (int i = 0; i < 12; i++) {

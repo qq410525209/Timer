@@ -46,6 +46,25 @@ typedef double f64;
 #endif
 #endif
 
+#define _SURF_INTERNAL_CONCATENATE(LEFT, RIGHT) LEFT##RIGHT
+#define _SURF_INTERNAL_UNPARENTHESIZE(...)      __VA_ARGS__
+#define SURF_CONCATENATE(LEFT, RIGHT)           _SURF_INTERNAL_CONCATENATE(LEFT, RIGHT)
+#define SURF_UNPARENTHESIZE(...)                _SURF_INTERNAL_UNPARENTHESIZE(__VA_ARGS__)
+
+#define MEM_PAD(SIZE) \
+\
+private: \
+	char SURF_CONCATENATE(pad_0, __COUNTER__)[SIZE]; \
+\
+public:
+
+#define VIRTUAL_PAD() \
+\
+private: \
+	virtual void SURF_CONCATENATE(unk, __COUNTER__)() = 0; \
+\
+public:
+
 #pragma endregion
 
 #pragma region COMMON_DEF
