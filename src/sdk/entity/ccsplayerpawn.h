@@ -27,6 +27,7 @@ public:
 	SCHEMA_FIELD(float, m_flSlopeDropHeight);
 	SCHEMA_FIELD(float, m_flVelocityModifier);
 	SCHEMA_FIELD(CCSBot*, m_pBot);
+	SCHEMA_FIELD(QAngle, m_aimPunchAngle);
 
 public:
 	template<typename T = CBasePlayerController>

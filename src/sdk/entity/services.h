@@ -94,6 +94,7 @@ public:
 
 	SCHEMA_FIELD_POINTER(CHandle<CBaseEntity>, m_hViewEntity);
 	SCHEMA_FIELD(float, m_flOldPlayerViewOffsetZ);
+	SCHEMA_FIELD(QAngle, m_vecCsViewPunchAngle);
 };
 
 class CCSPlayerBase_CameraServices : public CPlayer_CameraServices {

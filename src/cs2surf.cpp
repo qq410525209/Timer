@@ -38,8 +38,6 @@ bool CSurfPlugin::Load(PluginId id, ISmmAPI* ismm, char* error, size_t maxlen, b
 	LOG::Setup(0x00FFFF);
 
 	MEM::MODULE::Setup();
-	MEM::SetupHooks();
-	MOVEMENT::SetupHooks();
 	GS::Setup();
 	UTIL::UnlockConVars();
 	UTIL::UnlockConCommands();
@@ -52,6 +50,9 @@ bool CSurfPlugin::Load(PluginId id, ISmmAPI* ismm, char* error, size_t maxlen, b
 }
 
 void CSurfPlugin::AllPluginsLoaded() {
+	MEM::SetupHooks();
+	MOVEMENT::SetupHooks();
+
 	g_pMultiAddonManager = (IMultiAddonManager*)g_SMAPI->MetaFactory(MULTIADDONMANAGER_INTERFACE, nullptr, nullptr);
 }
 
