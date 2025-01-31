@@ -78,8 +78,16 @@ bool CSurfMiscPlugin::OnProcessMovement(CCSPlayer_MovementServices* ms, CMoveDat
 		return true;
 	}
 
-	// legacy csgo duck fix
-	ms->m_flDuckSpeed(CS_PLAYER_DUCK_SPEED_IDEAL);
+	static constexpr float DUCK_SPEED_NORMAL = 8.0f;
+	static constexpr float DUCK_SPEED_MINIMUM = 6.0234375f; // Equal to if you just ducked/unducked for the first time in a while;
+
+	// https://github.com/KZGlobalTeam/gokz/blob/4ce210ac8ac59916d7a668869dd3a0906cef08f9/addons/sourcemod/scripting/gokz-mode-simplekz.sp#L823
+	float flDuckSpeed = ms->m_flDuckSpeed();
+	if (!ms->m_bDucking() && flDuckSpeed < DUCK_SPEED_NORMAL) {
+		ms->m_flDuckSpeed(DUCK_SPEED_NORMAL);
+	} else if (flDuckSpeed < DUCK_SPEED_MINIMUM) {
+		ms->m_flDuckSpeed(DUCK_SPEED_MINIMUM);
+	}
 
 	auto& pMiscService = player->m_pMiscService;
 	pMiscService->HideLegs();

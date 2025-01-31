@@ -27,7 +27,6 @@ typedef double f64;
 #define ENGINE_FIXED_TICK_INTERVAL 0.015625f
 #define ENGINE_FIXED_TICK_RATE     (1.0f / ENGINE_FIXED_TICK_INTERVAL)
 #define EPSILON                    0.000001f
-#define CS_PLAYER_DUCK_SPEED_IDEAL 8.0f
 
 #ifndef SURF_DEBUG_BREAK
 #ifdef _WIN32
