@@ -19,4 +19,5 @@ namespace IFACE {
 	inline CGameTraceService* pGameTraceService = nullptr;
 
 	bool Setup(ISmmAPI* ismm, char* error, size_t maxlen);
+	bool PostSetup();
 } // namespace IFACE

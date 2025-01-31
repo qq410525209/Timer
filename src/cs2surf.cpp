@@ -44,16 +44,17 @@ bool CSurfPlugin::Load(PluginId id, ISmmAPI* ismm, char* error, size_t maxlen, b
 
 	g_SMAPI->AddListener(this, this);
 
-	FORWARD_POST(CCoreForward, OnPluginStart);
-
 	return true;
 }
 
 void CSurfPlugin::AllPluginsLoaded() {
+	IFACE::PostSetup();
 	MEM::SetupHooks();
 	MOVEMENT::SetupHooks();
 
 	g_pMultiAddonManager = (IMultiAddonManager*)g_SMAPI->MetaFactory(MULTIADDONMANAGER_INTERFACE, nullptr, nullptr);
+	
+	FORWARD_POST(CCoreForward, OnPluginStart);
 }
 
 void CSurfPlugin::OnLevelInit(char const* pMapName, char const* pMapEntities, char const* pOldLevel, char const* pLandmarkName, bool loadGame, bool background) {
