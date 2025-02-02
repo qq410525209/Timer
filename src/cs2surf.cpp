@@ -53,7 +53,7 @@ void CSurfPlugin::AllPluginsLoaded() {
 	MOVEMENT::SetupHooks();
 
 	g_pMultiAddonManager = (IMultiAddonManager*)g_SMAPI->MetaFactory(MULTIADDONMANAGER_INTERFACE, nullptr, nullptr);
-	
+
 	FORWARD_POST(CCoreForward, OnPluginStart);
 }
 
