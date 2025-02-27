@@ -107,6 +107,16 @@ void CHidePlugin::OnClientSendSnapshotBefore(CServerSideClient* pClient) {
 		return;
 	}
 
+	auto pClientController = reinterpret_cast<CCSPlayerController*>(UTIL::GetController(pClient->GetPlayerSlot()));
+	if (!pClientController) {
+		return;
+	}
+
+	auto pClientPawn = pClientController->GetPlayerPawn();
+	if (!pClientPawn || !pClientPawn->IsAlive()) {
+		return;
+	}
+
 	auto pTransmitEntity = pClient->m_PackInfo.m_pTransmitEntity;
 	auto pTransmitAlways = pClient->m_PackInfo.m_pTransmitAlways;
 	if (!pTransmitEntity || !pTransmitAlways) {
