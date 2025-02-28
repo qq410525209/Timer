@@ -29,7 +29,7 @@ static void Hook_OnStartTouch(CBaseEntity* pEnt, void* pCallback, bool post) {
 	HookTouch_t pHook = [](CBaseEntity* pSelf, CBaseEntity* pOther) {
 		void* vtable = *(void**)pSelf;
 		HookTouch_t pTrampoline = (HookTouch_t)SDKHOOK::m_umSDKHookTrampolines[SDKHook_StartTouch][vtable];
-		SURF_ASSERT(pTrampoline);
+		SDK_ASSERT(pTrampoline);
 
 		bool block = false;
 		const auto& preHooks = SDKHOOK::m_umSDKHooks[SDKHook_StartTouch][vtable];
@@ -64,7 +64,7 @@ static void Hook_OnTouch(CBaseEntity* pEnt, void* pCallback, bool post) {
 	HookTouch_t pHook = [](CBaseEntity* pSelf, CBaseEntity* pOther) {
 		void* vtable = *(void**)pSelf;
 		HookTouch_t pTrampoline = (HookTouch_t)SDKHOOK::m_umSDKHookTrampolines[SDKHook_Touch][vtable];
-		SURF_ASSERT(pTrampoline);
+		SDK_ASSERT(pTrampoline);
 
 		bool block = false;
 		const auto& preHooks = SDKHOOK::m_umSDKHooks[SDKHook_Touch][vtable];
@@ -99,7 +99,7 @@ static void Hook_OnEndTouch(CBaseEntity* pEnt, void* pCallback, bool post) {
 	HookTouch_t pHook = [](CBaseEntity* pSelf, CBaseEntity* pOther) {
 		void* vtable = *(void**)pSelf;
 		HookTouch_t pTrampoline = (HookTouch_t)SDKHOOK::m_umSDKHookTrampolines[SDKHook_EndTouch][vtable];
-		SURF_ASSERT(pTrampoline);
+		SDK_ASSERT(pTrampoline);
 
 		bool block = false;
 		const auto& preHooks = SDKHOOK::m_umSDKHooks[SDKHook_EndTouch][vtable];
@@ -134,7 +134,7 @@ static void Hook_OnTeleport(CBaseEntity* pEnt, void* pCallback, bool post) {
 	HookTeleport_t pHook = [](CBaseEntity* pSelf, const Vector* newPosition, const QAngle* newAngles, const Vector* newVelocity) {
 		void* vtable = *(void**)pSelf;
 		HookTeleport_t pTrampoline = (HookTeleport_t)SDKHOOK::m_umSDKHookTrampolines[SDKHook_Teleport][vtable];
-		SURF_ASSERT(pTrampoline);
+		SDK_ASSERT(pTrampoline);
 
 		bool block = false;
 		const auto& preHooks = SDKHOOK::m_umSDKHooks[SDKHook_Teleport][vtable];

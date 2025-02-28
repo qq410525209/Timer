@@ -132,7 +132,7 @@ CBaseEntity* CSurfZonePlugin::CreateNormalZone(const Vector& vecMins, const Vect
 	SURF::ZONE::FillBoxMinMax(mins, maxs, true);
 	auto pZone = MEM::CALL::CreateAABBTrigger(vecCenter, mins, maxs);
 	if (!pZone) {
-		SURF_ASSERT(false);
+		SDK_ASSERT(false);
 		return nullptr;
 	}
 

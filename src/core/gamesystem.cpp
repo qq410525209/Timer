@@ -23,7 +23,7 @@ IGameSystemFactory* CGameSystem::sm_Factory = nullptr;
 
 void GS::Setup() {
 	CBaseGameSystemFactory::sm_pFirst = (CBaseGameSystemFactory**)GAMEDATA::GetAddress("GetGameSystemFactory");
-	SURF_ASSERT(CBaseGameSystemFactory::sm_pFirst);
+	SDK_ASSERT(CBaseGameSystemFactory::sm_pFirst);
 
 	CGameSystem::sm_Factory = new CGameSystemStaticFactory<CGameSystem>("CS2Surf_GameSystem", &g_GameSystem);
 }

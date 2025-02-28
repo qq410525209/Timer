@@ -18,14 +18,14 @@ Vector CWorldTextMenu::GetRelativeOrigin(const Vector& eyePosition, float distan
 CWorldTextMenu::CWorldTextMenu(MenuHandler pFnHandler, std::string sTitle) : CBaseMenu(pFnHandler, sTitle) {
 	CPointWorldText* pMenuEntity = (CPointWorldText*)MEM::CALL::CreateEntityByName("point_worldtext");
 	if (!pMenuEntity) {
-		SURF_ASSERT(false);
+		SDK_ASSERT(false);
 		return;
 	}
 
 	CEntityKeyValues* pMenuKV = new CEntityKeyValues();
 	if (!pMenuKV) {
 		pMenuEntity->Kill();
-		SURF_ASSERT(false);
+		SDK_ASSERT(false);
 		return;
 	}
 
@@ -90,7 +90,7 @@ CWorldTextMenu::~CWorldTextMenu() {
 void CWorldTextMenu::Display(CCSPlayerPawnBase* pPawn, int iPageIndex) {
 	CMenuPlayer* pMenuPlayer = MENU::GetManager()->ToPlayer(pPawn);
 	if (!pMenuPlayer) {
-		SURF_ASSERT(false);
+		SDK_ASSERT(false);
 		return;
 	}
 
@@ -99,13 +99,13 @@ void CWorldTextMenu::Display(CCSPlayerPawnBase* pPawn, int iPageIndex) {
 
 	CPointWorldText* pMenuEntity = this->m_hWorldText.Get();
 	if (!pMenuEntity) {
-		SURF_ASSERT(false);
+		SDK_ASSERT(false);
 		return;
 	}
 
 	CBaseViewModel* pViewModel = pPawn->GetCustomViewModel();
 	if (!pViewModel) {
-		SURF_ASSERT(false);
+		SDK_ASSERT(false);
 		return;
 	}
 
@@ -180,12 +180,12 @@ void CWorldTextMenu::Display(CCSPlayerPawnBase* pPawn, int iPageIndex) {
 
 std::string CBaseMenu::GetItem(int iPageIndex, int iItemIndex) {
 	if (iPageIndex < 0 || iPageIndex >= this->m_vItems.size()) {
-		SURF_ASSERT(false);
+		SDK_ASSERT(false);
 		return "";
 	}
 
 	if (iItemIndex < 0) {
-		SURF_ASSERT(false);
+		SDK_ASSERT(false);
 		return "";
 	}
 
@@ -206,7 +206,7 @@ CMenuManager* MENU::GetManager() {
 void CMenuManager::OnMenuItemSelect(CCSPlayerController* pController, const std::vector<std::string>& vArgs) {
 	CMenuPlayer* pMenuPlayer = MENU::GetManager()->ToPlayer(pController);
 	if (!pMenuPlayer) {
-		SURF_ASSERT(false);
+		SDK_ASSERT(false);
 		return;
 	}
 

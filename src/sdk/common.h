@@ -1,70 +1,49 @@
 #pragma once
 
-typedef int8_t i8;
-typedef int16_t i16;
-typedef int32_t i32;
-typedef int64_t i64;
-
-typedef uint8_t u8;
-typedef uint16_t u16;
-typedef uint32_t u32;
-typedef uint64_t u64;
-
-typedef float f32;
-typedef double f64;
-
-#pragma region GAME_DEF
-
 #define CS_TEAM_NONE      0
 #define CS_TEAM_SPECTATOR 1
 #define CS_TEAM_T         2
 #define CS_TEAM_CT        3
 
-#pragma endregion
-
-#pragma region SURF_DEF
-
 #define ENGINE_FIXED_TICK_INTERVAL 0.015625f
 #define ENGINE_FIXED_TICK_RATE     (1.0f / ENGINE_FIXED_TICK_INTERVAL)
 #define EPSILON                    0.000001f
 
-#ifndef SURF_DEBUG_BREAK
+#ifndef SDK_DEBUG_BREAK
 #ifdef _WIN32
-#define SURF_DEBUG_BREAK() __debugbreak()
+#define SDK_DEBUG_BREAK() __debugbreak()
 #else
-#define SURF_DEBUG_BREAK() __builtin_trap()
+#define SDK_DEBUG_BREAK() __builtin_trap()
 #endif
 #endif
 
-#ifndef SURF_ASSERT
+#ifndef SDK_ASSERT
 #if defined(_DEBUG) || defined(_OD)
-#define SURF_ASSERT(EXPRESSION) static_cast<void>(!!(EXPRESSION) || (SURF_DEBUG_BREAK(), 0))
+#define SDK_ASSERT(EXPRESSION) static_cast<void>(!!(EXPRESSION) || (SDK_DEBUG_BREAK(), 0))
 #else
 // disable assertion for release builds
-#define SURF_ASSERT(EXPRESSION) static_cast<void>(0)
+#define SDK_ASSERT(EXPRESSION) static_cast<void>(0)
 #endif
 #endif
 
-#define _SURF_INTERNAL_CONCATENATE(LEFT, RIGHT) LEFT##RIGHT
-#define _SURF_INTERNAL_UNPARENTHESIZE(...)      __VA_ARGS__
-#define SURF_CONCATENATE(LEFT, RIGHT)           _SURF_INTERNAL_CONCATENATE(LEFT, RIGHT)
-#define SURF_UNPARENTHESIZE(...)                _SURF_INTERNAL_UNPARENTHESIZE(__VA_ARGS__)
+#define _SDK_INTERNAL_CONCATENATE(LEFT, RIGHT) LEFT##RIGHT
+#define _SDK_INTERNAL_UNPARENTHESIZE(...)      __VA_ARGS__
+#define SDK_CONCATENATE(LEFT, RIGHT)           _SDK_INTERNAL_CONCATENATE(LEFT, RIGHT)
+#define SDK_UNPARENTHESIZE(...)                _SDK_INTERNAL_UNPARENTHESIZE(__VA_ARGS__)
 
 #define MEM_PAD(SIZE) \
 \
 private: \
-	char SURF_CONCATENATE(pad_0, __COUNTER__)[SIZE]; \
+	char SDK_CONCATENATE(pad_0, __COUNTER__)[SIZE]; \
 \
 public:
 
 #define VIRTUAL_PAD() \
 \
 private: \
-	virtual void SURF_CONCATENATE(unk, __COUNTER__)() = 0; \
+	virtual void SDK_CONCATENATE(unk, __COUNTER__)() = 0; \
 \
 public:
-
-#pragma endregion
 
 #pragma region COMMON_DEF
 

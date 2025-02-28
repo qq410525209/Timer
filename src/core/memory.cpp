@@ -18,12 +18,12 @@ class CEntListener : public IEntityListener {
 
 #define CALL_SIG(sig, fnCurrent, ...) \
 	static auto fnSig = GAMEDATA::GetMemSig(sig); \
-	SURF_ASSERT(fnSig); \
+	SDK_ASSERT(fnSig); \
 	return MEM::SDKCall<FunctionTraits<decltype(&fnCurrent)>::ReturnType>(fnSig, __VA_ARGS__);
 
 #define CALL_ADDRESS(sig, fnCurrent, ...) \
 	static auto fnSig = GAMEDATA::GetAddress(sig); \
-	SURF_ASSERT(fnSig); \
+	SDK_ASSERT(fnSig); \
 	return MEM::SDKCall<FunctionTraits<decltype(&fnCurrent)>::ReturnType>(fnSig, __VA_ARGS__);
 
 #pragma region calls
@@ -376,8 +376,8 @@ static bool SetupVMTHooks() {
 }
 
 void MEM::SetupHooks() {
-	SURF_ASSERT(SetupDetours());
-	SURF_ASSERT(SetupVMTHooks());
+	SDK_ASSERT(SetupDetours());
+	SDK_ASSERT(SetupVMTHooks());
 }
 
 void MEM::MODULE::Setup() {
@@ -389,7 +389,7 @@ void MEM::MODULE::Setup() {
 
 	server = std::make_shared<libmodule::CModule>();
 	server->InitFromMemory(libmem::GetModule(LIB::server).base);
-	SURF_ASSERT(server->GetModuleBase().GetPtr());
+	SDK_ASSERT(server->GetModuleBase().GetPtr());
 
 	schemasystem = std::make_shared<libmodule::CModule>();
 	schemasystem->InitFromName(LIB::schemasystem, true);

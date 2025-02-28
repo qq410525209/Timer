@@ -49,7 +49,7 @@ void CSurfGlobalAPIPlugin::CreateRequest(std::string sEndpointAlias, const Globa
 			break;
 		}
 		default: {
-			SURF_ASSERT(false);
+			SDK_ASSERT(false);
 			break;
 		}
 	}

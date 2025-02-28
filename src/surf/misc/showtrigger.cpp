@@ -137,8 +137,8 @@ ToggleDebugOverlayFn g_fnAddDebugOverlayBits = nullptr;
 ToggleDebugOverlayFn g_fnRemoveDebugOverlayBits = nullptr;
 
 void CShowTrigger::OnPluginStart() {
-	SURF_ASSERT(g_fnAddDebugOverlayBits = (ToggleDebugOverlayFn)GAMEDATA::GetAddress("AddDebugOverlayBits"));
-	SURF_ASSERT(g_fnRemoveDebugOverlayBits = (ToggleDebugOverlayFn)GAMEDATA::GetAddress("RemoveDebugOverlayBits"));
+	SDK_ASSERT(g_fnAddDebugOverlayBits = (ToggleDebugOverlayFn)GAMEDATA::GetAddress("AddDebugOverlayBits"));
+	SDK_ASSERT(g_fnRemoveDebugOverlayBits = (ToggleDebugOverlayFn)GAMEDATA::GetAddress("RemoveDebugOverlayBits"));
 }
 
 void CShowTrigger::OnActivateServer(CNetworkGameServerBase* pGameServer) {

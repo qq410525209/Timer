@@ -21,29 +21,29 @@ class GameSessionConfiguration_t {};
 
 #define HOOK_SIG(sig, fnHook, fnTrampoline) \
 	static auto fn##fnHook = GAMEDATA::GetMemSig(sig); \
-	SURF_ASSERT(fn##fnHook); \
+	SDK_ASSERT(fn##fnHook); \
 	if (fn##fnHook) { \
 		libmem::HookFunc(fn##fnHook, fnHook, fnTrampoline); \
 	}
 
 #define HOOK_VMT(instance, vfn, fnHook, fnTrampoline) \
-	SURF_ASSERT(libmem::VmtHookEx(instance, offsetof_vtablefn(vfn), fnHook, fnTrampoline));
+	SDK_ASSERT(libmem::VmtHookEx(instance, offsetof_vtablefn(vfn), fnHook, fnTrampoline));
 
 #define HOOK_VMT_OVERRIDE(instance, classname, vfn, fnHook, fnTrampoline, ...) \
-	SURF_ASSERT(libmem::VmtHookEx( \
+	SDK_ASSERT(libmem::VmtHookEx( \
 		instance, \
 		TOOLS::GetVtableIndex(static_cast<FunctionTraits<decltype(&fnHook)>::ReturnType (classname::*)(__VA_ARGS__)>(&classname::vfn)), \
 		fnHook, \
 		fnTrampoline));
 
 #define HOOK_VMTEX(sClassname, vfn, pModule, fnHook, fnTrampoline) \
-	SURF_ASSERT(MEM::VmtHookEx(offsetof_vtablefn(vfn), pModule.get(), sClassname, fnHook, fnTrampoline));
+	SDK_ASSERT(MEM::VmtHookEx(offsetof_vtablefn(vfn), pModule.get(), sClassname, fnHook, fnTrampoline));
 
 #define GAMEDATA_VMT(gdOffsetKey, pModule, fnHook, fnTrampoline) \
-	SURF_ASSERT(MEM::VmtHookEx(GAMEDATA::GetOffset(gdOffsetKey), pModule.get(), gdOffsetKey, fnHook, fnTrampoline));
+	SDK_ASSERT(MEM::VmtHookEx(GAMEDATA::GetOffset(gdOffsetKey), pModule.get(), gdOffsetKey, fnHook, fnTrampoline));
 
 #define DETOUR_VMT(gdOffsetKey, pModule, fnHook, fnTrampoline) \
-	SURF_ASSERT(MEM::VmtHookEx(GAMEDATA::GetOffset(gdOffsetKey), pModule.get(), gdOffsetKey, fnHook, fnTrampoline, true));
+	SDK_ASSERT(MEM::VmtHookEx(GAMEDATA::GetOffset(gdOffsetKey), pModule.get(), gdOffsetKey, fnHook, fnTrampoline, true));
 
 // clang-format on
 
@@ -101,7 +101,7 @@ namespace MEM {
 	template<typename T = void, typename... Args>
 	T SDKCall(void* pAddress, Args... args) {
 		auto pFn = reinterpret_cast<T (*)(Args...)>(pAddress);
-		SURF_ASSERT((uintptr_t)pFn);
+		SDK_ASSERT((uintptr_t)pFn);
 		return pFn(args...);
 	}
 

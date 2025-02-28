@@ -33,7 +33,7 @@ void CSurfGlobalAPIPlugin::OnApplyGameSettings(ISource2Server* pServer, KeyValue
 
 	auto pGlobal = UTIL::GetGlobals();
 	if (!pGlobal) {
-		SURF_ASSERT(false);
+		SDK_ASSERT(false);
 		return;
 	}
 
