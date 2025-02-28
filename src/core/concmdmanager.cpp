@@ -7,7 +7,15 @@ CONCMD::CConCmdManager* CONCMD::GetManager() {
 	return &g_manager;
 }
 
-void CONCMD::RegServerCmd(std::string cmd, SrvCmd_Callback cb, std::string description, int64_t cmdFlag) {
+static void RegCmd(const std::string& cmd, const std::string& description, uint64 cmdFlag) {
+	ConCommandCreation_t command;
+	command.m_pszName = cmd.c_str();
+	command.m_pszHelpString = description.c_str();
+	command.m_nFlags = cmdFlag;
+	g_pCVar->RegisterConCommand(command, 4);
+}
+
+void CONCMD::RegServerCmd(std::string cmd, SrvCmd_Callback cb, std::string description, uint64 cmdFlag) {
 	std::transform(cmd.begin(), cmd.end(), cmd.begin(), ::tolower);
 
 	if (!cmd.starts_with("sm_")) {
@@ -20,13 +28,10 @@ void CONCMD::RegServerCmd(std::string cmd, SrvCmd_Callback cb, std::string descr
 	info.cmdFlags = cmdFlag;
 	g_manager.m_umSrvCmds[UTIL::ToWideString(cmd.c_str())].emplace_back(info);
 
-	static FnCommandCallback_t nullcb;
-	ConCommandRefAbstract ref;
-	ConCommand command = ConCommand(&ref, cmd.c_str(), nullcb, description.c_str(), cmdFlag);
-	g_pCVar->RegisterConCommand(&command, 4);
+	RegCmd(cmd, description, cmdFlag);
 }
 
-void CONCMD::RegConsoleCmd(std::string cmd, ConCmd_Callback cb, std::string description, int64_t cmdFlag) {
+void CONCMD::RegConsoleCmd(std::string cmd, ConCmd_Callback cb, std::string description, uint64 cmdFlag) {
 	std::transform(cmd.begin(), cmd.end(), cmd.begin(), ::tolower);
 
 	if (!cmd.starts_with("sm_")) {
@@ -40,13 +45,10 @@ void CONCMD::RegConsoleCmd(std::string cmd, ConCmd_Callback cb, std::string desc
 	info.cmdFlags = cmdFlag;
 	g_manager.m_umConCmds[UTIL::ToWideString(cmd.c_str())].emplace_back(info);
 
-	static FnCommandCallback_t nullcb;
-	ConCommandRefAbstract ref;
-	ConCommand command = ConCommand(&ref, cmd.c_str(), nullcb, description.c_str(), cmdFlag | FCVAR_CLIENT_CAN_EXECUTE);
-	g_pCVar->RegisterConCommand(&command, 4);
+	RegCmd(cmd, description, cmdFlag | FCVAR_CLIENT_CAN_EXECUTE);
 }
 
-void CONCMD::RegAdminCmd(std::string cmd, ConCmd_Callback cb, AdminFlag adminFlags, std::string description, int64_t cmdFlag) {
+void CONCMD::RegAdminCmd(std::string cmd, ConCmd_Callback cb, AdminFlag adminFlags, std::string description, uint64 cmdFlag) {
 	std::transform(cmd.begin(), cmd.end(), cmd.begin(), ::tolower);
 
 	if (!cmd.starts_with("sm_")) {
@@ -60,10 +62,7 @@ void CONCMD::RegAdminCmd(std::string cmd, ConCmd_Callback cb, AdminFlag adminFla
 	info.cmdFlags = cmdFlag;
 	g_manager.m_umConCmds[UTIL::ToWideString(cmd.c_str())].emplace_back(info);
 
-	static FnCommandCallback_t nullcb;
-	ConCommandRefAbstract ref;
-	ConCommand command = ConCommand(&ref, cmd.c_str(), nullcb, description.c_str(), cmdFlag | FCVAR_CLIENT_CAN_EXECUTE);
-	g_pCVar->RegisterConCommand(&command, 4);
+	RegCmd(cmd, description, cmdFlag | FCVAR_CLIENT_CAN_EXECUTE);
 }
 
 void CONCMD::AddCommandListener(std::string cmd, ConCmdListener_Callback cb) {
@@ -72,13 +71,13 @@ void CONCMD::AddCommandListener(std::string cmd, ConCmdListener_Callback cb) {
 	g_manager.m_umConCmdListeners[UTIL::ToWideString(cmd.c_str())].emplace_back(cb);
 }
 
-ConCommand* CONCMD::Find(const char* name) {
-	auto hConcmd = reinterpret_cast<ICvarS2*>(g_pCVar)->FindCommand(name);
-	if (!hConcmd.IsValid()) {
-		return nullptr;
+std::optional<ConCommandRef> CONCMD::Find(const char* name) {
+	ConCommandRef cmdRef = g_pCVar->FindConCommand(name, true);
+	if (!cmdRef.IsValidRef()) {
+		return std::nullopt;
 	}
 
-	return reinterpret_cast<ICvarS2*>(g_pCVar)->GetCommand(hConcmd);
+	return cmdRef;
 }
 
 static void ParseCommandArgs(const std::string& sRaw, std::vector<std::string>& vArgs) {
@@ -216,7 +215,7 @@ bool CONCMD::CConCmdManager::OnClientCommand(ISource2GameClients* pClient, CPlay
 	return true;
 }
 
-bool CONCMD::CConCmdManager::OnDispatchConCommand(ICvar* pCvar, ConCommandHandle cmd, const CCommandContext& ctx, const CCommand& args) {
+bool CONCMD::CConCmdManager::OnDispatchConCommand(ICvar* pCvar, ConCommandRef cmd, const CCommandContext& ctx, const CCommand& args) {
 	auto pszCommand = args.Arg(0);
 	if (!pszCommand || !pszCommand[0]) {
 		return true;

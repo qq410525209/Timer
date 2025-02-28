@@ -55,7 +55,7 @@ public:
 		return true;
 	}
 
-	virtual bool OnDispatchConCommand(ICvar* pCvar, ConCommandHandle cmd, const CCommandContext& ctx, const CCommand& args) {
+	virtual bool OnDispatchConCommand(ICvar* pCvar, ConCommandRef cmd, const CCommandContext& ctx, const CCommand& args) {
 		return true;
 	}
 

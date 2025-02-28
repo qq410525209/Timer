@@ -5,7 +5,6 @@
 #include <string>
 #include <filesystem>
 
-#include <sdk/convars2.h>
 #include <sdk/serversideclient.h>
 #include <sdk/gamerules.h>
 
@@ -52,8 +51,8 @@ namespace UTIL {
 	void UnlockConVars();
 	void UnlockConCommands();
 	void SendConVarValue(CPlayerSlot slot, const char* cvar, const char* value);
-	void SendConVarValue(CPlayerSlot slot, BaseConVar* cvar, const char* value);
+	void SendConVarValue(CPlayerSlot slot, ConVarRefAbstract* cvar, const char* value);
 	void SendMultipleConVarValues(CPlayerSlot slot, const char** cvars, const char** values, u32 size);
-	void SendMultipleConVarValues(CPlayerSlot slot, BaseConVar** cvars, const char** values, u32 size);
+	void SendMultipleConVarValues(CPlayerSlot slot, ConVarRefAbstract** cvars, const char** values, u32 size);
 #pragma endregion
 } // namespace UTIL

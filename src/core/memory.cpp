@@ -187,7 +187,7 @@ static void Hook_StartupServer(INetworkServerService* pThis, const GameSessionCo
 	MEM::SDKCall(MEM::TRAMPOLINE::g_fnStartupServer, pThis, &config, a3, a4);
 }
 
-static void Hook_DispatchConCommand(ICvar* pThis, ConCommandHandle cmd, const CCommandContext& ctx, const CCommand& args) {
+static void Hook_DispatchConCommand(ICvar* pThis, ConCommandRef cmd, const CCommandContext& ctx, const CCommand& args) {
 	bool block = false;
 	for (auto p = CCoreForward::m_pFirst; p; p = p->m_pNext) {
 		if (!p->OnDispatchConCommand(pThis, cmd, ctx, args)) {

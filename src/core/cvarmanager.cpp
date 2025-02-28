@@ -2,13 +2,13 @@
 #include <pch.h>
 #include <utils/utils.h>
 
-CConVarBaseData* CVAR::Find(const char* name) {
-	ConVarHandleS2 cvarHandle = reinterpret_cast<ICvarS2*>(g_pCVar)->FindConVar(name, true);
-	if (!cvarHandle.IsValid()) {
-		return nullptr;
+std::optional<ConVarRefAbstract> CVAR::Find(const char* name) {
+	ConVarRefAbstract cvarRef = g_pCVar->FindConVar(name, true);
+	if (!cvarRef.IsValidRef()) {
+		return std::nullopt;
 	}
 
-	return reinterpret_cast<ICvarS2*>(g_pCVar)->GetConVar(cvarHandle);
+	return cvarRef;
 }
 
 void ReplicateConVarValue(const char* name, const char* value, CPlayerSlot slot) {

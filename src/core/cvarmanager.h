@@ -1,53 +1,44 @@
 #pragma once
 
-#include <sdk/convars2.h>
+#include <tier1/convar.h>
+#include <optional>
 
 extern void ReplicateConVarValue(const char* name, const char* value, CPlayerSlot slot);
 
 namespace CVAR {
 	template<typename T>
-	BaseConVar* Register(const char* name, T defaultValue, const char* helpString = "", typename ConVarS2<T>::FnChangeCallback_t callback = 0) {
-		ConVarS2<T>* pCvarCreated = new ConVarS2<T>(name, 0, helpString, defaultValue, callback);
+	ConVarRefAbstract* Register(const char* name, T defaultValue, const char* helpString = "", typename CConVar<T>::FnChangeCallback_t callback = 0) {
+		CConVar<T>* pCvarCreated = new CConVar<T>(name, 0, helpString, defaultValue, callback);
 		return pCvarCreated;
 	}
 
-	CConVarBaseData* Find(const char* name);
+	std::optional<ConVarRefAbstract> Find(const char* name);
 
 	template<typename T>
 	bool Set(const char* name, T value) {
-		CConVarBaseData* pTargetCvar = Find(name);
-		if (!pTargetCvar) {
+		auto targetCvar = Find(name);
+		if (!targetCvar) {
 			return false;
 		}
 
-		CConVarData<T>* pCastCvar = pTargetCvar->Cast<T>();
-		if (!pCastCvar) {
-			Plat_FatalErrorFunc("Failed to match Cvar type! Target type: %d, T type: %d\n", pTargetCvar->GetType(), TranslateConVarType<T>());
-			DebuggerBreak();
-			return false;
-		}
+		auto& targetCvarRef = targetCvar.value();
+		targetCvarRef.SetAs(value);
 
-		pCastCvar->SetValue(value);
 		return true;
 	}
 
 	template<typename T>
 	bool Replicate(const char* name, T value, CPlayerSlot slot) {
-		CConVarBaseData* pTargetCvar = Find(name);
-		if (!pTargetCvar) {
+		auto targetCvar = Find(name);
+		if (!targetCvar) {
 			return false;
 		}
 
-		CConVarData<T>* pCastCvar = pTargetCvar->Cast<T>();
-		if (!pCastCvar) {
-			Plat_FatalErrorFunc("Failed to match Cvar type! Target type: %d, T type: %d\n", pTargetCvar->GetType(), TranslateConVarType<T>());
-			DebuggerBreak();
-			return false;
-		}
+		auto& targetCvarRef = targetCvar.value();
 
-		char szNewValue[256];
-		CConVarData<T>::ValueToString(value, szNewValue, sizeof(szNewValue));
-		ReplicateConVarValue(name, szNewValue, slot);
+		CBufferString buffer;
+		targetCvarRef.TypeTraits()->ValueToString(value, buffer);
+		ReplicateConVarValue(name, buffer.Get(), slot);
 
 		return true;
 	}
