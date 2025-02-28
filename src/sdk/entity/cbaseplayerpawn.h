@@ -31,6 +31,10 @@ public:
 		return !!(this->m_fFlags() & FL_PAWN_FAKECLIENT);
 	}
 
+	bool IsObserver() {
+		return m_pObserverServices() != nullptr;
+	}
+
 	void CommitSuicide(bool bExplode, bool bForce);
 
 	void SetCollisionGroup(StandardCollisionGroups_t group);

@@ -4,6 +4,7 @@
 #include <sdk/entity/ccsplayercontroller.h>
 #include <utils/utils.h>
 #include <core/playermanager.h>
+#include <core/eventmanager.h>
 
 CHidePlugin g_HidePlugin;
 
@@ -15,7 +16,7 @@ void SetMenuEntityTransmiter(CBaseEntity* pMenu, CBasePlayerController* pOwner) 
 	g_HidePlugin.SetExclude(pOwner, pMenu, true);
 }
 
-void CHidePlugin::ClearEntityTransmitInfo(CEdictBitVec* pTransmitEntity, CEdictBitVec* pTransmitAlways, CBaseEntity* pEntity) {
+void CHidePlugin::ClearEntityTransmitInfo(CEdictBitVec* pTransmitEntity, CBaseEntity* pEntity) {
 	if (!pEntity) {
 		return;
 	}
@@ -26,12 +27,9 @@ void CHidePlugin::ClearEntityTransmitInfo(CEdictBitVec* pTransmitEntity, CEdictB
 	}
 
 	pTransmitEntity->Clear(iEntityIndex);
-	if (pTransmitAlways->Get(iEntityIndex)) {
-		pTransmitAlways->Clear(iEntityIndex);
-	}
 };
 
-void CHidePlugin::ClearEntityChildEntities(CEdictBitVec* pTransmitEntity, CEdictBitVec* pTransmitAlways, CBaseEntity* pEntity) {
+void CHidePlugin::ClearEntityChildEntities(CEdictBitVec* pTransmitEntity, CBaseEntity* pEntity) {
 	CBodyComponent* pBodyComponent = pEntity->m_CBodyComponent();
 	if (!pBodyComponent) {
 		return;
@@ -48,7 +46,7 @@ void CHidePlugin::ClearEntityChildEntities(CEdictBitVec* pTransmitEntity, CEdict
 			continue;
 		}
 
-		ClearEntityTransmitInfo(pTransmitEntity, pTransmitAlways, pChildOwnerEntity);
+		ClearEntityTransmitInfo(pTransmitEntity, pChildOwnerEntity);
 	}
 }
 
@@ -102,6 +100,19 @@ void CHidePlugin::Reset(CBasePlayerController* pOwner) {
 	m_vBlockTransmit.at(iOwnerSlot).ClearAll();
 }
 
+void CHidePlugin::OnPlayerDeath(IGameEvent* pEvent, const char* szName, bool bDontBroadcast) {
+	auto pController = (CCSPlayerController*)pEvent->GetPlayerController("userid");
+	if (!pController) {
+		return;
+	}
+
+	pController->SendFullUpdate();
+}
+
+void CHidePlugin::OnPluginStart() {
+	EVENT::HookEvent("player_death", OnPlayerDeath);
+}
+
 void CHidePlugin::OnClientSendSnapshotBefore(CServerSideClient* pClient) {
 	if (pClient->IsFakeClient() || pClient->m_bIsHLTV) {
 		return;
@@ -118,8 +129,7 @@ void CHidePlugin::OnClientSendSnapshotBefore(CServerSideClient* pClient) {
 	}
 
 	auto pTransmitEntity = pClient->m_PackInfo.m_pTransmitEntity;
-	auto pTransmitAlways = pClient->m_PackInfo.m_pTransmitAlways;
-	if (!pTransmitEntity || !pTransmitAlways) {
+	if (!pTransmitEntity) {
 		return;
 	}
 
@@ -153,7 +163,7 @@ void CHidePlugin::OnClientSendSnapshotBefore(CServerSideClient* pClient) {
 			}
 		}
 
-		ClearEntityChildEntities(pTransmitEntity, pTransmitAlways, pEnt);
-		ClearEntityTransmitInfo(pTransmitEntity, pTransmitAlways, pEnt);
+		ClearEntityChildEntities(pTransmitEntity, pEnt);
+		ClearEntityTransmitInfo(pTransmitEntity, pEnt);
 	}
 }

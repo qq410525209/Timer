@@ -53,4 +53,5 @@ public:
 	}
 
 	void SetPawn(CCSPlayerPawn* pawn);
+	void SendFullUpdate();
 };

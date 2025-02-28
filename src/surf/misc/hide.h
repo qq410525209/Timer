@@ -6,6 +6,7 @@ using CEdictBitVec = CBitVec<MAX_EDICTS>;
 
 class CHidePlugin : CCoreForward {
 private:
+	virtual void OnPluginStart() override;
 	virtual void OnClientSendSnapshotBefore(CServerSideClient* pClient) override;
 
 public:
@@ -15,8 +16,11 @@ public:
 	void Reset(CBasePlayerController* pOwner);
 
 private:
-	void ClearEntityTransmitInfo(CEdictBitVec* pTransmitEntity, CEdictBitVec* pTransmitAlways, CBaseEntity* pEntity);
-	void ClearEntityChildEntities(CEdictBitVec* pTransmitEntity, CEdictBitVec* pTransmitAlways, CBaseEntity* pEntity);
+	void ClearEntityTransmitInfo(CEdictBitVec* pTransmitEntity, CBaseEntity* pEntity);
+	void ClearEntityChildEntities(CEdictBitVec* pTransmitEntity, CBaseEntity* pEntity);
+
+private:
+	static void OnPlayerDeath(IGameEvent* pEvent, const char* szName, bool bDontBroadcast);
 
 private:
 	std::array<CEdictBitVec, MAXPLAYERS> m_vBlockTransmit;

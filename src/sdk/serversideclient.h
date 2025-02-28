@@ -140,32 +140,14 @@ public:
 		return m_nSignonState == SIGNONSTATE_FULL;
 	}
 
-	virtual bool IsFakeClient() const {
-		return m_bFakePlayer;
-	}
+	virtual bool IsFakeClient() = 0;
 
 	virtual bool IsHLTV() = 0;
 
 	// Is an actual human player or splitscreen player (not a bot and not a HLTV slot)
-	virtual bool IsHumanPlayer() const {
-		return false;
-	}
+	virtual bool IsHumanPlayer() = 0;
 
-	virtual bool IsHearingClient(CPlayerSlot nSlot) const {
-		return false;
-	}
-
-	virtual bool IsLowViolenceClient() const {
-		return m_bLowViolence;
-	}
-
-	virtual bool IsSplitScreenUser() const {
-		return m_bSplitScreenUser;
-	}
-
-	int GetClientPlatform() const {
-		return m_ClientPlatform;
-	} // CrossPlayPlatform_t
+	virtual bool IsHearingClient(CPlayerSlot nSlot) = 0;
 
 public: // Message Handlers
 	virtual bool ProcessTick(const CNETMsg_Tick_t& msg) = 0;
@@ -220,15 +202,13 @@ public:
 	virtual bool UpdateAcknowledgedFramecount(int tick) = 0;
 
 	void ForceFullUpdate() {
-		UpdateAcknowledgedFramecount(-1);
+		m_nForceWaitForTick = -1;
 	}
 
 	virtual bool ShouldSendMessages() = 0;
 	virtual void UpdateSendState() = 0;
 
-	virtual const CMsgPlayerInfo& GetPlayerInfo() const {
-		return m_playerInfo;
-	}
+	virtual CMsgPlayerInfo& GetPlayerInfo() = 0;
 
 	virtual void UpdateUserSettings() = 0;
 	virtual void ResetUserSettings() = 0;
@@ -258,9 +238,7 @@ public:
 		m_bFullyAuthenticated = true;
 	}
 
-	virtual CServerSideClientBase* GetSplitScreenOwner() {
-		return m_pAttachedTo;
-	}
+	virtual CServerSideClientBase* GetSplitScreenOwner() = 0;
 
 	virtual int GetNumPlayers() = 0;
 
@@ -289,39 +267,30 @@ public:
 	virtual void PerformDisconnection(ENetworkDisconnectionReason reason) = 0;
 
 public:
-	void* m_pVT1;       // INetworkMessageProcessingPreFilter
-	CUtlString m_unk16; // 16
+	void* m_pVT1; // INetworkMessageProcessingPreFilter
 
 private:
-	[[maybe_unused]] char pad24[0x16]; // 24
+	MEM_PAD(0x20);
 #ifdef __linux__
-	[[maybe_unused]] char pad46[0x10]; // 46
+	MEM_PAD(0x10);
 #endif
 
 public:
-	void (*RebroadcastSource)(int msgID);         // 64
-	CUtlString m_UserIDString;                    // 72
-	CUtlString m_Name;                            // 80
-	CPlayerSlot m_nClientSlot;                    // 88
-	CEntityIndex m_nEntityIndex;                  // 92
-	CNetworkGameServerBase* m_Server;             // 96
-	INetChannel* m_NetChannel;                    // 104
-	uint8 m_nUnkVariable;                         // 112
-	bool m_bMarkedToKick;                         // 113
-	int32 m_nSignonState;                         // 116
-	bool m_bSplitScreenUser;                      // 120
-	bool m_bSplitAllowFastDisconnect;             // 121
-	int m_nSplitScreenPlayerSlot;                 // 124
-	CServerSideClientBase* m_SplitScreenUsers[4]; // 128
-	CServerSideClientBase* m_pAttachedTo;         // 160
-	bool m_bSplitPlayerDisconnecting;             // 168
-	int m_UnkVariable172;                         // 172
-	bool m_bFakePlayer;                           // 176
-	bool m_bSendingSnapshot;                      // 177
-	[[maybe_unused]] char pad6[0x5];
-	CPlayerUserId m_UserID; // 184
-	bool m_bReceivedPacket; // 186
-	CSteamID m_SteamID;     // 187
+	void (*RebroadcastSource)(int msgID); // 48
+	CUtlString m_UserIDString;            // 56
+	CUtlString m_Name;                    // 64
+	CPlayerSlot m_nClientSlot;            // 72
+	CEntityIndex m_nEntityIndex;          // 76
+	CNetworkGameServerBase* m_Server;     // 80
+	INetChannel* m_NetChannel;            // 88
+	uint8 m_nUnkVariable;                 // 96
+	bool m_bMarkedToKick;                 // 97
+	int32 m_nSignonState;                 // 100
+	MEM_PAD(0x38);
+	bool m_bFakePlayer; // 160
+	MEM_PAD(0x7);
+	CPlayerUserId m_UserID; // 168
+	CSteamID m_SteamID;     // 170
 	CSteamID m_UnkSteamID;  // 195
 	CSteamID m_UnkSteamID2; // 203 from auth ticket
 	CSteamID m_nFriendsID;  // 211
@@ -334,90 +303,35 @@ public:
 	bool m_bIsReplay;       // 299
 
 private:
-	[[maybe_unused]] char pad29[0xA];
+	MEM_PAD(0x15);
 
 public:
-	uint32 m_nSendtableCRC;                   // 312
-	int m_ClientPlatform;                     // 316
-	int m_nSignonTick;                        // 320
-	int m_nDeltaTick;                         // 324
-	int m_UnkVariable3;                       // 328
-	int m_nStringTableAckTick;                // 332
-	int m_UnkVariable4;                       // 336
-	CFrameSnapshot* m_pLastSnapshot;          // 344
-	CUtlVector<void*> m_vecLoadedSpawnGroups; // 352
-	CMsgPlayerInfo m_playerInfo;              // 376
-	CFrameSnapshot* m_pBaseline;              // 432
-	int m_nBaselineUpdateTick;                // 440
-	CBitVec<MAX_EDICTS> m_BaselinesSent;      // 444
-	int m_nBaselineUsed = 0;                  // 2492
-	int m_nLoadingProgress = 0;               // 2496
-	int m_nForceWaitForTick = -1;             // 2500
-	CCircularBuffer m_UnkBuffer = {1024};     // 2504 (24 bytes)
-	bool m_bLowViolence = false;              // 2528
-	bool m_bSomethingWithAddressType = true;  // 2529
-	bool m_bFullyAuthenticated = false;       // 2530
-	bool m_bUnk1 = false;                     // 2531
-	bool m_bUnk2 = false;                     // 2532
-	bool m_bUnk3 = false;                     // 2533
-	bool m_bUnk4 = false;                     // 2534
-	bool m_bUnk5 = false;                     // 2535
-	float m_fNextMessageTime = 0.0f;          // 2536
-	float m_fSnapshotInterval = -1.0f;        // 2540
-	float m_fAuthenticatedTime = 0.0f;        // 2544
+	int m_nForceWaitForTick; // 308
+	MEM_PAD(0x882);
+	bool m_bFullyAuthenticated = false; // 2490
+	MEM_PAD(0x1C2);
+};
 
-private:
-	// CSVCMsg_PacketEntities_t m_packetmsg;  // 2552
-	[[maybe_unused]] char pad2552[0x138]; // 2552
-
-public:
-	CNetworkStatTrace m_Trace;          // 2864
-	int m_spamCommandsCount = 0;        // 2904 if the value is greater than 16, the player will be kicked with reason 39
-	int m_unknown = 0;                  // 2908
-	double m_lastExecutedCommand = 0.0; // 2912 if command executed more than once per second, ++m_spamCommandCount
-
-private:
-	[[maybe_unused]] char pad2920[0x20]; // 2920
-}; // sizeof 2952
+#ifdef _WIN32
+COMPILE_TIME_ASSERT(sizeof(CServerSideClientBase) == 2944);
+#endif
 
 class CServerSideClient : public CServerSideClientBase {
 public:
 	virtual ~CServerSideClient() = 0;
 
 public:
-	CPlayerBitVec m_VoiceStreams;   // 2952
-	CPlayerBitVec m_VoiceProximity; // 2960
-	void* m_Unk2952;
-	CCheckTransmitInfo m_PackInfo;      // 2968
-	CClientFrameManager m_FrameManager; // 3568
-
-private:
-	[[maybe_unused]] char pad3856[8]; // 3856
-
-public:
-	float m_flLastClientCommandQuotaStart = 0.0f;     // 3864
-	float m_flTimeClientBecameFullyConnected = -1.0f; // 3868
-	bool m_bVoiceLoopback = false;                    // 3872
-	bool m_bUnk10 = false;                            // 3873
-	int m_nHltvReplayDelay = 0;                       // 3876
-	CHLTVServer* m_pHltvReplayServer;                 // 3880
-	int m_nHltvReplayStopAt;                          // 3888
-	int m_nHltvReplayStartAt;                         // 3892
-	int m_nHltvReplaySlowdownBeginAt;                 // 3896
-	int m_nHltvReplaySlowdownEndAt;                   // 3900
-	float m_flHltvReplaySlowdownRate;                 // 3904
-	int m_nHltvLastSendTick;                          // 3908
-	float m_flHltvLastReplayRequestTime;              // 3912
-	CUtlVector<INetMessage*> m_HltvQueuedMessages;    // 3920
-	HltvReplayStats_t m_HltvReplayStats;              // 3944
-	void* m_pLastJob;                                 // 4000
-
-private:
-	[[maybe_unused]] char pad3984[8]; // 4008
-}; // sizeof 4016
+	CPlayerBitVec m_VoiceStreams;   // 2944
+	CPlayerBitVec m_VoiceProximity; // 2952
+	CCheckTransmitInfo m_PackInfo;  // 2960
+	MEM_PAD(0x240);
+	CClientFrameManager m_FrameManager; // 3552
+	MEM_PAD(0xA0);
+};
 
 #ifdef _WIN32
-static_assert(offsetof(CServerSideClient, m_PackInfo) == 2960);
+COMPILE_TIME_ASSERT(offsetof(CServerSideClient, m_PackInfo) == 2960);
+COMPILE_TIME_ASSERT(sizeof(CServerSideClient) == 3968);
 #endif
 
 // not full class reversed
