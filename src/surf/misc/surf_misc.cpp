@@ -19,8 +19,8 @@ void CSurfMiscPlugin::OnPluginStart() {
 }
 
 void CSurfMiscPlugin::TweakCvars() {
-	static constexpr const char* tweakCvars[] = {"sv_infinite_ammo", "bot_stop"};
-	static constexpr const char* tweakCmds[] = {"sv_debug_overlays_broadcast"};
+	static constexpr const char* tweakCvars[] = {"sv_infinite_ammo", "bot_stop", "sv_debug_overlays_broadcast"};
+	//static constexpr const char* tweakCmds[] = {""};
 
 	for (size_t i = 0; i < ARRAYSIZE(tweakCvars); i++) {
 		auto cvar = CVAR::Find(tweakCvars[i]);
@@ -31,14 +31,14 @@ void CSurfMiscPlugin::TweakCvars() {
 		}
 	}
 
-	for (size_t i = 0; i < ARRAYSIZE(tweakCmds); i++) {
+	/*for (size_t i = 0; i < ARRAYSIZE(tweakCmds); i++) {
 		auto pConCommand = CONCMD::Find(tweakCmds[i]);
 		if (pConCommand) {
 			pConCommand->RemoveFlags(FCVAR_CHEAT);
 		} else {
 			LOG::Warning("Warning: %s is not found!\n", tweakCvars[i]);
 		}
-	}
+	}*/
 }
 
 void CSurfMiscPlugin::OnActivateServer(CNetworkGameServerBase* pGameServer) {
