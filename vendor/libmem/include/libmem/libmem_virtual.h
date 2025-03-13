@@ -8,8 +8,10 @@
 
 #ifdef _WIN32
 #define WIN_LINUX(win, linux) win
+#define THISCALL __thiscall
 #else
 #define WIN_LINUX(win, linux) linux
+#define THISCALL
 #endif
 
 namespace vmt {
@@ -32,12 +34,38 @@ namespace vmt {
 	// PS: The template function can't discerm should passed the var reference so we should use the `std::ref`
 	template<typename T, typename... Args>
 	inline T CallVirtual(uint32_t uIndex, void* pClass, Args... args) {
-		auto func_ptr = GetVMethod<T(__thiscall*)(void*, Args...)>(uIndex, pClass);
+		auto func_ptr = GetVMethod<T(THISCALL*)(void*, Args...)>(uIndex, pClass);
 		if (!func_ptr) {
 			printf("vmt::CallVirtual failed: invalid function pointer\n");
 			return T();
 		}
 		return func_ptr(pClass, args...);
+	}
+
+	// 模拟真实的虚函数调用流程
+	// 自动处理返回值为非平凡类型的情况
+	// 返回值类型、内存结构必须与虚函数的一致
+	template<typename Ret, typename T, typename... Args>
+	inline Ret CallVirtualEx(uint32_t uIndex, T pClass, Args... args) {
+		auto func_ptr = GetVMethod(uIndex, pClass);
+		if (!func_ptr) {
+			printf("vmt::CallVirtual failed: invalid function pointer\n");
+			return Ret();
+		}
+
+#ifdef _WIN32
+		class VType {};
+		union VConverter {
+			VConverter(void* _ptr) : ptr(_ptr) {}
+
+			void* ptr;
+			Ret (__thiscall VType::*fn)(Args...);
+		} v(func_ptr);
+
+		return ((VType*)pClass->*v.fn)(args...);
+#else
+		return reinterpret_cast<Ret (*)(T, Args...)>(func_ptr)(pClass, args...);
+#endif
 	}
 
 	template<typename T>
