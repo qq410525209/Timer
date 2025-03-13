@@ -27,6 +27,39 @@ namespace UTIL {
 		}
 	} // namespace PATH
 
+	namespace PB {
+		template<typename T>
+		bool ReadFromBuffer(bf_read& buffer, T& pb) {
+			auto size = buffer.ReadVarInt32();
+
+			if (size < 0 || size > 262140) {
+				return false;
+			}
+
+			if (size > buffer.GetNumBytesLeft()) {
+				return false;
+			}
+
+			if ((buffer.GetNumBitsRead() % 8) == 0) {
+				bool parseResult = pb.ParseFromArray(buffer.GetBasePointer() + buffer.GetNumBytesRead(), size);
+				buffer.SeekRelative(size * 8);
+
+				return true;
+			}
+
+			void* parseBuffer = stackalloc(size);
+			if (!buffer.ReadBytes(parseBuffer, size)) {
+				return false;
+			}
+
+			if (!pb.ParseFromArray(parseBuffer, size)) {
+				return false;
+			}
+
+			return true;
+		}
+	}
+
 	std::string GetWorkingDirectory();
 	std::string GetPublicIP();
 	json LoadJsonc(std::string sFilePath);

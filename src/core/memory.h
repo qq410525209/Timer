@@ -99,10 +99,17 @@ namespace MEM {
 	void SetupHooks();
 
 	template<typename T = void, typename... Args>
-	T SDKCall(void* pAddress, Args... args) {
+	typename std::enable_if<!std::is_void<T>::value, T>::type SDKCall(void* pAddress, Args... args) {
 		auto pFn = reinterpret_cast<T (*)(Args...)>(pAddress);
 		SDK_ASSERT((uintptr_t)pFn);
 		return pFn(args...);
+	}
+
+	template<typename T = void, typename... Args>
+	typename std::enable_if<std::is_void<T>::value, void>::type SDKCall(void* pAddress, Args... args) {
+		auto pFn = reinterpret_cast<void (*)(Args...)>(pAddress);
+		SDK_ASSERT((uintptr_t)pFn);
+		pFn(args...);
 	}
 
 	template<typename T, typename... Args>

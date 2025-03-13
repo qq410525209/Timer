@@ -206,13 +206,13 @@ static void Hook_OnProcessMovement(CCSPlayer_MovementServices* ms, CMoveData* mv
 	FORWARD_POST(CMovementForward, OnProcessMovementPost, ms, mv);
 }
 
-static float Hook_OnPhysicsSimulate(CCSPlayerController* pController) {
+static int Hook_OnPhysicsSimulate(CCSPlayerController* pController) {
 	if (pController->m_bIsHLTV()) {
-		return 0.0f;
+		return 0;
 	}
 
 	if (!pController) {
-		return MEM::SDKCall<float>(MOVEMENT::TRAMPOLINE::g_fnPhysicsSimulate, pController);
+		return MEM::SDKCall<int>(MOVEMENT::TRAMPOLINE::g_fnPhysicsSimulate, pController);
 	}
 
 	SurfPlugin()->simulatingPhysics = true;
@@ -224,16 +224,17 @@ static float Hook_OnPhysicsSimulate(CCSPlayerController* pController) {
 		}
 	}
 	if (block) {
-		return 0.0f;
+		return 0;
 	}
 
-	float flSimulationTime = MEM::SDKCall<float>(MOVEMENT::TRAMPOLINE::g_fnPhysicsSimulate, pController);
+	// seems like simulation time but crashes if return float
+	int ret = MEM::SDKCall<int>(MOVEMENT::TRAMPOLINE::g_fnPhysicsSimulate, pController);
 
 	SurfPlugin()->simulatingPhysics = false;
 
 	FORWARD_POST(CMovementForward, OnPhysicsSimulatePost, pController);
 
-	return flSimulationTime;
+	return ret;
 }
 
 static float Hook_OnGetMaxSpeed(CCSPlayerPawn* pawn) {

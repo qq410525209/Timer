@@ -326,11 +326,12 @@ public:
 	CCheckTransmitInfo m_PackInfo;  // 2960
 	MEM_PAD(0x240);
 	CClientFrameManager m_FrameManager; // 3552
-	MEM_PAD(0xA0);
+	MEM_PAD(0x80);
 };
 
 #ifdef _WIN32
 COMPILE_TIME_ASSERT(offsetof(CServerSideClient, m_PackInfo) == 2960);
+COMPILE_TIME_ASSERT(offsetof(CServerSideClient, m_FrameManager) == 3552);
 COMPILE_TIME_ASSERT(sizeof(CServerSideClient) == 3968);
 #endif
 
