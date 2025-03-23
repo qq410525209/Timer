@@ -12,7 +12,7 @@ static void RegCmd(const std::string& cmd, const std::string& description, uint6
 	command.m_pszName = cmd.c_str();
 	command.m_pszHelpString = description.c_str();
 	command.m_nFlags = cmdFlag;
-	g_pCVar->RegisterConCommand(command, 4);
+	g_pCVar->RegisterConCommand(command, FCVAR_GAMEDLL);
 }
 
 void CONCMD::RegServerCmd(std::string cmd, SrvCmd_Callback cb, std::string description, uint64 cmdFlag) {

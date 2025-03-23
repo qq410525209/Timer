@@ -58,7 +58,7 @@ namespace UTIL {
 
 			return true;
 		}
-	}
+	} // namespace PB
 
 	std::string GetWorkingDirectory();
 	std::string GetPublicIP();

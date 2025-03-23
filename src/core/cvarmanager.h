@@ -6,6 +6,7 @@
 extern void ReplicateConVarValue(const char* name, const char* value, CPlayerSlot slot);
 
 namespace CVAR {
+	// Must be on OnPluginStart
 	template<typename T>
 	ConVarRefAbstract* Register(const char* name, T defaultValue, const char* helpString = "", typename CConVar<T>::FnChangeCallback_t callback = 0) {
 		CConVar<T>* pCvarCreated = new CConVar<T>(name, 0, helpString, defaultValue, callback);
