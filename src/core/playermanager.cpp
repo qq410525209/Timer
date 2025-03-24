@@ -203,7 +203,7 @@ void CPlayerManager::OnClientDisconnect(ISource2GameClients* pClient, CPlayerSlo
 	}
 }
 
-void CPlayerManager::OnClientActive(ISource2GameClients* pClient, CPlayerSlot slot, bool bLoadGame, const char* pszName, uint64 xuid) {
+void CPlayerManager::OnClientConnected(ISource2GameClients* pClient, CPlayerSlot slot, const char* pszName, uint64 xuid, const char* pszNetworkID, const char* pszAddress, bool bFakePlayer) {
 	CPlayer* player = this->ToPlayer(slot);
 	if (player) {
 		player->Init(slot.Get());

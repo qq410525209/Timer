@@ -35,7 +35,8 @@ CSurfPlayer* CSurfPlayerManager::ToPlayer(CBasePlayerPawn* pawn) const {
 }
 
 CSurfPlayer* CSurfPlayerManager::ToPlayer(CPlayerSlot slot) const {
-	return static_cast<CSurfPlayer*>(CPlayerManager::ToPlayer(slot));
+	auto pPlayer = static_cast<CSurfPlayer*>(CPlayerManager::ToPlayer(slot));
+	return pPlayer->m_bFakeClient ? nullptr : pPlayer;
 }
 
 CSurfPlayer* CSurfPlayerManager::ToPlayer(CEntityIndex entIndex) const {
@@ -48,6 +49,17 @@ CSurfPlayer* CSurfPlayerManager::ToPlayer(CPlayerUserId userID) const {
 
 CSurfPlayer* CSurfPlayerManager::ToPlayer(CSteamID steamid, bool validate) const {
 	return static_cast<CSurfPlayer*>(CPlayerManager::ToPlayer(steamid, validate));
+}
+
+std::vector<CPlayer*> CSurfPlayerManager::GetOnlinePlayers() const {
+	std::vector<CPlayer*> players;
+	for (auto& player : m_pPlayers) {
+		if (!player->m_bFakeClient && UTIL::IsPlayerSlot(player->GetPlayerSlot())) {
+			players.emplace_back(player.get());
+		}
+	}
+
+	return players;
 }
 
 static bool Hook_OnPlayerTeleport(CBaseEntity* pSelf, const Vector* newPosition, const QAngle* newAngles, const Vector* newVelocity) {
@@ -77,16 +89,14 @@ static void Hook_OnPlayerTeleportPost(CBaseEntity* pSelf, const Vector* newPosit
 }
 
 void CSurfPlayerManager::OnClientConnected(ISource2GameClients* pClient, CPlayerSlot slot, const char* pszName, uint64 xuid, const char* pszNetworkID, const char* pszAddress, bool bFakePlayer) {
+	CMovementPlayerManager::OnClientConnected(pClient, slot, pszName, xuid, pszNetworkID, pszAddress, bFakePlayer);
+
 	if (bFakePlayer) {
-		int iSlot = slot.Get();
-		auto& pPlayer = m_pPlayers[iSlot];
+		auto pPlayer = this->ToPlayer(slot);
 		if (pPlayer) {
-			pPlayer.reset();
+			pPlayer->m_bFakeClient = true;
 		}
 	}
-
-	// base not impl yet.
-	// CMovementPlayerManager::OnClientConnected(pClient, slot, pszName, xuid, pszNetworkID, pszAddress, bFakePlayer);
 }
 
 void CSurfPlayerManager::OnEntitySpawned(CEntityInstance* pEntity) {

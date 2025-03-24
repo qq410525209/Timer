@@ -19,6 +19,7 @@ public:
 	virtual void Reset() {
 		m_iSlot = -1;
 		unauthenticatedSteamID = k_steamIDNil;
+		m_bFakeClient = false;
 	}
 
 	virtual CCSPlayerController* GetController() const;
@@ -60,6 +61,9 @@ public:
 private:
 	int m_iSlot = -1;
 	CSteamID unauthenticatedSteamID = k_steamIDNil;
+
+public:
+	bool m_bFakeClient = false;
 };
 
 class CPlayerManager : CCoreForward {
@@ -85,7 +89,7 @@ public:
 protected:
 	virtual void OnClientDisconnect(ISource2GameClients* pClient, CPlayerSlot slot, ENetworkDisconnectionReason reason, const char* pszName, uint64 xuid, const char* pszNetworkID) override;
 
-	virtual void OnClientActive(ISource2GameClients* pClient, CPlayerSlot slot, bool bLoadGame, const char* pszName, uint64 xuid) override;
+	virtual void OnClientConnected(ISource2GameClients* pClient, CPlayerSlot slot, const char* pszName, uint64 xuid, const char* pszNetworkID, const char* pszAddress, bool bFakePlayer) override;
 
 protected:
 	std::array<std::unique_ptr<CPlayer>, MAXPLAYERS> m_pPlayers;

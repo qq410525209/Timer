@@ -82,9 +82,7 @@ public:
 	virtual CSurfPlayer* ToPlayer(CSteamID steamid, bool validate = false) const override;
 
 	// fake players are excluded
-	virtual std::vector<CPlayer*> GetOnlinePlayers() const override {
-		return CMovementPlayerManager::GetOnlinePlayers();
-	}
+	virtual std::vector<CPlayer*> GetOnlinePlayers() const override;
 
 	// Safe
 	CSurfPlayer* ToSurfPlayer(CMovementPlayer* player) {
