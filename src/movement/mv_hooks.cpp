@@ -5,18 +5,17 @@
 #include <cs2surf.h>
 
 #include <surf/surf_player.h>
+#include <utils/utils.h>
 
-static void Hook_OnMovementServicesRunCmds(CPlayer_MovementServices* pMovementServices, CUserCmd* pUserCmd) {
+static void* Hook_OnMovementServicesRunCmds(CPlayer_MovementServices* pMovementServices, CUserCmd* pUserCmd) {
 	CCSPlayerPawn* pawn = pMovementServices->GetPawn();
-	if (!pawn) {
-		MEM::SDKCall<void>(MOVEMENT::TRAMPOLINE::g_fnMovementServicesRunCmds, pMovementServices, pUserCmd);
-		return;
+	if (!pawn || !pawn->IsAlive()) {
+		return MEM::SDKCall<void*>(MOVEMENT::TRAMPOLINE::g_fnMovementServicesRunCmds, pMovementServices, pUserCmd);
 	}
 
 	CCSPlayerController* controller = pawn->GetController<CCSPlayerController>();
 	if (!controller) {
-		MEM::SDKCall<void>(MOVEMENT::TRAMPOLINE::g_fnMovementServicesRunCmds, pMovementServices, pUserCmd);
-		return;
+		return MEM::SDKCall<void*>(MOVEMENT::TRAMPOLINE::g_fnMovementServicesRunCmds, pMovementServices, pUserCmd);
 	}
 
 	int32_t seed;
@@ -28,7 +27,6 @@ static void Hook_OnMovementServicesRunCmds(CPlayer_MovementServices* pMovementSe
 	float vec[3] = {0.0f, 0.0f, 0.0f};
 	QAngle viewAngles = {0.0f, 0.0f, 0.0f};
 
-	CInButtonStatePB* buttons_state = nullptr;
 	CBaseUserCmdPB* baseCmd = pUserCmd->mutable_base();
 	if (baseCmd) {
 		weapon = baseCmd->weaponselect();
@@ -43,19 +41,19 @@ static void Hook_OnMovementServicesRunCmds(CPlayer_MovementServices* pMovementSe
 		viewAngles.x = baseCmd->viewangles().x();
 		viewAngles.y = baseCmd->viewangles().y();
 		viewAngles.z = baseCmd->viewangles().z();
-		buttons_state = baseCmd->mutable_buttons_pb();
 	}
-
-	CPlayerButton* button = (CPlayerButton*)buttons_state;
 
 	bool block = false;
 	for (auto p = CMovementForward::m_pFirst; p; p = p->m_pNext) {
-		if (!p->OnPlayerRunCmd(pawn, button, vec, viewAngles, weapon, cmdnum, tickcount, seed, mouse)) {
+		if (!p->OnPlayerRunCmd(pawn, pUserCmd->m_buttons, vec, viewAngles, weapon, cmdnum, tickcount, seed, mouse)) {
 			block = true;
 		}
 	}
 
 	if (baseCmd) {
+		// subtick must die
+		baseCmd->clear_subtick_moves();
+
 		baseCmd->set_weaponselect(weapon);
 		baseCmd->set_legacy_command_number(cmdnum);
 		baseCmd->set_client_tick(tickcount);
@@ -66,32 +64,26 @@ static void Hook_OnMovementServicesRunCmds(CPlayer_MovementServices* pMovementSe
 		baseCmd->set_forwardmove(vec[1]);
 		baseCmd->set_upmove(vec[2]);
 
-		if (baseCmd->has_viewangles()) {
+		// unavaliable
+		/*if (baseCmd->has_viewangles()) {
 			CMsgQAngle* viewangles = baseCmd->mutable_viewangles();
 			if (viewangles) {
 				viewangles->set_x(viewAngles.x);
 				viewangles->set_y(viewAngles.y);
 				viewangles->set_z(viewAngles.z);
 			}
-		}
-
-		if (baseCmd->has_buttons_pb()) {
-			CInButtonStatePB* buttons_pb = baseCmd->mutable_buttons_pb();
-			if (buttons_pb) {
-				buttons_pb->set_buttonstate1(button->down);
-				buttons_pb->set_buttonstate2(button->changed);
-				buttons_pb->set_buttonstate3(button->scroll);
-			}
-		}
+		}*/
 	}
 
 	if (block) {
-		return;
+		return nullptr;
 	}
 
-	MEM::SDKCall<void>(MOVEMENT::TRAMPOLINE::g_fnMovementServicesRunCmds, pMovementServices, pUserCmd);
+	auto ret = MEM::SDKCall<void*>(MOVEMENT::TRAMPOLINE::g_fnMovementServicesRunCmds, pMovementServices, pUserCmd);
 
-	FORWARD_POST(CMovementForward, OnPlayerRunCmdPost, pawn, button, vec, viewAngles, weapon, cmdnum, tickcount, seed, mouse);
+	FORWARD_POST(CMovementForward, OnPlayerRunCmdPost, pawn, pUserCmd->m_buttons, vec, viewAngles, weapon, cmdnum, tickcount, seed, mouse);
+
+	return ret;
 }
 
 static void Hook_OnTryPlayerMove(CCSPlayer_MovementServices* ms, CMoveData* mv, Vector* pFirstDest, trace_t* pFirstTrace) {

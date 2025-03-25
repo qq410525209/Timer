@@ -27,18 +27,17 @@ enum InputBitMask_t : uint64_t {
 	IN_LOOK_AT_WEAPON = 0x800000000,
 };
 
-class CSGOUserCmdPB;
-
-class CPlayerButton {
-	void** vtable;
-	[[maybe_unused]] uint8_t unk[16];
-
-public:
+struct CPlayerButton {
 	uint64_t down;
 	uint64_t changed;
 	uint64_t scroll;
 
-public:
+	CPlayerButton() : down(0), changed(0), scroll(0) {}
+
+	CPlayerButton(const CPlayerButton&) = default;
+
+	CPlayerButton& operator=(const CPlayerButton& other) = default;
+
 	bool Released(InputBitMask_t mask) const {
 		return !(down & mask) && (changed & mask);
 	}
@@ -48,12 +47,18 @@ public:
 	}
 };
 
-static_assert(sizeof(CPlayerButton) == sizeof(CInButtonStatePB));
+class CInButtonState : public CPlayerButton {
+	virtual void dtor();
+
+public:
+	using CPlayerButton::CPlayerButton;
+	using CPlayerButton::operator=;
+};
 
 class CUserCmdBase {
 public:
 	int cmdNum;
-	uint8_t unk[4];
+	MEM_PAD(0x4);
 
 	virtual ~CUserCmdBase();
 
@@ -70,14 +75,20 @@ private:
 template<typename T>
 class CUserCmdBaseHost : public CUserCmdBase, public T {};
 
-class CUserCmd : public CUserCmdBaseHost<CSGOUserCmdPB> {};
-
-class PlayerCommand : public CUserCmd {
+class CUserCmd : public CUserCmdBaseHost<CSGOUserCmdPB> {
 public:
-	CPlayerButton m_Buttons;
+	CInButtonState m_buttons;
+	int m_iAttackHistory;
 
-	// Not part of the player message
-	uint32_t unknown[4];
-	PlayerCommand* unknowncmd;
-	PlayerCommand* unknowncmd2;
+private:
+	MEM_PAD(0x4);
+#ifdef _WIN32
+	MEM_PAD(0x4);
+#endif
+
+	MEM_PAD(0x10);
 };
+
+#ifdef _WIN32
+static_assert(sizeof(CUserCmd) == 152);
+#endif
