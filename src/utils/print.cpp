@@ -263,7 +263,7 @@ void UTIL::PrintChat(CBasePlayerController* pController, const char* format, ...
 	delete filter;
 }
 
-void UTIL::PrintCentre(CBasePlayerController* pController, const char* format, ...) {
+void UTIL::PrintCenter(CBasePlayerController* pController, const char* format, ...) {
 	FORMAT_STRING(buffer);
 	CSingleRecipientFilter* filter = new CSingleRecipientFilter(pController->GetPlayerSlot());
 	ClientPrintFilter(filter, HUD_PRINTCENTER, buffer, "", "", "", "");
@@ -277,7 +277,7 @@ void UTIL::PrintAlert(CBasePlayerController* pController, const char* format, ..
 	delete filter;
 }
 
-void UTIL::PrintHTMLCentre(CBasePlayerController* pController, const char* format, ...) {
+void UTIL::PrintHTMLCenter(CBasePlayerController* pController, const char* format, ...) {
 	CUtlString buffer;
 	va_list args;
 	va_start(args, format);

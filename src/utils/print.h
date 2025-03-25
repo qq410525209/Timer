@@ -17,9 +17,9 @@ namespace UTIL {
 	void SayChat(CBasePlayerController* pControler, const char* format, ...);
 	void PrintConsole(CBasePlayerController* pControler, const char* format, ...);
 	void PrintChat(CBasePlayerController* pControler, const char* format, ...);
-	void PrintCentre(CBasePlayerController* pControler, const char* format, ...);
+	void PrintCenter(CBasePlayerController* pControler, const char* format, ...);
 	void PrintAlert(CBasePlayerController* pControler, const char* format, ...);
-	void PrintHTMLCentre(CBasePlayerController* pControler, const char* format, ...); // This one uses HTML formatting.
+	void PrintHTMLCenter(CBasePlayerController* pControler, const char* format, ...); // This one uses HTML formatting.
 
 	void PrintConsoleAll(const char* format, ...);
 	void PrintChatAll(const char* format, ...);
