@@ -1,6 +1,7 @@
 #include "surf_hud.h"
 #include <surf/timer/surf_timer.h>
 #include <utils/print.h>
+#include <utils/utils.h>
 
 CSurfHudPlugin g_SurfHudPlugin;
 
@@ -14,6 +15,10 @@ void CSurfHudPlugin::OnPlayerRunCmdPost(CCSPlayerPawn* pawn, const CInButtonStat
 		return;
 	}
 
+	if (UTIL::GetGlobals()->tickcount % 2 == 0) {
+		return;
+	}
+
 	CUtlString sTime = SURF::FormatTime(player->m_pTimerService->m_fCurrentTime);
 	auto timerController = player->GetController();
 	if (!timerController) {
@@ -23,5 +28,5 @@ void CSurfHudPlugin::OnPlayerRunCmdPost(CCSPlayerPawn* pawn, const CInButtonStat
 	const char* name = timerController->GetPlayerName();
 	Vector vel;
 	player->GetVelocity(vel);
-	UTIL::PrintAlert(timerController, "time: %s, vel: %.3f", sTime.Get(), (float)vel.Length2D());
+	UTIL::PrintHTMLCenter(timerController, "time: %s, vel: %.3f", sTime.Get(), (float)vel.Length2D());
 }

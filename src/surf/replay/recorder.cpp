@@ -4,7 +4,7 @@ void CSurfReplayService::StartRecord() {
 	m_bEnabled = true;
 }
 
-void CSurfReplayService::DoRecord(CCSPlayerPawn* pawn, const CInButtonState& buttons, const QAngle& viewAngles) {
+void CSurfReplayService::DoRecord(CCSPlayerPawn* pawn, const CPlayerButton& buttons, const QAngle& viewAngles) {
 	ReplayFrame_t frame;
 	frame.ang = viewAngles;
 	frame.pos = pawn->GetAbsOrigin();

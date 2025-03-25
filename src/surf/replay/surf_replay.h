@@ -19,7 +19,7 @@ public:
 	using CSurfBaseService::CSurfBaseService;
 
 	void StartRecord();
-	void DoRecord(CCSPlayerPawn* pawn, const CInButtonState& buttons, const QAngle& viewAngles);
+	void DoRecord(CCSPlayerPawn* pawn, const CPlayerButton& buttons, const QAngle& viewAngles);
 	void SaveRecord();
 
 public:
