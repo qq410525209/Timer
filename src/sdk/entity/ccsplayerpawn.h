@@ -16,7 +16,7 @@ public:
 
 	Vector GetEyePosition();
 
-	CBaseViewModel* GetCustomViewModel();
+	CBaseViewModel* GetCustomViewModel(int vmSlot = 1);
 };
 
 class CCSPlayerPawn : public CCSPlayerPawnBase {

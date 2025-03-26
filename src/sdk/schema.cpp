@@ -104,7 +104,7 @@ SchemaKey schema::GetOffset(const char* className, uint32_t classKey, const char
 	return tableMap->Element(memberIndex);
 }
 
-void schema::NetworkStateChanged(int64 chainEntity, uint32 nLocalOffset, uint32 nArrayIndex) {
+void schema::NetworkStateChanged(int64 chainEntity, uint32 nLocalOffset, int nArrayIndex) {
 	CNetworkVarChainer* chainEnt = reinterpret_cast<CNetworkVarChainer*>(chainEntity);
 	CEntityInstance* entity = chainEnt->GetObj();
 	if (entity && !(entity->m_pEntity->m_flags & EF_IS_CONSTRUCTION_IN_PROGRESS)) {

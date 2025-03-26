@@ -35,7 +35,7 @@ namespace schema {
 	int16_t FindChainOffset(const char* className);
 	SchemaKey GetOffset(const char* className, const char* memberName);
 	SchemaKey GetOffset(const char* className, uint32_t classKey, const char* memberName, uint32_t memberKey);
-	void NetworkStateChanged(int64 chainEntity, uint32 nLocalOffset, uint32 nArrayIndex);
+	void NetworkStateChanged(int64 chainEntity, uint32 nLocalOffset, int nArrayIndex = -1);
 	size_t GetClassSize(const char* className);
 } // namespace schema
 
@@ -84,6 +84,25 @@ inline constexpr uint64_t hash_64_fnv1a_const(const char* const str, const uint6
 		} else { \
 			*reinterpret_cast<std::add_pointer_t<type>>((uintptr_t)(this) + varOffset) = const_cast<type&>(val); \
 		} \
+	}
+
+#define SCHEMA_STRING_SETTER(varName, len) \
+	{ \
+		static constexpr auto datatable_hash = hash_32_fnv1a_const(ThisClassName); \
+		static constexpr auto prop_hash = hash_32_fnv1a_const(#varName); \
+		static const auto m_key = schema::GetOffset(ThisClassName, datatable_hash, #varName, prop_hash); \
+		static const auto m_chain = schema::FindChainOffset(ThisClassName); \
+		if (m_key.networked) { \
+			if (m_chain != 0) { \
+				schema::NetworkStateChanged((uintptr_t)(this) + m_chain, m_key.offset); \
+			} else { \
+				if (!IsStruct) { \
+					((CEntityInstance*)this)->NetworkStateChanged(m_key.offset); \
+				} else { \
+				} \
+			} \
+		} \
+		strncpy(reinterpret_cast<char*>((uintptr_t)(this) + m_key.offset), val, len); \
 	}
 
 #define SCHEMA_FIELD_SETTER_IS_NOT_ENTITY(type, varName, varOffset) \
@@ -180,6 +199,11 @@ inline constexpr uint64_t hash_64_fnv1a_const(const char* const str, const uint6
 #define SCHEMA_FIELD_POINTER_ENTITY(type, varName) \
 	SCHEMA_FIELD_POINTER(type, varName) \
 	SCHEMA_FIELD_POINTER_ENTITY_SETTER(type, varName)
+
+// Use this when the type is char[].
+#define SCHEMA_FIELD_STRING(varName, length) \
+	SCHEMA_FIELD_POINTER_GETTER(char, varName, 0) \
+	void varName(const char* val) SCHEMA_STRING_SETTER(varName, length)
 
 #define SCHEMA_DATAMAP_FUNC(varName) \
 	SCHEMA_DATAMAP_FUNC_SETTER(varName) \

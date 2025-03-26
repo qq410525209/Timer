@@ -16,6 +16,10 @@ void SetMenuEntityTransmiter(CBaseEntity* pMenu, CBasePlayerController* pOwner) 
 	g_HidePlugin.SetExclude(pOwner, pMenu, true);
 }
 
+void SetScreenTextEntityTransmiter(CBaseEntity* pScreenEnt, CBasePlayerController* pOwner) {
+	g_HidePlugin.SetExclude(pOwner, pScreenEnt, true);
+}
+
 void CHidePlugin::ClearEntityTransmitInfo(CEdictBitVec* pTransmitEntity, CBaseEntity* pEntity) {
 	if (!pEntity) {
 		return;

@@ -41,6 +41,23 @@ enum class PlayerAnimEvent_t : uint32_t {
 	PLAYERANIMEVENT_COUNT = 0x17,
 };
 
+enum PointWorldTextJustifyHorizontal_t : uint32_t {
+	POINT_WORLD_TEXT_JUSTIFY_HORIZONTAL_LEFT = 0x0,
+	POINT_WORLD_TEXT_JUSTIFY_HORIZONTAL_CENTER = 0x1,
+	POINT_WORLD_TEXT_JUSTIFY_HORIZONTAL_RIGHT = 0x2,
+};
+
+enum PointWorldTextJustifyVertical_t : uint32_t {
+	POINT_WORLD_TEXT_JUSTIFY_VERTICAL_BOTTOM = 0x0,
+	POINT_WORLD_TEXT_JUSTIFY_VERTICAL_CENTER = 0x1,
+	POINT_WORLD_TEXT_JUSTIFY_VERTICAL_TOP = 0x2,
+};
+
+enum PointWorldTextReorientMode_t : uint32_t {
+	POINT_WORLD_TEXT_REORIENT_NONE = 0x0,
+	POINT_WORLD_TEXT_REORIENT_AROUND_UP = 0x1,
+};
+
 class CCollisionProperty;
 
 class CNetworkedQuantizedFloat {
@@ -259,6 +276,24 @@ class CPointWorldText : public CModelPointEntity {
 public:
 	DECLARE_SCHEMA_CLASS(CPointWorldText);
 
+	SCHEMA_FIELD_STRING(m_messageText, 512);
+	SCHEMA_FIELD_STRING(m_FontName, 64);
+	SCHEMA_FIELD_STRING(m_BackgroundMaterialName, 64);
+	SCHEMA_FIELD(bool, m_bEnabled);
+	SCHEMA_FIELD(bool, m_bFullbright);
+	SCHEMA_FIELD(float, m_flWorldUnitsPerPx);
+	SCHEMA_FIELD(float, m_flFontSize);
+	SCHEMA_FIELD(float, m_flDepthOffset);
+	SCHEMA_FIELD(bool, m_bDrawBackground);
+	SCHEMA_FIELD(float, m_flBackgroundBorderWidth);
+	SCHEMA_FIELD(float, m_flBackgroundBorderHeight);
+	SCHEMA_FIELD(float, m_flBackgroundWorldToUV);
+	SCHEMA_FIELD(Color, m_Color);
+	SCHEMA_FIELD(PointWorldTextJustifyHorizontal_t, m_nJustifyHorizontal);
+	SCHEMA_FIELD(PointWorldTextJustifyVertical_t, m_nJustifyVertical);
+	SCHEMA_FIELD(PointWorldTextReorientMode_t, m_nReorientMode);
+
+public:
 	void SetText(const char* msg) {
 		AcceptInput("SetMessage", msg);
 	}
