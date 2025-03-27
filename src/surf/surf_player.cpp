@@ -119,3 +119,16 @@ void CSurfPlayer::Init(int iSlot) {
 
 	m_bJustTeleported = false;
 }
+
+void CSurfPlayer::Reset() {
+	CMovementPlayer::Reset();
+
+	ResetService(m_pTimerService);
+	ResetService(m_pZoneService);
+	ResetService(m_pHudService);
+	ResetService(m_pReplayService);
+	ResetService(m_pMiscService);
+	ResetService(m_pGlobalAPIService);
+
+	m_bJustTeleported = false;
+}

@@ -20,9 +20,9 @@ public:
 	}
 
 public:
-	virtual void Reset() {}
+	virtual void OnInit() {}
 
-	virtual void OnServiceStartup() {}
+	virtual void OnReset() {}
 
 private:
 	CSurfPlayer* m_pPlayer;
@@ -32,7 +32,8 @@ class CSurfPlayer : public CMovementPlayer {
 public:
 	using CMovementPlayer::CMovementPlayer;
 
-	virtual void Init(int iSlot);
+	virtual void Init(int iSlot) override;
+	virtual void Reset() override;
 
 private:
 	struct ServiceDeleter {
@@ -47,8 +48,17 @@ private:
 
 		if (!service) {
 			service.reset(new T(this));
-			reinterpret_cast<CSurfBaseService*>(service.get())->OnServiceStartup();
-			reinterpret_cast<CSurfBaseService*>(service.get())->Reset();
+			reinterpret_cast<CSurfBaseService*>(service.get())->OnInit();
+			reinterpret_cast<CSurfBaseService*>(service.get())->OnReset();
+		}
+	}
+
+	template<typename T>
+	void ResetService(std::unique_ptr<T, ServiceDeleter>& service) {
+		static_assert(std::is_base_of<CSurfBaseService, T>::value, "T must be derived from CSurfBaseService");
+
+		if (service) {
+			reinterpret_cast<CSurfBaseService*>(service.get())->OnReset();
 		}
 	}
 

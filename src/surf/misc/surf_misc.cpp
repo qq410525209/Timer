@@ -113,4 +113,4 @@ void CSurfMiscService::HideLegs() {
 	}
 }
 
-void CSurfMiscService::Reset() {}
+void CSurfMiscService::OnReset() {}

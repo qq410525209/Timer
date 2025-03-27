@@ -25,7 +25,7 @@ public:
 class CSurfMiscService : CSurfBaseService {
 	using CSurfBaseService::CSurfBaseService;
 
-	virtual void Reset() override;
+	virtual void OnReset() override;
 
 public: // rampfix
 	bool didTPM {};

@@ -16,7 +16,10 @@ class CSurfHudService : CSurfBaseService {
 public:
 	using CSurfBaseService::CSurfBaseService;
 
+	virtual void OnReset() override;
+
 public:
+	int m_iPrevSpeed;
 	CScreenTextPtr m_pSpeedText;
 };
 

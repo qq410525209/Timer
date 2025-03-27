@@ -146,6 +146,6 @@ CBaseEntity* CSurfZonePlugin::CreateNormalZone(const Vector& vecMins, const Vect
 	return pZone;
 }
 
-void CSurfZoneService::Reset() {
+void CSurfZoneService::OnReset() {
 	m_ZoneEdit.Init(this);
 }

@@ -145,7 +145,7 @@ bool CSurfGlobalAPIPlugin::IsGlobalUpdaterEnabled() const {
 	return !m_UpdaterAuth.m_sToken.empty();
 }
 
-void CSurfGlobalAPIService::Reset() {
+void CSurfGlobalAPIService::OnReset() {
 	m_bGloballyVerified = false;
 }
 

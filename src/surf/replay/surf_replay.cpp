@@ -46,7 +46,7 @@ bool CSurfReplayPlugin::OnLeaveZone(const ZoneCache_t& zone, CSurfPlayer* pPlaye
 	return true;
 }
 
-void CSurfReplayService::Reset() {
+void CSurfReplayService::OnReset() {
 	m_bEnabled = false;
 	m_vReplayFrames.clear();
 }

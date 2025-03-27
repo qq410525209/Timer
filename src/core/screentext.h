@@ -30,7 +30,7 @@ public:
 	void UpdatePos();
 
 public:
-	static Vector GetRelativeOrigin(const Vector& eyePosition, float distanceToTarget = 7.0f);
+	static Vector GetRelativeOrigin(const Vector& eyePosition, float distanceToTarget = 6.7f);
 
 public:
 	Vector2D m_vecPos;

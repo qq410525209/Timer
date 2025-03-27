@@ -90,7 +90,7 @@ public:
 
 class CSurfGlobalAPIService : CSurfBaseService {
 private:
-	virtual void Reset() override;
+	virtual void OnReset() override;
 
 public:
 	using CSurfBaseService::CSurfBaseService;

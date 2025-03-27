@@ -28,7 +28,7 @@ struct std::hash<CZoneHandle> {
 
 class CSurfZoneService : public CSurfBaseService {
 private:
-	virtual void Reset() override;
+	virtual void OnReset() override;
 
 public:
 	using CSurfBaseService::CSurfBaseService;

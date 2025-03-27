@@ -25,7 +25,7 @@ void CSurfHudPlugin::OnPlayerSpawn(IGameEvent* pEvent, const char* szName, bool 
 	auto& pSpeedText = pSurfPlayer->m_pHudService->m_pSpeedText;
 	if (!pSpeedText) {
 		pSpeedText = VGUI::CreateScreenText();
-		pSpeedText->SetPos(-1.0f, -4.0f);
+		pSpeedText->SetPos(-0.5f, 3.0f);
 		pSpeedText->SetFontSize(40.0f);
 	}
 
@@ -63,18 +63,32 @@ void CSurfHudPlugin::OnPlayerRunCmdPost(CCSPlayerPawn* pPawn, const CInButtonSta
 		return;
 	}
 
-	CUtlString sTime = SURF::FormatTime(pSurfPlayer->m_pTimerService->m_fCurrentTime);
-	auto timerController = pSurfPlayer->GetController();
-	if (!timerController) {
+	auto pController = pSurfPlayer->GetController();
+	if (!pController) {
 		return;
 	}
 
-	UTIL::PrintHTMLCenter(timerController, "time: %s", sTime.Get());
+	auto& pTimerService = pSurfPlayer->m_pTimerService;
+	auto& pHudService = pSurfPlayer->m_pHudService;
 
-	Vector vel;
-	pSurfPlayer->GetVelocity(vel);
-	std::string sSpeed = fmt::format("vel: {}", std::roundf(vel.Length2D()));
+	CUtlString sTime = SURF::FormatTime(pTimerService->m_fCurrentTime);
+	UTIL::PrintHTMLCenter(pController, "时间: %s", sTime.Get());
 
-	auto& pSpeedText = pSurfPlayer->m_pHudService->m_pSpeedText;
+	Vector vVel;
+	pSurfPlayer->GetVelocity(vVel);
+	int iVel = std::round(vVel.Length2D());
+	std::string sSpeed = fmt::format("{}", iVel);
+
+	auto& pSpeedText = pHudService->m_pSpeedText;
+	Color iSpeedColor = iVel < pHudService->m_iPrevSpeed ? Color(255, 0, 0, 255) : Color(0, 0, 255, 255);
+	pSpeedText->SetColor(iSpeedColor);
 	pSpeedText->SetText(sSpeed);
+
+	pHudService->m_iPrevSpeed = iVel;
+}
+
+void CSurfHudService::OnReset() {
+	if (m_pSpeedText) {
+		m_pSpeedText.reset();
+	}
 }
