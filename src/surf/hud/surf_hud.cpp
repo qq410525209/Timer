@@ -22,15 +22,18 @@ void CSurfHudPlugin::OnPlayerSpawn(IGameEvent* pEvent, const char* szName, bool 
 		return;
 	}
 
-	auto& pSpeedText = pSurfPlayer->m_pHudService->m_pSpeedText;
-	if (!pSpeedText) {
-		pSpeedText = VGUI::CreateScreenText();
+	auto& wpSpeedText = pSurfPlayer->m_pHudService->m_wpSpeedText;
+	if (wpSpeedText.expired()) {
+		wpSpeedText = VGUI::CreateScreenText(pController);
+	}
+
+	if (auto pSpeedText = wpSpeedText.lock()) {
 		pSpeedText->SetPos(-0.5f, 3.0f);
 		pSpeedText->SetFontSize(40.0f);
 	}
 
 	CHandle<CCSPlayerController> hController = pController->GetRefEHandle();
-	UTIL::RequestFrame([hController, pSpeedText]() {
+	UTIL::RequestFrame([hController, wpSpeedText]() {
 		CCSPlayerController* pController = hController.Get();
 		if (!pController) {
 			return;
@@ -45,7 +48,7 @@ void CSurfHudPlugin::OnPlayerSpawn(IGameEvent* pEvent, const char* szName, bool 
 			return;
 		}
 
-		VGUI::Render(pController, pSpeedText);
+		VGUI::Render(pController, wpSpeedText);
 	});
 }
 
@@ -79,16 +82,13 @@ void CSurfHudPlugin::OnPlayerRunCmdPost(CCSPlayerPawn* pPawn, const CInButtonSta
 	int iVel = std::round(vVel.Length2D());
 	std::string sSpeed = fmt::format("{}", iVel);
 
-	auto& pSpeedText = pHudService->m_pSpeedText;
-	Color iSpeedColor = iVel < pHudService->m_iPrevSpeed ? Color(255, 0, 0, 255) : Color(0, 0, 255, 255);
-	pSpeedText->SetColor(iSpeedColor);
-	pSpeedText->SetText(sSpeed);
+	if (auto pSpeedText = pHudService->m_wpSpeedText.lock()) {
+		Color iSpeedColor = iVel < pHudService->m_iPrevSpeed ? Color(255, 0, 0, 255) : Color(0, 0, 255, 255);
+		pSpeedText->SetColor(iSpeedColor);
+		pSpeedText->SetText(sSpeed);
+	}
 
 	pHudService->m_iPrevSpeed = iVel;
 }
 
-void CSurfHudService::OnReset() {
-	if (m_pSpeedText) {
-		m_pSpeedText.reset();
-	}
-}
+void CSurfHudService::OnReset() {}

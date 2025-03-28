@@ -5,17 +5,17 @@ CScreenTextControllerManager g_ScreenTextControllerManager;
 
 extern void SetScreenTextEntityTransmiter(CBaseEntity* pScreenEnt, CBasePlayerController* pOwner);
 
-CScreenText::CScreenText(float x, float y, Color color, const std::string_view& font, float fontsize) : m_vecPos(x, y) {
+CScreenText::CScreenText(const ScreenTextManifest_t& manifest) : m_vecPos(manifest.m_vecPos) {
 	CPointWorldText* pText = (CPointWorldText*)MEM::CALL::CreateEntityByName("point_worldtext");
 	if (!pText) {
 		SDK_ASSERT(false);
 		return;
 	}
 
-	pText->m_Color(color);
-	pText->m_FontName(font.data());
-	pText->m_flFontSize(fontsize);
-	pText->m_flWorldUnitsPerPx((0.25 / 300) * fontsize);
+	pText->m_Color(manifest.m_Color);
+	pText->m_FontName(manifest.m_sFont.c_str());
+	pText->m_flFontSize(manifest.m_fFontSize);
+	pText->m_flWorldUnitsPerPx((0.25 / 300) * manifest.m_fFontSize);
 	pText->m_flDepthOffset(0.125f);
 	pText->m_fadeMinDist(-1.0f);
 	pText->m_fadeMinDist(0.0f);
@@ -134,10 +134,31 @@ CScreenTextControllerManager* VGUI::GetScreenTextManager() {
 	return &g_ScreenTextControllerManager;
 }
 
-void VGUI::Render(CBasePlayerController* pController, const std::shared_ptr<CScreenText>& pText) {
+std::weak_ptr<CScreenText> VGUI::CreateScreenText(CBasePlayerController* pController, std::optional<ScreenTextManifest_t> manifest) {
 	CScreenTextController* pTextController = GetScreenTextManager()->ToPlayer(pController);
 	if (!pTextController) {
 		SDK_ASSERT(false);
+		return {};
+	}
+
+	if (!manifest) {
+		manifest = ScreenTextManifest_t {};
+	}
+
+	auto pText = std::make_shared<CScreenText>(manifest.value());
+	pTextController->m_vScreenTexts.emplace_back(pText);
+	return pText;
+}
+
+void VGUI::Render(CBasePlayerController* pController, const std::weak_ptr<CScreenText>& hText) {
+	CScreenTextController* pTextController = GetScreenTextManager()->ToPlayer(pController);
+	if (!pTextController) {
+		SDK_ASSERT(false);
+		return;
+	}
+
+	auto pText = hText.lock();
+	if (!pText) {
 		return;
 	}
 
@@ -145,14 +166,18 @@ void VGUI::Render(CBasePlayerController* pController, const std::shared_ptr<CScr
 		return;
 	}
 
-	pTextController->m_vScreenTexts.emplace_back(pText);
 	pText->Display(pController);
 }
 
-void VGUI::Unrender(CBasePlayerController* pController, const std::shared_ptr<CScreenText>& pText) {
+void VGUI::Unrender(CBasePlayerController* pController, const std::weak_ptr<CScreenText>& hText) {
 	CScreenTextController* pTextController = GetScreenTextManager()->ToPlayer(pController);
 	if (!pTextController) {
 		SDK_ASSERT(false);
+		return;
+	}
+
+	auto pText = hText.lock();
+	if (!pText) {
 		return;
 	}
 

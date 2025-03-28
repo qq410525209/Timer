@@ -20,7 +20,7 @@ public:
 
 public:
 	int m_iPrevSpeed;
-	CScreenTextPtr m_pSpeedText;
+	std::weak_ptr<CScreenText> m_wpSpeedText;
 };
 
 namespace SURF {

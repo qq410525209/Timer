@@ -3,9 +3,16 @@
 #include <pch.h>
 #include <core/playermanager.h>
 
+struct ScreenTextManifest_t {
+	Vector2D m_vecPos = {0.0f, 0.0f};
+	Color m_Color = {0, 222, 101, 255};
+	std::string m_sFont = "Arial";
+	float m_fFontSize = 20.0f;
+};
+
 class CScreenText {
 public:
-	CScreenText(float x, float y, Color color, const std::string_view& font, float fontsize);
+	CScreenText(const ScreenTextManifest_t& manifest);
 	~CScreenText();
 
 	void SetText(const std::string_view& text);
@@ -39,8 +46,6 @@ private:
 	CHandle<CPointWorldText> m_hScreenEnt;
 	CHandle<CBasePlayerPawn> m_hOwner;
 };
-
-using CScreenTextPtr = std::shared_ptr<CScreenText>;
 
 class CScreenTextController : public CPlayer {
 public:
@@ -76,11 +81,8 @@ public:
 namespace VGUI {
 	CScreenTextControllerManager* GetScreenTextManager();
 
-	[[nodiscard]] inline std::shared_ptr<CScreenText> CreateScreenText(float x = 0.0f, float y = 0.0f, Color color = Color(0, 222, 101, 255), std::string_view font = "Arial", float fontsize = 20.0f) {
-		return std::make_shared<CScreenText>(x, y, color, font, fontsize);
-	}
-
-	void Render(CBasePlayerController* pController, const std::shared_ptr<CScreenText>& pText);
-	void Unrender(CBasePlayerController* pController, const std::shared_ptr<CScreenText>& pText);
+	[[nodiscard]] std::weak_ptr<CScreenText> CreateScreenText(CBasePlayerController* pController, std::optional<ScreenTextManifest_t> manifest = std::nullopt);
+	void Render(CBasePlayerController* pController, const std::weak_ptr<CScreenText>& hText);
+	void Unrender(CBasePlayerController* pController, const std::weak_ptr<CScreenText>& hText);
 	void Cleanup(CBasePlayerController* pController);
 } // namespace VGUI
