@@ -4,7 +4,7 @@
 #include <core/playermanager.h>
 
 enum class EMenuType {
-	POINT_WORLDTEXT = 0
+	ScreenText = 0
 };
 
 class CBaseMenu;
@@ -162,5 +162,5 @@ inline void CMenuHandle::Free() {
 namespace MENU {
 	extern CMenuManager* GetManager();
 
-	[[nodiscard]] CBaseMenu* Create(MenuHandler pMenuHandler, EMenuType eMenuType = EMenuType::POINT_WORLDTEXT);
+	[[nodiscard]] CBaseMenu* Create(MenuHandler pMenuHandler, EMenuType eMenuType = EMenuType::ScreenText);
 } // namespace MENU

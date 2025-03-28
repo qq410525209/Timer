@@ -3,7 +3,7 @@
 #include <pch.h>
 #include <surf/surf_player.h>
 
-class CSurfMiscPlugin : CCoreForward, CMovementForward {
+class CSurfMiscPlugin : CMovementForward, CCoreForward {
 private:
 	virtual void OnPluginStart() override;
 	virtual void OnActivateServer(CNetworkGameServerBase* pGameServer) override;
@@ -46,4 +46,6 @@ public:
 
 namespace SURF {
 	extern CSurfMiscPlugin* MiscPlugin();
+
+	void Print(CBasePlayerController* pControler, const char* fmt, ...);
 } // namespace SURF

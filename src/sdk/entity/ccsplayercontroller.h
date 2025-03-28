@@ -1,4 +1,5 @@
 #pragma once
+#pragma once
 
 #include "cbaseplayercontroller.h"
 #include "random.h"
@@ -42,33 +43,13 @@ public:
 		return m_hObserverPawn().Get();
 	}
 
-	void ChangeTeam(int iTeam) {
-		CALL_VIRTUAL(void, GAMEDATA::GetOffset("ControllerChangeTeam"), this, iTeam);
-	}
+	void ChangeTeam(int iTeam);
 
-	void SwitchTeam(int iTeam) {
-		if (!IsController()) {
-			return;
-		}
-
-		if (iTeam <= CS_TEAM_SPECTATOR) {
-			ChangeTeam(iTeam);
-		} else {
-			MEM::CALL::SwitchTeam(this, iTeam);
-		}
-	}
+	void SwitchTeam(int iTeam);
 
 	// Respawns the player if the player is not alive, does nothing otherwise.
-	void Respawn() {
-		CCSPlayerPawn* pawn = GetPlayerPawn();
-		if (!pawn || pawn->IsAlive()) {
-			return;
-		}
+	void Respawn();
 
-		SetPawn(pawn);
-		if (this->m_iTeamNum() != CS_TEAM_CT && this->m_iTeamNum() != CS_TEAM_T) {
-			SwitchTeam(RandomInt(CS_TEAM_T, CS_TEAM_CT));
-		}
-		CALL_VIRTUAL(void, GAMEDATA::GetOffset("ControllerRespawn"), this);
-	}
+	// Returns the player self if the player is not an observer
+	CBaseEntity* GetObserverTarget();
 };

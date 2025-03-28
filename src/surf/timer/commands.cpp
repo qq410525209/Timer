@@ -18,7 +18,7 @@ CCMD_CALLBACK(Command_EndTimer) {
 	}
 
 	auto& pTimerService = player->m_pTimerService;
-	pTimerService->DoTimerEnd();
+	pTimerService->DoTimerStop();
 }
 
 void CSurfTimerPlugin::RegisterCommand() {

@@ -3,7 +3,7 @@
 #include <surf/surf_player.h>
 #include <core/screentext.h>
 
-class CSurfHudPlugin : CCoreForward, CMovementForward {
+class CSurfHudPlugin : CMovementForward, CCoreForward {
 private:
 	virtual void OnPluginStart() override;
 	virtual void OnPlayerRunCmdPost(CCSPlayerPawn* pPawn, const CInButtonState& buttons, const float (&vec)[3], const QAngle& viewAngles, const int& weapon, const int& cmdnum, const int& tickcount, const int& seed, const int (&mouse)[2]) override;
@@ -25,8 +25,8 @@ public:
 	virtual void OnReset() override;
 
 public:
-	int m_iCurrentSpeed;
-	int m_iPrevousSpeed;
+	i32 m_iCurrentSpeed;
+	i32 m_iPrevousSpeed;
 	std::weak_ptr<CScreenText> m_wpSpeedText;
 };
 

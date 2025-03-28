@@ -46,7 +46,7 @@ void CSurfGlobalAPIPlugin::OnApplyGameSettings(ISource2Server* pServer, KeyValue
 
 			JSON_GETTER(r.m_Data, token, SURF::GlobalPlugin()->m_GlobalAuth.m_sToken);
 
-			FORWARD_POST(CSurfGlobalForward, OnGlobalInit);
+			FORWARD_POST(CSurfGlobalAPIForward, OnGlobalInit);
 		});
 
 	SURF::GLOBALAPI::AUTH::GetUpdaterToken(
@@ -55,7 +55,7 @@ void CSurfGlobalAPIPlugin::OnApplyGameSettings(ISource2Server* pServer, KeyValue
 
 			JSON_GETTER(r.m_Data, token, SURF::GlobalPlugin()->m_UpdaterAuth.m_sToken);
 
-			FORWARD_POST(CSurfGlobalForward, OnGlobalZoneHelperInit);
+			FORWARD_POST(CSurfGlobalAPIForward, OnGlobalZoneHelperInit);
 		});
 
 	if (m_iMapWorkshopID != 0) {
@@ -69,7 +69,7 @@ void CSurfGlobalAPIPlugin::OnApplyGameSettings(ISource2Server* pServer, KeyValue
 				JSON_GETTER(r.m_Data, maxvel, SURF::GLOBALAPI::MAP::g_MapInfo.m_fMaxvel);
 				JSON_GETTER(r.m_Data, limitpre, SURF::GLOBALAPI::MAP::g_MapInfo.m_bLimitPrespeed);
 
-				FORWARD_POST(CSurfGlobalForward, OnGlobalMapValidated);
+				FORWARD_POST(CSurfGlobalAPIForward, OnGlobalMapValidated);
 			});
 	}
 }

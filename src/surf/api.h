@@ -10,9 +10,25 @@ public:
 		return true;
 	}
 
-	virtual bool OnTimerEnd(CSurfPlayer* pPlayer) {
+	virtual bool OnTimerPause(CSurfPlayer* pPlayer) {
 		return true;
 	}
+
+	virtual bool OnTimerResume(CSurfPlayer* pPlayer) {
+		return true;
+	}
+
+	virtual bool OnTimerStop(CSurfPlayer* pPlayer) {
+		return true;
+	}
+
+	virtual void OnTimerStopPost(CSurfPlayer* pPlayer) {}
+
+	virtual bool OnTimerFinish(CSurfPlayer* pPlayer) {
+		return true;
+	}
+
+	virtual void OnTimerFinishPost(CSurfPlayer* pPlayer) {}
 
 	virtual bool OnEnterZone(const ZoneCache_t& zone, CSurfPlayer* pPlayer) {
 		return true;
@@ -27,7 +43,7 @@ public:
 	}
 };
 
-class CSurfGlobalForward : public CBaseForward<CSurfGlobalForward> {
+class CSurfGlobalAPIForward : public CBaseForward<CSurfGlobalAPIForward> {
 public:
 	virtual void OnGlobalInit() {}
 

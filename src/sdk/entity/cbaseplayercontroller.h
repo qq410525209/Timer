@@ -52,6 +52,8 @@ public:
 		return m_steamID() == 0;
 	}
 
+	bool IsObserver();
+
 	void SetPawn(CCSPlayerPawn* pawn);
 	void SendFullUpdate();
 };

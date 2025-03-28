@@ -12,6 +12,17 @@ CSurfMiscPlugin* SURF::MiscPlugin() {
 	return &g_SurfMisc;
 }
 
+void SURF::Print(CBasePlayerController* pControler, const char* fmt, ...) {
+	if (pControler) {
+		CUtlString buffer;
+		va_list args;
+		va_start(args, fmt);
+		buffer.FormatV(fmt, args);
+
+		UTIL::CPrintChat(pControler, "[Surf] %s\n", buffer);
+	}
+}
+
 void CSurfMiscPlugin::OnPluginStart() {
 	TweakCvars();
 	HookEvents();

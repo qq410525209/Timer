@@ -1,6 +1,7 @@
 #include <utils/utils.h>
 #include <core/sdkhook.h>
 
+#include <surf/checkpoint/surf_checkpoint.h>
 #include <surf/global/surf_global.h>
 #include <surf/hud/surf_hud.h>
 #include <surf/misc/surf_misc.h>
@@ -116,6 +117,7 @@ void CSurfPlayer::Init(int iSlot) {
 	InitService(m_pReplayService);
 	InitService(m_pMiscService);
 	InitService(m_pGlobalAPIService);
+	InitService(m_pCheckpointService);
 
 	m_bJustTeleported = false;
 }
@@ -129,6 +131,7 @@ void CSurfPlayer::Reset() {
 	ResetService(m_pReplayService);
 	ResetService(m_pMiscService);
 	ResetService(m_pGlobalAPIService);
+	ResetService(m_pCheckpointService);
 
 	m_bJustTeleported = false;
 }

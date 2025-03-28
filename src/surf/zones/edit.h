@@ -2,13 +2,13 @@
 
 class CSurfZoneService;
 
-enum ZoneTrack {
+enum ZoneTrack : u8 {
 	Track_Main,
 	Track_Bonus,
 	TRACKS_SIZE
 };
 
-enum ZoneType {
+enum ZoneType : u8 {
 	Zone_Start,
 	Zone_End,
 	Zone_Stage,
@@ -19,7 +19,7 @@ enum ZoneType {
 	ZONETYPES_SIZE
 };
 
-enum ZoneEditStep {
+enum ZoneEditStep : u8 {
 	EditStep_None,   // 0 - nothing
 	EditStep_First,  // 1 - wait for E tap to setup first coord
 	EditStep_Second, // 2 - wait for E tap to setup second coord
@@ -60,14 +60,14 @@ struct ZoneData_t {
 
 	ZoneTrack m_iTrack;
 	ZoneType m_iType;
-	int m_iValue;
+	i32 m_iValue;
 	Vector m_vecMins;
 	Vector m_vecMaxs;
 	Vector m_vecDestination;
-	int m_iFlag;
-	int m_iHookHammerid;
+	i32 m_iFlag;
+	i32 m_iHookHammerid;
 	std::string m_sHookName;
-	float m_fLimitSpeed;
+	f32 m_fLimitSpeed;
 };
 
 struct CZoneEditProperty : ZoneData_t {

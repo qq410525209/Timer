@@ -10,6 +10,7 @@ class CSurfHudService;
 class CSurfReplayService;
 class CSurfMiscService;
 class CSurfGlobalAPIService;
+class CSurfCheckpointService;
 
 class CSurfBaseService {
 public:
@@ -69,6 +70,7 @@ public:
 	std::unique_ptr<CSurfReplayService, ServiceDeleter> m_pReplayService;
 	std::unique_ptr<CSurfMiscService, ServiceDeleter> m_pMiscService;
 	std::unique_ptr<CSurfGlobalAPIService, ServiceDeleter> m_pGlobalAPIService;
+	std::unique_ptr<CSurfCheckpointService, ServiceDeleter> m_pCheckpointService;
 
 public:
 	bool m_bJustTeleported;

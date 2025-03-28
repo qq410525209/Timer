@@ -265,7 +265,7 @@ CBaseMenu* MENU::Create(MenuHandler pMenuHandler, EMenuType eMenuType) {
 	CBaseMenu* pMenu = nullptr;
 
 	switch (eMenuType) {
-		case EMenuType::POINT_WORLDTEXT: {
+		case EMenuType::ScreenText: {
 			pMenu = new CWorldTextMenu(pMenuHandler);
 			break;
 		}

@@ -1,4 +1,4 @@
 #include "api.h"
 
 FORWARD_INIT(CSurfForward);
-FORWARD_INIT(CSurfGlobalForward);
+FORWARD_INIT(CSurfGlobalAPIForward);

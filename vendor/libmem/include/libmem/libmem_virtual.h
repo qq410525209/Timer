@@ -4,7 +4,7 @@
 
 #define GET_VIRTUAL(pInstance, idx)        vmt::GetVMethod(idx, pInstance)
 #define SET_VIRTUAL(pInstance, idx, pFunc) vmt::SetVMethod(idx, pInstance, pFunc)
-#define CALL_VIRTUAL(retType, idx, ...)    vmt::CallVirtual<retType>(idx, __VA_ARGS__)
+#define CALL_VIRTUAL(retType, idx, ...)    vmt::CallVirtualEx<retType>(idx, __VA_ARGS__)
 
 #ifdef _WIN32
 #define WIN_LINUX(win, linux) win

@@ -15,9 +15,7 @@ struct ZoneCache_t : ZoneData_t {
 	std::array<CHandle<CBeam>, 12> m_aBeams;
 };
 
-class CZoneHandle : public CHandle<CBaseTrigger> {
-	using CHandle::CHandle;
-};
+using CZoneHandle = CHandle<CBaseTrigger>;
 
 template<>
 struct std::hash<CZoneHandle> {

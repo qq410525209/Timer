@@ -14,6 +14,20 @@ class CServerSideClient;
 	template<> \
 	forwardClass* CBaseForward<forwardClass>::m_pFirst = nullptr;
 
+#define FORWARD_PRE_void(forwardClass, forwardFn, ...) \
+	for (auto p = forwardClass::m_pFirst; p; p = p->m_pNext) { \
+		if (!p->forwardFn(__VA_ARGS__)) { \
+			return; \
+		} \
+	}
+
+#define FORWARD_PRE(forwardClass, forwardFn, ret, ...) \
+	for (auto p = forwardClass::m_pFirst; p; p = p->m_pNext) { \
+		if (!p->forwardFn(__VA_ARGS__)) { \
+			return ret; \
+		} \
+	}
+
 #define FORWARD_POST(forwardClass, forwardFn, ...) \
 	for (auto p = forwardClass::m_pFirst; p; p = p->m_pNext) { \
 		p->forwardFn(__VA_ARGS__); \

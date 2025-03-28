@@ -26,7 +26,7 @@ void CSurfTimerPlugin::OnPhysicsSimulatePost(CCSPlayerController* pController) {
 
 bool CSurfTimerPlugin::OnEnterZone(const ZoneCache_t& zone, CSurfPlayer* player) {
 	if (zone.m_iType == ZoneType::Zone_End) {
-		player->m_pTimerService->DoTimerEnd();
+		player->m_pTimerService->DoTimerStop();
 	}
 
 	return true;
@@ -41,9 +41,12 @@ bool CSurfTimerPlugin::OnStayZone(const ZoneCache_t& zone, CSurfPlayer* player) 
 }
 
 void CSurfTimerService::DoTimerStart(bool playSound) {
-	for (auto p = CSurfForward::m_pFirst; p; p = p->m_pNext) {
-		p->OnTimerStart(this->GetPlayer());
-	};
+	CSurfPlayer* pSurfPlayer = this->GetPlayer();
+	if (!pSurfPlayer->IsAlive()) {
+		return;
+	}
+
+	FORWARD_PRE_void(CSurfForward, OnTimerStart, pSurfPlayer);
 
 	this->m_fCurrentTime = 0.0f;
 	this->m_bTimerRunning = true;
@@ -54,9 +57,22 @@ void CSurfTimerService::DoTimerStart(bool playSound) {
 	}
 }
 
-void CSurfTimerService::DoTimerEnd() {
-	auto player = this->GetPlayer();
-	if (!player->IsAlive()) {
+void CSurfTimerService::DoTimerStop() {
+	CSurfPlayer* pSurfPlayer = this->GetPlayer();
+	if (!pSurfPlayer->IsAlive()) {
+		return;
+	}
+
+	FORWARD_PRE_void(CSurfForward, OnTimerStop, pSurfPlayer);
+
+	this->m_fCurrentTime = 0.0f;
+
+	FORWARD_POST(CSurfForward, OnTimerStopPost, pSurfPlayer);
+}
+
+void CSurfTimerService::DoTimerFinish() {
+	CSurfPlayer* pSurfPlayer = this->GetPlayer();
+	if (!pSurfPlayer->IsAlive()) {
 		return;
 	}
 
@@ -66,18 +82,45 @@ void CSurfTimerService::DoTimerEnd() {
 		return;
 	}
 
-	f64 time = this->m_fCurrentTime + UTIL::GetServerGlobals()->frametime;
+	this->m_fCurrentTime += ENGINE_FIXED_TICK_INTERVAL;
 
-	for (auto p = CSurfForward::m_pFirst; p; p = p->m_pNext) {
-		p->OnTimerEnd(this->GetPlayer());
-	};
-
-	// Update current time for one last time.
-	this->m_fCurrentTime = time;
+	FORWARD_PRE_void(CSurfForward, OnTimerFinish, pSurfPlayer);
 
 	this->m_bTimerRunning = false;
 	this->m_fLastEndTime = UTIL::GetServerGlobals()->curtime;
 	// this->PlayTimerEndSound();
+
+	FORWARD_POST(CSurfForward, OnTimerFinishPost, pSurfPlayer);
+}
+
+void CSurfTimerService::DoTimerPause() {
+	CSurfPlayer* pSurfPlayer = this->GetPlayer();
+	if (!pSurfPlayer->IsAlive()) {
+		return;
+	}
+
+	FORWARD_PRE_void(CSurfForward, OnTimerPause, pSurfPlayer);
+
+	m_bPaused = true;
+}
+
+void CSurfTimerService::DoTimerResume() {
+	CSurfPlayer* pSurfPlayer = this->GetPlayer();
+	if (!pSurfPlayer->IsAlive()) {
+		return;
+	}
+
+	FORWARD_PRE_void(CSurfForward, OnTimerResume, pSurfPlayer);
+
+	m_bPaused = false;
+}
+
+void CSurfTimerService::BuildSnapshot(timer_snapshot_t& buffer) const {
+	buffer = static_cast<const timer_snapshot_t&>(*this);
+}
+
+void CSurfTimerService::FromSnapshot(const timer_snapshot_t& snapshot) {
+	static_cast<timer_snapshot_t&>(*this) = snapshot;
 }
 
 void SURF::FormatTime(f64 time, char* output, u32 length, bool precise) {

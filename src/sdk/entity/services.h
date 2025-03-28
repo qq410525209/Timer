@@ -3,6 +3,16 @@
 #include <sdk/schema.h>
 #include <sdk/usercmd.h>
 
+enum ObserverMode_t {
+	OBS_MODE_NONE = 0x0,    // not in spectator mode
+	OBS_MODE_FIXED = 0x1,   // view from a fixed camera position
+	OBS_MODE_IN_EYE = 0x2,  // follow a player in first person view
+	OBS_MODE_CHASE = 0x3,   // follow a player in third person view
+	OBS_MODE_ROAMING = 0x4, // free roaming
+	OBS_MODE_DIRECTED = 0x5,
+	NUM_OBSERVER_MODES = 0x6,
+};
+
 class CTakeDamageInfo {
 public:
 	DECLARE_SCHEMA_STRUCT(CTakeDamageInfo);
@@ -25,6 +35,11 @@ public:
 class CPlayer_ObserverServices : public CPlayerPawnComponent {
 public:
 	DECLARE_SCHEMA_CLASS(CPlayer_ObserverServices);
+
+	SCHEMA_FIELD(uint8_t, m_iObserverMode);
+	SCHEMA_FIELD_POINTER(CHandle<CBaseEntity>, m_hObserverTarget);
+	SCHEMA_FIELD(ObserverMode_t, m_iObserverLastMode);
+	SCHEMA_FIELD(bool, m_bForcedObserverMode);
 };
 
 class CPlayer_MovementServices : public CPlayerPawnComponent {
