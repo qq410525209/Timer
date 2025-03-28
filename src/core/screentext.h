@@ -6,7 +6,7 @@
 struct ScreenTextManifest_t {
 	Vector2D m_vecPos = {0.0f, 0.0f};
 	Color m_Color = {0, 222, 101, 255};
-	std::string m_sFont = "Arial";
+	std::string m_sFont = "Trebuchet MS";
 	float m_fFontSize = 20.0f;
 };
 

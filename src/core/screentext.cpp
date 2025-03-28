@@ -16,8 +16,8 @@ CScreenText::CScreenText(const ScreenTextManifest_t& manifest) : m_vecPos(manife
 	pText->m_FontName(manifest.m_sFont.c_str());
 	pText->m_flFontSize(manifest.m_fFontSize);
 	pText->m_flWorldUnitsPerPx((0.25 / 300) * manifest.m_fFontSize);
-	pText->m_flDepthOffset(0.125f);
-	pText->m_fadeMinDist(-1.0f);
+	pText->m_flDepthOffset(0.0f);
+	pText->m_fadeMinDist(0.0f);
 	pText->m_fadeMinDist(0.0f);
 	pText->m_nJustifyHorizontal(PointWorldTextJustifyHorizontal_t::POINT_WORLD_TEXT_JUSTIFY_HORIZONTAL_LEFT);
 	pText->m_nJustifyVertical(PointWorldTextJustifyVertical_t::POINT_WORLD_TEXT_JUSTIFY_VERTICAL_CENTER);

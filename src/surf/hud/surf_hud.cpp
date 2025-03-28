@@ -28,7 +28,7 @@ void CSurfHudPlugin::OnPlayerSpawn(IGameEvent* pEvent, const char* szName, bool 
 	}
 
 	if (auto pSpeedText = wpSpeedText.lock()) {
-		pSpeedText->SetPos(-0.5f, 3.0f);
+		pSpeedText->SetPos(-0.6f, 3.0f);
 		pSpeedText->SetFontSize(40.0f);
 	}
 
@@ -80,7 +80,8 @@ void CSurfHudPlugin::OnPlayerRunCmdPost(CCSPlayerPawn* pPawn, const CInButtonSta
 	Vector vVel;
 	pSurfPlayer->GetVelocity(vVel);
 	int iVel = std::round(vVel.Length2D());
-	std::string sSpeed = fmt::format("{}", iVel);
+	auto sAlign = iVel < 100 ? "  " : iVel < 1000 ? " " : "";
+	std::string sSpeed = fmt::format("{}{}", sAlign, iVel);
 
 	if (auto pSpeedText = pHudService->m_wpSpeedText.lock()) {
 		Color iSpeedColor = iVel < pHudService->m_iPrevSpeed ? Color(255, 0, 0, 255) : Color(0, 0, 255, 255);
