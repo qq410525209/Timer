@@ -66,30 +66,57 @@ void CSurfHudPlugin::OnPlayerRunCmdPost(CCSPlayerPawn* pPawn, const CInButtonSta
 		return;
 	}
 
+	UpdateHudData(pSurfPlayer);
+	UpdateHTML(pSurfPlayer);
+	UpdateScreenText(pSurfPlayer);
+	UpdateHudDataPost(pSurfPlayer);
+}
+
+void CSurfHudPlugin::UpdateHudData(CSurfPlayer* pSurfPlayer) {
+	auto& pHudService = pSurfPlayer->m_pHudService;
+
+	Vector vVel;
+	pSurfPlayer->GetVelocity(vVel);
+	pHudService->m_iCurrentSpeed = std::round(vVel.Length2D());
+}
+
+void CSurfHudPlugin::UpdateHudDataPost(CSurfPlayer* pSurfPlayer) {
+	auto& pHudService = pSurfPlayer->m_pHudService;
+
+	pHudService->m_iPrevousSpeed = pHudService->m_iCurrentSpeed;
+}
+
+void CSurfHudPlugin::UpdateHTML(CSurfPlayer* pSurfPlayer) {
 	auto pController = pSurfPlayer->GetController();
 	if (!pController) {
 		return;
 	}
 
 	auto& pTimerService = pSurfPlayer->m_pTimerService;
-	auto& pHudService = pSurfPlayer->m_pHudService;
 
 	CUtlString sTime = SURF::FormatTime(pTimerService->m_fCurrentTime);
-	UTIL::PrintHTMLCenter(pController, "时间: %s", sTime.Get());
 
-	Vector vVel;
-	pSurfPlayer->GetVelocity(vVel);
-	int iVel = std::round(vVel.Length2D());
-	auto sAlign = iVel < 100 ? "  " : iVel < 1000 ? " " : "";
-	std::string sSpeed = fmt::format("{}{}", sAlign, iVel);
+	// clang-format off
+	UTIL::PrintHTMLCenter(pController, " %s时间: %s%s", 
+		"<span class='fontSize-l'>", 
+		sTime.Get(),
+		"</span>");
+	// clang-format on
+}
+
+void CSurfHudPlugin::UpdateScreenText(CSurfPlayer* pSurfPlayer) {
+	auto& pHudService = pSurfPlayer->m_pHudService;
 
 	if (auto pSpeedText = pHudService->m_wpSpeedText.lock()) {
-		Color iSpeedColor = iVel < pHudService->m_iPrevSpeed ? Color(255, 0, 0, 255) : Color(0, 0, 255, 255);
+		int iVel = pHudService->m_iCurrentSpeed;
+
+		Color iSpeedColor = iVel < pHudService->m_iPrevousSpeed ? Color(255, 0, 0, 255) : Color(0, 0, 255, 255);
 		pSpeedText->SetColor(iSpeedColor);
+
+		auto sAlign = iVel < 100 ? "  " : iVel < 1000 ? " " : "";
+		std::string sSpeed = fmt::format("{}{}", sAlign, iVel);
 		pSpeedText->SetText(sSpeed);
 	}
-
-	pHudService->m_iPrevSpeed = iVel;
 }
 
 void CSurfHudService::OnReset() {}
