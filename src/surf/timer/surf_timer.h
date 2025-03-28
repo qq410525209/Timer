@@ -3,6 +3,11 @@
 #include <surf/api.h>
 
 struct timer_snapshot_t {
+	timer_snapshot_t() = default;
+	timer_snapshot_t(const timer_snapshot_t&) = default;
+
+	timer_snapshot_t& operator=(const timer_snapshot_t& other) = default;
+
 	f64 m_fCurrentTime {};
 	bool m_bTimerRunning {};
 	bool m_bPracticeMode {};

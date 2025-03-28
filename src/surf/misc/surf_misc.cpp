@@ -19,7 +19,7 @@ void SURF::Print(CBasePlayerController* pControler, const char* fmt, ...) {
 		va_start(args, fmt);
 		buffer.FormatV(fmt, args);
 
-		UTIL::CPrintChat(pControler, "[Surf] %s\n", buffer);
+		UTIL::CPrintChat(pControler, "[Surf] %s\n", buffer.Get());
 	}
 }
 
