@@ -6,111 +6,44 @@
 
 #include <fmt/format.h>
 
-extern void SetMenuEntityTransmiter(CBaseEntity* pMenu, CBasePlayerController* pOwner);
-
 constexpr float g_fMenuOffsetX = -9.1f;
-constexpr float g_fMenuOffsetY = -4.6f;
+constexpr float g_fMenuOffsetY = 6.45f;
 
-Vector CWorldTextMenu::GetRelativeOrigin(const Vector& eyePosition, float distanceToTarget) {
-	return Vector(eyePosition.x + distanceToTarget, eyePosition.y, eyePosition.z);
+CScreenTextMenu::CScreenTextMenu(CBasePlayerController* pController, MenuHandler fnHandler, std::string sTitle) : CBaseMenu(fnHandler, sTitle) {
+	ScreenTextManifest_t manifest;
+	manifest.m_iUnits = 1000;
+	manifest.m_sFont = "Consolas";
+	manifest.m_Color = Color(255, 100, 255, 255);
+	manifest.m_fFontSize = 40;
+	manifest.m_bEnable = false;
+	manifest.m_vecPos.x = g_fMenuOffsetX;
+	manifest.m_vecPos.y = g_fMenuOffsetY;
+
+	m_wpScreenText = VGUI::CreateScreenText(pController, manifest);
 }
 
-CWorldTextMenu::CWorldTextMenu(MenuHandler pFnHandler, std::string sTitle) : CBaseMenu(pFnHandler, sTitle) {
-	CPointWorldText* pMenuEntity = (CPointWorldText*)MEM::CALL::CreateEntityByName("point_worldtext");
-	if (!pMenuEntity) {
-		SDK_ASSERT(false);
-		return;
-	}
-
-	CEntityKeyValues* pMenuKV = new CEntityKeyValues();
-	if (!pMenuKV) {
-		pMenuEntity->Kill();
-		SDK_ASSERT(false);
-		return;
-	}
-
-	int fontSize = 40;
-	pMenuKV->SetBool("enabled", false);
-	pMenuKV->SetFloat("world_units_per_pixel", (0.25 / 1000) * fontSize);
-	pMenuKV->SetFloat("depth_render_offset", 0.125);
-	pMenuKV->SetInt("justify_horizontal", 0);
-	pMenuKV->SetInt("justify_vertical", 1);
-	pMenuKV->SetInt("reorient_mode", 0);
-	pMenuKV->SetInt("fullbright", 1);
-	pMenuKV->SetFloat("font_size", fontSize);
-	pMenuKV->SetString("font_name", "Consolas");
-	pMenuKV->SetColor("color", Color(255, 100, 255, 255));
-
-	pMenuEntity->DispatchSpawn(pMenuKV);
-	this->m_hWorldText.Set(pMenuEntity);
-
-	// background
-	CPointWorldText* pMenuBackground = (CPointWorldText*)MEM::CALL::CreateEntityByName("point_worldtext");
-	if (!pMenuBackground) {
-		return;
-	}
-
-	auto pBackgroundKV = new CEntityKeyValues();
-	if (!pBackgroundKV) {
-		pMenuBackground->Kill();
-		return;
-	}
-
-	int bgFontSize = 80;
-	pBackgroundKV->SetColor("color", Color(50, 50, 50, 100));
-	pBackgroundKV->SetBool("enabled", false);
-	pBackgroundKV->SetFloat("world_units_per_pixel", (0.25 / 300) * bgFontSize);
-	pBackgroundKV->SetFloat("depth_render_offset", 0.125);
-	pBackgroundKV->SetInt("justify_horizontal", 0);
-	pBackgroundKV->SetInt("justify_vertical", 1);
-	pBackgroundKV->SetInt("reorient_mode", 0);
-	pBackgroundKV->SetInt("fullbright", 1);
-	pBackgroundKV->SetFloat("font_size", bgFontSize);
-
-	pMenuBackground->DispatchSpawn(pBackgroundKV);
-	this->m_hBackground.Set(pMenuBackground);
-
-	pMenuBackground->SetText("█");
-}
-
-CWorldTextMenu::~CWorldTextMenu() {
+CScreenTextMenu::~CScreenTextMenu() {
 	CBaseMenu::~CBaseMenu();
-
-	auto pWorldText = m_hWorldText.Get();
-	if (pWorldText) {
-		pWorldText->Kill();
-	}
-
-	auto pBackground = m_hBackground.Get();
-	if (pBackground) {
-		pBackground->Kill();
-	}
 }
 
-void CWorldTextMenu::Display(CCSPlayerPawnBase* pPawn, int iPageIndex) {
-	CMenuPlayer* pMenuPlayer = MENU::GetManager()->ToPlayer(pPawn);
+void CScreenTextMenu::Display(int iPageIndex) {
+	if (m_wpScreenText.expired()) {
+		return;
+	}
+
+	auto pMenu = m_wpScreenText.lock();
+	auto pController = pMenu->GetOriginalController();
+	if (!pController) {
+		return;
+	}
+
+	CMenuPlayer* pMenuPlayer = MENU::GetManager()->ToPlayer(pController);
 	if (!pMenuPlayer) {
 		SDK_ASSERT(false);
 		return;
 	}
 
-	pMenuPlayer->m_pCurrentMenu.m_pMenu = this;
 	pMenuPlayer->m_iCurrentPage = iPageIndex;
-
-	CPointWorldText* pMenuEntity = this->m_hWorldText.Get();
-	if (!pMenuEntity) {
-		SDK_ASSERT(false);
-		return;
-	}
-
-	CBaseViewModel* pViewModel = pPawn->GetCustomViewModel();
-	if (!pViewModel) {
-		SDK_ASSERT(false);
-		return;
-	}
-
-	pMenuEntity->SetParent(pViewModel);
-	pMenuEntity->m_hOwnerEntity(pViewModel->GetRefEHandle());
 
 	auto formatItem = [](int iItemIndex, const std::string& sItem) { return !sItem.empty() ? fmt::format("{}.{}", iItemIndex, sItem) : ""; };
 	bool bDrawPreview = (iPageIndex != 0);
@@ -138,44 +71,35 @@ void CWorldTextMenu::Display(CCSPlayerPawnBase* pPawn, int iPageIndex) {
 										formatItem(8, bDrawNext ? "下一页" : ""));
 	// clang-format on
 
-	pMenuEntity->SetText(sMenuText.c_str());
-	pMenuEntity->Enable();
-	SetMenuEntityTransmiter(pMenuEntity, pPawn->GetController());
+	pMenu->SetText(sMenuText.c_str());
+	VGUI::Render(m_wpScreenText);
+}
 
-	Vector& vmPos = pViewModel->GetAbsOrigin();
-	Vector panelPos = GetRelativeOrigin(vmPos, 7.0f);
-
-	Vector rig;
-	Vector dwn;
-	static QAngle panelAng = {0.0f, -90.0f, 90.0f};
-	AngleVectors(panelAng, &rig, &dwn, nullptr);
-
-	rig *= g_fMenuOffsetX;
-	dwn *= g_fMenuOffsetY + 1.85f;
-
-	panelPos += rig + dwn;
-	pMenuEntity->Teleport(&panelPos, &panelAng, nullptr);
-
-	// background
-	CPointWorldText* pMenuBackground = this->m_hBackground.Get();
-	if (!pMenuBackground) {
-		return;
+bool CScreenTextMenu::Close() {
+	if (this->m_wpScreenText.expired()) {
+		SDK_ASSERT(false);
+		return false;
 	}
 
-	pMenuBackground->SetParent(pViewModel);
-	pMenuBackground->m_hOwnerEntity(pViewModel->GetRefEHandle());
+	VGUI::Unrender(this->m_wpScreenText);
 
-	pMenuBackground->Enable();
-	SetMenuEntityTransmiter(pMenuBackground, pPawn->GetController());
+	if (auto pText = this->m_wpScreenText.lock()) {
+		auto pController = pText->GetOriginalController();
+		if (!pController) {
+			SDK_ASSERT(false);
+			return false;
+		}
 
-	Vector bgPos = GetRelativeOrigin(vmPos, 7.09f);
-	AngleVectors(panelAng, &rig, &dwn, nullptr);
+		auto pMenuPlayer = MENU::GetManager()->ToPlayer(pController);
+		if (!pMenuPlayer) {
+			SDK_ASSERT(false);
+			return false;
+		}
 
-	rig *= (g_fMenuOffsetX - 0.2f);
-	dwn *= (g_fMenuOffsetY + 1.64f);
+		pMenuPlayer->ResetMenu();
+	}
 
-	bgPos += rig + dwn;
-	pMenuBackground->Teleport(&bgPos, &panelAng, nullptr);
+	return true;
 }
 
 std::string CBaseMenu::GetItem(int iPageIndex, int iItemIndex) {
@@ -197,6 +121,14 @@ std::string CBaseMenu::GetItem(int iPageIndex, int iItemIndex) {
 	return "";
 }
 
+void CMenuPlayer::ResetMenu() {
+	if (m_pCurrentMenu) {
+		m_pCurrentMenu.reset();
+	}
+
+	m_iCurrentPage = 0;
+}
+
 CMenuManager g_MenuManager;
 
 CMenuManager* MENU::GetManager() {
@@ -210,11 +142,16 @@ void CMenuManager::OnMenuItemSelect(CCSPlayerController* pController, const std:
 		return;
 	}
 
-	if (!pMenuPlayer->m_pCurrentMenu.IsValid()) {
+	if (!pMenuPlayer->m_pCurrentMenu) {
 		return;
 	}
 
-	auto& pMenu = pMenuPlayer->m_pCurrentMenu.m_pMenu;
+	const auto& pMenu = pMenuPlayer->m_pCurrentMenu;
+	auto iMenuType = pMenu->GetType();
+	if (iMenuType == EMenuType::Unknown) {
+		SDK_ASSERT(false);
+		return;
+	}
 
 	int num = -1;
 	if (vArgs.size() > 0) {
@@ -230,7 +167,17 @@ void CMenuManager::OnMenuItemSelect(CCSPlayerController* pController, const std:
 		case 6: {
 			if (pMenu->m_pFnMenuHandler) {
 				int iItemIndex = (pMenuPlayer->m_iCurrentPage * CBaseMenu::PAGE_SIZE) + num - 1;
-				pMenu->m_pFnMenuHandler(pMenuPlayer->m_pCurrentMenu, pController, iItemIndex);
+				switch (iMenuType) {
+					case EMenuType::ScreenText: {
+						CScreenTextMenuHandle hMenu(pMenu);
+						pMenu->m_pFnMenuHandler(hMenu, pController, iItemIndex);
+						break;
+					}
+					default: {
+						SDK_ASSERT(false);
+						break;
+					}
+				}
 			}
 
 			break;
@@ -238,20 +185,20 @@ void CMenuManager::OnMenuItemSelect(CCSPlayerController* pController, const std:
 		case 7: {
 			int iPrevPageIndex = pMenuPlayer->m_iCurrentPage - 1;
 			if (iPrevPageIndex >= 0 && iPrevPageIndex < pMenu->GetPageLength()) {
-				pMenu->Display(pController->GetPlayerPawn(), iPrevPageIndex);
+				pMenu->Display(iPrevPageIndex);
 			}
 			break;
 		}
 		case 8: {
 			int iNextPageIndex = pMenuPlayer->m_iCurrentPage + 1;
 			if (iNextPageIndex >= 0 && iNextPageIndex < pMenu->GetPageLength()) {
-				pMenu->Display(pController->GetPlayerPawn(), iNextPageIndex);
+				pMenu->Display(iNextPageIndex);
 			}
 			break;
 		}
 		case 9: {
 			// prev, next menu not impl yet.
-			pMenuPlayer->m_pCurrentMenu.Free();
+			pMenuPlayer->m_pCurrentMenu->Close();
 			break;
 		}
 	}
@@ -261,15 +208,35 @@ void CMenuManager::OnPluginStart() {
 	CONCMD::RegConsoleCmd("sm_menu_select", OnMenuItemSelect);
 }
 
-CBaseMenu* MENU::Create(MenuHandler pMenuHandler, EMenuType eMenuType) {
-	CBaseMenu* pMenu = nullptr;
+std::weak_ptr<CBaseMenu> MENU::Create(CBasePlayerController* pController, MenuHandler pFnMenuHandler, EMenuType eMenuType) {
+	CMenuPlayer* pMenuPlayer = MENU::GetManager()->ToPlayer(pController);
+	if (!pMenuPlayer) {
+		SDK_ASSERT(false);
+		return {};
+	}
 
 	switch (eMenuType) {
 		case EMenuType::ScreenText: {
-			pMenu = new CWorldTextMenu(pMenuHandler);
+			auto pMenu = std::make_shared<CScreenTextMenu>(pController, pFnMenuHandler);
+			pMenuPlayer->m_pCurrentMenu = pMenu;
+			return pMenu;
 			break;
 		}
 	}
 
-	return pMenu;
+	return {};
+}
+
+bool CScreenTextMenuHandle::Close() {
+	if (auto pMenu = this->m_wpData.lock()) {
+		auto pScreenTextMenu = std::dynamic_pointer_cast<CScreenTextMenu>(pMenu);
+		if (!pScreenTextMenu) {
+			SDK_ASSERT(false);
+			return false;
+		}
+
+		return pScreenTextMenu->Close();
+	} else {
+		return false;
+	}
 }

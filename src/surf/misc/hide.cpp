@@ -12,10 +12,6 @@ CHidePlugin* SURF::MISC::HidePlugin() {
 	return &g_HidePlugin;
 }
 
-void SetMenuEntityTransmiter(CBaseEntity* pMenu, CBasePlayerController* pOwner) {
-	g_HidePlugin.SetExclude(pOwner, pMenu, true);
-}
-
 void SetScreenTextEntityTransmiter(CBaseEntity* pScreenEnt, CBasePlayerController* pOwner) {
 	g_HidePlugin.SetExclude(pOwner, pScreenEnt, true);
 }

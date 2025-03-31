@@ -2,24 +2,15 @@
 
 #include <pch.h>
 #include <core/playermanager.h>
+#include <core/screentext.h>
+#include <list>
 
 enum class EMenuType {
-	ScreenText = 0
+	Unknown = 0,
+	ScreenText = 1
 };
 
-class CBaseMenu;
-
-class CMenuHandle {
-public:
-	bool IsValid() const {
-		return (m_pMenu != nullptr);
-	}
-
-	void Free();
-
-public:
-	CBaseMenu* m_pMenu = nullptr;
-};
+using CMenuHandle = CWeakHandle<class CBaseMenu>;
 
 #define MENU_CALLBACK_ARGS   CMenuHandle &hMenu, CBasePlayerController *pController, int iItem
 #define MENU_CALLBACK(fn)    static void fn(MENU_CALLBACK_ARGS)
@@ -40,12 +31,12 @@ public:
 		m_sTitle = sTitle;
 	}
 
-	virtual void SetPrevious(CBaseMenu* pPrevious) {
-		m_pLast = pPrevious;
+	virtual void SetPrev(CBaseMenu* pPrev) {
+		m_Cursor.emplace_front(pPrev);
 	}
 
 	virtual void SetNext(CBaseMenu* pNext) {
-		m_pNext = pNext;
+		m_Cursor.emplace_back(pNext);
 	}
 
 	virtual void AddItem(std::string sItem) {
@@ -56,10 +47,14 @@ public:
 		m_vItems.back().emplace_back(sItem);
 	}
 
+	virtual EMenuType GetType() {
+		return EMenuType::Unknown;
+	}
+
 	virtual std::string GetItem(int iPageIndex, int iItemIndex);
 
-public:
-	virtual void Display(CCSPlayerPawnBase* pPawn, int iPageIndex = 0) = 0;
+	virtual void Display(int iPageIndex = 0) = 0;
+	virtual bool Close() = 0;
 
 public:
 	size_t GetPageLength() const {
@@ -80,34 +75,36 @@ public:
 	MenuHandler m_pFnMenuHandler;
 
 protected:
-	CBaseMenu* m_pLast;
-	CBaseMenu* m_pNext;
+	std::list<CBaseMenu*> m_Cursor;
 };
 
-class CWorldTextMenu : public CBaseMenu {
+class CScreenTextMenu : public CBaseMenu {
 public:
-	CWorldTextMenu(MenuHandler pFnHandler, std::string sTitle = "");
+	CScreenTextMenu(CBasePlayerController* pController, MenuHandler pFnHandler, std::string sTitle = "");
 
-	virtual ~CWorldTextMenu() override;
-	virtual void Display(CCSPlayerPawnBase* pPawn, int iPageIndex = 0) override;
+	virtual EMenuType GetType() override {
+		return EMenuType::ScreenText;
+	}
 
 public:
-	static Vector GetRelativeOrigin(const Vector& eyePosition, float distanceToTarget = 100.0);
+	virtual ~CScreenTextMenu() override;
+	virtual void Display(int iPageIndex = 0) override;
+	virtual bool Close() override;
 
-private:
-	CHandle<CPointWorldText> m_hWorldText;
-	CHandle<CPointWorldText> m_hBackground;
+public:
+	std::weak_ptr<CScreenText> m_wpScreenText;
+};
+
+class CScreenTextMenuHandle : public CMenuHandle {
+public:
+	using CMenuHandle::CMenuHandle;
+
+	virtual bool Close() override;
 };
 
 class CMenuPlayer : public CPlayer {
 public:
 	using CPlayer::CPlayer;
-
-	virtual void Init(int iSlot) override {
-		CPlayer::Init(iSlot);
-
-		ResetMenu();
-	}
 
 	virtual void Reset() override {
 		CPlayer::Reset();
@@ -115,17 +112,10 @@ public:
 		ResetMenu();
 	}
 
-private:
-	void ResetMenu() {
-		if (m_pCurrentMenu.IsValid()) {
-			m_pCurrentMenu.Free();
-		}
-
-		m_iCurrentPage = 0;
-	}
+	void ResetMenu();
 
 public:
-	CMenuHandle m_pCurrentMenu;
+	std::shared_ptr<CBaseMenu> m_pCurrentMenu;
 	int m_iCurrentPage;
 };
 
@@ -152,15 +142,8 @@ private:
 	virtual void OnPluginStart() override;
 };
 
-inline void CMenuHandle::Free() {
-	if (m_pMenu) {
-		delete m_pMenu;
-		m_pMenu = nullptr;
-	}
-}
-
 namespace MENU {
 	extern CMenuManager* GetManager();
 
-	[[nodiscard]] CBaseMenu* Create(MenuHandler pMenuHandler, EMenuType eMenuType = EMenuType::ScreenText);
+	[[nodiscard]] std::weak_ptr<CBaseMenu> Create(CBasePlayerController* pController, MenuHandler pFnMenuHandler, EMenuType eMenuType = EMenuType::ScreenText);
 } // namespace MENU

@@ -29,7 +29,6 @@ using FnFireEventCallbackPost_t = std::function<void(EVENT_POST_CALLBACK_ARGS)>;
 #define EVENT_POSTNOCOPY_CALLBACK_L(...) [__VA_ARGS__](EVENT_POSTNOCOPY_CALLBACK_ARGS) -> void
 using FnFireEventCallbackPostNoCopy_t = std::function<void(EVENT_POSTNOCOPY_CALLBACK_ARGS)>;
 
-
 struct event_t {
 	const char* m_szName;
 	FnFireEventCallbackPre_t m_pCallbackPre;

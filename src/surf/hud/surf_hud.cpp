@@ -48,7 +48,7 @@ void CSurfHudPlugin::OnPlayerSpawn(IGameEvent* pEvent, const char* szName, bool 
 			return;
 		}
 
-		VGUI::Render(pController, wpSpeedText);
+		VGUI::Render(wpSpeedText);
 	});
 }
 

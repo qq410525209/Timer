@@ -6,8 +6,10 @@
 struct ScreenTextManifest_t {
 	Vector2D m_vecPos = {0.0f, 0.0f};
 	Color m_Color = {0, 222, 101, 255};
+	int m_iUnits = 300;
 	std::string m_sFont = "Trebuchet MS";
 	float m_fFontSize = 20.0f;
+	bool m_bEnable = true;
 };
 
 class CScreenText {
@@ -28,6 +30,7 @@ public:
 	void SetColor(Color color);
 	void SetFont(const std::string_view& font);
 	void SetFontSize(float fontsize);
+	void SetUnits(int unit);
 
 	bool IsRendering();
 
@@ -35,6 +38,18 @@ public:
 	void Display(CBasePlayerController* pController);
 
 	void UpdatePos();
+
+	void Enable() {
+		m_hScreenEnt->Enable();
+	}
+
+	void Disable() {
+		m_hScreenEnt->Disable();
+	}
+
+	CBasePlayerController* GetOriginalController() const {
+		return m_hOriginalController.IsValid() ? m_hOriginalController.Get() : nullptr;
+	}
 
 public:
 	static Vector GetRelativeOrigin(const Vector& eyePosition, float distanceToTarget = 6.7f);
@@ -45,6 +60,9 @@ public:
 private:
 	CHandle<CPointWorldText> m_hScreenEnt;
 	CHandle<CBasePlayerPawn> m_hOwner;
+
+public:
+	CHandle<CBasePlayerController> m_hOriginalController;
 };
 
 class CScreenTextController : public CPlayer {
@@ -82,7 +100,7 @@ namespace VGUI {
 	CScreenTextControllerManager* GetScreenTextManager();
 
 	[[nodiscard]] std::weak_ptr<CScreenText> CreateScreenText(CBasePlayerController* pController, std::optional<ScreenTextManifest_t> manifest = std::nullopt);
-	void Render(CBasePlayerController* pController, const std::weak_ptr<CScreenText>& hText);
-	void Unrender(CBasePlayerController* pController, const std::weak_ptr<CScreenText>& hText);
+	void Render(const std::weak_ptr<CScreenText>& hText);
+	void Unrender(const std::weak_ptr<CScreenText>& hText);
 	void Cleanup(CBasePlayerController* pController);
 } // namespace VGUI
