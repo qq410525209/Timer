@@ -5,16 +5,19 @@
 
 #include <optional>
 
-#define SCMD_CALLBACK(fn)            static void fn(const std::vector<std::string>& vArgs)
-#define SCMD_CALLBACK_L(...)         [__VA_ARGS__](const std::vector<std::string>& vArgs) -> void
-#define CCMD_CALLBACK(fn)            static void fn(CCSPlayerController* pController, const std::vector<std::string>& vArgs)
-#define CCMD_CALLBACK_L(...)         [__VA_ARGS__](CCSPlayerController * pController, const std::vector<std::string>& vArgs) -> void
-#define CCMDLISTENER_CALLBACK(fn)    static bool fn(CCSPlayerController* pController, const std::vector<std::string>& vArgs)
-#define CCMDLISTENER_CALLBACK_L(...) [__VA_ARGS__](CCSPlayerController * pController, const std::vector<std::string>& vArgs) -> bool
+#define SCMD_CALLBACK_ARGS   const std::vector<std::string>& vArgs
+#define SCMD_CALLBACK(fn)    static void fn(SCMD_CALLBACK_ARGS)
+#define SCMD_CALLBACK_L(...) [__VA_ARGS__](SCMD_CALLBACK_ARGS) -> void
+using SrvCmd_Callback = std::function<void(SCMD_CALLBACK_ARGS)>;
 
-using SrvCmd_Callback = std::function<void(const std::vector<std::string>& vArgs)>;
-using ConCmd_Callback = std::function<void(CCSPlayerController* pController, const std::vector<std::string>& vArgs)>;
-using ConCmdListener_Callback = std::function<bool(CCSPlayerController* pController, const std::vector<std::string>& vArgs)>;
+#define CCMD_CALLBACK_ARGS   CCSPlayerController *pController, const std::vector<std::string>&vArgs
+#define CCMD_CALLBACK(fn)    static void fn(CCMD_CALLBACK_ARGS)
+#define CCMD_CALLBACK_L(...) [__VA_ARGS__](CCMD_CALLBACK_ARGS) -> void
+using ConCmd_Callback = std::function<void(CCMD_CALLBACK_ARGS)>;
+
+#define CCMDLISTENER_CALLBACK(fn)    static bool fn(CCMD_CALLBACK_ARGS)
+#define CCMDLISTENER_CALLBACK_L(...) [__VA_ARGS__](CCMD_CALLBACK_ARGS) -> bool
+using ConCmdListener_Callback = std::function<bool(CCMD_CALLBACK_ARGS)>;
 
 namespace CONCMD {
 	class CConCmdManager : CCoreForward {

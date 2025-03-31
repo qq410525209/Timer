@@ -14,9 +14,21 @@ enum EventHookMode {
 	EventHookMode_PostNoCopy //< Hook callback fired after event is fired, but event data won't be copied */
 };
 
-using FnFireEventCallbackPostNoCopy_t = std::function<void(const char* szName, bool bDontBroadcast)>;
-using FnFireEventCallbackPost_t = std::function<void(IGameEvent* pEvent, const char* szName, bool bDontBroadcast)>;
-using FnFireEventCallbackPre_t = std::function<EventHookAction(IGameEvent* pEvent, const char* szName, bool& bDontBroadcast)>;
+#define EVENT_PRE_CALLBACK_ARGS   IGameEvent *pEvent, const char *szName, bool &bDontBroadcast
+#define EVENT_PRE_CALLBACK(fn)    static EventHookAction fn(EVENT_PRE_CALLBACK_ARGS)
+#define EVENT_PRE_CALLBACK_L(...) [__VA_ARGS__](EVENT_PRE_CALLBACK_ARGS) -> EventHookAction
+using FnFireEventCallbackPre_t = std::function<EventHookAction(EVENT_PRE_CALLBACK_ARGS)>;
+
+#define EVENT_POST_CALLBACK_ARGS   IGameEvent *pEvent, const char *szName, bool bDontBroadcast
+#define EVENT_POST_CALLBACK(fn)    static void fn(EVENT_POST_CALLBACK_ARGS)
+#define EVENT_POST_CALLBACK_L(...) [__VA_ARGS__](EVENT_POST_CALLBACK_ARGS) -> void
+using FnFireEventCallbackPost_t = std::function<void(EVENT_POST_CALLBACK_ARGS)>;
+
+#define EVENT_POSTNOCOPY_CALLBACK_ARGS   const char *szName, bool bDontBroadcast
+#define EVENT_POSTNOCOPY_CALLBACK(fn)    static void fn(EVENT_POSTNOCOPY_CALLBACK_ARGS)
+#define EVENT_POSTNOCOPY_CALLBACK_L(...) [__VA_ARGS__](EVENT_POSTNOCOPY_CALLBACK_ARGS) -> void
+using FnFireEventCallbackPostNoCopy_t = std::function<void(EVENT_POSTNOCOPY_CALLBACK_ARGS)>;
+
 
 struct event_t {
 	const char* m_szName;

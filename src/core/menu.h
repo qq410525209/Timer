@@ -21,10 +21,10 @@ public:
 	CBaseMenu* m_pMenu = nullptr;
 };
 
-using MenuHandler = std::function<void(CMenuHandle& hMenu, CBasePlayerController* pController, int iItem)>;
-
-#define MENU_CALLBACK(cb)    void cb(CMenuHandle& hMenu, CBasePlayerController* pController, int iItem)
-#define MENU_CALLBACK_L(...) [__VA_ARGS__](CMenuHandle & hMenu, CBasePlayerController * pController, int iItem)
+#define MENU_CALLBACK_ARGS   CMenuHandle &hMenu, CBasePlayerController *pController, int iItem
+#define MENU_CALLBACK(fn)    static void fn(MENU_CALLBACK_ARGS)
+#define MENU_CALLBACK_L(...) [__VA_ARGS__](MENU_CALLBACK_ARGS) -> void
+using MenuHandler = std::function<void(MENU_CALLBACK_ARGS)>;
 
 class CBaseMenu {
 public:
