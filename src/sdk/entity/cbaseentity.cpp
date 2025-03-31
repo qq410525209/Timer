@@ -13,6 +13,14 @@ void CBaseEntity::SetParent(CBaseEntity* pParent) {
 	MEM::CALL::SetParent(this, pParent);
 }
 
+void CBaseEntity::SetName(const char* pszName, bool bCheckDuplicate) {
+	if (bCheckDuplicate && !V_strcmp(this->m_pEntity->m_name.String(), pszName)) {
+		return;
+	}
+
+	MEM::CALL::SetEntityName(this->m_pEntity, pszName);
+}
+
 Vector& CBaseEntity::GetAbsOrigin() {
 	static Vector null(0.0f, 0.0f, 0.0f);
 	auto pBodyComponent = m_CBodyComponent();

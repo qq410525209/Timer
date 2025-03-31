@@ -204,6 +204,7 @@ public:
 
 	void DispatchSpawn(CEntityKeyValues* pInitKeyValue = nullptr);
 	void SetParent(CBaseEntity* pParent);
+	void SetName(const char* pszName, bool bCheckDuplicate = false);
 
 	Vector& GetAbsOrigin();
 	Vector& GetOrigin();

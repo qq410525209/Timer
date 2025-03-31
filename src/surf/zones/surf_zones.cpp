@@ -141,7 +141,7 @@ CBaseEntity* CSurfZonePlugin::CreateNormalZone(const Vector& vecMins, const Vect
 	SDKHOOK::HookEntity<SDKHook_TouchPost>(pZone, SURF::ZONE::HOOK::OnTouchPost);
 	SDKHOOK::HookEntity<SDKHook_EndTouchPost>(pZone, SURF::ZONE::HOOK::OnEndTouchPost);
 
-	pZone->m_pEntity->m_name = GameEntitySystem()->AllocPooledString("surf_zone");
+	pZone->SetName("surf_zone");
 
 	return pZone;
 }

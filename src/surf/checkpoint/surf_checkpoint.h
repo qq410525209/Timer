@@ -26,7 +26,6 @@ struct cp_cache_t : timer_snapshot_t {
 	CEntityHandle m_hGroundEntity;
 
 	std::string m_sTargetName;
-	std::string m_sDesignerName;
 };
 
 class CSurfCheckpointPlugin : CSurfForward, CMovementForward, CCoreForward {

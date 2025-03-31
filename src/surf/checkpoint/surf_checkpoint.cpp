@@ -90,7 +90,6 @@ void CSurfCheckpointService::SaveCheckpoint() {
 	}
 
 	cache.m_sTargetName = pTargetPawn->m_pEntity->m_name.String();
-	cache.m_sDesignerName = pTargetPawn->m_pEntity->m_designerName.String();
 
 	if (cache.m_nMoveType == MOVETYPE_NONE) {
 		cache.m_nMoveType = MOVETYPE_WALK;
@@ -134,8 +133,8 @@ void CSurfCheckpointService::LoadCheckpoint(const cp_cache_t& cache) {
 	pPawn->m_flVelocityModifier(cache.m_fSpeed);
 	pPawn->m_fFlags(cache.m_iFlags);
 	pPawn->m_hGroundEntity(cache.m_hGroundEntity);
-	pPawn->m_pEntity->m_name = GameEntitySystem()->AllocPooledString(cache.m_sTargetName.c_str());
-	pPawn->m_pEntity->m_designerName = GameEntitySystem()->AllocPooledString(cache.m_sDesignerName.c_str());
+
+	pPawn->SetName(cache.m_sTargetName.c_str(), true);
 
 	pMoveService->m_vecLadderNormal(cache.m_vecLadderNormal);
 	pMoveService->m_bDucked(cache.m_bDucked);

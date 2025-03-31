@@ -76,6 +76,10 @@ void MEM::CALL::SetParent(CBaseEntity* pEnt, CBaseEntity* pParent) {
 	CALL_SIG("CBaseEntity::SetParent", SetParent, pEnt, pParent, 0, 0);
 }
 
+void MEM::CALL::SetEntityName(CEntityIdentity* pEnt, const char* pszName) {
+	CALL_SIG("CEntityIdentity::SetEntityName", SetEntityName, pEnt, pszName);
+}
+
 #pragma endregion
 
 #pragma region hooks
