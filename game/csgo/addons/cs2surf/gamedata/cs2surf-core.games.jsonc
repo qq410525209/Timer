@@ -306,21 +306,10 @@
 			"windows": "48 83 EC ? F3 0F 10 05 ? ? ? ? 48 8D 15 ? ? ? ? F3 0F 10 0D",
 			"linux": "48 B8 ? ? ? ? ? ? ? ? 55 48 89 E5 41 54 4C 8D 25"
 		},
-		//*(a2 + 200) = sub_7FFE4786BD30(a1->pawn); <- this function
-		//   v23 = a1->pawn;
-		//   a1->m_bInStuckTest = 0;
-		//   v24 = v23->m_pCameraServices;
-		//   v25 = sub_7FFE47482320(v23);
-		//   v26 = v25;
-		//   if ( v25 )
-		//   {
-		//     EntIndex(v25, &v35);
-		//     sub_7FFE4799A200(a1, "following entity %d", v35);
-		//   }
-		// also contains the string "weapon_shield"
+		// cvar: mp_heavyassaultsuit_speed, xref
 		"CCSPlayerPawn::GetMaxSpeed": {
 			"library": "server",
-			"windows": "48 89 5C 24 ? 57 48 83 EC ? 48 8B D9 E8 ? ? ? ? 84 C0 0F 84 ? ? ? ? 48 8B 0D",
+			"windows": "40 53 48 83 EC ? 48 8B D9 E8 ? ? ? ? 84 C0 0F 84 ? ? ? ? 48 8B 0D",
 			"linux": "55 48 89 E5 41 55 41 54 53 48 89 FB 48 83 EC 18 E8 ? ? ? ? 84 C0"
 		},
 		"CServerSideClient::SendSnapshotBefore": {
