@@ -385,6 +385,15 @@ extern CMsgGCCStrike15_v2_PredictionsDefaultTypeInternal _CMsgGCCStrike15_v2_Pre
 class CMsgGCCStrike15_v2_Predictions_GroupMatchTeamPick;
 struct CMsgGCCStrike15_v2_Predictions_GroupMatchTeamPickDefaultTypeInternal;
 extern CMsgGCCStrike15_v2_Predictions_GroupMatchTeamPickDefaultTypeInternal _CMsgGCCStrike15_v2_Predictions_GroupMatchTeamPick_default_instance_;
+class CMsgGCCStrike15_v2_PremierSeasonSummary;
+struct CMsgGCCStrike15_v2_PremierSeasonSummaryDefaultTypeInternal;
+extern CMsgGCCStrike15_v2_PremierSeasonSummaryDefaultTypeInternal _CMsgGCCStrike15_v2_PremierSeasonSummary_default_instance_;
+class CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerMap;
+struct CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerMapDefaultTypeInternal;
+extern CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerMapDefaultTypeInternal _CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerMap_default_instance_;
+class CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerWeek;
+struct CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerWeekDefaultTypeInternal;
+extern CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerWeekDefaultTypeInternal _CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerWeek_default_instance_;
 class CMsgGCCStrike15_v2_Server2GCClientValidate;
 struct CMsgGCCStrike15_v2_Server2GCClientValidateDefaultTypeInternal;
 extern CMsgGCCStrike15_v2_Server2GCClientValidateDefaultTypeInternal _CMsgGCCStrike15_v2_Server2GCClientValidate_default_instance_;
@@ -672,6 +681,9 @@ template<> ::CMsgGCCStrike15_v2_PlayerOverwatchCaseUpdate* Arena::CreateMaybeMes
 template<> ::CMsgGCCStrike15_v2_PlayersProfile* Arena::CreateMaybeMessage<::CMsgGCCStrike15_v2_PlayersProfile>(Arena*);
 template<> ::CMsgGCCStrike15_v2_Predictions* Arena::CreateMaybeMessage<::CMsgGCCStrike15_v2_Predictions>(Arena*);
 template<> ::CMsgGCCStrike15_v2_Predictions_GroupMatchTeamPick* Arena::CreateMaybeMessage<::CMsgGCCStrike15_v2_Predictions_GroupMatchTeamPick>(Arena*);
+template<> ::CMsgGCCStrike15_v2_PremierSeasonSummary* Arena::CreateMaybeMessage<::CMsgGCCStrike15_v2_PremierSeasonSummary>(Arena*);
+template<> ::CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerMap* Arena::CreateMaybeMessage<::CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerMap>(Arena*);
+template<> ::CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerWeek* Arena::CreateMaybeMessage<::CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerWeek>(Arena*);
 template<> ::CMsgGCCStrike15_v2_Server2GCClientValidate* Arena::CreateMaybeMessage<::CMsgGCCStrike15_v2_Server2GCClientValidate>(Arena*);
 template<> ::CMsgGCCStrike15_v2_ServerNotificationForUserPenalty* Arena::CreateMaybeMessage<::CMsgGCCStrike15_v2_ServerNotificationForUserPenalty>(Arena*);
 template<> ::CMsgGCCStrike15_v2_ServerVarValueNotificationInfo* Arena::CreateMaybeMessage<::CMsgGCCStrike15_v2_ServerVarValueNotificationInfo>(Arena*);
@@ -837,11 +849,12 @@ enum ECsgoGCMsg : int {
   k_EMsgGCCStrike15_v2_ClientNetworkConfig = 9220,
   k_EMsgGCCStrike15_v2_GC2ClientNotifyXPShop = 9221,
   k_EMsgGCCStrike15_v2_Client2GcAckXPShopTracks = 9222,
-  k_EMsgGCCStrike15_v2_MatchmakingGC2ClientSearchStats = 9223
+  k_EMsgGCCStrike15_v2_MatchmakingGC2ClientSearchStats = 9223,
+  k_EMsgGCCStrike15_v2_PremierSeasonSummary = 9224
 };
 bool ECsgoGCMsg_IsValid(int value);
 constexpr ECsgoGCMsg ECsgoGCMsg_MIN = k_EMsgGCCStrike15_v2_Base;
-constexpr ECsgoGCMsg ECsgoGCMsg_MAX = k_EMsgGCCStrike15_v2_MatchmakingGC2ClientSearchStats;
+constexpr ECsgoGCMsg ECsgoGCMsg_MAX = k_EMsgGCCStrike15_v2_PremierSeasonSummary;
 constexpr int ECsgoGCMsg_ARRAYSIZE = ECsgoGCMsg_MAX + 1;
 
 const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* ECsgoGCMsg_descriptor();
@@ -3805,6 +3818,8 @@ class PlayerRankingInfo :
     kRankIfLoseFieldNumber = 11,
     kRankIfTieFieldNumber = 12,
     kLeaderboardNameStatusFieldNumber = 14,
+    kHighestRankFieldNumber = 15,
+    kRankExpiryFieldNumber = 16,
   };
   // repeated .PlayerRankingInfo.PerMapRank per_map_rank = 13;
   int per_map_rank_size() const;
@@ -3985,6 +4000,32 @@ class PlayerRankingInfo :
   void _internal_set_leaderboard_name_status(uint32_t value);
   public:
 
+  // optional uint32 highest_rank = 15;
+  bool has_highest_rank() const;
+  private:
+  bool _internal_has_highest_rank() const;
+  public:
+  void clear_highest_rank();
+  uint32_t highest_rank() const;
+  void set_highest_rank(uint32_t value);
+  private:
+  uint32_t _internal_highest_rank() const;
+  void _internal_set_highest_rank(uint32_t value);
+  public:
+
+  // optional uint32 rank_expiry = 16;
+  bool has_rank_expiry() const;
+  private:
+  bool _internal_has_rank_expiry() const;
+  public:
+  void clear_rank_expiry();
+  uint32_t rank_expiry() const;
+  void set_rank_expiry(uint32_t value);
+  private:
+  uint32_t _internal_rank_expiry() const;
+  void _internal_set_rank_expiry(uint32_t value);
+  public:
+
   // @@protoc_insertion_point(class_scope:PlayerRankingInfo)
  private:
   class _Internal;
@@ -4008,6 +4049,8 @@ class PlayerRankingInfo :
     uint32_t rank_if_lose_;
     uint32_t rank_if_tie_;
     uint32_t leaderboard_name_status_;
+    uint32_t highest_rank_;
+    uint32_t rank_expiry_;
   };
   union { Impl_ _impl_; };
   friend struct ::TableStruct_cstrike15_5fgcmessages_2eproto;
@@ -19496,6 +19539,754 @@ class CMsgGCCStrike15_v2_PlayersProfile :
 };
 // -------------------------------------------------------------------
 
+class CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerWeek :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:CMsgGCCStrike15_v2_PremierSeasonSummary.DataPerWeek) */ {
+ public:
+  inline CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerWeek() : CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerWeek(nullptr) {}
+  ~CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerWeek() override;
+  explicit PROTOBUF_CONSTEXPR CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerWeek(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerWeek(const CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerWeek& from);
+  CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerWeek(CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerWeek&& from) noexcept
+    : CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerWeek() {
+    *this = ::std::move(from);
+  }
+
+  inline CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerWeek& operator=(const CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerWeek& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerWeek& operator=(CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerWeek&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  inline const ::PROTOBUF_NAMESPACE_ID::UnknownFieldSet& unknown_fields() const {
+    return _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance);
+  }
+  inline ::PROTOBUF_NAMESPACE_ID::UnknownFieldSet* mutable_unknown_fields() {
+    return _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerWeek& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerWeek* internal_default_instance() {
+    return reinterpret_cast<const CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerWeek*>(
+               &_CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerWeek_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    73;
+
+  friend void swap(CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerWeek& a, CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerWeek& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerWeek* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerWeek* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerWeek* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerWeek>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerWeek& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom( const CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerWeek& from) {
+    CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerWeek::MergeImpl(*this, from);
+  }
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  uint8_t* _InternalSerialize(
+      uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena, bool is_message_owned);
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerWeek* other);
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "CMsgGCCStrike15_v2_PremierSeasonSummary.DataPerWeek";
+  }
+  protected:
+  explicit CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerWeek(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kWeekIdFieldNumber = 1,
+    kRankIdFieldNumber = 2,
+    kMatchesPlayedFieldNumber = 3,
+  };
+  // optional uint64 week_id = 1;
+  bool has_week_id() const;
+  private:
+  bool _internal_has_week_id() const;
+  public:
+  void clear_week_id();
+  uint64_t week_id() const;
+  void set_week_id(uint64_t value);
+  private:
+  uint64_t _internal_week_id() const;
+  void _internal_set_week_id(uint64_t value);
+  public:
+
+  // optional uint32 rank_id = 2;
+  bool has_rank_id() const;
+  private:
+  bool _internal_has_rank_id() const;
+  public:
+  void clear_rank_id();
+  uint32_t rank_id() const;
+  void set_rank_id(uint32_t value);
+  private:
+  uint32_t _internal_rank_id() const;
+  void _internal_set_rank_id(uint32_t value);
+  public:
+
+  // optional uint32 matches_played = 3;
+  bool has_matches_played() const;
+  private:
+  bool _internal_has_matches_played() const;
+  public:
+  void clear_matches_played();
+  uint32_t matches_played() const;
+  void set_matches_played(uint32_t value);
+  private:
+  uint32_t _internal_matches_played() const;
+  void _internal_set_matches_played(uint32_t value);
+  public:
+
+  // @@protoc_insertion_point(class_scope:CMsgGCCStrike15_v2_PremierSeasonSummary.DataPerWeek)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+    ::PROTOBUF_NAMESPACE_ID::internal::HasBits<1> _has_bits_;
+    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+    uint64_t week_id_;
+    uint32_t rank_id_;
+    uint32_t matches_played_;
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_cstrike15_5fgcmessages_2eproto;
+};
+// -------------------------------------------------------------------
+
+class CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerMap :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:CMsgGCCStrike15_v2_PremierSeasonSummary.DataPerMap) */ {
+ public:
+  inline CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerMap() : CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerMap(nullptr) {}
+  ~CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerMap() override;
+  explicit PROTOBUF_CONSTEXPR CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerMap(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerMap(const CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerMap& from);
+  CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerMap(CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerMap&& from) noexcept
+    : CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerMap() {
+    *this = ::std::move(from);
+  }
+
+  inline CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerMap& operator=(const CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerMap& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerMap& operator=(CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerMap&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  inline const ::PROTOBUF_NAMESPACE_ID::UnknownFieldSet& unknown_fields() const {
+    return _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance);
+  }
+  inline ::PROTOBUF_NAMESPACE_ID::UnknownFieldSet* mutable_unknown_fields() {
+    return _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerMap& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerMap* internal_default_instance() {
+    return reinterpret_cast<const CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerMap*>(
+               &_CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerMap_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    74;
+
+  friend void swap(CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerMap& a, CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerMap& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerMap* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerMap* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerMap* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerMap>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerMap& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom( const CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerMap& from) {
+    CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerMap::MergeImpl(*this, from);
+  }
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  uint8_t* _InternalSerialize(
+      uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena, bool is_message_owned);
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerMap* other);
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "CMsgGCCStrike15_v2_PremierSeasonSummary.DataPerMap";
+  }
+  protected:
+  explicit CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerMap(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kMapIdFieldNumber = 1,
+    kWinsFieldNumber = 2,
+    kTiesFieldNumber = 3,
+    kLossesFieldNumber = 4,
+    kRoundsFieldNumber = 5,
+    kKillsFieldNumber = 6,
+    kHeadshotsFieldNumber = 7,
+    kAssistsFieldNumber = 8,
+    kDeathsFieldNumber = 9,
+    kMvpsFieldNumber = 10,
+    kRounds3KFieldNumber = 11,
+    kRounds4KFieldNumber = 12,
+    kRounds5KFieldNumber = 13,
+  };
+  // optional uint32 map_id = 1;
+  bool has_map_id() const;
+  private:
+  bool _internal_has_map_id() const;
+  public:
+  void clear_map_id();
+  uint32_t map_id() const;
+  void set_map_id(uint32_t value);
+  private:
+  uint32_t _internal_map_id() const;
+  void _internal_set_map_id(uint32_t value);
+  public:
+
+  // optional uint32 wins = 2;
+  bool has_wins() const;
+  private:
+  bool _internal_has_wins() const;
+  public:
+  void clear_wins();
+  uint32_t wins() const;
+  void set_wins(uint32_t value);
+  private:
+  uint32_t _internal_wins() const;
+  void _internal_set_wins(uint32_t value);
+  public:
+
+  // optional uint32 ties = 3;
+  bool has_ties() const;
+  private:
+  bool _internal_has_ties() const;
+  public:
+  void clear_ties();
+  uint32_t ties() const;
+  void set_ties(uint32_t value);
+  private:
+  uint32_t _internal_ties() const;
+  void _internal_set_ties(uint32_t value);
+  public:
+
+  // optional uint32 losses = 4;
+  bool has_losses() const;
+  private:
+  bool _internal_has_losses() const;
+  public:
+  void clear_losses();
+  uint32_t losses() const;
+  void set_losses(uint32_t value);
+  private:
+  uint32_t _internal_losses() const;
+  void _internal_set_losses(uint32_t value);
+  public:
+
+  // optional uint32 rounds = 5;
+  bool has_rounds() const;
+  private:
+  bool _internal_has_rounds() const;
+  public:
+  void clear_rounds();
+  uint32_t rounds() const;
+  void set_rounds(uint32_t value);
+  private:
+  uint32_t _internal_rounds() const;
+  void _internal_set_rounds(uint32_t value);
+  public:
+
+  // optional uint32 kills = 6;
+  bool has_kills() const;
+  private:
+  bool _internal_has_kills() const;
+  public:
+  void clear_kills();
+  uint32_t kills() const;
+  void set_kills(uint32_t value);
+  private:
+  uint32_t _internal_kills() const;
+  void _internal_set_kills(uint32_t value);
+  public:
+
+  // optional uint32 headshots = 7;
+  bool has_headshots() const;
+  private:
+  bool _internal_has_headshots() const;
+  public:
+  void clear_headshots();
+  uint32_t headshots() const;
+  void set_headshots(uint32_t value);
+  private:
+  uint32_t _internal_headshots() const;
+  void _internal_set_headshots(uint32_t value);
+  public:
+
+  // optional uint32 assists = 8;
+  bool has_assists() const;
+  private:
+  bool _internal_has_assists() const;
+  public:
+  void clear_assists();
+  uint32_t assists() const;
+  void set_assists(uint32_t value);
+  private:
+  uint32_t _internal_assists() const;
+  void _internal_set_assists(uint32_t value);
+  public:
+
+  // optional uint32 deaths = 9;
+  bool has_deaths() const;
+  private:
+  bool _internal_has_deaths() const;
+  public:
+  void clear_deaths();
+  uint32_t deaths() const;
+  void set_deaths(uint32_t value);
+  private:
+  uint32_t _internal_deaths() const;
+  void _internal_set_deaths(uint32_t value);
+  public:
+
+  // optional uint32 mvps = 10;
+  bool has_mvps() const;
+  private:
+  bool _internal_has_mvps() const;
+  public:
+  void clear_mvps();
+  uint32_t mvps() const;
+  void set_mvps(uint32_t value);
+  private:
+  uint32_t _internal_mvps() const;
+  void _internal_set_mvps(uint32_t value);
+  public:
+
+  // optional uint32 rounds_3k = 11;
+  bool has_rounds_3k() const;
+  private:
+  bool _internal_has_rounds_3k() const;
+  public:
+  void clear_rounds_3k();
+  uint32_t rounds_3k() const;
+  void set_rounds_3k(uint32_t value);
+  private:
+  uint32_t _internal_rounds_3k() const;
+  void _internal_set_rounds_3k(uint32_t value);
+  public:
+
+  // optional uint32 rounds_4k = 12;
+  bool has_rounds_4k() const;
+  private:
+  bool _internal_has_rounds_4k() const;
+  public:
+  void clear_rounds_4k();
+  uint32_t rounds_4k() const;
+  void set_rounds_4k(uint32_t value);
+  private:
+  uint32_t _internal_rounds_4k() const;
+  void _internal_set_rounds_4k(uint32_t value);
+  public:
+
+  // optional uint32 rounds_5k = 13;
+  bool has_rounds_5k() const;
+  private:
+  bool _internal_has_rounds_5k() const;
+  public:
+  void clear_rounds_5k();
+  uint32_t rounds_5k() const;
+  void set_rounds_5k(uint32_t value);
+  private:
+  uint32_t _internal_rounds_5k() const;
+  void _internal_set_rounds_5k(uint32_t value);
+  public:
+
+  // @@protoc_insertion_point(class_scope:CMsgGCCStrike15_v2_PremierSeasonSummary.DataPerMap)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+    ::PROTOBUF_NAMESPACE_ID::internal::HasBits<1> _has_bits_;
+    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+    uint32_t map_id_;
+    uint32_t wins_;
+    uint32_t ties_;
+    uint32_t losses_;
+    uint32_t rounds_;
+    uint32_t kills_;
+    uint32_t headshots_;
+    uint32_t assists_;
+    uint32_t deaths_;
+    uint32_t mvps_;
+    uint32_t rounds_3k_;
+    uint32_t rounds_4k_;
+    uint32_t rounds_5k_;
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_cstrike15_5fgcmessages_2eproto;
+};
+// -------------------------------------------------------------------
+
+class CMsgGCCStrike15_v2_PremierSeasonSummary :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:CMsgGCCStrike15_v2_PremierSeasonSummary) */ {
+ public:
+  inline CMsgGCCStrike15_v2_PremierSeasonSummary() : CMsgGCCStrike15_v2_PremierSeasonSummary(nullptr) {}
+  ~CMsgGCCStrike15_v2_PremierSeasonSummary() override;
+  explicit PROTOBUF_CONSTEXPR CMsgGCCStrike15_v2_PremierSeasonSummary(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  CMsgGCCStrike15_v2_PremierSeasonSummary(const CMsgGCCStrike15_v2_PremierSeasonSummary& from);
+  CMsgGCCStrike15_v2_PremierSeasonSummary(CMsgGCCStrike15_v2_PremierSeasonSummary&& from) noexcept
+    : CMsgGCCStrike15_v2_PremierSeasonSummary() {
+    *this = ::std::move(from);
+  }
+
+  inline CMsgGCCStrike15_v2_PremierSeasonSummary& operator=(const CMsgGCCStrike15_v2_PremierSeasonSummary& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline CMsgGCCStrike15_v2_PremierSeasonSummary& operator=(CMsgGCCStrike15_v2_PremierSeasonSummary&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  inline const ::PROTOBUF_NAMESPACE_ID::UnknownFieldSet& unknown_fields() const {
+    return _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance);
+  }
+  inline ::PROTOBUF_NAMESPACE_ID::UnknownFieldSet* mutable_unknown_fields() {
+    return _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const CMsgGCCStrike15_v2_PremierSeasonSummary& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const CMsgGCCStrike15_v2_PremierSeasonSummary* internal_default_instance() {
+    return reinterpret_cast<const CMsgGCCStrike15_v2_PremierSeasonSummary*>(
+               &_CMsgGCCStrike15_v2_PremierSeasonSummary_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    75;
+
+  friend void swap(CMsgGCCStrike15_v2_PremierSeasonSummary& a, CMsgGCCStrike15_v2_PremierSeasonSummary& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(CMsgGCCStrike15_v2_PremierSeasonSummary* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(CMsgGCCStrike15_v2_PremierSeasonSummary* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  CMsgGCCStrike15_v2_PremierSeasonSummary* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<CMsgGCCStrike15_v2_PremierSeasonSummary>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const CMsgGCCStrike15_v2_PremierSeasonSummary& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom( const CMsgGCCStrike15_v2_PremierSeasonSummary& from) {
+    CMsgGCCStrike15_v2_PremierSeasonSummary::MergeImpl(*this, from);
+  }
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  uint8_t* _InternalSerialize(
+      uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena, bool is_message_owned);
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(CMsgGCCStrike15_v2_PremierSeasonSummary* other);
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "CMsgGCCStrike15_v2_PremierSeasonSummary";
+  }
+  protected:
+  explicit CMsgGCCStrike15_v2_PremierSeasonSummary(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  typedef CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerWeek DataPerWeek;
+  typedef CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerMap DataPerMap;
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kDataPerWeekFieldNumber = 3,
+    kDataPerMapFieldNumber = 4,
+    kAccountIdFieldNumber = 1,
+    kSeasonIdFieldNumber = 2,
+  };
+  // repeated .CMsgGCCStrike15_v2_PremierSeasonSummary.DataPerWeek data_per_week = 3;
+  int data_per_week_size() const;
+  private:
+  int _internal_data_per_week_size() const;
+  public:
+  void clear_data_per_week();
+  ::CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerWeek* mutable_data_per_week(int index);
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerWeek >*
+      mutable_data_per_week();
+  private:
+  const ::CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerWeek& _internal_data_per_week(int index) const;
+  ::CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerWeek* _internal_add_data_per_week();
+  public:
+  const ::CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerWeek& data_per_week(int index) const;
+  ::CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerWeek* add_data_per_week();
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerWeek >&
+      data_per_week() const;
+
+  // repeated .CMsgGCCStrike15_v2_PremierSeasonSummary.DataPerMap data_per_map = 4;
+  int data_per_map_size() const;
+  private:
+  int _internal_data_per_map_size() const;
+  public:
+  void clear_data_per_map();
+  ::CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerMap* mutable_data_per_map(int index);
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerMap >*
+      mutable_data_per_map();
+  private:
+  const ::CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerMap& _internal_data_per_map(int index) const;
+  ::CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerMap* _internal_add_data_per_map();
+  public:
+  const ::CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerMap& data_per_map(int index) const;
+  ::CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerMap* add_data_per_map();
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerMap >&
+      data_per_map() const;
+
+  // optional uint32 account_id = 1;
+  bool has_account_id() const;
+  private:
+  bool _internal_has_account_id() const;
+  public:
+  void clear_account_id();
+  uint32_t account_id() const;
+  void set_account_id(uint32_t value);
+  private:
+  uint32_t _internal_account_id() const;
+  void _internal_set_account_id(uint32_t value);
+  public:
+
+  // optional uint32 season_id = 2;
+  bool has_season_id() const;
+  private:
+  bool _internal_has_season_id() const;
+  public:
+  void clear_season_id();
+  uint32_t season_id() const;
+  void set_season_id(uint32_t value);
+  private:
+  uint32_t _internal_season_id() const;
+  void _internal_set_season_id(uint32_t value);
+  public:
+
+  // @@protoc_insertion_point(class_scope:CMsgGCCStrike15_v2_PremierSeasonSummary)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+    ::PROTOBUF_NAMESPACE_ID::internal::HasBits<1> _has_bits_;
+    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+    ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerWeek > data_per_week_;
+    ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerMap > data_per_map_;
+    uint32_t account_id_;
+    uint32_t season_id_;
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_cstrike15_5fgcmessages_2eproto;
+};
+// -------------------------------------------------------------------
+
 class CMsgGCCStrike15_v2_PlayerOverwatchCaseUpdate :
     public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:CMsgGCCStrike15_v2_PlayerOverwatchCaseUpdate) */ {
  public:
@@ -19551,7 +20342,7 @@ class CMsgGCCStrike15_v2_PlayerOverwatchCaseUpdate :
                &_CMsgGCCStrike15_v2_PlayerOverwatchCaseUpdate_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    73;
+    76;
 
   friend void swap(CMsgGCCStrike15_v2_PlayerOverwatchCaseUpdate& a, CMsgGCCStrike15_v2_PlayerOverwatchCaseUpdate& b) {
     a.Swap(&b);
@@ -19816,7 +20607,7 @@ class CMsgGCCStrike15_v2_PlayerOverwatchCaseAssignment :
                &_CMsgGCCStrike15_v2_PlayerOverwatchCaseAssignment_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    74;
+    77;
 
   friend void swap(CMsgGCCStrike15_v2_PlayerOverwatchCaseAssignment& a, CMsgGCCStrike15_v2_PlayerOverwatchCaseAssignment& b) {
     a.Swap(&b);
@@ -20131,7 +20922,7 @@ class CMsgGCCStrike15_v2_PlayerOverwatchCaseStatus :
                &_CMsgGCCStrike15_v2_PlayerOverwatchCaseStatus_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    75;
+    78;
 
   friend void swap(CMsgGCCStrike15_v2_PlayerOverwatchCaseStatus& a, CMsgGCCStrike15_v2_PlayerOverwatchCaseStatus& b) {
     a.Swap(&b);
@@ -20306,7 +21097,7 @@ class CClientHeaderOverwatchEvidence :
                &_CClientHeaderOverwatchEvidence_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    76;
+    79;
 
   friend void swap(CClientHeaderOverwatchEvidence& a, CClientHeaderOverwatchEvidence& b) {
     a.Swap(&b);
@@ -20481,7 +21272,7 @@ class CMsgGCCStrike15_v2_GC2ClientTextMsg :
                &_CMsgGCCStrike15_v2_GC2ClientTextMsg_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    77;
+    80;
 
   friend void swap(CMsgGCCStrike15_v2_GC2ClientTextMsg& a, CMsgGCCStrike15_v2_GC2ClientTextMsg& b) {
     a.Swap(&b);
@@ -20676,7 +21467,7 @@ class CMsgGCCStrike15_v2_Client2GCTextMsg :
                &_CMsgGCCStrike15_v2_Client2GCTextMsg_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    78;
+    81;
 
   friend void swap(CMsgGCCStrike15_v2_Client2GCTextMsg& a, CMsgGCCStrike15_v2_Client2GCTextMsg& b) {
     a.Swap(&b);
@@ -20862,7 +21653,7 @@ class CMsgGCCStrike15_v2_MatchEndRunRewardDrops :
                &_CMsgGCCStrike15_v2_MatchEndRunRewardDrops_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    79;
+    82;
 
   friend void swap(CMsgGCCStrike15_v2_MatchEndRunRewardDrops& a, CMsgGCCStrike15_v2_MatchEndRunRewardDrops& b) {
     a.Swap(&b);
@@ -21047,7 +21838,7 @@ class CEconItemPreviewDataBlock_Sticker :
                &_CEconItemPreviewDataBlock_Sticker_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    80;
+    83;
 
   friend void swap(CEconItemPreviewDataBlock_Sticker& a, CEconItemPreviewDataBlock_Sticker& b) {
     a.Swap(&b);
@@ -21342,7 +22133,7 @@ class CEconItemPreviewDataBlock :
                &_CEconItemPreviewDataBlock_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    81;
+    84;
 
   friend void swap(CEconItemPreviewDataBlock& a, CEconItemPreviewDataBlock& b) {
     a.Swap(&b);
@@ -21804,7 +22595,7 @@ class CMsgGCCStrike15_v2_MatchEndRewardDropsNotification :
                &_CMsgGCCStrike15_v2_MatchEndRewardDropsNotification_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    82;
+    85;
 
   friend void swap(CMsgGCCStrike15_v2_MatchEndRewardDropsNotification& a, CMsgGCCStrike15_v2_MatchEndRewardDropsNotification& b) {
     a.Swap(&b);
@@ -21969,7 +22760,7 @@ class CMsgItemAcknowledged :
                &_CMsgItemAcknowledged_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    83;
+    86;
 
   friend void swap(CMsgItemAcknowledged& a, CMsgItemAcknowledged& b) {
     a.Swap(&b);
@@ -22134,7 +22925,7 @@ class CMsgGCCStrike15_v2_Client2GCEconPreviewDataBlockRequest :
                &_CMsgGCCStrike15_v2_Client2GCEconPreviewDataBlockRequest_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    84;
+    87;
 
   friend void swap(CMsgGCCStrike15_v2_Client2GCEconPreviewDataBlockRequest& a, CMsgGCCStrike15_v2_Client2GCEconPreviewDataBlockRequest& b) {
     a.Swap(&b);
@@ -22339,7 +23130,7 @@ class CMsgGCCStrike15_v2_Client2GCEconPreviewDataBlockResponse :
                &_CMsgGCCStrike15_v2_Client2GCEconPreviewDataBlockResponse_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    85;
+    88;
 
   friend void swap(CMsgGCCStrike15_v2_Client2GCEconPreviewDataBlockResponse& a, CMsgGCCStrike15_v2_Client2GCEconPreviewDataBlockResponse& b) {
     a.Swap(&b);
@@ -22503,7 +23294,7 @@ class CMsgGCCStrike15_v2_MatchListRequestCurrentLiveGames :
                &_CMsgGCCStrike15_v2_MatchListRequestCurrentLiveGames_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    86;
+    89;
 
   friend void swap(CMsgGCCStrike15_v2_MatchListRequestCurrentLiveGames& a, CMsgGCCStrike15_v2_MatchListRequestCurrentLiveGames& b) {
     a.Swap(&b);
@@ -22629,7 +23420,7 @@ class CMsgGCCStrike15_v2_MatchListRequestLiveGameForUser :
                &_CMsgGCCStrike15_v2_MatchListRequestLiveGameForUser_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    87;
+    90;
 
   friend void swap(CMsgGCCStrike15_v2_MatchListRequestLiveGameForUser& a, CMsgGCCStrike15_v2_MatchListRequestLiveGameForUser& b) {
     a.Swap(&b);
@@ -22789,7 +23580,7 @@ class CMsgGCCStrike15_v2_MatchListRequestRecentUserGames :
                &_CMsgGCCStrike15_v2_MatchListRequestRecentUserGames_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    88;
+    91;
 
   friend void swap(CMsgGCCStrike15_v2_MatchListRequestRecentUserGames& a, CMsgGCCStrike15_v2_MatchListRequestRecentUserGames& b) {
     a.Swap(&b);
@@ -22949,7 +23740,7 @@ class CMsgGCCStrike15_v2_MatchListRequestTournamentGames :
                &_CMsgGCCStrike15_v2_MatchListRequestTournamentGames_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    89;
+    92;
 
   friend void swap(CMsgGCCStrike15_v2_MatchListRequestTournamentGames& a, CMsgGCCStrike15_v2_MatchListRequestTournamentGames& b) {
     a.Swap(&b);
@@ -23109,7 +23900,7 @@ class CMsgGCCStrike15_v2_MatchListRequestFullGameInfo :
                &_CMsgGCCStrike15_v2_MatchListRequestFullGameInfo_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    90;
+    93;
 
   friend void swap(CMsgGCCStrike15_v2_MatchListRequestFullGameInfo& a, CMsgGCCStrike15_v2_MatchListRequestFullGameInfo& b) {
     a.Swap(&b);
@@ -23299,7 +24090,7 @@ class CDataGCCStrike15_v2_MatchInfo :
                &_CDataGCCStrike15_v2_MatchInfo_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    91;
+    94;
 
   friend void swap(CDataGCCStrike15_v2_MatchInfo& a, CDataGCCStrike15_v2_MatchInfo& b) {
     a.Swap(&b);
@@ -23534,7 +24325,7 @@ class CDataGCCStrike15_v2_TournamentGroupTeam :
                &_CDataGCCStrike15_v2_TournamentGroupTeam_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    92;
+    95;
 
   friend void swap(CDataGCCStrike15_v2_TournamentGroupTeam& a, CDataGCCStrike15_v2_TournamentGroupTeam& b) {
     a.Swap(&b);
@@ -23724,7 +24515,7 @@ class CDataGCCStrike15_v2_TournamentGroup_Picks :
                &_CDataGCCStrike15_v2_TournamentGroup_Picks_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    93;
+    96;
 
   friend void swap(CDataGCCStrike15_v2_TournamentGroup_Picks& a, CDataGCCStrike15_v2_TournamentGroup_Picks& b) {
     a.Swap(&b);
@@ -23892,7 +24683,7 @@ class CDataGCCStrike15_v2_TournamentGroup :
                &_CDataGCCStrike15_v2_TournamentGroup_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    94;
+    97;
 
   friend void swap(CDataGCCStrike15_v2_TournamentGroup& a, CDataGCCStrike15_v2_TournamentGroup& b) {
     a.Swap(&b);
@@ -24218,7 +25009,7 @@ class CDataGCCStrike15_v2_TournamentSection :
                &_CDataGCCStrike15_v2_TournamentSection_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    95;
+    98;
 
   friend void swap(CDataGCCStrike15_v2_TournamentSection& a, CDataGCCStrike15_v2_TournamentSection& b) {
     a.Swap(&b);
@@ -24438,7 +25229,7 @@ class CDataGCCStrike15_v2_TournamentInfo :
                &_CDataGCCStrike15_v2_TournamentInfo_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    96;
+    99;
 
   friend void swap(CDataGCCStrike15_v2_TournamentInfo& a, CDataGCCStrike15_v2_TournamentInfo& b) {
     a.Swap(&b);
@@ -24643,7 +25434,7 @@ class CMsgGCCStrike15_v2_MatchList :
                &_CMsgGCCStrike15_v2_MatchList_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    97;
+    100;
 
   friend void swap(CMsgGCCStrike15_v2_MatchList& a, CMsgGCCStrike15_v2_MatchList& b) {
     a.Swap(&b);
@@ -24893,7 +25684,7 @@ class CMsgGCCStrike15_v2_MatchListTournamentOperatorMgmt :
                &_CMsgGCCStrike15_v2_MatchListTournamentOperatorMgmt_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    98;
+    101;
 
   friend void swap(CMsgGCCStrike15_v2_MatchListTournamentOperatorMgmt& a, CMsgGCCStrike15_v2_MatchListTournamentOperatorMgmt& b) {
     a.Swap(&b);
@@ -25088,7 +25879,7 @@ class CMsgGCCStrike15_v2_Predictions_GroupMatchTeamPick :
                &_CMsgGCCStrike15_v2_Predictions_GroupMatchTeamPick_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    99;
+    102;
 
   friend void swap(CMsgGCCStrike15_v2_Predictions_GroupMatchTeamPick& a, CMsgGCCStrike15_v2_Predictions_GroupMatchTeamPick& b) {
     a.Swap(&b);
@@ -25308,7 +26099,7 @@ class CMsgGCCStrike15_v2_Predictions :
                &_CMsgGCCStrike15_v2_Predictions_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    100;
+    103;
 
   friend void swap(CMsgGCCStrike15_v2_Predictions& a, CMsgGCCStrike15_v2_Predictions& b) {
     a.Swap(&b);
@@ -25490,7 +26281,7 @@ class CMsgGCCStrike15_v2_Fantasy_FantasySlot :
                &_CMsgGCCStrike15_v2_Fantasy_FantasySlot_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    101;
+    104;
 
   friend void swap(CMsgGCCStrike15_v2_Fantasy_FantasySlot& a, CMsgGCCStrike15_v2_Fantasy_FantasySlot& b) {
     a.Swap(&b);
@@ -25680,7 +26471,7 @@ class CMsgGCCStrike15_v2_Fantasy_FantasyTeam :
                &_CMsgGCCStrike15_v2_Fantasy_FantasyTeam_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    102;
+    105;
 
   friend void swap(CMsgGCCStrike15_v2_Fantasy_FantasyTeam& a, CMsgGCCStrike15_v2_Fantasy_FantasyTeam& b) {
     a.Swap(&b);
@@ -25860,7 +26651,7 @@ class CMsgGCCStrike15_v2_Fantasy :
                &_CMsgGCCStrike15_v2_Fantasy_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    103;
+    106;
 
   friend void swap(CMsgGCCStrike15_v2_Fantasy& a, CMsgGCCStrike15_v2_Fantasy& b) {
     a.Swap(&b);
@@ -26043,7 +26834,7 @@ class CAttribute_String :
                &_CAttribute_String_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    104;
+    107;
 
   friend void swap(CAttribute_String& a, CAttribute_String& b) {
     a.Swap(&b);
@@ -26208,7 +26999,7 @@ class CMsgLegacySource1ClientWelcome_Location :
                &_CMsgLegacySource1ClientWelcome_Location_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    105;
+    108;
 
   friend void swap(CMsgLegacySource1ClientWelcome_Location& a, CMsgLegacySource1ClientWelcome_Location& b) {
     a.Swap(&b);
@@ -26403,7 +27194,7 @@ class CMsgLegacySource1ClientWelcome :
                &_CMsgLegacySource1ClientWelcome_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    106;
+    109;
 
   friend void swap(CMsgLegacySource1ClientWelcome& a, CMsgLegacySource1ClientWelcome& b) {
     a.Swap(&b);
@@ -26750,7 +27541,7 @@ class CMsgCStrike15Welcome :
                &_CMsgCStrike15Welcome_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    107;
+    110;
 
   friend void swap(CMsgCStrike15Welcome& a, CMsgCStrike15Welcome& b) {
     a.Swap(&b);
@@ -27000,7 +27791,7 @@ class CMsgGCCStrike15_v2_ClientVarValueNotificationInfo :
                &_CMsgGCCStrike15_v2_ClientVarValueNotificationInfo_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    108;
+    111;
 
   friend void swap(CMsgGCCStrike15_v2_ClientVarValueNotificationInfo& a, CMsgGCCStrike15_v2_ClientVarValueNotificationInfo& b) {
     a.Swap(&b);
@@ -27236,7 +28027,7 @@ class CMsgGCCStrike15_v2_ServerVarValueNotificationInfo :
                &_CMsgGCCStrike15_v2_ServerVarValueNotificationInfo_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    109;
+    112;
 
   friend void swap(CMsgGCCStrike15_v2_ServerVarValueNotificationInfo& a, CMsgGCCStrike15_v2_ServerVarValueNotificationInfo& b) {
     a.Swap(&b);
@@ -27458,7 +28249,7 @@ class CMsgGCCStrike15_v2_GiftsLeaderboardRequest :
                &_CMsgGCCStrike15_v2_GiftsLeaderboardRequest_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    110;
+    113;
 
   friend void swap(CMsgGCCStrike15_v2_GiftsLeaderboardRequest& a, CMsgGCCStrike15_v2_GiftsLeaderboardRequest& b) {
     a.Swap(&b);
@@ -27584,7 +28375,7 @@ class CMsgGCCStrike15_v2_GiftsLeaderboardResponse_GiftLeaderboardEntry :
                &_CMsgGCCStrike15_v2_GiftsLeaderboardResponse_GiftLeaderboardEntry_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    111;
+    114;
 
   friend void swap(CMsgGCCStrike15_v2_GiftsLeaderboardResponse_GiftLeaderboardEntry& a, CMsgGCCStrike15_v2_GiftsLeaderboardResponse_GiftLeaderboardEntry& b) {
     a.Swap(&b);
@@ -27759,7 +28550,7 @@ class CMsgGCCStrike15_v2_GiftsLeaderboardResponse :
                &_CMsgGCCStrike15_v2_GiftsLeaderboardResponse_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    112;
+    115;
 
   friend void swap(CMsgGCCStrike15_v2_GiftsLeaderboardResponse& a, CMsgGCCStrike15_v2_GiftsLeaderboardResponse& b) {
     a.Swap(&b);
@@ -27986,7 +28777,7 @@ class CMsgGCCStrike15_v2_ClientSubmitSurveyVote :
                &_CMsgGCCStrike15_v2_ClientSubmitSurveyVote_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    113;
+    116;
 
   friend void swap(CMsgGCCStrike15_v2_ClientSubmitSurveyVote& a, CMsgGCCStrike15_v2_ClientSubmitSurveyVote& b) {
     a.Swap(&b);
@@ -28161,7 +28952,7 @@ class CMsgGCCStrike15_v2_Server2GCClientValidate :
                &_CMsgGCCStrike15_v2_Server2GCClientValidate_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    114;
+    117;
 
   friend void swap(CMsgGCCStrike15_v2_Server2GCClientValidate& a, CMsgGCCStrike15_v2_Server2GCClientValidate& b) {
     a.Swap(&b);
@@ -28321,7 +29112,7 @@ class CMsgGCCStrike15_v2_GC2ClientTournamentInfo :
                &_CMsgGCCStrike15_v2_GC2ClientTournamentInfo_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    115;
+    118;
 
   friend void swap(CMsgGCCStrike15_v2_GC2ClientTournamentInfo& a, CMsgGCCStrike15_v2_GC2ClientTournamentInfo& b) {
     a.Swap(&b);
@@ -28535,7 +29326,7 @@ class CSOEconCoupon :
                &_CSOEconCoupon_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    116;
+    119;
 
   friend void swap(CSOEconCoupon& a, CSOEconCoupon& b) {
     a.Swap(&b);
@@ -28725,7 +29516,7 @@ class CSOAccountItemPersonalStore :
                &_CSOAccountItemPersonalStore_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    117;
+    120;
 
   friend void swap(CSOAccountItemPersonalStore& a, CSOAccountItemPersonalStore& b) {
     a.Swap(&b);
@@ -28924,7 +29715,7 @@ class CSOAccountXpShop :
                &_CSOAccountXpShop_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    118;
+    121;
 
   friend void swap(CSOAccountXpShop& a, CSOAccountXpShop& b) {
     a.Swap(&b);
@@ -29123,7 +29914,7 @@ class CSOAccountKeychainRemoveToolCharges :
                &_CSOAccountKeychainRemoveToolCharges_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    119;
+    122;
 
   friend void swap(CSOAccountKeychainRemoveToolCharges& a, CSOAccountKeychainRemoveToolCharges& b) {
     a.Swap(&b);
@@ -29283,7 +30074,7 @@ class CSOQuestProgress :
                &_CSOQuestProgress_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    120;
+    123;
 
   friend void swap(CSOQuestProgress& a, CSOQuestProgress& b) {
     a.Swap(&b);
@@ -29473,7 +30264,7 @@ class CSOAccountSeasonalOperation :
                &_CSOAccountSeasonalOperation_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    121;
+    124;
 
   friend void swap(CSOAccountSeasonalOperation& a, CSOAccountSeasonalOperation& b) {
     a.Swap(&b);
@@ -29723,7 +30514,7 @@ class CSOAccountRecurringSubscription :
                &_CSOAccountRecurringSubscription_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    122;
+    125;
 
   friend void swap(CSOAccountRecurringSubscription& a, CSOAccountRecurringSubscription& b) {
     a.Swap(&b);
@@ -29898,7 +30689,7 @@ class CSOPersonaDataPublic :
                &_CSOPersonaDataPublic_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    123;
+    126;
 
   friend void swap(CSOPersonaDataPublic& a, CSOPersonaDataPublic& b) {
     a.Swap(&b);
@@ -30123,7 +30914,7 @@ class CMsgGCCStrike15_v2_GC2ClientNotifyXPShop :
                &_CMsgGCCStrike15_v2_GC2ClientNotifyXPShop_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    124;
+    127;
 
   friend void swap(CMsgGCCStrike15_v2_GC2ClientNotifyXPShop& a, CMsgGCCStrike15_v2_GC2ClientNotifyXPShop& b) {
     a.Swap(&b);
@@ -30337,7 +31128,7 @@ class CMsgGCCStrike15_v2_Client2GcAckXPShopTracks :
                &_CMsgGCCStrike15_v2_Client2GcAckXPShopTracks_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    125;
+    128;
 
   friend void swap(CMsgGCCStrike15_v2_Client2GcAckXPShopTracks& a, CMsgGCCStrike15_v2_Client2GcAckXPShopTracks& b) {
     a.Swap(&b);
@@ -30463,7 +31254,7 @@ class CMsgGCCStrike15_v2_MatchmakingGC2ClientSearchStats :
                &_CMsgGCCStrike15_v2_MatchmakingGC2ClientSearchStats_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    126;
+    129;
 
   friend void swap(CMsgGCCStrike15_v2_MatchmakingGC2ClientSearchStats& a, CMsgGCCStrike15_v2_MatchmakingGC2ClientSearchStats& b) {
     a.Swap(&b);
@@ -30683,7 +31474,7 @@ class CMsgGC_GlobalGame_Subscribe :
                &_CMsgGC_GlobalGame_Subscribe_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    127;
+    130;
 
   friend void swap(CMsgGC_GlobalGame_Subscribe& a, CMsgGC_GlobalGame_Subscribe& b) {
     a.Swap(&b);
@@ -30843,7 +31634,7 @@ class CMsgGC_GlobalGame_Unsubscribe :
                &_CMsgGC_GlobalGame_Unsubscribe_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    128;
+    131;
 
   friend void swap(CMsgGC_GlobalGame_Unsubscribe& a, CMsgGC_GlobalGame_Unsubscribe& b) {
     a.Swap(&b);
@@ -31003,7 +31794,7 @@ class CMsgGC_GlobalGame_Play :
                &_CMsgGC_GlobalGame_Play_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    129;
+    132;
 
   friend void swap(CMsgGC_GlobalGame_Play& a, CMsgGC_GlobalGame_Play& b) {
     a.Swap(&b);
@@ -31193,7 +31984,7 @@ class CMsgGCCStrike15_v2_AcknowledgePenalty :
                &_CMsgGCCStrike15_v2_AcknowledgePenalty_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    130;
+    133;
 
   friend void swap(CMsgGCCStrike15_v2_AcknowledgePenalty& a, CMsgGCCStrike15_v2_AcknowledgePenalty& b) {
     a.Swap(&b);
@@ -31353,7 +32144,7 @@ class CMsgGCCStrike15_v2_Client2GCRequestPrestigeCoin :
                &_CMsgGCCStrike15_v2_Client2GCRequestPrestigeCoin_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    131;
+    134;
 
   friend void swap(CMsgGCCStrike15_v2_Client2GCRequestPrestigeCoin& a, CMsgGCCStrike15_v2_Client2GCRequestPrestigeCoin& b) {
     a.Swap(&b);
@@ -31558,7 +32349,7 @@ class CMsgGCCStrike15_v2_Client2GCStreamUnlock :
                &_CMsgGCCStrike15_v2_Client2GCStreamUnlock_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    132;
+    135;
 
   friend void swap(CMsgGCCStrike15_v2_Client2GCStreamUnlock& a, CMsgGCCStrike15_v2_Client2GCStreamUnlock& b) {
     a.Swap(&b);
@@ -31733,7 +32524,7 @@ class CMsgGCCStrike15_v2_ClientToGCRequestElevate :
                &_CMsgGCCStrike15_v2_ClientToGCRequestElevate_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    133;
+    136;
 
   friend void swap(CMsgGCCStrike15_v2_ClientToGCRequestElevate& a, CMsgGCCStrike15_v2_ClientToGCRequestElevate& b) {
     a.Swap(&b);
@@ -31893,7 +32684,7 @@ class CMsgGCCStrike15_v2_ClientToGCChat :
                &_CMsgGCCStrike15_v2_ClientToGCChat_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    134;
+    137;
 
   friend void swap(CMsgGCCStrike15_v2_ClientToGCChat& a, CMsgGCCStrike15_v2_ClientToGCChat& b) {
     a.Swap(&b);
@@ -32073,7 +32864,7 @@ class CMsgGCCStrike15_v2_GCToClientChat :
                &_CMsgGCCStrike15_v2_GCToClientChat_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    135;
+    138;
 
   friend void swap(CMsgGCCStrike15_v2_GCToClientChat& a, CMsgGCCStrike15_v2_GCToClientChat& b) {
     a.Swap(&b);
@@ -32253,7 +33044,7 @@ class CMsgGCCStrike15_v2_ClientAuthKeyCode :
                &_CMsgGCCStrike15_v2_ClientAuthKeyCode_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    136;
+    139;
 
   friend void swap(CMsgGCCStrike15_v2_ClientAuthKeyCode& a, CMsgGCCStrike15_v2_ClientAuthKeyCode& b) {
     a.Swap(&b);
@@ -32433,7 +33224,7 @@ class CMsgGCCStrike15_GotvSyncPacket :
                &_CMsgGCCStrike15_GotvSyncPacket_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    137;
+    140;
 
   friend void swap(CMsgGCCStrike15_GotvSyncPacket& a, CMsgGCCStrike15_GotvSyncPacket& b) {
     a.Swap(&b);
@@ -32598,7 +33389,7 @@ class PlayerDecalDigitalSignature :
                &_PlayerDecalDigitalSignature_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    138;
+    141;
 
   friend void swap(PlayerDecalDigitalSignature& a, PlayerDecalDigitalSignature& b) {
     a.Swap(&b);
@@ -32994,7 +33785,7 @@ class CMsgGCCStrike15_v2_ClientPlayerDecalSign :
                &_CMsgGCCStrike15_v2_ClientPlayerDecalSign_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    139;
+    142;
 
   friend void swap(CMsgGCCStrike15_v2_ClientPlayerDecalSign& a, CMsgGCCStrike15_v2_ClientPlayerDecalSign& b) {
     a.Swap(&b);
@@ -33174,7 +33965,7 @@ class CMsgGCCStrike15_v2_BetaEnrollment :
                &_CMsgGCCStrike15_v2_BetaEnrollment_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    140;
+    143;
 
   friend void swap(CMsgGCCStrike15_v2_BetaEnrollment& a, CMsgGCCStrike15_v2_BetaEnrollment& b) {
     a.Swap(&b);
@@ -33334,7 +34125,7 @@ class CMsgGCCStrike15_v2_ClientLogonFatalError :
                &_CMsgGCCStrike15_v2_ClientLogonFatalError_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    141;
+    144;
 
   friend void swap(CMsgGCCStrike15_v2_ClientLogonFatalError& a, CMsgGCCStrike15_v2_ClientLogonFatalError& b) {
     a.Swap(&b);
@@ -33534,7 +34325,7 @@ class CMsgGCCStrike15_v2_ClientPollState :
                &_CMsgGCCStrike15_v2_ClientPollState_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    142;
+    145;
 
   friend void swap(CMsgGCCStrike15_v2_ClientPollState& a, CMsgGCCStrike15_v2_ClientPollState& b) {
     a.Swap(&b);
@@ -33744,7 +34535,7 @@ class CMsgGCCStrike15_v2_Party_Register :
                &_CMsgGCCStrike15_v2_Party_Register_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    143;
+    146;
 
   friend void swap(CMsgGCCStrike15_v2_Party_Register& a, CMsgGCCStrike15_v2_Party_Register& b) {
     a.Swap(&b);
@@ -34024,7 +34815,7 @@ class CMsgGCCStrike15_v2_Party_Search :
                &_CMsgGCCStrike15_v2_Party_Search_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    144;
+    147;
 
   friend void swap(CMsgGCCStrike15_v2_Party_Search& a, CMsgGCCStrike15_v2_Party_Search& b) {
     a.Swap(&b);
@@ -34268,7 +35059,7 @@ class CMsgGCCStrike15_v2_Party_SearchResults_Entry :
                &_CMsgGCCStrike15_v2_Party_SearchResults_Entry_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    145;
+    148;
 
   friend void swap(CMsgGCCStrike15_v2_Party_SearchResults_Entry& a, CMsgGCCStrike15_v2_Party_SearchResults_Entry& b) {
     a.Swap(&b);
@@ -34518,7 +35309,7 @@ class CMsgGCCStrike15_v2_Party_SearchResults :
                &_CMsgGCCStrike15_v2_Party_SearchResults_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    146;
+    149;
 
   friend void swap(CMsgGCCStrike15_v2_Party_SearchResults& a, CMsgGCCStrike15_v2_Party_SearchResults& b) {
     a.Swap(&b);
@@ -34684,7 +35475,7 @@ class CMsgGCCStrike15_v2_Party_Invite :
                &_CMsgGCCStrike15_v2_Party_Invite_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    147;
+    150;
 
   friend void swap(CMsgGCCStrike15_v2_Party_Invite& a, CMsgGCCStrike15_v2_Party_Invite& b) {
     a.Swap(&b);
@@ -34859,7 +35650,7 @@ class CMsgGCCStrike15_v2_Account_RequestCoPlays_Player :
                &_CMsgGCCStrike15_v2_Account_RequestCoPlays_Player_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    148;
+    151;
 
   friend void swap(CMsgGCCStrike15_v2_Account_RequestCoPlays_Player& a, CMsgGCCStrike15_v2_Account_RequestCoPlays_Player& b) {
     a.Swap(&b);
@@ -35049,7 +35840,7 @@ class CMsgGCCStrike15_v2_Account_RequestCoPlays :
                &_CMsgGCCStrike15_v2_Account_RequestCoPlays_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    149;
+    152;
 
   friend void swap(CMsgGCCStrike15_v2_Account_RequestCoPlays& a, CMsgGCCStrike15_v2_Account_RequestCoPlays& b) {
     a.Swap(&b);
@@ -35231,7 +36022,7 @@ class CMsgGCCStrike15_v2_ClientToGCRequestTicket :
                &_CMsgGCCStrike15_v2_ClientToGCRequestTicket_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    150;
+    153;
 
   friend void swap(CMsgGCCStrike15_v2_ClientToGCRequestTicket& a, CMsgGCCStrike15_v2_ClientToGCRequestTicket& b) {
     a.Swap(&b);
@@ -35441,7 +36232,7 @@ class CMsgGCToClientSteamDatagramTicket :
                &_CMsgGCToClientSteamDatagramTicket_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    151;
+    154;
 
   friend void swap(CMsgGCToClientSteamDatagramTicket& a, CMsgGCToClientSteamDatagramTicket& b) {
     a.Swap(&b);
@@ -35605,7 +36396,7 @@ class CMsgGCCStrike15_v2_ClientRequestOffers :
                &_CMsgGCCStrike15_v2_ClientRequestOffers_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    152;
+    155;
 
   friend void swap(CMsgGCCStrike15_v2_ClientRequestOffers& a, CMsgGCCStrike15_v2_ClientRequestOffers& b) {
     a.Swap(&b);
@@ -35731,7 +36522,7 @@ class CMsgGCCStrike15_v2_ClientRequestSouvenir :
                &_CMsgGCCStrike15_v2_ClientRequestSouvenir_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    153;
+    156;
 
   friend void swap(CMsgGCCStrike15_v2_ClientRequestSouvenir& a, CMsgGCCStrike15_v2_ClientRequestSouvenir& b) {
     a.Swap(&b);
@@ -35921,7 +36712,7 @@ class CMsgGCCStrike15_v2_ClientAccountBalance :
                &_CMsgGCCStrike15_v2_ClientAccountBalance_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    154;
+    157;
 
   friend void swap(CMsgGCCStrike15_v2_ClientAccountBalance& a, CMsgGCCStrike15_v2_ClientAccountBalance& b) {
     a.Swap(&b);
@@ -36101,7 +36892,7 @@ class CMsgGCCStrike15_v2_ClientPartyJoinRelay :
                &_CMsgGCCStrike15_v2_ClientPartyJoinRelay_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    155;
+    158;
 
   friend void swap(CMsgGCCStrike15_v2_ClientPartyJoinRelay& a, CMsgGCCStrike15_v2_ClientPartyJoinRelay& b) {
     a.Swap(&b);
@@ -36276,7 +37067,7 @@ class CMsgGCCStrike15_v2_ClientPartyWarning_Entry :
                &_CMsgGCCStrike15_v2_ClientPartyWarning_Entry_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    156;
+    159;
 
   friend void swap(CMsgGCCStrike15_v2_ClientPartyWarning_Entry& a, CMsgGCCStrike15_v2_ClientPartyWarning_Entry& b) {
     a.Swap(&b);
@@ -36451,7 +37242,7 @@ class CMsgGCCStrike15_v2_ClientPartyWarning :
                &_CMsgGCCStrike15_v2_ClientPartyWarning_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    157;
+    160;
 
   friend void swap(CMsgGCCStrike15_v2_ClientPartyWarning& a, CMsgGCCStrike15_v2_ClientPartyWarning& b) {
     a.Swap(&b);
@@ -36617,7 +37408,7 @@ class CMsgGCCStrike15_v2_SetEventFavorite :
                &_CMsgGCCStrike15_v2_SetEventFavorite_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    158;
+    161;
 
   friend void swap(CMsgGCCStrike15_v2_SetEventFavorite& a, CMsgGCCStrike15_v2_SetEventFavorite& b) {
     a.Swap(&b);
@@ -36792,7 +37583,7 @@ class CMsgGCCStrike15_v2_GetEventFavorites_Request :
                &_CMsgGCCStrike15_v2_GetEventFavorites_Request_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    159;
+    162;
 
   friend void swap(CMsgGCCStrike15_v2_GetEventFavorites_Request& a, CMsgGCCStrike15_v2_GetEventFavorites_Request& b) {
     a.Swap(&b);
@@ -36952,7 +37743,7 @@ class CMsgGCCStrike15_v2_GetEventFavorites_Response :
                &_CMsgGCCStrike15_v2_GetEventFavorites_Response_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    160;
+    163;
 
   friend void swap(CMsgGCCStrike15_v2_GetEventFavorites_Response& a, CMsgGCCStrike15_v2_GetEventFavorites_Response& b) {
     a.Swap(&b);
@@ -37152,7 +37943,7 @@ class CMsgGCCStrike15_v2_ClientPerfReport_Entry :
                &_CMsgGCCStrike15_v2_ClientPerfReport_Entry_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    161;
+    164;
 
   friend void swap(CMsgGCCStrike15_v2_ClientPerfReport_Entry& a, CMsgGCCStrike15_v2_ClientPerfReport_Entry& b) {
     a.Swap(&b);
@@ -37397,7 +38188,7 @@ class CMsgGCCStrike15_v2_ClientPerfReport :
                &_CMsgGCCStrike15_v2_ClientPerfReport_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    162;
+    165;
 
   friend void swap(CMsgGCCStrike15_v2_ClientPerfReport& a, CMsgGCCStrike15_v2_ClientPerfReport& b) {
     a.Swap(&b);
@@ -37563,7 +38354,7 @@ class CVDiagnostic :
                &_CVDiagnostic_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    163;
+    166;
 
   friend void swap(CVDiagnostic& a, CVDiagnostic& b) {
     a.Swap(&b);
@@ -37773,7 +38564,7 @@ class CMsgGCCStrike15_v2_ClientReportValidation :
                &_CMsgGCCStrike15_v2_ClientReportValidation_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    164;
+    167;
 
   friend void swap(CMsgGCCStrike15_v2_ClientReportValidation& a, CMsgGCCStrike15_v2_ClientReportValidation& b) {
     a.Swap(&b);
@@ -38238,7 +39029,7 @@ class CMsgGCCStrike15_v2_GC2ClientRefuseSecureMode :
                &_CMsgGCCStrike15_v2_GC2ClientRefuseSecureMode_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    165;
+    168;
 
   friend void swap(CMsgGCCStrike15_v2_GC2ClientRefuseSecureMode& a, CMsgGCCStrike15_v2_GC2ClientRefuseSecureMode& b) {
     a.Swap(&b);
@@ -38528,7 +39319,7 @@ class CMsgGCCStrike15_v2_GC2ClientRequestValidation :
                &_CMsgGCCStrike15_v2_GC2ClientRequestValidation_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    166;
+    169;
 
   friend void swap(CMsgGCCStrike15_v2_GC2ClientRequestValidation& a, CMsgGCCStrike15_v2_GC2ClientRequestValidation& b) {
     a.Swap(&b);
@@ -38708,7 +39499,7 @@ class CMsgGCCStrike15_v2_GC2ClientInitSystem :
                &_CMsgGCCStrike15_v2_GC2ClientInitSystem_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    167;
+    170;
 
   friend void swap(CMsgGCCStrike15_v2_GC2ClientInitSystem& a, CMsgGCCStrike15_v2_GC2ClientInitSystem& b) {
     a.Swap(&b);
@@ -39018,7 +39809,7 @@ class CMsgGCCStrike15_v2_GC2ClientInitSystem_Response :
                &_CMsgGCCStrike15_v2_GC2ClientInitSystem_Response_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    168;
+    171;
 
   friend void swap(CMsgGCCStrike15_v2_GC2ClientInitSystem_Response& a, CMsgGCCStrike15_v2_GC2ClientInitSystem_Response& b) {
     a.Swap(&b);
@@ -39323,7 +40114,7 @@ class CMsgGCCStrike15_v2_SetPlayerLeaderboardSafeName :
                &_CMsgGCCStrike15_v2_SetPlayerLeaderboardSafeName_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    169;
+    172;
 
   friend void swap(CMsgGCCStrike15_v2_SetPlayerLeaderboardSafeName& a, CMsgGCCStrike15_v2_SetPlayerLeaderboardSafeName& b) {
     a.Swap(&b);
@@ -42211,6 +43002,62 @@ inline void PlayerRankingInfo::_internal_set_leaderboard_name_status(uint32_t va
 inline void PlayerRankingInfo::set_leaderboard_name_status(uint32_t value) {
   _internal_set_leaderboard_name_status(value);
   // @@protoc_insertion_point(field_set:PlayerRankingInfo.leaderboard_name_status)
+}
+
+// optional uint32 highest_rank = 15;
+inline bool PlayerRankingInfo::_internal_has_highest_rank() const {
+  bool value = (_impl_._has_bits_[0] & 0x00001000u) != 0;
+  return value;
+}
+inline bool PlayerRankingInfo::has_highest_rank() const {
+  return _internal_has_highest_rank();
+}
+inline void PlayerRankingInfo::clear_highest_rank() {
+  _impl_.highest_rank_ = 0u;
+  _impl_._has_bits_[0] &= ~0x00001000u;
+}
+inline uint32_t PlayerRankingInfo::_internal_highest_rank() const {
+  return _impl_.highest_rank_;
+}
+inline uint32_t PlayerRankingInfo::highest_rank() const {
+  // @@protoc_insertion_point(field_get:PlayerRankingInfo.highest_rank)
+  return _internal_highest_rank();
+}
+inline void PlayerRankingInfo::_internal_set_highest_rank(uint32_t value) {
+  _impl_._has_bits_[0] |= 0x00001000u;
+  _impl_.highest_rank_ = value;
+}
+inline void PlayerRankingInfo::set_highest_rank(uint32_t value) {
+  _internal_set_highest_rank(value);
+  // @@protoc_insertion_point(field_set:PlayerRankingInfo.highest_rank)
+}
+
+// optional uint32 rank_expiry = 16;
+inline bool PlayerRankingInfo::_internal_has_rank_expiry() const {
+  bool value = (_impl_._has_bits_[0] & 0x00002000u) != 0;
+  return value;
+}
+inline bool PlayerRankingInfo::has_rank_expiry() const {
+  return _internal_has_rank_expiry();
+}
+inline void PlayerRankingInfo::clear_rank_expiry() {
+  _impl_.rank_expiry_ = 0u;
+  _impl_._has_bits_[0] &= ~0x00002000u;
+}
+inline uint32_t PlayerRankingInfo::_internal_rank_expiry() const {
+  return _impl_.rank_expiry_;
+}
+inline uint32_t PlayerRankingInfo::rank_expiry() const {
+  // @@protoc_insertion_point(field_get:PlayerRankingInfo.rank_expiry)
+  return _internal_rank_expiry();
+}
+inline void PlayerRankingInfo::_internal_set_rank_expiry(uint32_t value) {
+  _impl_._has_bits_[0] |= 0x00002000u;
+  _impl_.rank_expiry_ = value;
+}
+inline void PlayerRankingInfo::set_rank_expiry(uint32_t value) {
+  _internal_set_rank_expiry(value);
+  // @@protoc_insertion_point(field_set:PlayerRankingInfo.rank_expiry)
 }
 
 // -------------------------------------------------------------------
@@ -57454,6 +58301,602 @@ CMsgGCCStrike15_v2_PlayersProfile::account_profiles() const {
 
 // -------------------------------------------------------------------
 
+// CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerWeek
+
+// optional uint64 week_id = 1;
+inline bool CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerWeek::_internal_has_week_id() const {
+  bool value = (_impl_._has_bits_[0] & 0x00000001u) != 0;
+  return value;
+}
+inline bool CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerWeek::has_week_id() const {
+  return _internal_has_week_id();
+}
+inline void CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerWeek::clear_week_id() {
+  _impl_.week_id_ = uint64_t{0u};
+  _impl_._has_bits_[0] &= ~0x00000001u;
+}
+inline uint64_t CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerWeek::_internal_week_id() const {
+  return _impl_.week_id_;
+}
+inline uint64_t CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerWeek::week_id() const {
+  // @@protoc_insertion_point(field_get:CMsgGCCStrike15_v2_PremierSeasonSummary.DataPerWeek.week_id)
+  return _internal_week_id();
+}
+inline void CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerWeek::_internal_set_week_id(uint64_t value) {
+  _impl_._has_bits_[0] |= 0x00000001u;
+  _impl_.week_id_ = value;
+}
+inline void CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerWeek::set_week_id(uint64_t value) {
+  _internal_set_week_id(value);
+  // @@protoc_insertion_point(field_set:CMsgGCCStrike15_v2_PremierSeasonSummary.DataPerWeek.week_id)
+}
+
+// optional uint32 rank_id = 2;
+inline bool CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerWeek::_internal_has_rank_id() const {
+  bool value = (_impl_._has_bits_[0] & 0x00000002u) != 0;
+  return value;
+}
+inline bool CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerWeek::has_rank_id() const {
+  return _internal_has_rank_id();
+}
+inline void CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerWeek::clear_rank_id() {
+  _impl_.rank_id_ = 0u;
+  _impl_._has_bits_[0] &= ~0x00000002u;
+}
+inline uint32_t CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerWeek::_internal_rank_id() const {
+  return _impl_.rank_id_;
+}
+inline uint32_t CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerWeek::rank_id() const {
+  // @@protoc_insertion_point(field_get:CMsgGCCStrike15_v2_PremierSeasonSummary.DataPerWeek.rank_id)
+  return _internal_rank_id();
+}
+inline void CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerWeek::_internal_set_rank_id(uint32_t value) {
+  _impl_._has_bits_[0] |= 0x00000002u;
+  _impl_.rank_id_ = value;
+}
+inline void CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerWeek::set_rank_id(uint32_t value) {
+  _internal_set_rank_id(value);
+  // @@protoc_insertion_point(field_set:CMsgGCCStrike15_v2_PremierSeasonSummary.DataPerWeek.rank_id)
+}
+
+// optional uint32 matches_played = 3;
+inline bool CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerWeek::_internal_has_matches_played() const {
+  bool value = (_impl_._has_bits_[0] & 0x00000004u) != 0;
+  return value;
+}
+inline bool CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerWeek::has_matches_played() const {
+  return _internal_has_matches_played();
+}
+inline void CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerWeek::clear_matches_played() {
+  _impl_.matches_played_ = 0u;
+  _impl_._has_bits_[0] &= ~0x00000004u;
+}
+inline uint32_t CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerWeek::_internal_matches_played() const {
+  return _impl_.matches_played_;
+}
+inline uint32_t CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerWeek::matches_played() const {
+  // @@protoc_insertion_point(field_get:CMsgGCCStrike15_v2_PremierSeasonSummary.DataPerWeek.matches_played)
+  return _internal_matches_played();
+}
+inline void CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerWeek::_internal_set_matches_played(uint32_t value) {
+  _impl_._has_bits_[0] |= 0x00000004u;
+  _impl_.matches_played_ = value;
+}
+inline void CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerWeek::set_matches_played(uint32_t value) {
+  _internal_set_matches_played(value);
+  // @@protoc_insertion_point(field_set:CMsgGCCStrike15_v2_PremierSeasonSummary.DataPerWeek.matches_played)
+}
+
+// -------------------------------------------------------------------
+
+// CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerMap
+
+// optional uint32 map_id = 1;
+inline bool CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerMap::_internal_has_map_id() const {
+  bool value = (_impl_._has_bits_[0] & 0x00000001u) != 0;
+  return value;
+}
+inline bool CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerMap::has_map_id() const {
+  return _internal_has_map_id();
+}
+inline void CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerMap::clear_map_id() {
+  _impl_.map_id_ = 0u;
+  _impl_._has_bits_[0] &= ~0x00000001u;
+}
+inline uint32_t CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerMap::_internal_map_id() const {
+  return _impl_.map_id_;
+}
+inline uint32_t CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerMap::map_id() const {
+  // @@protoc_insertion_point(field_get:CMsgGCCStrike15_v2_PremierSeasonSummary.DataPerMap.map_id)
+  return _internal_map_id();
+}
+inline void CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerMap::_internal_set_map_id(uint32_t value) {
+  _impl_._has_bits_[0] |= 0x00000001u;
+  _impl_.map_id_ = value;
+}
+inline void CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerMap::set_map_id(uint32_t value) {
+  _internal_set_map_id(value);
+  // @@protoc_insertion_point(field_set:CMsgGCCStrike15_v2_PremierSeasonSummary.DataPerMap.map_id)
+}
+
+// optional uint32 wins = 2;
+inline bool CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerMap::_internal_has_wins() const {
+  bool value = (_impl_._has_bits_[0] & 0x00000002u) != 0;
+  return value;
+}
+inline bool CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerMap::has_wins() const {
+  return _internal_has_wins();
+}
+inline void CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerMap::clear_wins() {
+  _impl_.wins_ = 0u;
+  _impl_._has_bits_[0] &= ~0x00000002u;
+}
+inline uint32_t CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerMap::_internal_wins() const {
+  return _impl_.wins_;
+}
+inline uint32_t CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerMap::wins() const {
+  // @@protoc_insertion_point(field_get:CMsgGCCStrike15_v2_PremierSeasonSummary.DataPerMap.wins)
+  return _internal_wins();
+}
+inline void CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerMap::_internal_set_wins(uint32_t value) {
+  _impl_._has_bits_[0] |= 0x00000002u;
+  _impl_.wins_ = value;
+}
+inline void CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerMap::set_wins(uint32_t value) {
+  _internal_set_wins(value);
+  // @@protoc_insertion_point(field_set:CMsgGCCStrike15_v2_PremierSeasonSummary.DataPerMap.wins)
+}
+
+// optional uint32 ties = 3;
+inline bool CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerMap::_internal_has_ties() const {
+  bool value = (_impl_._has_bits_[0] & 0x00000004u) != 0;
+  return value;
+}
+inline bool CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerMap::has_ties() const {
+  return _internal_has_ties();
+}
+inline void CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerMap::clear_ties() {
+  _impl_.ties_ = 0u;
+  _impl_._has_bits_[0] &= ~0x00000004u;
+}
+inline uint32_t CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerMap::_internal_ties() const {
+  return _impl_.ties_;
+}
+inline uint32_t CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerMap::ties() const {
+  // @@protoc_insertion_point(field_get:CMsgGCCStrike15_v2_PremierSeasonSummary.DataPerMap.ties)
+  return _internal_ties();
+}
+inline void CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerMap::_internal_set_ties(uint32_t value) {
+  _impl_._has_bits_[0] |= 0x00000004u;
+  _impl_.ties_ = value;
+}
+inline void CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerMap::set_ties(uint32_t value) {
+  _internal_set_ties(value);
+  // @@protoc_insertion_point(field_set:CMsgGCCStrike15_v2_PremierSeasonSummary.DataPerMap.ties)
+}
+
+// optional uint32 losses = 4;
+inline bool CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerMap::_internal_has_losses() const {
+  bool value = (_impl_._has_bits_[0] & 0x00000008u) != 0;
+  return value;
+}
+inline bool CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerMap::has_losses() const {
+  return _internal_has_losses();
+}
+inline void CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerMap::clear_losses() {
+  _impl_.losses_ = 0u;
+  _impl_._has_bits_[0] &= ~0x00000008u;
+}
+inline uint32_t CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerMap::_internal_losses() const {
+  return _impl_.losses_;
+}
+inline uint32_t CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerMap::losses() const {
+  // @@protoc_insertion_point(field_get:CMsgGCCStrike15_v2_PremierSeasonSummary.DataPerMap.losses)
+  return _internal_losses();
+}
+inline void CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerMap::_internal_set_losses(uint32_t value) {
+  _impl_._has_bits_[0] |= 0x00000008u;
+  _impl_.losses_ = value;
+}
+inline void CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerMap::set_losses(uint32_t value) {
+  _internal_set_losses(value);
+  // @@protoc_insertion_point(field_set:CMsgGCCStrike15_v2_PremierSeasonSummary.DataPerMap.losses)
+}
+
+// optional uint32 rounds = 5;
+inline bool CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerMap::_internal_has_rounds() const {
+  bool value = (_impl_._has_bits_[0] & 0x00000010u) != 0;
+  return value;
+}
+inline bool CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerMap::has_rounds() const {
+  return _internal_has_rounds();
+}
+inline void CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerMap::clear_rounds() {
+  _impl_.rounds_ = 0u;
+  _impl_._has_bits_[0] &= ~0x00000010u;
+}
+inline uint32_t CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerMap::_internal_rounds() const {
+  return _impl_.rounds_;
+}
+inline uint32_t CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerMap::rounds() const {
+  // @@protoc_insertion_point(field_get:CMsgGCCStrike15_v2_PremierSeasonSummary.DataPerMap.rounds)
+  return _internal_rounds();
+}
+inline void CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerMap::_internal_set_rounds(uint32_t value) {
+  _impl_._has_bits_[0] |= 0x00000010u;
+  _impl_.rounds_ = value;
+}
+inline void CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerMap::set_rounds(uint32_t value) {
+  _internal_set_rounds(value);
+  // @@protoc_insertion_point(field_set:CMsgGCCStrike15_v2_PremierSeasonSummary.DataPerMap.rounds)
+}
+
+// optional uint32 kills = 6;
+inline bool CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerMap::_internal_has_kills() const {
+  bool value = (_impl_._has_bits_[0] & 0x00000020u) != 0;
+  return value;
+}
+inline bool CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerMap::has_kills() const {
+  return _internal_has_kills();
+}
+inline void CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerMap::clear_kills() {
+  _impl_.kills_ = 0u;
+  _impl_._has_bits_[0] &= ~0x00000020u;
+}
+inline uint32_t CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerMap::_internal_kills() const {
+  return _impl_.kills_;
+}
+inline uint32_t CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerMap::kills() const {
+  // @@protoc_insertion_point(field_get:CMsgGCCStrike15_v2_PremierSeasonSummary.DataPerMap.kills)
+  return _internal_kills();
+}
+inline void CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerMap::_internal_set_kills(uint32_t value) {
+  _impl_._has_bits_[0] |= 0x00000020u;
+  _impl_.kills_ = value;
+}
+inline void CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerMap::set_kills(uint32_t value) {
+  _internal_set_kills(value);
+  // @@protoc_insertion_point(field_set:CMsgGCCStrike15_v2_PremierSeasonSummary.DataPerMap.kills)
+}
+
+// optional uint32 headshots = 7;
+inline bool CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerMap::_internal_has_headshots() const {
+  bool value = (_impl_._has_bits_[0] & 0x00000040u) != 0;
+  return value;
+}
+inline bool CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerMap::has_headshots() const {
+  return _internal_has_headshots();
+}
+inline void CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerMap::clear_headshots() {
+  _impl_.headshots_ = 0u;
+  _impl_._has_bits_[0] &= ~0x00000040u;
+}
+inline uint32_t CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerMap::_internal_headshots() const {
+  return _impl_.headshots_;
+}
+inline uint32_t CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerMap::headshots() const {
+  // @@protoc_insertion_point(field_get:CMsgGCCStrike15_v2_PremierSeasonSummary.DataPerMap.headshots)
+  return _internal_headshots();
+}
+inline void CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerMap::_internal_set_headshots(uint32_t value) {
+  _impl_._has_bits_[0] |= 0x00000040u;
+  _impl_.headshots_ = value;
+}
+inline void CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerMap::set_headshots(uint32_t value) {
+  _internal_set_headshots(value);
+  // @@protoc_insertion_point(field_set:CMsgGCCStrike15_v2_PremierSeasonSummary.DataPerMap.headshots)
+}
+
+// optional uint32 assists = 8;
+inline bool CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerMap::_internal_has_assists() const {
+  bool value = (_impl_._has_bits_[0] & 0x00000080u) != 0;
+  return value;
+}
+inline bool CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerMap::has_assists() const {
+  return _internal_has_assists();
+}
+inline void CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerMap::clear_assists() {
+  _impl_.assists_ = 0u;
+  _impl_._has_bits_[0] &= ~0x00000080u;
+}
+inline uint32_t CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerMap::_internal_assists() const {
+  return _impl_.assists_;
+}
+inline uint32_t CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerMap::assists() const {
+  // @@protoc_insertion_point(field_get:CMsgGCCStrike15_v2_PremierSeasonSummary.DataPerMap.assists)
+  return _internal_assists();
+}
+inline void CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerMap::_internal_set_assists(uint32_t value) {
+  _impl_._has_bits_[0] |= 0x00000080u;
+  _impl_.assists_ = value;
+}
+inline void CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerMap::set_assists(uint32_t value) {
+  _internal_set_assists(value);
+  // @@protoc_insertion_point(field_set:CMsgGCCStrike15_v2_PremierSeasonSummary.DataPerMap.assists)
+}
+
+// optional uint32 deaths = 9;
+inline bool CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerMap::_internal_has_deaths() const {
+  bool value = (_impl_._has_bits_[0] & 0x00000100u) != 0;
+  return value;
+}
+inline bool CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerMap::has_deaths() const {
+  return _internal_has_deaths();
+}
+inline void CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerMap::clear_deaths() {
+  _impl_.deaths_ = 0u;
+  _impl_._has_bits_[0] &= ~0x00000100u;
+}
+inline uint32_t CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerMap::_internal_deaths() const {
+  return _impl_.deaths_;
+}
+inline uint32_t CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerMap::deaths() const {
+  // @@protoc_insertion_point(field_get:CMsgGCCStrike15_v2_PremierSeasonSummary.DataPerMap.deaths)
+  return _internal_deaths();
+}
+inline void CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerMap::_internal_set_deaths(uint32_t value) {
+  _impl_._has_bits_[0] |= 0x00000100u;
+  _impl_.deaths_ = value;
+}
+inline void CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerMap::set_deaths(uint32_t value) {
+  _internal_set_deaths(value);
+  // @@protoc_insertion_point(field_set:CMsgGCCStrike15_v2_PremierSeasonSummary.DataPerMap.deaths)
+}
+
+// optional uint32 mvps = 10;
+inline bool CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerMap::_internal_has_mvps() const {
+  bool value = (_impl_._has_bits_[0] & 0x00000200u) != 0;
+  return value;
+}
+inline bool CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerMap::has_mvps() const {
+  return _internal_has_mvps();
+}
+inline void CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerMap::clear_mvps() {
+  _impl_.mvps_ = 0u;
+  _impl_._has_bits_[0] &= ~0x00000200u;
+}
+inline uint32_t CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerMap::_internal_mvps() const {
+  return _impl_.mvps_;
+}
+inline uint32_t CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerMap::mvps() const {
+  // @@protoc_insertion_point(field_get:CMsgGCCStrike15_v2_PremierSeasonSummary.DataPerMap.mvps)
+  return _internal_mvps();
+}
+inline void CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerMap::_internal_set_mvps(uint32_t value) {
+  _impl_._has_bits_[0] |= 0x00000200u;
+  _impl_.mvps_ = value;
+}
+inline void CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerMap::set_mvps(uint32_t value) {
+  _internal_set_mvps(value);
+  // @@protoc_insertion_point(field_set:CMsgGCCStrike15_v2_PremierSeasonSummary.DataPerMap.mvps)
+}
+
+// optional uint32 rounds_3k = 11;
+inline bool CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerMap::_internal_has_rounds_3k() const {
+  bool value = (_impl_._has_bits_[0] & 0x00000400u) != 0;
+  return value;
+}
+inline bool CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerMap::has_rounds_3k() const {
+  return _internal_has_rounds_3k();
+}
+inline void CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerMap::clear_rounds_3k() {
+  _impl_.rounds_3k_ = 0u;
+  _impl_._has_bits_[0] &= ~0x00000400u;
+}
+inline uint32_t CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerMap::_internal_rounds_3k() const {
+  return _impl_.rounds_3k_;
+}
+inline uint32_t CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerMap::rounds_3k() const {
+  // @@protoc_insertion_point(field_get:CMsgGCCStrike15_v2_PremierSeasonSummary.DataPerMap.rounds_3k)
+  return _internal_rounds_3k();
+}
+inline void CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerMap::_internal_set_rounds_3k(uint32_t value) {
+  _impl_._has_bits_[0] |= 0x00000400u;
+  _impl_.rounds_3k_ = value;
+}
+inline void CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerMap::set_rounds_3k(uint32_t value) {
+  _internal_set_rounds_3k(value);
+  // @@protoc_insertion_point(field_set:CMsgGCCStrike15_v2_PremierSeasonSummary.DataPerMap.rounds_3k)
+}
+
+// optional uint32 rounds_4k = 12;
+inline bool CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerMap::_internal_has_rounds_4k() const {
+  bool value = (_impl_._has_bits_[0] & 0x00000800u) != 0;
+  return value;
+}
+inline bool CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerMap::has_rounds_4k() const {
+  return _internal_has_rounds_4k();
+}
+inline void CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerMap::clear_rounds_4k() {
+  _impl_.rounds_4k_ = 0u;
+  _impl_._has_bits_[0] &= ~0x00000800u;
+}
+inline uint32_t CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerMap::_internal_rounds_4k() const {
+  return _impl_.rounds_4k_;
+}
+inline uint32_t CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerMap::rounds_4k() const {
+  // @@protoc_insertion_point(field_get:CMsgGCCStrike15_v2_PremierSeasonSummary.DataPerMap.rounds_4k)
+  return _internal_rounds_4k();
+}
+inline void CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerMap::_internal_set_rounds_4k(uint32_t value) {
+  _impl_._has_bits_[0] |= 0x00000800u;
+  _impl_.rounds_4k_ = value;
+}
+inline void CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerMap::set_rounds_4k(uint32_t value) {
+  _internal_set_rounds_4k(value);
+  // @@protoc_insertion_point(field_set:CMsgGCCStrike15_v2_PremierSeasonSummary.DataPerMap.rounds_4k)
+}
+
+// optional uint32 rounds_5k = 13;
+inline bool CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerMap::_internal_has_rounds_5k() const {
+  bool value = (_impl_._has_bits_[0] & 0x00001000u) != 0;
+  return value;
+}
+inline bool CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerMap::has_rounds_5k() const {
+  return _internal_has_rounds_5k();
+}
+inline void CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerMap::clear_rounds_5k() {
+  _impl_.rounds_5k_ = 0u;
+  _impl_._has_bits_[0] &= ~0x00001000u;
+}
+inline uint32_t CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerMap::_internal_rounds_5k() const {
+  return _impl_.rounds_5k_;
+}
+inline uint32_t CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerMap::rounds_5k() const {
+  // @@protoc_insertion_point(field_get:CMsgGCCStrike15_v2_PremierSeasonSummary.DataPerMap.rounds_5k)
+  return _internal_rounds_5k();
+}
+inline void CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerMap::_internal_set_rounds_5k(uint32_t value) {
+  _impl_._has_bits_[0] |= 0x00001000u;
+  _impl_.rounds_5k_ = value;
+}
+inline void CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerMap::set_rounds_5k(uint32_t value) {
+  _internal_set_rounds_5k(value);
+  // @@protoc_insertion_point(field_set:CMsgGCCStrike15_v2_PremierSeasonSummary.DataPerMap.rounds_5k)
+}
+
+// -------------------------------------------------------------------
+
+// CMsgGCCStrike15_v2_PremierSeasonSummary
+
+// optional uint32 account_id = 1;
+inline bool CMsgGCCStrike15_v2_PremierSeasonSummary::_internal_has_account_id() const {
+  bool value = (_impl_._has_bits_[0] & 0x00000001u) != 0;
+  return value;
+}
+inline bool CMsgGCCStrike15_v2_PremierSeasonSummary::has_account_id() const {
+  return _internal_has_account_id();
+}
+inline void CMsgGCCStrike15_v2_PremierSeasonSummary::clear_account_id() {
+  _impl_.account_id_ = 0u;
+  _impl_._has_bits_[0] &= ~0x00000001u;
+}
+inline uint32_t CMsgGCCStrike15_v2_PremierSeasonSummary::_internal_account_id() const {
+  return _impl_.account_id_;
+}
+inline uint32_t CMsgGCCStrike15_v2_PremierSeasonSummary::account_id() const {
+  // @@protoc_insertion_point(field_get:CMsgGCCStrike15_v2_PremierSeasonSummary.account_id)
+  return _internal_account_id();
+}
+inline void CMsgGCCStrike15_v2_PremierSeasonSummary::_internal_set_account_id(uint32_t value) {
+  _impl_._has_bits_[0] |= 0x00000001u;
+  _impl_.account_id_ = value;
+}
+inline void CMsgGCCStrike15_v2_PremierSeasonSummary::set_account_id(uint32_t value) {
+  _internal_set_account_id(value);
+  // @@protoc_insertion_point(field_set:CMsgGCCStrike15_v2_PremierSeasonSummary.account_id)
+}
+
+// optional uint32 season_id = 2;
+inline bool CMsgGCCStrike15_v2_PremierSeasonSummary::_internal_has_season_id() const {
+  bool value = (_impl_._has_bits_[0] & 0x00000002u) != 0;
+  return value;
+}
+inline bool CMsgGCCStrike15_v2_PremierSeasonSummary::has_season_id() const {
+  return _internal_has_season_id();
+}
+inline void CMsgGCCStrike15_v2_PremierSeasonSummary::clear_season_id() {
+  _impl_.season_id_ = 0u;
+  _impl_._has_bits_[0] &= ~0x00000002u;
+}
+inline uint32_t CMsgGCCStrike15_v2_PremierSeasonSummary::_internal_season_id() const {
+  return _impl_.season_id_;
+}
+inline uint32_t CMsgGCCStrike15_v2_PremierSeasonSummary::season_id() const {
+  // @@protoc_insertion_point(field_get:CMsgGCCStrike15_v2_PremierSeasonSummary.season_id)
+  return _internal_season_id();
+}
+inline void CMsgGCCStrike15_v2_PremierSeasonSummary::_internal_set_season_id(uint32_t value) {
+  _impl_._has_bits_[0] |= 0x00000002u;
+  _impl_.season_id_ = value;
+}
+inline void CMsgGCCStrike15_v2_PremierSeasonSummary::set_season_id(uint32_t value) {
+  _internal_set_season_id(value);
+  // @@protoc_insertion_point(field_set:CMsgGCCStrike15_v2_PremierSeasonSummary.season_id)
+}
+
+// repeated .CMsgGCCStrike15_v2_PremierSeasonSummary.DataPerWeek data_per_week = 3;
+inline int CMsgGCCStrike15_v2_PremierSeasonSummary::_internal_data_per_week_size() const {
+  return _impl_.data_per_week_.size();
+}
+inline int CMsgGCCStrike15_v2_PremierSeasonSummary::data_per_week_size() const {
+  return _internal_data_per_week_size();
+}
+inline void CMsgGCCStrike15_v2_PremierSeasonSummary::clear_data_per_week() {
+  _impl_.data_per_week_.Clear();
+}
+inline ::CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerWeek* CMsgGCCStrike15_v2_PremierSeasonSummary::mutable_data_per_week(int index) {
+  // @@protoc_insertion_point(field_mutable:CMsgGCCStrike15_v2_PremierSeasonSummary.data_per_week)
+  return _impl_.data_per_week_.Mutable(index);
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerWeek >*
+CMsgGCCStrike15_v2_PremierSeasonSummary::mutable_data_per_week() {
+  // @@protoc_insertion_point(field_mutable_list:CMsgGCCStrike15_v2_PremierSeasonSummary.data_per_week)
+  return &_impl_.data_per_week_;
+}
+inline const ::CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerWeek& CMsgGCCStrike15_v2_PremierSeasonSummary::_internal_data_per_week(int index) const {
+  return _impl_.data_per_week_.Get(index);
+}
+inline const ::CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerWeek& CMsgGCCStrike15_v2_PremierSeasonSummary::data_per_week(int index) const {
+  // @@protoc_insertion_point(field_get:CMsgGCCStrike15_v2_PremierSeasonSummary.data_per_week)
+  return _internal_data_per_week(index);
+}
+inline ::CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerWeek* CMsgGCCStrike15_v2_PremierSeasonSummary::_internal_add_data_per_week() {
+  return _impl_.data_per_week_.Add();
+}
+inline ::CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerWeek* CMsgGCCStrike15_v2_PremierSeasonSummary::add_data_per_week() {
+  ::CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerWeek* _add = _internal_add_data_per_week();
+  // @@protoc_insertion_point(field_add:CMsgGCCStrike15_v2_PremierSeasonSummary.data_per_week)
+  return _add;
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerWeek >&
+CMsgGCCStrike15_v2_PremierSeasonSummary::data_per_week() const {
+  // @@protoc_insertion_point(field_list:CMsgGCCStrike15_v2_PremierSeasonSummary.data_per_week)
+  return _impl_.data_per_week_;
+}
+
+// repeated .CMsgGCCStrike15_v2_PremierSeasonSummary.DataPerMap data_per_map = 4;
+inline int CMsgGCCStrike15_v2_PremierSeasonSummary::_internal_data_per_map_size() const {
+  return _impl_.data_per_map_.size();
+}
+inline int CMsgGCCStrike15_v2_PremierSeasonSummary::data_per_map_size() const {
+  return _internal_data_per_map_size();
+}
+inline void CMsgGCCStrike15_v2_PremierSeasonSummary::clear_data_per_map() {
+  _impl_.data_per_map_.Clear();
+}
+inline ::CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerMap* CMsgGCCStrike15_v2_PremierSeasonSummary::mutable_data_per_map(int index) {
+  // @@protoc_insertion_point(field_mutable:CMsgGCCStrike15_v2_PremierSeasonSummary.data_per_map)
+  return _impl_.data_per_map_.Mutable(index);
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerMap >*
+CMsgGCCStrike15_v2_PremierSeasonSummary::mutable_data_per_map() {
+  // @@protoc_insertion_point(field_mutable_list:CMsgGCCStrike15_v2_PremierSeasonSummary.data_per_map)
+  return &_impl_.data_per_map_;
+}
+inline const ::CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerMap& CMsgGCCStrike15_v2_PremierSeasonSummary::_internal_data_per_map(int index) const {
+  return _impl_.data_per_map_.Get(index);
+}
+inline const ::CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerMap& CMsgGCCStrike15_v2_PremierSeasonSummary::data_per_map(int index) const {
+  // @@protoc_insertion_point(field_get:CMsgGCCStrike15_v2_PremierSeasonSummary.data_per_map)
+  return _internal_data_per_map(index);
+}
+inline ::CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerMap* CMsgGCCStrike15_v2_PremierSeasonSummary::_internal_add_data_per_map() {
+  return _impl_.data_per_map_.Add();
+}
+inline ::CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerMap* CMsgGCCStrike15_v2_PremierSeasonSummary::add_data_per_map() {
+  ::CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerMap* _add = _internal_add_data_per_map();
+  // @@protoc_insertion_point(field_add:CMsgGCCStrike15_v2_PremierSeasonSummary.data_per_map)
+  return _add;
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::CMsgGCCStrike15_v2_PremierSeasonSummary_DataPerMap >&
+CMsgGCCStrike15_v2_PremierSeasonSummary::data_per_map() const {
+  // @@protoc_insertion_point(field_list:CMsgGCCStrike15_v2_PremierSeasonSummary.data_per_map)
+  return _impl_.data_per_map_;
+}
+
+// -------------------------------------------------------------------
+
 // CMsgGCCStrike15_v2_PlayerOverwatchCaseUpdate
 
 // optional uint64 caseid = 1;
@@ -71189,6 +72632,12 @@ inline void CMsgGCCStrike15_v2_SetPlayerLeaderboardSafeName::set_allocated_leade
 #ifdef __GNUC__
   #pragma GCC diagnostic pop
 #endif  // __GNUC__
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------
