@@ -79,10 +79,7 @@ void CScreenTextMenu::Display(int iPageIndex) {
 }
 
 bool CScreenTextMenu::Close() {
-	auto pTextPlayerMgr = VGUI::GetScreenTextManager();
-
 	if (m_wpScreenText.expired()) {
-		SDK_ASSERT(false);
 		return false;
 	}
 
