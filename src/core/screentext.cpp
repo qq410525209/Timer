@@ -22,6 +22,9 @@ CScreenText::CScreenText(const ScreenTextManifest_t& manifest) : m_vecPos(manife
 	pText->m_nJustifyHorizontal(PointWorldTextJustifyHorizontal_t::POINT_WORLD_TEXT_JUSTIFY_HORIZONTAL_LEFT);
 	pText->m_nJustifyVertical(PointWorldTextJustifyVertical_t::POINT_WORLD_TEXT_JUSTIFY_VERTICAL_CENTER);
 	pText->m_bFullbright(true);
+	pText->m_bDrawBackground(manifest.m_bBackground);
+	pText->m_flBackgroundBorderHeight(manifest.m_fBackgroundBorderHeight);
+	pText->m_flBackgroundBorderWidth(manifest.m_fBackgroundBorderWidth);
 
 	pText->m_messageText("Sample Text");
 	pText->m_bEnabled(manifest.m_bEnable);
@@ -162,22 +165,16 @@ void VGUI::Render(const std::weak_ptr<CScreenText>& hText) {
 		return;
 	}
 
+	if (pText->IsRendering()) {
+		return;
+	}
+
 	if (!pText->m_hOriginalController.IsValid()) {
 		return;
 	}
 
 	auto pController = pText->m_hOriginalController.Get();
 	if (!pController) {
-		return;
-	}
-
-	CScreenTextController* pTextController = GetScreenTextManager()->ToPlayer(pController);
-	if (!pTextController) {
-		SDK_ASSERT(false);
-		return;
-	}
-
-	if (pText->IsRendering()) {
 		return;
 	}
 

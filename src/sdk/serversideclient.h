@@ -312,6 +312,8 @@ public:
 	MEM_PAD(0x1C2);
 };
 
+// constexpr auto dsa = offsetof(CServerSideClientBase, m_nSignonState);
+
 #ifdef _WIN32
 COMPILE_TIME_ASSERT(sizeof(CServerSideClientBase) == 2944);
 #endif

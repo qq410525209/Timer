@@ -10,7 +10,7 @@
 #define SCMD_CALLBACK_L(...) [__VA_ARGS__](SCMD_CALLBACK_ARGS) -> void
 using SrvCmd_Callback = std::function<void(SCMD_CALLBACK_ARGS)>;
 
-#define CCMD_CALLBACK_ARGS   CCSPlayerController *pController, const std::vector<std::string>&vArgs
+#define CCMD_CALLBACK_ARGS   CCSPlayerController *pController, const std::vector<std::string>&vArgs, const std::wstring &wCommand
 #define CCMD_CALLBACK(fn)    static void fn(CCMD_CALLBACK_ARGS)
 #define CCMD_CALLBACK_L(...) [__VA_ARGS__](CCMD_CALLBACK_ARGS) -> void
 using ConCmd_Callback = std::function<void(CCMD_CALLBACK_ARGS)>;

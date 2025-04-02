@@ -6,28 +6,31 @@
 
 #include <fmt/format.h>
 
-constexpr float g_fMenuOffsetX = -9.1f;
-constexpr float g_fMenuOffsetY = 6.45f;
+constexpr float g_fMenuOffsetX = -8.5f;
+constexpr float g_fMenuOffsetY = 2.0f;
 
 CScreenTextMenu::CScreenTextMenu(CBasePlayerController* pController, MenuHandler fnHandler, std::string sTitle) : CBaseMenu(fnHandler, sTitle) {
 	ScreenTextManifest_t manifest;
 	manifest.m_iUnits = 1000;
-	manifest.m_sFont = "Consolas";
-	manifest.m_Color = Color(255, 100, 255, 255);
+	manifest.m_sFont = "Arial Bold";
+	manifest.m_Color = Color(255, 165, 0, 255);
 	manifest.m_fFontSize = 40;
 	manifest.m_bEnable = false;
 	manifest.m_vecPos.x = g_fMenuOffsetX;
 	manifest.m_vecPos.y = g_fMenuOffsetY;
+	manifest.m_bBackground = true;
 
 	m_wpScreenText = VGUI::CreateScreenText(pController, manifest);
 }
 
 CScreenTextMenu::~CScreenTextMenu() {
 	CBaseMenu::~CBaseMenu();
+	this->Close();
 }
 
 void CScreenTextMenu::Display(int iPageIndex) {
 	if (m_wpScreenText.expired()) {
+		SDK_ASSERT(false);
 		return;
 	}
 
@@ -45,18 +48,18 @@ void CScreenTextMenu::Display(int iPageIndex) {
 
 	pMenuPlayer->m_iCurrentPage = iPageIndex;
 
-	auto formatItem = [](int iItemIndex, const std::string& sItem) { return !sItem.empty() ? fmt::format("{}.{}", iItemIndex, sItem) : ""; };
+	auto formatItem = [](int iItemIndex, const std::string& sItem) { return !sItem.empty() ? fmt::format("{}.{}\n", iItemIndex, sItem) : ""; };
 	bool bDrawPreview = (iPageIndex != 0);
 	bool bDrawNext = ((this->m_vItems.size() > 0) && (iPageIndex < (this->m_vItems.size() - 1)));
 
 	// clang-format off
 	std::string sMenuText = fmt::format("{}\n\n"
+										"{}"
+										"{}"
+										"{}"
+										"{}"
+										"{}"
 										"{}\n"
-										"{}\n"
-										"{}\n"
-										"{}\n"
-										"{}\n"
-										"{}\n\n"
 										"{}\n"
 										"{}\n"
 										"9.退出",
@@ -76,28 +79,14 @@ void CScreenTextMenu::Display(int iPageIndex) {
 }
 
 bool CScreenTextMenu::Close() {
-	if (this->m_wpScreenText.expired()) {
+	auto pTextPlayerMgr = VGUI::GetScreenTextManager();
+
+	if (m_wpScreenText.expired()) {
 		SDK_ASSERT(false);
 		return false;
 	}
 
-	VGUI::Unrender(this->m_wpScreenText);
-
-	if (auto pText = this->m_wpScreenText.lock()) {
-		auto pController = pText->GetOriginalController();
-		if (!pController) {
-			SDK_ASSERT(false);
-			return false;
-		}
-
-		auto pMenuPlayer = MENU::GetManager()->ToPlayer(pController);
-		if (!pMenuPlayer) {
-			SDK_ASSERT(false);
-			return false;
-		}
-
-		pMenuPlayer->ResetMenu();
-	}
+	VGUI::Unrender(m_wpScreenText);
 
 	return true;
 }
@@ -135,30 +124,20 @@ CMenuManager* MENU::GetManager() {
 	return &g_MenuManager;
 }
 
-void CMenuManager::OnMenuItemSelect(CCSPlayerController* pController, const std::vector<std::string>& vArgs) {
-	CMenuPlayer* pMenuPlayer = MENU::GetManager()->ToPlayer(pController);
-	if (!pMenuPlayer) {
-		SDK_ASSERT(false);
+void CMenuPlayer::SelectMenu(int iMenuItem) {
+	auto pController = GetController();
+	if (!pController) {
 		return;
 	}
 
-	if (!pMenuPlayer->m_pCurrentMenu) {
-		return;
-	}
-
-	const auto& pMenu = pMenuPlayer->m_pCurrentMenu;
+	const auto& pMenu = m_pCurrentMenu;
 	auto iMenuType = pMenu->GetType();
 	if (iMenuType == EMenuType::Unknown) {
 		SDK_ASSERT(false);
 		return;
 	}
 
-	int num = -1;
-	if (vArgs.size() > 0) {
-		num = V_StringToInt32(vArgs[0].c_str(), -1);
-	}
-
-	switch (num) {
+	switch (iMenuItem) {
 		case 1:
 		case 2:
 		case 3:
@@ -166,7 +145,7 @@ void CMenuManager::OnMenuItemSelect(CCSPlayerController* pController, const std:
 		case 5:
 		case 6: {
 			if (pMenu->m_pFnMenuHandler) {
-				int iItemIndex = (pMenuPlayer->m_iCurrentPage * CBaseMenu::PAGE_SIZE) + num - 1;
+				int iItemIndex = (m_iCurrentPage * CBaseMenu::PAGE_SIZE) + iMenuItem - 1;
 				switch (iMenuType) {
 					case EMenuType::ScreenText: {
 						CScreenTextMenuHandle hMenu(pMenu);
@@ -183,29 +162,67 @@ void CMenuManager::OnMenuItemSelect(CCSPlayerController* pController, const std:
 			break;
 		}
 		case 7: {
-			int iPrevPageIndex = pMenuPlayer->m_iCurrentPage - 1;
+			int iPrevPageIndex = m_iCurrentPage - 1;
 			if (iPrevPageIndex >= 0 && iPrevPageIndex < pMenu->GetPageLength()) {
 				pMenu->Display(iPrevPageIndex);
 			}
 			break;
 		}
 		case 8: {
-			int iNextPageIndex = pMenuPlayer->m_iCurrentPage + 1;
+			int iNextPageIndex = m_iCurrentPage + 1;
 			if (iNextPageIndex >= 0 && iNextPageIndex < pMenu->GetPageLength()) {
 				pMenu->Display(iNextPageIndex);
 			}
 			break;
 		}
 		case 9: {
-			// prev, next menu not impl yet.
-			pMenuPlayer->m_pCurrentMenu->Close();
+			ResetMenu();
 			break;
 		}
 	}
 }
 
+CCMD_CALLBACK(OnMenuItemSelect) {
+	CMenuPlayer* pMenuPlayer = MENU::GetManager()->ToPlayer(pController);
+	if (!pMenuPlayer) {
+		SDK_ASSERT(false);
+		return;
+	}
+
+	if (!pMenuPlayer->m_pCurrentMenu) {
+		return;
+	}
+
+	int num = -1;
+	if (vArgs.size() > 0) {
+		num = V_StringToInt32(vArgs[0].c_str(), -1);
+	}
+
+	pMenuPlayer->SelectMenu(num);
+}
+
+CCMD_CALLBACK(OnNumberSelect) {
+	CMenuPlayer* pMenuPlayer = MENU::GetManager()->ToPlayer(pController);
+	if (!pMenuPlayer) {
+		SDK_ASSERT(false);
+		return;
+	}
+
+	if (!pMenuPlayer->m_pCurrentMenu) {
+		return;
+	}
+
+	int num = wCommand[wCommand.length() - 2] - L'0';
+	pMenuPlayer->SelectMenu(num);
+}
+
 void CMenuManager::OnPluginStart() {
 	CONCMD::RegConsoleCmd("sm_menu_select", OnMenuItemSelect);
+
+	for (int i = 1; i <= 9; i++) {
+		std::string sMenuCmd = fmt::format("sm_{}", i);
+		CONCMD::RegConsoleCmd(sMenuCmd, OnNumberSelect);
+	}
 }
 
 std::weak_ptr<CBaseMenu> MENU::Create(CBasePlayerController* pController, MenuHandler pFnMenuHandler, EMenuType eMenuType) {
@@ -225,6 +242,16 @@ std::weak_ptr<CBaseMenu> MENU::Create(CBasePlayerController* pController, MenuHa
 	}
 
 	return {};
+}
+
+void MENU::Close(CBasePlayerController* pController) {
+	CMenuPlayer* pMenuPlayer = MENU::GetManager()->ToPlayer(pController);
+	if (!pMenuPlayer) {
+		SDK_ASSERT(false);
+		return;
+	}
+
+	pMenuPlayer->ResetMenu();
 }
 
 bool CScreenTextMenuHandle::Close() {

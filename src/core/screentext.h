@@ -9,6 +9,9 @@ struct ScreenTextManifest_t {
 	int m_iUnits = 300;
 	std::string m_sFont = "Trebuchet MS";
 	float m_fFontSize = 20.0f;
+	float m_fBackgroundBorderWidth = 0.15f;
+	float m_fBackgroundBorderHeight = 0.2f;
+	bool m_bBackground = false;
 	bool m_bEnable = true;
 };
 

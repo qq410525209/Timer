@@ -89,6 +89,4 @@ private:
 	MEM_PAD(0x10);
 };
 
-#ifdef _WIN32
-static_assert(sizeof(CUserCmd) == 152);
-#endif
+static_assert(sizeof(CUserCmd) == WIN_LINUX(152, 144));

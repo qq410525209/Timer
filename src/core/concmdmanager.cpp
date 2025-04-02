@@ -168,14 +168,14 @@ static bool HandleConCommand(CCSPlayerController* pController, const CCommand& p
 				}
 			}
 
-			info.callback(pController, vArgs);
+			info.callback(pController, vArgs, wCommand);
 		}
 	}
 
 	if (bListenedCmd) {
 		auto& vListenCmds = g_manager.m_umConCmdListeners.at(wCommand);
 		for (const auto& callback : vListenCmds) {
-			if (!callback(pController, vArgs)) {
+			if (!callback(pController, vArgs, wCommand)) {
 				return false;
 			}
 		}
@@ -207,7 +207,7 @@ bool CONCMD::CConCmdManager::OnClientCommand(ISource2GameClients* pClient, CPlay
 
 	auto& vListenCmds = g_manager.m_umConCmdListeners.at(wCommand);
 	for (const auto& callback : vListenCmds) {
-		if (!callback(pController, vArgs)) {
+		if (!callback(pController, vArgs, wCommand)) {
 			return false;
 		}
 	}

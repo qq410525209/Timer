@@ -1,6 +1,7 @@
 #pragma once
 
 #include <pch.h>
+#include <core/concmdmanager.h>
 #include <core/playermanager.h>
 #include <core/screentext.h>
 #include <list>
@@ -29,14 +30,6 @@ public:
 
 	virtual void SetTitle(const std::string_view& sTitle) {
 		m_sTitle = sTitle;
-	}
-
-	virtual void SetPrev(CBaseMenu* pPrev) {
-		m_Cursor.emplace_front(pPrev);
-	}
-
-	virtual void SetNext(CBaseMenu* pNext) {
-		m_Cursor.emplace_back(pNext);
 	}
 
 	virtual void AddItem(std::string sItem) {
@@ -73,9 +66,6 @@ public:
 	std::string m_sTitle;
 	std::vector<std::vector<std::string>> m_vItems;
 	MenuHandler m_pFnMenuHandler;
-
-protected:
-	std::list<CBaseMenu*> m_Cursor;
 };
 
 class CScreenTextMenu : public CBaseMenu {
@@ -103,16 +93,18 @@ public:
 };
 
 class CMenuPlayer : public CPlayer {
-public:
-	using CPlayer::CPlayer;
-
+private:
 	virtual void Reset() override {
 		CPlayer::Reset();
 
 		ResetMenu();
 	}
 
+public:
+	using CPlayer::CPlayer;
+
 	void ResetMenu();
+	void SelectMenu(int iMenuItem);
 
 public:
 	std::shared_ptr<CBaseMenu> m_pCurrentMenu;
@@ -136,9 +128,6 @@ public:
 	}
 
 private:
-	static void OnMenuItemSelect(CCSPlayerController* pController, const std::vector<std::string>& vArgs);
-
-private:
 	virtual void OnPluginStart() override;
 };
 
@@ -146,4 +135,5 @@ namespace MENU {
 	extern CMenuManager* GetManager();
 
 	[[nodiscard]] std::weak_ptr<CBaseMenu> Create(CBasePlayerController* pController, MenuHandler pFnMenuHandler, EMenuType eMenuType = EMenuType::ScreenText);
+	void Close(CBasePlayerController* pController);
 } // namespace MENU

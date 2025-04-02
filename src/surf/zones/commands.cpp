@@ -66,7 +66,6 @@ CCMD_CALLBACK(Command_Zones) {
 		pController, MENU_CALLBACK_L() {
 			switch (iItem) {
 				case 0:
-					hMenu.Close();
 					OpenMenu_SelectZoneTrack(pController);
 					return;
 				case 1:
