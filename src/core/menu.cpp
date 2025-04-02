@@ -6,8 +6,8 @@
 
 #include <fmt/format.h>
 
-constexpr float g_fMenuOffsetX = -8.5f;
-constexpr float g_fMenuOffsetY = 2.0f;
+constexpr float g_fMenuDefaultOffsetX_Alive = -8.95f;
+constexpr float g_fMenuDefaultOffsetY_Alive = 2.4f;
 
 CScreenTextMenu::CScreenTextMenu(CBasePlayerController* pController, MenuHandler fnHandler, std::string sTitle) : CBaseMenu(fnHandler, sTitle) {
 	ScreenTextManifest_t manifest;
@@ -16,8 +16,8 @@ CScreenTextMenu::CScreenTextMenu(CBasePlayerController* pController, MenuHandler
 	manifest.m_Color = Color(255, 165, 0, 255);
 	manifest.m_fFontSize = 40;
 	manifest.m_bEnable = false;
-	manifest.m_vecPos.x = g_fMenuOffsetX;
-	manifest.m_vecPos.y = g_fMenuOffsetY;
+	manifest.m_vecPos.x = g_fMenuDefaultOffsetX_Alive;
+	manifest.m_vecPos.y = g_fMenuDefaultOffsetY_Alive;
 	manifest.m_bBackground = true;
 
 	m_wpScreenText = VGUI::CreateScreenText(pController, manifest);
@@ -48,18 +48,18 @@ void CScreenTextMenu::Display(int iPageIndex) {
 
 	pMenuPlayer->m_iCurrentPage = iPageIndex;
 
-	auto formatItem = [](int iItemIndex, const std::string& sItem) { return !sItem.empty() ? fmt::format("{}.{}\n", iItemIndex, sItem) : ""; };
+	auto formatItem = [](int iItemIndex, const std::string& sItem) { return !sItem.empty() ? fmt::format("{}.{}", iItemIndex, sItem) : ""; };
 	bool bDrawPreview = (iPageIndex != 0);
 	bool bDrawNext = ((this->m_vItems.size() > 0) && (iPageIndex < (this->m_vItems.size() - 1)));
 
 	// clang-format off
 	std::string sMenuText = fmt::format("{}\n\n"
-										"{}"
-										"{}"
-										"{}"
-										"{}"
-										"{}"
 										"{}\n"
+										"{}\n"
+										"{}\n"
+										"{}\n"
+										"{}\n"
+										"{}\n\n"
 										"{}\n"
 										"{}\n"
 										"9.退出",
