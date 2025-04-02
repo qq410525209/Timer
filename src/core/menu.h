@@ -1,10 +1,8 @@
 #pragma once
 
 #include <pch.h>
-#include <core/concmdmanager.h>
 #include <core/playermanager.h>
 #include <core/screentext.h>
-#include <list>
 
 enum class EMenuType {
 	Unknown = 0,
