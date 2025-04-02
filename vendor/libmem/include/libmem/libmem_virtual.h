@@ -4,7 +4,7 @@
 
 #define GET_VIRTUAL(pInstance, idx)        vmt::GetVMethod(idx, pInstance)
 #define SET_VIRTUAL(pInstance, idx, pFunc) vmt::SetVMethod(idx, pInstance, pFunc)
-#define CALL_VIRTUAL(retType, idx, ...)    vmt::CallVirtualEx<retType>(idx, __VA_ARGS__)
+#define CALL_VIRTUAL(retType, idx, ...)    vmt::CallVirtual<retType>(idx, __VA_ARGS__)
 
 #ifdef _WIN32
 #define WIN_LINUX(win, linux) win
@@ -31,22 +31,11 @@ namespace vmt {
 		return reinterpret_cast<T>(vtable[uIndex]);
 	}
 
-	// PS: The template function can't discerm should passed the var reference so we should use the `std::ref`
-	template<typename T, typename... Args>
-	inline T CallVirtual(uint32_t uIndex, void* pClass, Args... args) {
-		auto func_ptr = GetVMethod<T(THISCALL*)(void*, Args...)>(uIndex, pClass);
-		if (!func_ptr) {
-			printf("vmt::CallVirtual failed: invalid function pointer\n");
-			return T();
-		}
-		return func_ptr(pClass, args...);
-	}
-
 	// 模拟真实的虚函数调用流程
 	// 自动处理返回值为非平凡类型的情况
 	// 返回值类型、内存结构必须与虚函数的一致
 	template<typename Ret, typename T, typename... Args>
-	inline Ret CallVirtualEx(uint32_t uIndex, T pClass, Args... args) {
+	inline Ret CallVirtual(uint32_t uIndex, T pClass, Args... args) {
 		auto func_ptr = GetVMethod(uIndex, pClass);
 		if (!func_ptr) {
 			printf("vmt::CallVirtual failed: invalid function pointer\n");

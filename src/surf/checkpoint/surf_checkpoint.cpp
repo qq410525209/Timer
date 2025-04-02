@@ -9,6 +9,8 @@ CSurfCheckpointPlugin* SURF::CheckpointPlugin() {
 }
 
 void CSurfCheckpointPlugin::OnPluginStart() {
+	RegisterCommands();
+
 	EVENT::HookEvent("player_spawn", OnPlayerSpawn);
 }
 
@@ -28,10 +30,33 @@ void CSurfCheckpointPlugin::OnPlayerSpawn(IGameEvent* pEvent, const char* szName
 	}
 }
 
+void CSurfCheckpointService::OnInit() {
+	// TODO: cvar to control reserve
+	m_vCheckpoints.reserve(1000);
+}
+
 void CSurfCheckpointService::OnReset() {
 	// TODO: persist data
 	m_vCheckpoints.clear();
 	m_iCurrentCP = 0;
+}
+
+std::optional<cp_cache_t> CSurfCheckpointService::GetCheckpoint(const i32 idx) const {
+	if (!EnsureIndex(idx)) {
+		SURF::Print(GetPlayer(), "检查点不存在");
+		return std::nullopt;
+	}
+
+	return m_vCheckpoints.at(idx);
+}
+
+bool CSurfCheckpointService::EnsureIndex(const i32 idx) const {
+	return idx >= 0 && idx < m_vCheckpoints.size();
+}
+
+void CSurfCheckpointService::ClampIndex(i32& idx) const {
+	const auto cpSize = m_vCheckpoints.size();
+	idx = std::clamp(idx, 0, cpSize ? static_cast<i32>(cpSize - 1) : 0);
 }
 
 void CSurfCheckpointService::SaveCheckpoint() {
@@ -47,25 +72,25 @@ void CSurfCheckpointService::SaveCheckpoint() {
 
 	CCSPlayerController* pTargetController = (CCSPlayerController*)pController->GetObserverTarget();
 	if (!pTargetController || !pTargetController->IsController()) {
-		SURF::Print(pController, "暂不支持观察对象为非玩家的存点.");
+		SURF::Print(pSurfPlayer, "暂不支持观察对象为非玩家的存点.");
 		return;
 	}
 
 	CCSPlayerPawn* pTargetPawn = pTargetController->GetPlayerPawn();
 	if (!pTargetPawn || !pTargetPawn->IsPawn()) {
-		SURF::Print(pController, "暂不支持观察对象为非玩家的存点.");
+		SURF::Print(pSurfPlayer, "暂不支持观察对象为非玩家的存点.");
 		return;
 	}
 
 	CSurfPlayer* pTargetSurfPlayer = SURF::GetPlayerManager()->ToPlayer(pTargetController);
 	if (!pTargetSurfPlayer) {
-		SURF::Print(pController, "观察对象有问题.");
+		SURF::Print(pSurfPlayer, "观察对象有问题.");
 		return;
 	}
 
 	CCSPlayer_MovementServices* pTargetMoveService = pTargetSurfPlayer->GetMoveServices();
 	if (!pTargetMoveService) {
-		SURF::Print(pController, "观察对象 MoveService 有问题.");
+		SURF::Print(pSurfPlayer, "观察对象 MoveService 有问题.");
 		return;
 	}
 
@@ -106,6 +131,8 @@ void CSurfCheckpointService::SaveCheckpoint() {
 	cache.m_fDuckSpeed = pTargetMoveService->m_flDuckSpeed();
 
 	pTargetSurfPlayer->m_pTimerService->BuildSnapshot(cache);
+
+	m_vCheckpoints.emplace_back(cache);
 }
 
 void CSurfCheckpointService::LoadCheckpoint(const cp_cache_t& cache) {
@@ -115,7 +142,7 @@ void CSurfCheckpointService::LoadCheckpoint(const cp_cache_t& cache) {
 	}
 
 	CCSPlayerPawn* pPawn = pSurfPlayer->GetPlayerPawn();
-	if (pPawn) {
+	if (!pPawn) {
 		return;
 	}
 
@@ -124,9 +151,6 @@ void CSurfCheckpointService::LoadCheckpoint(const cp_cache_t& cache) {
 		return;
 	}
 
-	pSurfPlayer->SetOrigin(cache.m_vecPos);
-	pSurfPlayer->SetAngles(cache.m_vecAng);
-	pSurfPlayer->SetVelocity(cache.m_vecVel);
 	pPawn->m_MoveType(cache.m_nMoveType);
 	pPawn->m_nActualMoveType(cache.m_nActualMoveType);
 	pPawn->m_flGravityScale(cache.m_fGravity);
@@ -142,5 +166,28 @@ void CSurfCheckpointService::LoadCheckpoint(const cp_cache_t& cache) {
 	pMoveService->m_flDuckAmount(cache.m_fDuckTime);
 	pMoveService->m_flDuckSpeed(cache.m_fDuckSpeed);
 
+	pPawn->Teleport(&cache.m_vecPos, &cache.m_vecAng, &cache.m_vecVel);
+
 	pSurfPlayer->m_pTimerService->FromSnapshot(cache);
+}
+
+void CSurfCheckpointService::LoadCheckpoint(const i32 idx) {
+	auto cache = GetCheckpoint(idx);
+	if (cache.has_value()) {
+		LoadCheckpoint(cache.value());
+	}
+}
+
+void CSurfCheckpointService::LoadPrev() {
+	m_iCurrentCP--;
+
+	ClampIndex(m_iCurrentCP);
+	LoadCheckpoint(m_iCurrentCP);
+}
+
+void CSurfCheckpointService::LoadNext() {
+	m_iCurrentCP++;
+
+	ClampIndex(m_iCurrentCP);
+	LoadCheckpoint(m_iCurrentCP);
 }

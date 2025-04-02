@@ -45,12 +45,20 @@ class CSurfCheckpointService : CSurfBaseService {
 public:
 	using CSurfBaseService::CSurfBaseService;
 
+	virtual void OnInit() override;
 	virtual void OnReset() override;
 
 public:
 	void OpenCheckpointsMenu();
+
+	std::optional<cp_cache_t> GetCheckpoint(const i32 idx) const;
+	bool EnsureIndex(const i32 idx) const;
+	void ClampIndex(i32& idx) const;
 	void SaveCheckpoint();
 	void LoadCheckpoint(const cp_cache_t& cache);
+	void LoadCheckpoint(const i32 idx);
+	void LoadPrev();
+	void LoadNext();
 
 public:
 	std::vector<cp_cache_t> m_vCheckpoints;

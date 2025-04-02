@@ -6,7 +6,7 @@
 
 #include <fmt/format.h>
 
-constexpr float g_fMenuDefaultOffsetX_Alive = -8.95f;
+constexpr float g_fMenuDefaultOffsetX_Alive = -8.9f;
 constexpr float g_fMenuDefaultOffsetY_Alive = 2.4f;
 
 CScreenTextMenu::CScreenTextMenu(CBasePlayerController* pController, MenuHandler fnHandler, std::string sTitle) : CBaseMenu(fnHandler, sTitle) {

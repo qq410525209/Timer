@@ -11,24 +11,29 @@ void CSurfCheckpointService::OpenCheckpointsMenu() {
 		pController, MENU_CALLBACK_L(this) {
 			switch (iItem) {
 				case 0: {
+					this->SaveCheckpoint();
 					break;
 				}
 				case 1: {
+					this->LoadCheckpoint(this->m_iCurrentCP);
 					break;
 				}
 				case 2: {
+					this->LoadPrev();
 					break;
 				}
 				case 3: {
+					this->LoadNext();
 					break;
 				}
 				case 4: {
+					if (this->m_iCurrentCP >= 0 && this->m_iCurrentCP < this->m_vCheckpoints.size()) {
+						this->m_vCheckpoints.erase(this->m_vCheckpoints.begin() + this->m_iCurrentCP);
+					}
 					break;
 				}
 				case 5: {
-					break;
-				}
-				case 6: {
+					this->m_vCheckpoints.clear();
 					break;
 				}
 			}
