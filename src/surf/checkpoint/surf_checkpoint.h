@@ -59,6 +59,8 @@ public:
 	void LoadCheckpoint(const i32 idx);
 	void LoadPrev();
 	void LoadNext();
+	void DeleteCheckpoint(const i32 idx);
+	void ResetCheckpoint();
 
 public:
 	std::vector<cp_cache_t> m_vCheckpoints;

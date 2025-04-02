@@ -27,13 +27,11 @@ void CSurfCheckpointService::OpenCheckpointsMenu() {
 					break;
 				}
 				case 4: {
-					if (this->m_iCurrentCP >= 0 && this->m_iCurrentCP < this->m_vCheckpoints.size()) {
-						this->m_vCheckpoints.erase(this->m_vCheckpoints.begin() + this->m_iCurrentCP);
-					}
+					this->DeleteCheckpoint(this->m_iCurrentCP);
 					break;
 				}
 				case 5: {
-					this->m_vCheckpoints.clear();
+					this->ResetCheckpoint();
 					break;
 				}
 			}

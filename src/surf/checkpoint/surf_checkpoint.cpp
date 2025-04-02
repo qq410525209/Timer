@@ -191,3 +191,13 @@ void CSurfCheckpointService::LoadNext() {
 	ClampIndex(m_iCurrentCP);
 	LoadCheckpoint(m_iCurrentCP);
 }
+
+void CSurfCheckpointService::DeleteCheckpoint(const i32 idx) {
+	if (EnsureIndex(idx)) {
+		this->m_vCheckpoints.erase(this->m_vCheckpoints.begin() + idx);
+	}
+}
+
+void CSurfCheckpointService::ResetCheckpoint() {
+	m_vCheckpoints.clear();
+}
