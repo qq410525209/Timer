@@ -50,15 +50,6 @@ std::optional<cp_cache_t> CSurfCheckpointService::GetCheckpoint(const i32 idx) c
 	return m_vCheckpoints.at(idx);
 }
 
-bool CSurfCheckpointService::EnsureIndex(const i32 idx) const {
-	return idx >= 0 && idx < m_vCheckpoints.size();
-}
-
-void CSurfCheckpointService::ClampIndex(i32& idx) const {
-	const auto cpSize = m_vCheckpoints.size();
-	idx = std::clamp(idx, 0, cpSize ? static_cast<i32>(cpSize - 1) : 0);
-}
-
 void CSurfCheckpointService::SaveCheckpoint() {
 	CSurfPlayer* pSurfPlayer = this->GetPlayer();
 	if (!pSurfPlayer) {
@@ -171,6 +162,15 @@ void CSurfCheckpointService::LoadCheckpoint(const cp_cache_t& cache) {
 	pSurfPlayer->m_pTimerService->FromSnapshot(cache);
 }
 
+bool CSurfCheckpointService::EnsureIndex(const i32 idx) const {
+	return idx >= 0 && idx < m_vCheckpoints.size();
+}
+
+void CSurfCheckpointService::ClampIndex(i32& idx) const {
+	const auto cpSize = m_vCheckpoints.size();
+	idx = std::clamp(idx, 0, cpSize ? static_cast<i32>(cpSize - 1) : 0);
+}
+
 void CSurfCheckpointService::LoadCheckpoint(const i32 idx) {
 	auto cache = GetCheckpoint(idx);
 	if (cache.has_value()) {
@@ -194,7 +194,7 @@ void CSurfCheckpointService::LoadNext() {
 
 void CSurfCheckpointService::DeleteCheckpoint(const i32 idx) {
 	if (EnsureIndex(idx)) {
-		this->m_vCheckpoints.erase(this->m_vCheckpoints.begin() + idx);
+		m_vCheckpoints.erase(m_vCheckpoints.begin() + idx);
 	}
 }
 
