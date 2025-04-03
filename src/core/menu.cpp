@@ -261,27 +261,28 @@ bool MENU::Close(CBasePlayerController* pController) {
 }
 
 bool CScreenTextMenuHandle::Close() {
-	if (auto pMenu = this->m_wpData.lock()) {
-		auto pScreenTextMenu = std::dynamic_pointer_cast<CScreenTextMenu>(pMenu);
-		if (!pScreenTextMenu) {
-			SDK_ASSERT(false);
-			return false;
-		}
-
-		auto pScreenText = pScreenTextMenu->m_wpScreenText.lock();
-		if (!pScreenText) {
-			SDK_ASSERT(false);
-			return false;
-		}
-
-		auto pController = pScreenText->GetOriginalController();
-		if (!pController) {
-			SDK_ASSERT(false);
-			return false;
-		}
-
-		return MENU::Close(pController);
-	} else {
+	auto pMenu = this->m_wpData.lock();
+	if (!pMenu) {
 		return false;
 	}
+
+	auto pScreenTextMenu = std::dynamic_pointer_cast<CScreenTextMenu>(pMenu);
+	if (!pScreenTextMenu) {
+		SDK_ASSERT(false);
+		return false;
+	}
+
+	auto pScreenText = pScreenTextMenu->m_wpScreenText.lock();
+	if (!pScreenText) {
+		SDK_ASSERT(false);
+		return false;
+	}
+
+	auto pController = pScreenText->GetOriginalController();
+	if (!pController) {
+		SDK_ASSERT(false);
+		return false;
+	}
+
+	return MENU::Close(pController);
 }
