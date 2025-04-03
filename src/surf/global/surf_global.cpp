@@ -114,7 +114,7 @@ void CSurfGlobalAPIPlugin::GlobalCheck(CBasePlayerController* pController) const
 		}
 	}
 
-	auto GCArg = [](bool bStatus) -> std::string { return std::format("{}{}", bStatus ? COLOR::Text::GREEN : COLOR::Text::DARKRED, bStatus ? "✓" : "X"); };
+	auto GCArg = [](bool bStatus) -> std::string { return fmt::format("{}{}", bStatus ? COLOR::Text::GREEN : COLOR::Text::DARKRED, bStatus ? "✓" : "X"); };
 
 	// clang-format off
 	std::string sGC = fmt::format("{}API接入检测:\n{}API密钥 {}{} | 插件 {}{} | 参数设置 {}{} | 地图 {}{} | 你 {}",
