@@ -13,34 +13,42 @@ void CSurfTimerPlugin::OnPluginStart() {
 }
 
 void CSurfTimerPlugin::OnPhysicsSimulatePost(CCSPlayerController* pController) {
-	CSurfPlayer* player = SURF::GetPlayerManager()->ToPlayer(pController);
-	if (!player) {
+	CSurfPlayer* pPlayer = SURF::GetPlayerManager()->ToPlayer(pController);
+	if (!pPlayer) {
 		return;
 	}
 
-	auto& pTimerService = player->m_pTimerService;
-	if (player->IsAlive() && pTimerService->m_bTimerRunning && !pTimerService->m_bPaused) {
+	auto& pTimerService = pPlayer->m_pTimerService;
+	if (pPlayer->IsAlive() && pTimerService->m_bTimerRunning && !pTimerService->m_bPaused) {
 		pTimerService->m_fCurrentTime += ENGINE_FIXED_TICK_INTERVAL;
 	}
 }
 
-bool CSurfTimerPlugin::OnEnterZone(const ZoneCache_t& zone, CSurfPlayer* player) {
+bool CSurfTimerPlugin::OnEnterZone(const ZoneCache_t& zone, CSurfPlayer* pPlayer) {
 	if (zone.m_iType == ZoneType::Zone_End) {
-		player->m_pTimerService->DoTimerStop();
+		pPlayer->m_pTimerService->DoTimerFinish();
 	}
 
 	return true;
 }
 
-bool CSurfTimerPlugin::OnStayZone(const ZoneCache_t& zone, CSurfPlayer* player) {
+bool CSurfTimerPlugin::OnStayZone(const ZoneCache_t& zone, CSurfPlayer* pPlayer) {
 	if (zone.m_iType == ZoneType::Zone_Start) {
-		player->m_pTimerService->DoTimerStart();
+		pPlayer->m_pTimerService->DoTimerStart();
 	}
 
 	return true;
 }
 
-void CSurfTimerService::DoTimerStart(bool playSound) {
+bool CSurfTimerPlugin::OnLeaveZone(const ZoneCache_t& zone, CSurfPlayer* pPlayer) {
+	if (zone.m_iType == ZoneType::Zone_Start) {
+		pPlayer->m_pTimerService->PlayStartTimerSound();
+	}
+
+	return true;
+}
+
+void CSurfTimerService::DoTimerStart() {
 	CSurfPlayer* pSurfPlayer = this->GetPlayer();
 	if (!pSurfPlayer->IsAlive()) {
 		return;
@@ -51,10 +59,6 @@ void CSurfTimerService::DoTimerStart(bool playSound) {
 	this->m_fCurrentTime = 0.0f;
 	this->m_bTimerRunning = true;
 	this->m_iCurrentStage = 0;
-
-	if (playSound) {
-		// this->PlayTimerStartSound();
-	}
 }
 
 void CSurfTimerService::DoTimerStop() {
@@ -76,19 +80,19 @@ void CSurfTimerService::DoTimerFinish() {
 		return;
 	}
 
-	if (!this->m_bTimerRunning) {
-		// this->PlayTimerFalseEndSound();
-		this->m_fLastFalseEndTime = UTIL::GetServerGlobals()->curtime;
+	if (!m_bTimerRunning) {
+		PlayErrorSound();
+		m_fLastFalseEndTime = UTIL::GetServerGlobals()->curtime;
 		return;
 	}
 
-	this->m_fCurrentTime += ENGINE_FIXED_TICK_INTERVAL;
+	m_fCurrentTime += ENGINE_FIXED_TICK_INTERVAL;
 
 	FORWARD_PRE_void(CSurfForward, OnTimerFinish, pSurfPlayer);
 
-	this->m_bTimerRunning = false;
-	this->m_fLastEndTime = UTIL::GetServerGlobals()->curtime;
-	// this->PlayTimerEndSound();
+	m_bTimerRunning = false;
+	m_fLastEndTime = UTIL::GetServerGlobals()->curtime;
+	PlayFinishTimerSound(m_iTrack);
 
 	FORWARD_POST(CSurfForward, OnTimerFinishPost, pSurfPlayer);
 }
@@ -121,6 +125,23 @@ void CSurfTimerService::BuildSnapshot(timer_snapshot_t& buffer) const {
 
 void CSurfTimerService::FromSnapshot(const timer_snapshot_t& snapshot) {
 	static_cast<timer_snapshot_t&>(*this) = snapshot;
+}
+
+void CSurfTimerService::PlayStartTimerSound() {
+	UTIL::PlaySoundToClient(GetPlayer()->GetPlayerSlot(), SURF_SND_TIMER_START, 3.0f);
+}
+
+void CSurfTimerService::PlayFinishTimerSound(ZoneTrack iTrack) {
+	switch (iTrack) {
+		case ZoneTrack::Track_Main: {
+			UTIL::PlaySoundToClient(GetPlayer()->GetPlayerSlot(), SURF_SND_TIMER_FINISH_MAIN);
+			break;
+		}
+		case ZoneTrack::Track_Bonus: {
+			UTIL::PlaySoundToClient(GetPlayer()->GetPlayerSlot(), SURF_SND_TIMER_FINISH_BONUS);
+			break;
+		}
+	}
 }
 
 void SURF::FormatTime(f64 time, char* output, u32 length, bool precise) {

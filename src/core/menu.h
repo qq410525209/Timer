@@ -136,5 +136,5 @@ namespace MENU {
 	extern CMenuManager* GetManager();
 
 	[[nodiscard]] std::weak_ptr<CBaseMenu> Create(CBasePlayerController* pController, MenuHandler pFnMenuHandler, EMenuType eMenuType = EMenuType::ScreenText);
-	void Close(CBasePlayerController* pController);
+	bool Close(CBasePlayerController* pController);
 } // namespace MENU

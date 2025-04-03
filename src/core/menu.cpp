@@ -128,6 +128,10 @@ void CMenuPlayer::SelectMenu(int iMenuItem) {
 	}
 
 	const auto& pMenu = m_pCurrentMenu;
+	if (!pMenu) {
+		return;
+	}
+
 	auto iMenuType = pMenu->GetType();
 	if (iMenuType == EMenuType::Unknown) {
 		SDK_ASSERT(false);
@@ -245,14 +249,15 @@ std::weak_ptr<CBaseMenu> MENU::Create(CBasePlayerController* pController, MenuHa
 	return {};
 }
 
-void MENU::Close(CBasePlayerController* pController) {
+bool MENU::Close(CBasePlayerController* pController) {
 	CMenuPlayer* pMenuPlayer = MENU::GetManager()->ToPlayer(pController);
 	if (!pMenuPlayer) {
 		SDK_ASSERT(false);
-		return;
+		return false;
 	}
 
 	pMenuPlayer->ResetMenu();
+	return true;
 }
 
 bool CScreenTextMenuHandle::Close() {
@@ -263,7 +268,19 @@ bool CScreenTextMenuHandle::Close() {
 			return false;
 		}
 
-		return pScreenTextMenu->Close();
+		auto pScreenText = pScreenTextMenu->m_wpScreenText.lock();
+		if (!pScreenText) {
+			SDK_ASSERT(false);
+			return false;
+		}
+
+		auto pController = pScreenText->GetOriginalController();
+		if (!pController) {
+			SDK_ASSERT(false);
+			return false;
+		}
+
+		return MENU::Close(pController);
 	} else {
 		return false;
 	}

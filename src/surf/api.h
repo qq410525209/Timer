@@ -7,6 +7,15 @@ constexpr auto SURF_SND_ERROR = "Buttons.snd8";
 constexpr auto SURF_SND_SAVE_CP = "surf.savecp";
 constexpr auto SURF_SND_TELE_CP = "Buttons.snd9";
 
+constexpr auto SURF_SND_TIMER_START = "surf.timer_start";
+constexpr auto SURF_SND_TIMER_FINISH_MAIN = "surf.finish_main";
+constexpr auto SURF_SND_TIMER_FINISH_BONUS = "surf.finish_bonus";
+constexpr auto SURF_SND_TIMER_LOSSPB = "tr.PuckFail";
+constexpr auto SURF_SND_TIMER_RESERVED = "tr.ScoreRegular";
+constexpr auto SURF_SND_TIMER_RESERVED2 = "Instructor.ImportantLessonStart";
+constexpr auto SURF_SND_TIMER_RESERVED3 = "Vote.Passed";
+constexpr auto SURF_SND_TIMER_RESERVED4 = "UI.DeathNotice";
+
 #include <surf/zones/surf_zones.h>
 
 class CSurfForward : public CBaseForward<CSurfForward> {

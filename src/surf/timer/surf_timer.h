@@ -13,7 +13,7 @@ struct timer_snapshot_t {
 	bool m_bPracticeMode {};
 	bool m_bPaused {};
 
-	ZoneTrack m_iTrack;
+	ZoneTrack m_iTrack = ZoneTrack::Track_Main;
 
 	i32 m_iCurrentStage {};
 	i32 m_iCurrentCP {};
@@ -27,6 +27,7 @@ private:
 	virtual void OnPhysicsSimulatePost(CCSPlayerController* pController) override;
 	virtual bool OnEnterZone(const ZoneCache_t& zone, CSurfPlayer* player) override;
 	virtual bool OnStayZone(const ZoneCache_t& zone, CSurfPlayer* player) override;
+	virtual bool OnLeaveZone(const ZoneCache_t& zone, CSurfPlayer* pPlayer) override;
 
 private:
 	void RegisterCommand();
@@ -36,7 +37,7 @@ class CSurfTimerService : CSurfBaseService, public timer_snapshot_t {
 public:
 	using CSurfBaseService::CSurfBaseService;
 
-	void DoTimerStart(bool playSound = true);
+	void DoTimerStart();
 	void DoTimerStop();
 	void DoTimerFinish();
 	void DoTimerPause();
@@ -44,6 +45,9 @@ public:
 
 	void BuildSnapshot(timer_snapshot_t& buffer) const;
 	void FromSnapshot(const timer_snapshot_t& snapshot);
+
+	void PlayStartTimerSound();
+	void PlayFinishTimerSound(ZoneTrack iTrack);
 
 public:
 	f64 m_fLastEndTime {};
