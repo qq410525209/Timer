@@ -147,6 +147,7 @@ void CMenuPlayer::SelectMenu(int iMenuItem) {
 					case EMenuType::ScreenText: {
 						CScreenTextMenuHandle hMenu(pMenu);
 						pMenu->m_pFnMenuHandler(hMenu, pController, iItemIndex);
+						UTIL::PlaySoundToClient(GetPlayerSlot(), MENU_SND_SELECT);
 						break;
 					}
 					default: {
@@ -162,6 +163,7 @@ void CMenuPlayer::SelectMenu(int iMenuItem) {
 			int iPrevPageIndex = m_iCurrentPage - 1;
 			if (iPrevPageIndex >= 0 && iPrevPageIndex < pMenu->GetPageLength()) {
 				pMenu->Display(iPrevPageIndex);
+				UTIL::PlaySoundToClient(GetPlayerSlot(), MENU_SND_SELECT);
 			}
 			break;
 		}
@@ -169,11 +171,13 @@ void CMenuPlayer::SelectMenu(int iMenuItem) {
 			int iNextPageIndex = m_iCurrentPage + 1;
 			if (iNextPageIndex >= 0 && iNextPageIndex < pMenu->GetPageLength()) {
 				pMenu->Display(iNextPageIndex);
+				UTIL::PlaySoundToClient(GetPlayerSlot(), MENU_SND_SELECT);
 			}
 			break;
 		}
 		case 9: {
 			ResetMenu();
+			UTIL::PlaySoundToClient(GetPlayerSlot(), MENU_SND_EXIT);
 			break;
 		}
 	}

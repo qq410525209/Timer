@@ -4,6 +4,9 @@
 #include <core/playermanager.h>
 #include <core/screentext.h>
 
+constexpr auto MENU_SND_SELECT = "UIPanorama.submenu_select";
+constexpr auto MENU_SND_EXIT = "UIPanorama.submenu_slidein";
+
 enum class EMenuType {
 	Unknown = 0,
 	ScreenText = 1
