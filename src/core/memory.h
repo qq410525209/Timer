@@ -62,6 +62,7 @@ namespace MEM {
 		CBaseTrigger* CreateAABBTrigger(const Vector& center, const Vector& mins, const Vector& maxs);
 		void SetParent(CBaseEntity* pEnt, CBaseEntity* pParent);
 		void SetEntityName(CEntityIdentity* pEnt, const char* pszName);
+		SndOpEventGuid_t EmitSound(IRecipientFilter& filter, CEntityIndex ent, const EmitSound_t& params);
 	} // namespace CALL
 
 	namespace MODULE {

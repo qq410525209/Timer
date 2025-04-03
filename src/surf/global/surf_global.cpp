@@ -1,6 +1,7 @@
 #include "surf_global.h"
 #include <surf/api.h>
 #include <utils/utils.h>
+#include <utils/color.h>
 #include <fmt/format.h>
 #include <regex>
 
@@ -113,17 +114,25 @@ void CSurfGlobalAPIPlugin::GlobalCheck(CBasePlayerController* pController) const
 		}
 	}
 
-	auto GCArg = [](bool bStatus) -> const char* { return bStatus ? "[green]✓" : "[darkred]X"; };
+	auto GCArg = [](bool bStatus) -> std::string { return std::format("{}{}", bStatus ? COLOR::Text::GREEN : COLOR::Text::DARKRED, bStatus ? "✓" : "X"); };
 
 	// clang-format off
-	std::string sGC = fmt::format("[grey]API接入检测:\n[grey]API密钥 {}[grey] | 插件 {}[grey] | 参数设置 {}[grey] | 地图 {}[grey] | 你 {}",
+	std::string sGC = fmt::format("{}API接入检测:\n{}API密钥 {}{} | 插件 {}{} | 参数设置 {}{} | 地图 {}{} | 你 {}",
+					COLOR::Text::GREY,
+					COLOR::Text::GREY,
 					GCArg(!m_GlobalAuth.m_sToken.empty()),
+					COLOR::Text::GREY,
 					GCArg(m_bBannedCommandsCheck),
+					COLOR::Text::GREY,
 					GCArg(m_bEnforcerOnFreshMap),
+					COLOR::Text::GREY,
 					GCArg(MapCheck()),
+					COLOR::Text::GREY,
 					GCArg(bClientGloballyVerified));
 	
-	std::string sMapGC = fmt::format("[grey]地图数据上报API接入检测:\n[grey]API密钥 {}",
+	std::string sMapGC = fmt::format("{}地图数据上报API接入检测:\n{}API密钥 {}",
+					COLOR::Text::GREY,
+					COLOR::Text::GREY,
 					GCArg(!m_UpdaterAuth.m_sToken.empty()));
 	// clang-format on
 

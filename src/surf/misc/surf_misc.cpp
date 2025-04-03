@@ -1,5 +1,5 @@
 #include "surf_misc.h"
-#include <surf/surf_player.h>
+#include <surf/api.h>
 #include <core/interfaces.h>
 #include <core/logger.h>
 #include <core/cvarmanager.h>
@@ -20,7 +20,19 @@ void SURF::Print(CSurfPlayer* pSurfPlayer, const char* fmt, ...) {
 		va_start(args, fmt);
 		buffer.FormatV(fmt, args);
 
-		UTIL::CPrintChat(pController, "[Surf] %s\n", buffer.Get());
+		UTIL::CPrintChat(pController, "{green}[Surf] {grey}%s", buffer.Get());
+	}
+}
+
+void SURF::PrintWarning(CSurfPlayer* pSurfPlayer, const char* fmt, ...) {
+	auto pController = pSurfPlayer->GetController();
+	if (pController) {
+		CUtlString buffer;
+		va_list args;
+		va_start(args, fmt);
+		buffer.FormatV(fmt, args);
+
+		UTIL::CPrintChat(pController, "{green}[Surf] {darkred}%s", buffer.Get());
 	}
 }
 
@@ -109,6 +121,10 @@ bool CSurfMiscPlugin::OnProcessMovement(CCSPlayer_MovementServices* ms, CMoveDat
 
 bool CSurfMiscPlugin::OnTakeDamage(CCSPlayerPawn* pVictim, CTakeDamageInfo* info) {
 	return false;
+}
+
+void CSurfMiscPlugin::OnResourcePrecache(IEntityResourceManifest* pResourceManifest) {
+	pResourceManifest->AddResource(SURF_WORKSHOP_ADDONS_SNDEVENT_FILE);
 }
 
 void CSurfMiscService::HideLegs() {

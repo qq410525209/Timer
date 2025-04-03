@@ -1,6 +1,7 @@
 #include "surf_checkpoint.h"
 #include <core/eventmanager.h>
 #include <surf/misc/surf_misc.h>
+#include <utils/utils.h>
 
 CSurfCheckpointPlugin g_SurfCheckpoint;
 
@@ -43,7 +44,8 @@ void CSurfCheckpointService::OnReset() {
 
 std::optional<cp_cache_t> CSurfCheckpointService::GetCheckpoint(const i32 idx) const {
 	if (!EnsureIndex(idx)) {
-		SURF::Print(GetPlayer(), "检查点不存在");
+		SURF::Print(GetPlayer(), "存点 {green}#%d{default} 为{darkred}空{default}.", idx);
+		PlayErrorSound();
 		return std::nullopt;
 	}
 
@@ -63,25 +65,25 @@ void CSurfCheckpointService::SaveCheckpoint() {
 
 	CCSPlayerController* pTargetController = (CCSPlayerController*)pController->GetObserverTarget();
 	if (!pTargetController || !pTargetController->IsController()) {
-		SURF::Print(pSurfPlayer, "暂不支持观察对象为非玩家的存点.");
+		SURF::PrintWarning(pSurfPlayer, "暂不支持观察对象为非玩家的存点.");
 		return;
 	}
 
 	CCSPlayerPawn* pTargetPawn = pTargetController->GetPlayerPawn();
 	if (!pTargetPawn || !pTargetPawn->IsPawn()) {
-		SURF::Print(pSurfPlayer, "暂不支持观察对象为非玩家的存点.");
+		SURF::PrintWarning(pSurfPlayer, "暂不支持观察对象为非玩家的存点.");
 		return;
 	}
 
 	CSurfPlayer* pTargetSurfPlayer = SURF::GetPlayerManager()->ToPlayer(pTargetController);
 	if (!pTargetSurfPlayer) {
-		SURF::Print(pSurfPlayer, "观察对象有问题.");
+		SURF::PrintWarning(pSurfPlayer, "观察对象有问题.");
 		return;
 	}
 
 	CCSPlayer_MovementServices* pTargetMoveService = pTargetSurfPlayer->GetMoveServices();
 	if (!pTargetMoveService) {
-		SURF::Print(pSurfPlayer, "观察对象 MoveService 有问题.");
+		SURF::PrintWarning(pSurfPlayer, "观察对象 MoveService 有问题.");
 		return;
 	}
 
@@ -124,6 +126,9 @@ void CSurfCheckpointService::SaveCheckpoint() {
 	pTargetSurfPlayer->m_pTimerService->BuildSnapshot(cache);
 
 	m_vCheckpoints.emplace_back(cache);
+
+	SURF::Print(pSurfPlayer, "存点 {green}#%d {gold}已保存{default}.", GetLatestCheckpoint());
+	PlaySaveCheckpointSound();
 }
 
 void CSurfCheckpointService::LoadCheckpoint(const cp_cache_t& cache) {
@@ -175,6 +180,13 @@ void CSurfCheckpointService::LoadCheckpoint(const i32 idx) {
 	auto cache = GetCheckpoint(idx);
 	if (cache.has_value()) {
 		LoadCheckpoint(cache.value());
+		PlayTeleCheckpointSound();
+
+		if (m_iLastCPLoaded != idx) {
+			SURF::Print(GetPlayer(), "已传送到存点 {green}#%d{default}.", idx);
+		}
+
+		m_iLastCPLoaded = idx;
 	}
 }
 
@@ -195,9 +207,27 @@ void CSurfCheckpointService::LoadNext() {
 void CSurfCheckpointService::DeleteCheckpoint(const i32 idx) {
 	if (EnsureIndex(idx)) {
 		m_vCheckpoints.erase(m_vCheckpoints.begin() + idx);
+		SURF::Print(GetPlayer(), "存点 {green}#%d {gold}已删除", idx);
 	}
 }
 
 void CSurfCheckpointService::ResetCheckpoint() {
 	m_vCheckpoints.clear();
+	m_iCurrentCP = 0;
+	m_iLastCPLoaded = -1;
+
+	SURF::Print(GetPlayer(), "所有存点 {green}已重置");
+}
+
+i32 CSurfCheckpointService::GetLatestCheckpoint() const {
+	const auto cpSize = m_vCheckpoints.size();
+	return cpSize ? static_cast<i32>(cpSize - 1) : 0;
+}
+
+void CSurfCheckpointService::PlaySaveCheckpointSound() const {
+	UTIL::PlaySoundToClient(GetPlayer()->GetPlayerSlot(), SURF_SND_SAVE_CP);
+}
+
+void CSurfCheckpointService::PlayTeleCheckpointSound() const {
+	UTIL::PlaySoundToClient(GetPlayer()->GetPlayerSlot(), SURF_SND_TELE_CP);
 }

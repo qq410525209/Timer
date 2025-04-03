@@ -12,6 +12,7 @@ private:
 	virtual void OnClientDisconnect(ISource2GameClients* pClient, CPlayerSlot slot, ENetworkDisconnectionReason reason, const char* pszName, uint64 xuid, const char* pszNetworkID) override;
 	virtual bool OnProcessMovement(CCSPlayer_MovementServices* ms, CMoveData* mv) override;
 	virtual bool OnTakeDamage(CCSPlayerPawn* pVictim, CTakeDamageInfo* info) override;
+	virtual void OnResourcePrecache(IEntityResourceManifest* pResourceManifest) override;
 
 private:
 	void TweakCvars();
@@ -48,4 +49,5 @@ namespace SURF {
 	extern CSurfMiscPlugin* MiscPlugin();
 
 	void Print(CSurfPlayer* pSurfPlayer, const char* fmt, ...);
+	void PrintWarning(CSurfPlayer* pSurfPlayer, const char* fmt, ...);
 } // namespace SURF

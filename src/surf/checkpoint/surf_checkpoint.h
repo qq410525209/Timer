@@ -61,10 +61,15 @@ public:
 	void LoadNext();
 	void DeleteCheckpoint(const i32 idx);
 	void ResetCheckpoint();
+	i32 GetLatestCheckpoint() const;
+
+	void PlaySaveCheckpointSound() const;
+	void PlayTeleCheckpointSound() const;
 
 public:
 	std::vector<cp_cache_t> m_vCheckpoints;
 	i32 m_iCurrentCP {};
+	i32 m_iLastCPLoaded = -1;
 };
 
 namespace SURF {

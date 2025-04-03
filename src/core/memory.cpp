@@ -80,6 +80,10 @@ void MEM::CALL::SetEntityName(CEntityIdentity* pEnt, const char* pszName) {
 	CALL_SIG("CEntityIdentity::SetEntityName", SetEntityName, pEnt, pszName);
 }
 
+SndOpEventGuid_t MEM::CALL::EmitSound(IRecipientFilter& filter, CEntityIndex ent, const EmitSound_t& params) {
+	CALL_SIG("EmitSound", EmitSound, &filter, ent, &params);
+}
+
 #pragma endregion
 
 #pragma region hooks

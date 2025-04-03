@@ -25,6 +25,8 @@ public:
 
 	virtual void OnReset() {}
 
+	virtual void PlayErrorSound() const;
+
 private:
 	CSurfPlayer* m_pPlayer;
 };

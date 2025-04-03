@@ -71,6 +71,21 @@ std::wstring UTIL::ToWideString(const char* pszCharStr) {
 	return std::wstring();
 }
 
+void UTIL::ReplaceString(std::string& str, const char* search, const char* replace) {
+	if (!search || !search[0] || !replace) {
+		return;
+	}
+
+	size_t start_pos = 0;
+	const size_t search_len = strlen(search);
+	const size_t replace_len = strlen(replace);
+
+	while ((start_pos = str.find(search, start_pos)) != std::string::npos) {
+		str.replace(start_pos, search_len, replace);
+		start_pos += replace_len;
+	}
+}
+
 CGlobalVars* UTIL::GetGlobals() {
 	INetworkGameServer* server = g_pNetworkServerService->GetIGameServer();
 
@@ -176,6 +191,18 @@ void UTIL::GetPlayerAiming(CCSPlayerPawnBase* pPlayer, CGameTrace& ret) {
 	Vector to = from + forward * MAX_COORD_FLOAT;
 
 	TraceLine(from, to, pPlayer, &ret, MASK_SOLID, CONTENTS_TRIGGER | CONTENTS_PLAYER | CONTENTS_PLAYER_CLIP);
+}
+
+void UTIL::PlaySoundToClient(CPlayerSlot player, const char* sound, f32 volume) {
+	if (!SurfPlugin()->IsAddonMounted()) {
+		return;
+	}
+
+	CSingleRecipientFilter filter(player.Get());
+	EmitSound_t soundParams;
+	soundParams.m_pSoundName = sound;
+	soundParams.m_flVolume = volume;
+	MEM::CALL::EmitSound(filter, player.Get() + 1, soundParams);
 }
 
 CBaseEntity* UTIL::FindEntityByClassname(CEntityInstance* start, const char* name) {

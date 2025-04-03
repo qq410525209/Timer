@@ -1,6 +1,8 @@
 #include <surf/checkpoint/surf_checkpoint.h>
 #include <surf/surf_player.h>
 #include <core/concmdmanager.h>
+#include <utils/utils.h>
+#include <surf/misc/surf_misc.h>
 
 CCMD_CALLBACK(Command_Checkpoints) {
 	CSurfPlayer* pSurfPlayer = SURF::GetPlayerManager()->ToPlayer(pController);
@@ -19,6 +21,8 @@ CCMD_CALLBACK(Command_Save) {
 	}
 
 	auto& pCPService = pSurfPlayer->m_pCheckpointService;
+	pCPService->SaveCheckpoint();
+	pCPService->m_iCurrentCP = pCPService->GetLatestCheckpoint();
 }
 
 CCMD_CALLBACK(Command_Tele) {
@@ -28,6 +32,19 @@ CCMD_CALLBACK(Command_Tele) {
 	}
 
 	auto& pCPService = pSurfPlayer->m_pCheckpointService;
+	i32 iCP = pCPService->m_iCurrentCP;
+	if (vArgs.size() > 0) {
+		std::string sCP = vArgs.at(0);
+		UTIL::ReplaceString(sCP, "#", "");
+		iCP = V_StringToInt32(sCP.c_str(), -1);
+
+		if (iCP == -1) {
+			SURF::Print(pSurfPlayer, "输入格式不合法!");
+			return;
+		}
+	}
+
+	pCPService->LoadCheckpoint(iCP);
 }
 
 CCMDLISTENER_CALLBACK(Command_Jointeam) {

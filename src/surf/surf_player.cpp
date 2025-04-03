@@ -135,3 +135,7 @@ void CSurfPlayer::Reset() {
 
 	m_bJustTeleported = false;
 }
+
+void CSurfBaseService::PlayErrorSound() const {
+	UTIL::PlaySoundToClient(GetPlayer()->GetPlayerSlot(), SURF_SND_ERROR);
+}

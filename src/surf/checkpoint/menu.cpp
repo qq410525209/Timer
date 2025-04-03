@@ -12,6 +12,7 @@ void CSurfCheckpointService::OpenCheckpointsMenu() {
 			switch (iItem) {
 				case 0: {
 					this->SaveCheckpoint();
+					this->m_iCurrentCP = this->GetLatestCheckpoint();
 					break;
 				}
 				case 1: {
@@ -28,6 +29,8 @@ void CSurfCheckpointService::OpenCheckpointsMenu() {
 				}
 				case 4: {
 					this->DeleteCheckpoint(this->m_iCurrentCP);
+					this->m_iCurrentCP--;
+					this->ClampIndex(this->m_iCurrentCP);
 					break;
 				}
 				case 5: {

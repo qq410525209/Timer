@@ -1,6 +1,11 @@
 #pragma once
 
 constexpr auto SURF_WORKSHOP_ADDONS_ID = "3377250885";
+constexpr auto SURF_WORKSHOP_ADDONS_SNDEVENT_FILE = "soundevents/surf.vsndevts";
+
+constexpr auto SURF_SND_ERROR = "Buttons.snd8";
+constexpr auto SURF_SND_SAVE_CP = "surf.savecp";
+constexpr auto SURF_SND_TELE_CP = "Buttons.snd9";
 
 #include <surf/zones/surf_zones.h>
 

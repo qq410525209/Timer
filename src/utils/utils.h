@@ -64,6 +64,7 @@ namespace UTIL {
 	std::string GetPublicIP();
 	json LoadJsonc(std::string sFilePath);
 	std::wstring ToWideString(const char* pszCharStr);
+	void ReplaceString(std::string& str, const char* from, const char* to);
 
 	CGlobalVars* GetGlobals();
 	CGlobalVars* GetServerGlobals();
@@ -76,6 +77,7 @@ namespace UTIL {
 
 	bool TraceLine(const Vector& vecStart, const Vector& vecEnd, CEntityInstance* ignore1, CGameTrace* tr, uint64 traceLayer, uint64 excludeLayer = 0);
 	void GetPlayerAiming(CCSPlayerPawnBase* pPlayer, CGameTrace& ret);
+	void PlaySoundToClient(CPlayerSlot player, const char* sound, f32 volume = 1.0f);
 
 	CBaseEntity* FindEntityByClassname(CEntityInstance* start, const char* name);
 	CBaseEntity* CreateBeam(const Vector& from, const Vector& to, Color color = Color(0, 255, 0, 255), float width = 1.5f, CBaseEntity* owner = nullptr);
