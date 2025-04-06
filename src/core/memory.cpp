@@ -16,6 +16,8 @@ class CEntListener : public IEntityListener {
 	virtual void OnEntityDeleted(CEntityInstance* pEntity) override;
 } g_EntityListener;
 
+MEM::CHookManager g_HookManager;
+
 #define CALL_SIG(sig, fnCurrent, ...) \
 	static auto fnSig = GAMEDATA::GetMemSig(sig); \
 	SDK_ASSERT(fnSig); \
@@ -386,6 +388,10 @@ static bool SetupVMTHooks() {
 void MEM::SetupHooks() {
 	SDK_ASSERT(SetupDetours());
 	SDK_ASSERT(SetupVMTHooks());
+}
+
+MEM::CHookManager* MEM::GetHookManager() {
+	return &g_HookManager;
 }
 
 void MEM::MODULE::Setup() {

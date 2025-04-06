@@ -19,7 +19,9 @@
 
 namespace libmem {
 	template<typename T>
+	[[deprecated("libmem::HookCode is problemic, dont use it.")]]
 	inline bool HookFunc(void* from, T to, void*& trampoline) {
+		throw std::runtime_error("libmem::HookFunc is disabled.");
 		if (!from) {
 			return false;
 		}

@@ -3,10 +3,13 @@
 #include <pch.h>
 
 #include <sdk/common.h>
-#include <libmem/libmem_helper.h>
-#include <vendor/libmodule/module.h>
 #include <sdk/datatypes.h>
+#include <libmem/libmem_helper.h>
+#include <polyhook2/Detour/x64Detour.hpp>
+#include <vendor/libmodule/module.h>
 #include <utils/vtablehelper.h>
+
+#include <list>
 
 class CBasePlayerController;
 class CCSPlayerController;
@@ -16,36 +19,6 @@ class CEntityKeyValues;
 class CBaseTrigger;
 
 class GameSessionConfiguration_t {};
-
-// clang-format off
-
-#define HOOK_SIG(sig, fnHook, fnTrampoline) \
-	static auto fn##fnHook = GAMEDATA::GetMemSig(sig); \
-	SDK_ASSERT(fn##fnHook); \
-	if (fn##fnHook) { \
-		libmem::HookFunc(fn##fnHook, fnHook, fnTrampoline); \
-	}
-
-#define HOOK_VMT(instance, vfn, fnHook, fnTrampoline) \
-	SDK_ASSERT(libmem::VmtHookEx(instance, offsetof_vtablefn(vfn), fnHook, fnTrampoline));
-
-#define HOOK_VMT_OVERRIDE(instance, classname, vfn, fnHook, fnTrampoline, ...) \
-	SDK_ASSERT(libmem::VmtHookEx( \
-		instance, \
-		TOOLS::GetVtableIndex(static_cast<FunctionTraits<decltype(&fnHook)>::ReturnType (classname::*)(__VA_ARGS__)>(&classname::vfn)), \
-		fnHook, \
-		fnTrampoline));
-
-#define HOOK_VMTEX(sClassname, vfn, pModule, fnHook, fnTrampoline) \
-	SDK_ASSERT(MEM::VmtHookEx(offsetof_vtablefn(vfn), pModule.get(), sClassname, fnHook, fnTrampoline));
-
-#define GAMEDATA_VMT(gdOffsetKey, pModule, fnHook, fnTrampoline) \
-	SDK_ASSERT(MEM::VmtHookEx(GAMEDATA::GetOffset(gdOffsetKey), pModule.get(), gdOffsetKey, fnHook, fnTrampoline));
-
-#define DETOUR_VMT(gdOffsetKey, pModule, fnHook, fnTrampoline) \
-	SDK_ASSERT(MEM::VmtHookEx(GAMEDATA::GetOffset(gdOffsetKey), pModule.get(), gdOffsetKey, fnHook, fnTrampoline, true));
-
-// clang-format on
 
 namespace MEM {
 	namespace CALL {
@@ -100,6 +73,23 @@ namespace MEM {
 
 	void SetupHooks();
 
+	class CHookManager {
+	public:
+		std::list<PLH::Detour*> m_pDetourList;
+	};
+
+	extern CHookManager* GetHookManager();
+
+	template<typename TFn, typename TCallback, typename TTram>
+	void AddDetour(TFn pFn, TCallback pCallback, TTram& pTrampoline) {
+		PLH::x64Detour* pDetour = new PLH::x64Detour((uint64_t)pFn, (uint64_t)pCallback, (uint64_t*)&pTrampoline);
+		if (!pDetour->hook()) {
+			SDK_ASSERT(false);
+			return;
+		}
+		GetHookManager()->m_pDetourList.emplace_back(pDetour);
+	}
+
 	template<typename T = void, typename... Args>
 	typename std::enable_if<!std::is_void<T>::value, T>::type SDKCall(void* pAddress, Args... args) {
 		auto pFn = reinterpret_cast<T (*)(Args...)>(pAddress);
@@ -125,17 +115,7 @@ namespace MEM {
 			return false;
 		}
 
-		auto extractClassName = [](std::string input) {
-			size_t pos = input.find("::");
-			if (pos != std::string::npos) {
-				return input.substr(0, pos);
-			}
-			return input;
-		};
-
-		auto sClassName = extractClassName(className);
-
-		void* vtable = pModule->GetVirtualTableByName(sClassName);
+		void* vtable = pModule->GetVirtualTableByName(className);
 		if (!vtable) {
 			return false;
 		}
@@ -144,7 +124,7 @@ namespace MEM {
 		auto from = vmt.GetOriginal(uIndex);
 
 		if (allInstance) {
-			libmem::HookFunc((void*)from, pFunc, pOriginFunc);
+			MEM::AddDetour(from, pFunc, pOriginFunc);
 		} else {
 			vmt.Hook(uIndex, (libmem::Address)pFunc);
 			pOriginFunc = (void*)from;
@@ -152,4 +132,44 @@ namespace MEM {
 
 		return true;
 	}
+
+	template<size_t nOffset = 0>
+	inline void PatchNOP(void* pAddress, size_t nLen) {
+		uint8_t* adr_patch = static_cast<uint8_t*>(pAddress) + nOffset;
+		auto old_mem_prot = libmem::ProtMemory((libmem::Address)adr_patch, nLen, libmem::Prot::XRW);
+		if (old_mem_prot.has_value()) {
+			libmem::SetMemory((libmem::Address)adr_patch, 0x90, nLen);
+			libmem::ProtMemory((libmem::Address)adr_patch, nLen, old_mem_prot.value());
+		}
+	}
 } // namespace MEM
+
+// clang-format off
+
+#define HOOK_SIG(sig, fnHook, fnTrampoline) \
+	static auto fn##fnHook = GAMEDATA::GetMemSig(sig); \
+	SDK_ASSERT(fn##fnHook); \
+	if (fn##fnHook) { \
+		MEM::AddDetour(fn##fnHook, fnHook, fnTrampoline); \
+	}
+
+#define HOOK_VMT(instance, vfn, fnHook, fnTrampoline) \
+	SDK_ASSERT(libmem::VmtHookEx(instance, offsetof_vtablefn(vfn), fnHook, fnTrampoline));
+
+#define HOOK_VMT_OVERRIDE(instance, classname, vfn, fnHook, fnTrampoline, ...) \
+	SDK_ASSERT(libmem::VmtHookEx( \
+		instance, \
+		TOOLS::GetVtableIndex(static_cast<FunctionTraits<decltype(&fnHook)>::ReturnType (classname::*)(__VA_ARGS__)>(&classname::vfn)), \
+		fnHook, \
+		fnTrampoline));
+
+#define HOOK_VMTEX(sClassname, vfn, pModule, fnHook, fnTrampoline) \
+	SDK_ASSERT(MEM::VmtHookEx(offsetof_vtablefn(vfn), pModule.get(), sClassname, fnHook, fnTrampoline));
+
+#define GAMEDATA_VMT(gdOffsetKey, pModule, fnHook, fnTrampoline) \
+	SDK_ASSERT(MEM::VmtHookEx(GAMEDATA::GetOffset(gdOffsetKey), pModule.get(), gdOffsetKey, fnHook, fnTrampoline));
+
+#define DETOUR_VMT(gdOffsetKey, pModule, fnHook, fnTrampoline) \
+	SDK_ASSERT(MEM::VmtHookEx(GAMEDATA::GetOffset(gdOffsetKey), pModule.get(), gdOffsetKey, fnHook, fnTrampoline, true));
+
+// clang-format on

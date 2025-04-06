@@ -52,7 +52,6 @@ private:
 		if (!service) {
 			service.reset(new T(this));
 			reinterpret_cast<CSurfBaseService*>(service.get())->OnInit();
-			reinterpret_cast<CSurfBaseService*>(service.get())->OnReset();
 		}
 	}
 

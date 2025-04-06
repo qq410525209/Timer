@@ -98,6 +98,7 @@ SchemaKey schema::GetOffset(const char* className, uint32_t classKey, const char
 	int16_t memberIndex = tableMap->Find(memberKey);
 	if (!tableMap->IsValidIndex(memberIndex)) {
 		Warning("schema::GetOffset(): '%s' was not found in '%s'!\n", memberName, className);
+		SDK_ASSERT(false);
 		return {0, 0};
 	}
 
