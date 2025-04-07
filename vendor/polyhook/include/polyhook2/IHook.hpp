@@ -12,7 +12,9 @@
 #include <functional>
 
 #if defined(__clang__)
+#ifndef NOINLINE
 #define NOINLINE __attribute__((noinline))
+#endif
 #define PH_ATTR_NAKED __attribute__((naked))
 #elif defined(__GNUC__) || defined(__GNUG__)
 #define NOINLINE __attribute__((noinline))
@@ -119,9 +121,17 @@ struct callback_type<Ret(CCFROM Class::*)(Args...), void> \
 };
 
 #ifndef _MSC_VER
+#ifndef __cdecl
 #define __cdecl __attribute__((__cdecl__))
+#endif
+
+#ifndef __fastcall
 #define __fastcall __attribute__((__fastcall__))
+#endif
+
+#ifndef __stdcall
 #define __stdcall __attribute__((__stdcall__))
+#endif
 #endif
 
 #ifndef POLYHOOK2_ARCH_X64
