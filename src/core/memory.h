@@ -5,7 +5,7 @@
 #include <sdk/common.h>
 #include <sdk/datatypes.h>
 #include <libmem/libmem_helper.h>
-#include <polyhook2/Detour/x64Detour.hpp>
+#include <polyhook2/Detour/NatDetour.hpp>
 #include <vendor/libmodule/module.h>
 #include <utils/vtablehelper.h>
 
@@ -75,19 +75,36 @@ namespace MEM {
 
 	class CHookManager {
 	public:
-		std::list<PLH::Detour*> m_pDetourList;
+		std::list<std::pair<std::unique_ptr<PLH::NatDetour>, std::uintptr_t>> m_DetourList;
 	};
 
 	extern CHookManager* GetHookManager();
 
-	template<typename TFn, typename TCallback, typename TTram>
-	void AddDetour(TFn pFn, TCallback pCallback, TTram& pTrampoline) {
-		PLH::x64Detour* pDetour = new PLH::x64Detour((uint64_t)pFn, (uint64_t)pCallback, (uint64_t*)&pTrampoline);
+	template<typename TOriginal, typename TCallback, typename TTram>
+	bool AddDetour(TOriginal pOriginal, TCallback pCallback, TTram& pTrampoline) {
+		auto pDetour = std::make_unique<PLH::NatDetour>((uint64_t)pOriginal, (uint64_t)pCallback, (uint64_t*)&pTrampoline);
 		if (!pDetour->hook()) {
 			SDK_ASSERT(false);
-			return;
+			return false;
 		}
-		GetHookManager()->m_pDetourList.emplace_back(pDetour);
+
+		GetHookManager()->m_DetourList.emplace_back(std::pair {std::move(pDetour), (uintptr_t)pOriginal});
+		return true;
+	}
+
+	template<typename TOriginal, typename TTram>
+	bool RemoveDetour(TOriginal pOriginal, TTram& pTrampoline) {
+		auto pTarget = reinterpret_cast<uintptr_t>(pOriginal);
+		auto& pDetourList = GetHookManager()->m_DetourList;
+		auto it = std::ranges::find_if(pDetourList, [pTarget](const auto& pair) { return pair.second == pTarget; });
+
+		if (it != pDetourList.end()) {
+			it->first->unHook();
+			pDetourList.erase(it);
+			return true;
+		}
+
+		return false;
 	}
 
 	template<typename T = void, typename... Args>
