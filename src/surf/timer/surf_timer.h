@@ -56,9 +56,9 @@ public:
 	f64 m_fLastMissedTimeSoundTime {};
 	bool m_bValidTime {};
 
-	Vector m_vecPausePos = Vector(0.0f, 0.0f, 0.0f);
-	QAngle m_vecPauseAng = QAngle(0.0f, 0.0f, 0.0f);
-	Vector m_vecPauseVel = Vector(0.0f, 0.0f, 0.0f);
+	Vector m_vecPausePos = SURF::ZERO_VEC;
+	QAngle m_vecPauseAng = SURF::ZERO_ANG;
+	Vector m_vecPauseVel = SURF::ZERO_VEC;
 };
 
 namespace SURF {
