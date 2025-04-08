@@ -33,7 +33,7 @@ private:
 	void RegisterCommand();
 };
 
-class CSurfTimerService : CSurfBaseService, public timer_snapshot_t {
+class CSurfTimerService : public CSurfBaseService, public timer_snapshot_t {
 public:
 	using CSurfBaseService::CSurfBaseService;
 

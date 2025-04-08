@@ -26,6 +26,7 @@ struct std::hash<CZoneHandle> {
 
 class CSurfZoneService : public CSurfBaseService {
 private:
+	virtual void OnInit() override;
 	virtual void OnReset() override;
 
 public:
@@ -34,6 +35,9 @@ public:
 public:
 	void EditZone(CCSPlayerPawnBase* pawn, const CInButtonState& buttons);
 	bool TeleportToZone(ZoneTrack track, ZoneType type);
+
+private:
+	void ResetCustomDestination();
 
 public:
 	std::array<std::array<std::pair<Vector, QAngle>, ZoneType::ZONETYPES_SIZE>, ZoneTrack::TRACKS_SIZE> m_vCustomDestination;

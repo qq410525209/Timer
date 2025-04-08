@@ -155,6 +155,15 @@ bool CSurfZoneService::TeleportToZone(ZoneTrack track, ZoneType type) {
 	return true;
 }
 
+void CSurfZoneService::ResetCustomDestination() {
+	for (auto& arr : m_vCustomDestination) {
+		for (auto& custom : arr) {
+			custom.first.Invalidate();
+			custom.second.Invalidate();
+		}
+	}
+}
+
 void CSurfZonePlugin::CreateBeams(const Vector& vecMin, const Vector& vecMax, std::array<CHandle<CBeam>, 12>& out) {
 	Vector points[8];
 	SURF::ZONE::CreatePoints3D(vecMin, vecMax, points);
@@ -184,6 +193,11 @@ CBaseEntity* CSurfZonePlugin::CreateNormalZone(const Vector& vecMins, const Vect
 	return pZone;
 }
 
-void CSurfZoneService::OnReset() {
+void CSurfZoneService::OnInit() {
 	m_ZoneEdit.Init(this);
+	ResetCustomDestination();
+}
+
+void CSurfZoneService::OnReset() {
+	ResetCustomDestination();
 }
