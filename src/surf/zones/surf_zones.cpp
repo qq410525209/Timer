@@ -2,7 +2,6 @@
 #include <utils/utils.h>
 #include <core/sdkhook.h>
 #include <surf/global/surf_global.h>
-#include <surf/misc/surf_misc.h>
 
 CSurfZonePlugin g_SurfZonePlugin;
 
@@ -151,7 +150,7 @@ bool CSurfZoneService::TeleportToZone(ZoneTrack track, ZoneType type) {
 		vecTargetAng = customDestination.second;
 	}
 
-	GetPlayer()->Teleport(&vecTargetOrigin, &vecTargetAng, &SURF::ZERO_VEC);
+	GetPlayer()->Teleport(&vecTargetOrigin, vecTargetAng.IsValid() ? &vecTargetAng : nullptr, &SURF::ZERO_VEC);
 
 	return true;
 }
@@ -187,19 +186,4 @@ CBaseEntity* CSurfZonePlugin::CreateNormalZone(const Vector& vecMins, const Vect
 
 void CSurfZoneService::OnReset() {
 	m_ZoneEdit.Init(this);
-}
-
-void ZoneCache_t::EnsureDestination() {
-	for (const auto& hTele : SURF::MiscPlugin()->m_vTeleDestination) {
-		auto pTeleEnt = hTele.Get();
-		if (pTeleEnt) {
-			const Vector& origin = pTeleEnt->GetOrigin();
-			if (IsInsideBox(origin)) {
-				m_vecDestination = origin;
-				return;
-			}
-		}
-	}
-
-	m_vecDestination = (m_vecMins + m_vecMaxs) / 2.0f;
 }

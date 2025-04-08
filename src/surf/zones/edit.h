@@ -53,6 +53,8 @@ struct ZoneData_t {
 		return (vec.x > m_vecMins.x && vec.y > m_vecMins.y && vec.z > m_vecMins.z) && (vec.x < m_vecMaxs.x && vec.y < m_vecMaxs.y && vec.z < m_vecMaxs.z);
 	}
 
+	void EnsureDestination();
+
 	ZoneTrack m_iTrack;
 	ZoneType m_iType;
 	i32 m_iValue;

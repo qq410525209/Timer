@@ -12,8 +12,6 @@ struct ZoneCache_t : ZoneData_t {
 		m_aBeams.fill(CEntityHandle());
 	}
 
-	void EnsureDestination();
-
 	std::array<CHandle<CBeam>, 12> m_aBeams;
 };
 

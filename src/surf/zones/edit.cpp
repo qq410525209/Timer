@@ -1,6 +1,7 @@
 #include "edit.h"
 #include <utils/utils.h>
 #include <surf/zones/surf_zones.h>
+#include <surf/misc/surf_misc.h>
 
 void ZoneEditProperty::Init(CSurfZoneService* outer) {
 	m_pOuter = outer;
@@ -132,4 +133,21 @@ void ZoneEditProperty::ClearBeams() {
 		}
 	}
 	m_vBeam.clear();
+}
+
+void ZoneData_t::EnsureDestination() {
+	for (const auto& hTele : SURF::MiscPlugin()->m_vTeleDestination) {
+		auto pTeleEnt = hTele.Get();
+		if (pTeleEnt) {
+			const Vector& origin = pTeleEnt->GetOrigin();
+			if (IsInsideBox(origin)) {
+				m_vecDestination = origin;
+				m_angDestination = pTeleEnt->GetAbsAngles();
+				return;
+			}
+		}
+	}
+
+	m_vecDestination = (m_vecMins + m_vecMaxs) / 2.0f;
+	m_angDestination.Invalidate();
 }

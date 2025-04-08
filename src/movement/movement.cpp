@@ -141,11 +141,9 @@ void CMovementPlayer::Teleport(const Vector* origin, const QAngle* angle, const 
 	if (origin) {
 		SetOrigin(*origin);
 	}
-
 	if (angle) {
 		SetAngles(*angle);
 	}
-
 	if (vel) {
 		SetVelocity(*vel);
 	}
