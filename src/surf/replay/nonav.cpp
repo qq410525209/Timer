@@ -9,8 +9,8 @@ class CNoNavPlugin : CCoreForward {
 CNoNavPlugin g_NoNav;
 
 void CNoNavPlugin::OnPluginStart() {
-	static auto fn = libmem::SignScan("80 B8 ? ? ? ? ? 0F 84 ? ? ? ? 80 3D ? ? ? ? ? 74", LIB::server);
+	static auto fn = GAMEDATA::GetMemSig("BotNavIgnore");
 	SDK_ASSERT(fn);
 
-	MEM::PatchNOP(fn, 13);
+	MEM::PatchNOP(fn, WIN_LINUX(13, 36));
 }
