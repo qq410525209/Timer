@@ -2,6 +2,7 @@
 #include <utils/utils.h>
 #include <core/sdkhook.h>
 #include <surf/global/surf_global.h>
+#include <surf/misc/surf_misc.h>
 
 CSurfZonePlugin g_SurfZonePlugin;
 
@@ -41,6 +42,18 @@ int CSurfZonePlugin::GetZoneCount(ZoneTrack track, ZoneType type) {
 	}
 
 	return count;
+}
+
+std::vector<ZoneCache_t> CSurfZonePlugin::GetZones(ZoneTrack track, ZoneType type) {
+	std::vector<ZoneCache_t> vZones;
+	for (const auto& pair : m_hZones) {
+		const auto& cache = pair.second;
+		if (cache.m_iTrack == track && cache.m_iType == type) {
+			vZones.emplace_back(cache);
+		}
+	}
+
+	return vZones;
 }
 
 void CSurfZonePlugin::ClearZones() {
@@ -87,11 +100,12 @@ void CSurfZonePlugin::AddZone(const ZoneData_t& data, bool bUpload) {
 	auto pZone = this->CreateNormalZone(data.m_vecMins, data.m_vecMaxs);
 	CZoneHandle hRefZone = pZone->GetRefEHandle();
 	ZoneCache_t cache(data);
+	cache.EnsureDestination();
 	SURF::ZonePlugin()->CreateBeams(cache.m_vecMins, cache.m_vecMaxs, cache.m_aBeams);
 	SURF::ZonePlugin()->m_hZones[hRefZone] = cache;
 
 	if (bUpload) {
-		SURF::GLOBALAPI::MAP::zoneinfo_t info(data);
+		SURF::GLOBALAPI::MAP::zoneinfo_t info(cache);
 		SURF::GLOBALAPI::MAP::UpdateZone(
 			info, HTTPRES_CALLBACK_L() {
 				GAPIRES_CHECK(res, r);
@@ -117,17 +131,42 @@ void CSurfZoneService::EditZone(CCSPlayerPawnBase* pawn, const CInButtonState& b
 	}
 }
 
+bool CSurfZoneService::TeleportToZone(ZoneTrack track, ZoneType type) {
+	const auto vZones = SURF::ZonePlugin()->GetZones(track, type);
+	if (vZones.empty()) {
+		return false;
+	}
+
+	const ZoneCache_t& zone = vZones.at(0);
+	Vector vecTargetOrigin = zone.m_vecDestination;
+	QAngle vecTargetAng = zone.m_angDestination;
+
+	const auto& customDestination = m_vCustomDestination.at(track).at(type);
+	if (customDestination.first.IsValid()) {
+		if (zone.IsInsideBox(customDestination.first)) {
+			vecTargetOrigin = customDestination.first;
+		}
+	}
+	if (customDestination.second.IsValid()) {
+		vecTargetAng = customDestination.second;
+	}
+
+	GetPlayer()->Teleport(&vecTargetOrigin, &vecTargetAng, &SURF::ZERO_VEC);
+
+	return true;
+}
+
 void CSurfZonePlugin::CreateBeams(const Vector& vecMin, const Vector& vecMax, std::array<CHandle<CBeam>, 12>& out) {
 	Vector points[8];
 	SURF::ZONE::CreatePoints3D(vecMin, vecMax, points);
 	for (int i = 0; i < 12; i++) {
-		CBeam* beam = (CBeam*)UTIL::CreateBeam(points[CZoneEditProperty::m_iZonePairs3D[i][0]], points[CZoneEditProperty::m_iZonePairs3D[i][1]]);
+		CBeam* beam = (CBeam*)UTIL::CreateBeam(points[ZoneEditProperty::m_iZonePairs3D[i][0]], points[ZoneEditProperty::m_iZonePairs3D[i][1]]);
 		out[i] = beam->GetRefEHandle();
 	}
 }
 
 CBaseEntity* CSurfZonePlugin::CreateNormalZone(const Vector& vecMins, const Vector& vecMaxs) {
-	Vector vecCenter = (vecMins + vecMaxs) / 2.0;
+	Vector vecCenter = (vecMins + vecMaxs) / 2.0f;
 	Vector mins(vecMins), maxs(vecMaxs);
 	SURF::ZONE::FillBoxMinMax(mins, maxs, true);
 	auto pZone = MEM::CALL::CreateAABBTrigger(vecCenter, mins, maxs);
@@ -148,4 +187,19 @@ CBaseEntity* CSurfZonePlugin::CreateNormalZone(const Vector& vecMins, const Vect
 
 void CSurfZoneService::OnReset() {
 	m_ZoneEdit.Init(this);
+}
+
+void ZoneCache_t::EnsureDestination() {
+	for (const auto& hTele : SURF::MiscPlugin()->m_vTeleDestination) {
+		auto pTeleEnt = hTele.Get();
+		if (pTeleEnt) {
+			const Vector& origin = pTeleEnt->GetOrigin();
+			if (IsInsideBox(origin)) {
+				m_vecDestination = origin;
+				return;
+			}
+		}
+	}
+
+	m_vecDestination = (m_vecMins + m_vecMaxs) / 2.0f;
 }

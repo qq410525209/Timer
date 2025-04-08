@@ -46,18 +46,18 @@ void SURF::ZONE::FillBoxMinMax(Vector& vecMin, Vector& vecMax, bool resize) {
 	vecMax.z = size.z / 2;
 }
 
-std::string SURF::ZONE::GetZoneNameByTrack(ZoneTrack track) {
+const char* SURF::ZONE::GetZoneNameByTrack(ZoneTrack track) {
 	switch (track) {
 		case ZoneTrack::Track_Main:
 			return "主线";
 		case ZoneTrack::Track_Bonus:
 			return "奖励";
+		default:
+			return "undefined track";
 	}
-
-	return "undefined track";
 }
 
-std::string SURF::ZONE::GetZoneNameByType(ZoneType type) {
+const char* SURF::ZONE::GetZoneNameByType(ZoneType type) {
 	switch (type) {
 		case Zone_Start:
 			return "起点";

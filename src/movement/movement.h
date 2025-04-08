@@ -132,6 +132,7 @@ public:
 	virtual void SetVelocity(const Vector& velocity);
 	virtual void GetAngles(QAngle& angles);
 	virtual void SetAngles(const QAngle& angles);
+	virtual void Teleport(const Vector* origin, const QAngle* angle, const Vector* vel);
 
 public:
 	// General

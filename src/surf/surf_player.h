@@ -114,4 +114,7 @@ private:
 
 namespace SURF {
 	extern CSurfPlayerManager* GetPlayerManager();
+
+	inline const Vector ZERO_VEC = {0.0f, 0.0f, 0.0f};
+	inline const QAngle ZERO_ANG = {0.0f, 0.0f, 0.0f};
 } // namespace SURF

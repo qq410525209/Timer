@@ -1,24 +1,47 @@
 #include "surf_timer.h"
+#include <surf/misc/surf_misc.h>
 #include <core/concmdmanager.h>
 
 CCMD_CALLBACK(Command_StartTimer) {
-	CSurfPlayer* player = SURF::GetPlayerManager()->ToPlayer(pController);
-	if (!player) {
+	CSurfPlayer* pPlayer = SURF::GetPlayerManager()->ToPlayer(pController);
+	if (!pPlayer) {
 		return;
 	}
 
-	auto& pTimerService = player->m_pTimerService;
-	pTimerService->DoTimerStart();
+	if (!pPlayer->IsAlive()) {
+		SURF::PrintWarning(pPlayer, "非存活状态!");
+		return;
+	}
+
+	auto& pTimerService = pPlayer->m_pTimerService;
+	auto& pZoneService = pPlayer->m_pZoneService;
+
+	auto track = pTimerService->m_iTrack;
+	if (!pZoneService->TeleportToZone(track, ZoneType::Zone_Start)) {
+		SURF::PrintWarning(pPlayer, "您的计时器将不会启动，因为地图未设置{orchid}%s{default}起点区域.", SURF::ZONE::GetZoneNameByTrack(track));
+		return;
+	}
 }
 
 CCMD_CALLBACK(Command_EndTimer) {
-	CSurfPlayer* player = SURF::GetPlayerManager()->ToPlayer(pController);
-	if (!player) {
+	CSurfPlayer* pPlayer = SURF::GetPlayerManager()->ToPlayer(pController);
+	if (!pPlayer) {
 		return;
 	}
 
-	auto& pTimerService = player->m_pTimerService;
-	pTimerService->DoTimerStop();
+	if (!pPlayer->IsAlive()) {
+		SURF::PrintWarning(pPlayer, "非存活状态!");
+		return;
+	}
+
+	auto& pTimerService = pPlayer->m_pTimerService;
+	auto& pZoneService = pPlayer->m_pZoneService;
+
+	auto track = pTimerService->m_iTrack;
+	if (!pZoneService->TeleportToZone(track, ZoneType::Zone_End)) {
+		SURF::PrintWarning(pPlayer, "您的计时器将不会启动，因为地图未设置{orchid}%s{default}终点区域.", SURF::ZONE::GetZoneNameByTrack(track));
+		return;
+	}
 }
 
 void CSurfTimerPlugin::RegisterCommand() {

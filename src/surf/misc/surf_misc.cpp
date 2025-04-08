@@ -83,6 +83,9 @@ void CSurfMiscPlugin::OnEntitySpawned(CEntityInstance* pEntity) {
 	if (V_strstr(sClassname, "trigger_")) {
 		m_vTriggers.emplace_back(pEntity->GetRefEHandle());
 	}
+	if (!V_strcmp(sClassname, "info_teleport_destination") || !V_strcmp(sClassname, "info_target")) {
+		m_vTeleDestination.emplace_back(pEntity->GetRefEHandle());
+	}
 }
 
 void CSurfMiscPlugin::OnClientDisconnect(ISource2GameClients* pClient, CPlayerSlot slot, ENetworkDisconnectionReason reason, const char* pszName, uint64 xuid, const char* pszNetworkID) {

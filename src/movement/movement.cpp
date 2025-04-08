@@ -136,3 +136,17 @@ void CMovementPlayer::SetAngles(const QAngle& angles) {
 	pawn->Teleport(NULL, &absAngles, NULL);
 	MEM::CALL::SnapViewAngles(pawn, angles);
 }
+
+void CMovementPlayer::Teleport(const Vector* origin, const QAngle* angle, const Vector* vel) {
+	if (origin) {
+		SetOrigin(*origin);
+	}
+
+	if (angle) {
+		SetAngles(*angle);
+	}
+
+	if (vel) {
+		SetVelocity(*vel);
+	}
+}

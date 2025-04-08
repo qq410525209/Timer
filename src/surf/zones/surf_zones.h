@@ -12,6 +12,8 @@ struct ZoneCache_t : ZoneData_t {
 		m_aBeams.fill(CEntityHandle());
 	}
 
+	void EnsureDestination();
+
 	std::array<CHandle<CBeam>, 12> m_aBeams;
 };
 
@@ -20,7 +22,7 @@ using CZoneHandle = CHandle<CBaseTrigger>;
 template<>
 struct std::hash<CZoneHandle> {
 	size_t operator()(const CZoneHandle& handle) const {
-		return std::hash<uint32>()(handle.ToInt());
+		return std::hash<int>()(handle.ToInt());
 	}
 };
 
@@ -33,9 +35,11 @@ public:
 
 public:
 	void EditZone(CCSPlayerPawnBase* pawn, const CInButtonState& buttons);
+	bool TeleportToZone(ZoneTrack track, ZoneType type);
 
 public:
-	CZoneEditProperty m_ZoneEdit;
+	std::array<std::array<std::pair<Vector, QAngle>, ZoneType::ZONETYPES_SIZE>, ZoneTrack::TRACKS_SIZE> m_vCustomDestination;
+	ZoneEditProperty m_ZoneEdit;
 };
 
 class CSurfZonePlugin : CMovementForward, CCoreForward {
@@ -46,6 +50,7 @@ private:
 public:
 	std::optional<ZoneCache_t> FindZone(CBaseEntity* pEnt);
 	int GetZoneCount(ZoneTrack track, ZoneType type);
+	std::vector<ZoneCache_t> GetZones(ZoneTrack track, ZoneType type);
 	void ClearZones();
 	void RefreshZones();
 	void AddZone(const ZoneData_t& data, bool bUpload = true);
@@ -66,8 +71,8 @@ namespace SURF {
 		void CreatePoints2D(const Vector& vecMin, const Vector& vecMax, Vector out[4]);
 		void CreatePoints3D(const Vector& vecMin, const Vector& vecMax, Vector out[8]);
 		void FillBoxMinMax(Vector& vecMin, Vector& vecMax, bool resize = false);
-		std::string GetZoneNameByTrack(ZoneTrack track);
-		std::string GetZoneNameByType(ZoneType type);
+		const char* GetZoneNameByTrack(ZoneTrack track);
+		const char* GetZoneNameByType(ZoneType type);
 
 		namespace HOOK {
 			bool OnStartTouch(CBaseEntity* pSelf, CBaseEntity* pOther);

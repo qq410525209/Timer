@@ -2,12 +2,12 @@
 #include <utils/utils.h>
 #include <surf/zones/surf_zones.h>
 
-void CZoneEditProperty::Init(CSurfZoneService* outer) {
+void ZoneEditProperty::Init(CSurfZoneService* outer) {
 	m_pOuter = outer;
 	this->Reset();
 }
 
-void CZoneEditProperty::Reset() {
+void ZoneEditProperty::Reset() {
 	m_bEnabled = false;
 	m_iStep = EditStep_None;
 
@@ -16,7 +16,7 @@ void CZoneEditProperty::Reset() {
 	this->ClearBeams();
 }
 
-void CZoneEditProperty::StartEditZone() {
+void ZoneEditProperty::StartEditZone() {
 	m_bEnabled = true;
 	m_iStep = EditStep_None;
 
@@ -29,7 +29,7 @@ void CZoneEditProperty::StartEditZone() {
 	m_vBeam.emplace_back(pBeam->GetRefEHandle());
 }
 
-void CZoneEditProperty::CreateEditZone(const Vector& playerAim) {
+void ZoneEditProperty::CreateEditZone(const Vector& playerAim) {
 	switch (m_iStep) {
 		case EditStep_First: {
 			this->m_vecMins = playerAim;
@@ -62,7 +62,7 @@ void CZoneEditProperty::CreateEditZone(const Vector& playerAim) {
 	}
 }
 
-void CZoneEditProperty::UpdateZone(const Vector& playerAim) {
+void ZoneEditProperty::UpdateZone(const Vector& playerAim) {
 	switch (this->m_iStep) {
 		case EditStep_None: {
 			auto pBeam = this->m_vBeam[0].Get();
@@ -86,21 +86,21 @@ void CZoneEditProperty::UpdateZone(const Vector& playerAim) {
 	}
 }
 
-void CZoneEditProperty::CreateZone2D(const Vector points[4], std::vector<CHandle<CBeam>>& out) {
+void ZoneEditProperty::CreateZone2D(const Vector points[4], std::vector<CHandle<CBeam>>& out) {
 	for (int i = 0; i < 4; i++) {
 		CBeam* beam = (CBeam*)UTIL::CreateBeam(points[m_iZonePairs3D[i][0]], points[m_iZonePairs3D[i][1]]);
 		out.emplace_back(beam->GetRefEHandle());
 	}
 }
 
-void CZoneEditProperty::CreateZone3D(const Vector points[8], std::vector<CHandle<CBeam>>& out) {
+void ZoneEditProperty::CreateZone3D(const Vector points[8], std::vector<CHandle<CBeam>>& out) {
 	for (int i = 0; i < 12; i++) {
 		CBeam* beam = (CBeam*)UTIL::CreateBeam(points[m_iZonePairs3D[i][0]], points[m_iZonePairs3D[i][1]]);
 		out.emplace_back(beam->GetRefEHandle());
 	}
 }
 
-void CZoneEditProperty::UpdateZone2D(const std::vector<CHandle<CBeam>>& vBeams, const Vector& vecMin, const Vector& vecMax) {
+void ZoneEditProperty::UpdateZone2D(const std::vector<CHandle<CBeam>>& vBeams, const Vector& vecMin, const Vector& vecMax) {
 	Vector points[4];
 	SURF::ZONE::CreatePoints2D(vecMin, vecMax, points);
 	for (int i = 0; i < vBeams.size(); i++) {
@@ -112,7 +112,7 @@ void CZoneEditProperty::UpdateZone2D(const std::vector<CHandle<CBeam>>& vBeams, 
 	}
 }
 
-void CZoneEditProperty::UpdateZone3D(const std::vector<CHandle<CBeam>>& vBeams, const Vector& vecMin, const Vector& vecMax) {
+void ZoneEditProperty::UpdateZone3D(const std::vector<CHandle<CBeam>>& vBeams, const Vector& vecMin, const Vector& vecMax) {
 	Vector points[8];
 	SURF::ZONE::CreatePoints3D(vecMin, vecMax, points);
 	for (int i = 0; i < vBeams.size(); i++) {
@@ -124,7 +124,7 @@ void CZoneEditProperty::UpdateZone3D(const std::vector<CHandle<CBeam>>& vBeams, 
 	}
 }
 
-void CZoneEditProperty::ClearBeams() {
+void ZoneEditProperty::ClearBeams() {
 	for (const auto& hBeam : m_vBeam) {
 		auto pBeam = hBeam.Get();
 		if (pBeam) {

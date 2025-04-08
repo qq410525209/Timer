@@ -14,7 +14,7 @@ static void OpenMenu_SelectZoneType(CBasePlayerController* pController) {
 			auto& pZoneService = player->m_pZoneService;
 			pZoneService->m_ZoneEdit.m_iType = (ZoneType)iItem;
 			pZoneService->m_ZoneEdit.m_iValue = SURF::ZonePlugin()->GetZoneCount(pZoneService->m_ZoneEdit.m_iTrack, (ZoneType)iItem);
-			UTIL::PrintChat(pController, "SELECT: %s, value: %d\n", SURF::ZONE::GetZoneNameByType((ZoneType)iItem).c_str(), pZoneService->m_ZoneEdit.m_iValue);
+			UTIL::PrintChat(pController, "SELECT: %s, value: %d\n", SURF::ZONE::GetZoneNameByType((ZoneType)iItem), pZoneService->m_ZoneEdit.m_iValue);
 			pZoneService->m_ZoneEdit.StartEditZone();
 
 			hMenu.Close();

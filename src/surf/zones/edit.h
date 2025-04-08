@@ -5,7 +5,8 @@ class CSurfZoneService;
 enum ZoneTrack : u8 {
 	Track_Main,
 	Track_Bonus,
-	TRACKS_SIZE
+	Track_MaxBonus = 16,
+	TRACKS_SIZE,
 };
 
 enum ZoneType : u8 {
@@ -32,18 +33,7 @@ struct ZoneData_t {
 		Reset();
 	}
 
-	ZoneData_t(const ZoneData_t& other) {
-		m_iTrack = other.m_iTrack;
-		m_iType = other.m_iType;
-		m_iValue = other.m_iValue;
-		m_vecMins = other.m_vecMins;
-		m_vecMaxs = other.m_vecMaxs;
-		m_vecDestination = other.m_vecDestination;
-		m_iFlag = other.m_iFlag;
-		m_iHookHammerid = other.m_iHookHammerid;
-		m_sHookName = other.m_sHookName;
-		m_fLimitSpeed = other.m_fLimitSpeed;
-	}
+	ZoneData_t(const ZoneData_t& other) = default;
 
 	void Reset() {
 		m_iTrack = (ZoneTrack)-1;
@@ -52,10 +42,15 @@ struct ZoneData_t {
 		m_vecMins = Vector(0.0f, 0.0f, 0.0f);
 		m_vecMaxs = Vector(0.0f, 0.0f, 0.0f);
 		m_vecDestination = Vector(0.0f, 0.0f, 0.0f);
+		m_angDestination = QAngle(0.0f, 0.0f, 0.0f);
 		m_iFlag = -1;
 		m_iHookHammerid = -1;
 		m_sHookName = std::string();
 		m_fLimitSpeed = -1.0f;
+	}
+
+	bool IsInsideBox(const Vector& vec) const {
+		return (vec.x > m_vecMins.x && vec.y > m_vecMins.y && vec.z > m_vecMins.z) && (vec.x < m_vecMaxs.x && vec.y < m_vecMaxs.y && vec.z < m_vecMaxs.z);
 	}
 
 	ZoneTrack m_iTrack;
@@ -64,13 +59,14 @@ struct ZoneData_t {
 	Vector m_vecMins;
 	Vector m_vecMaxs;
 	Vector m_vecDestination;
+	QAngle m_angDestination;
 	i32 m_iFlag;
+	f32 m_fLimitSpeed;
 	i32 m_iHookHammerid;
 	std::string m_sHookName;
-	f32 m_fLimitSpeed;
 };
 
-struct CZoneEditProperty : ZoneData_t {
+struct ZoneEditProperty : ZoneData_t {
 	using ZoneData_t::ZoneData_t;
 
 	void Init(CSurfZoneService* outer);

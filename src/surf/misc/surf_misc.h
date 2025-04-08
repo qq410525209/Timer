@@ -21,6 +21,7 @@ private:
 
 public:
 	std::vector<CHandle<CBaseTrigger>> m_vTriggers;
+	std::vector<CHandle<CBaseEntity>> m_vTeleDestination;
 };
 
 class CSurfMiscService : CSurfBaseService {
