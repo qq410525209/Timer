@@ -17,7 +17,7 @@ public:
 	static void OnPlayerSpawn(IGameEvent* pEvent, const char* szName, bool bDontBroadcast);
 };
 
-class CSurfCheckpointService : CSurfPlayerService {
+class CSurfCheckpointService : public CSurfPlayerService {
 public:
 	using CSurfPlayerService::CSurfPlayerService;
 

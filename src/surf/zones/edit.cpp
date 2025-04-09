@@ -49,11 +49,11 @@ void ZoneEditProperty::CreateEditZone(const Vector& playerAim) {
 		}
 		case EditStep_Third: {
 			this->m_vecMaxs.z = playerAim.z;
-			SURF::Print(m_pOuter->GetPlayer(), "The final step! Confirmed?");
+			m_pOuter->GetPlayer()->m_pZoneService->Print("The final step! Confirmed?");
 			break;
 		}
 		case EditStep_Final: {
-			SURF::Print(m_pOuter->GetPlayer(), "Confirmed!\n");
+			m_pOuter->GetPlayer()->m_pZoneService->Print("Confirmed!\n");
 			SURF::ZonePlugin()->AddZone(*this);
 			this->Reset();
 			return;

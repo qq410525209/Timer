@@ -48,7 +48,4 @@ public:
 
 namespace SURF {
 	extern CSurfMiscPlugin* MiscPlugin();
-
-	void Print(CSurfPlayer* pSurfPlayer, const char* fmt, ...);
-	void PrintWarning(CSurfPlayer* pSurfPlayer, const char* fmt, ...);
 } // namespace SURF

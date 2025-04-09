@@ -125,6 +125,54 @@ void CSurfPlayer::Reset() {
 	m_bJustTeleported = false;
 }
 
+void CSurfPlayer::Print(const char* fmt, ...) const {
+	auto pController = GetController();
+	if (pController) {
+		CUtlString buffer;
+		va_list args;
+		va_start(args, fmt);
+		buffer.FormatV(fmt, args);
+
+		UTIL::CPrintChat(pController, "{green}[Surf] {grey}%s", buffer.Get());
+	}
+}
+
+void CSurfPlayer::PrintWarning(const char* fmt, ...) const {
+	auto pController = GetController();
+	if (pController) {
+		CUtlString buffer;
+		va_list args;
+		va_start(args, fmt);
+		buffer.FormatV(fmt, args);
+
+		UTIL::CPrintChat(pController, "{green}[Surf] {darkred}%s", buffer.Get());
+	}
+}
+
 void CSurfPlayerService::PlayErrorSound() const {
 	UTIL::PlaySoundToClient(GetPlayer()->GetPlayerSlot(), SURF_SND_ERROR);
+}
+
+void CSurfPlayerService::Print(const char* fmt, ...) const {
+	auto pController = GetPlayer()->GetController();
+	if (pController) {
+		CUtlString buffer;
+		va_list args;
+		va_start(args, fmt);
+		buffer.FormatV(fmt, args);
+
+		UTIL::CPrintChat(pController, "{green}[Surf] {grey}%s", buffer.Get());
+	}
+}
+
+void CSurfPlayerService::PrintWarning(const char* fmt, ...) const {
+	auto pController = GetPlayer()->GetController();
+	if (pController) {
+		CUtlString buffer;
+		va_list args;
+		va_start(args, fmt);
+		buffer.FormatV(fmt, args);
+
+		UTIL::CPrintChat(pController, "{green}[Surf] {darkred}%s", buffer.Get());
+	}
 }

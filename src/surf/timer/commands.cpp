@@ -9,7 +9,7 @@ CCMD_CALLBACK(Command_StartTimer) {
 	}
 
 	if (!pPlayer->IsAlive()) {
-		SURF::PrintWarning(pPlayer, "非存活状态!");
+		pPlayer->PrintWarning("非存活状态!");
 		return;
 	}
 
@@ -18,7 +18,7 @@ CCMD_CALLBACK(Command_StartTimer) {
 
 	auto track = pTimerService->m_iCurrentTrack;
 	if (!pZoneService->TeleportToZone(track, ZoneType::Zone_Start)) {
-		SURF::PrintWarning(pPlayer, "您的计时器将不会启动，因为地图未设置{orchid}%s{default}起点区域.", SURF::ZONE::GetZoneNameByTrack(track));
+		pTimerService->PrintWarning("您的计时器将不会启动，因为地图未设置{orchid}%s{default}起点区域.", SURF::ZONE::GetZoneNameByTrack(track));
 		pZoneService->PlayErrorSound();
 		return;
 	}
@@ -31,7 +31,7 @@ CCMD_CALLBACK(Command_StopTimer) {
 	}
 
 	if (!pPlayer->IsAlive()) {
-		SURF::PrintWarning(pPlayer, "非存活状态!");
+		pPlayer->PrintWarning("非存活状态!");
 		return;
 	}
 
@@ -46,7 +46,7 @@ CCMD_CALLBACK(Command_EndTimer) {
 	}
 
 	if (!pPlayer->IsAlive()) {
-		SURF::PrintWarning(pPlayer, "非存活状态!");
+		pPlayer->PrintWarning("非存活状态!");
 		return;
 	}
 
@@ -58,7 +58,7 @@ CCMD_CALLBACK(Command_EndTimer) {
 
 	const auto vEndZones = SURF::ZonePlugin()->GetZones(track, type);
 	if (vEndZones.empty()) {
-		SURF::PrintWarning(pPlayer, "地图未设置{orchid}%s{default}终点区域!", SURF::ZONE::GetZoneNameByTrack(track));
+		pTimerService->PrintWarning("地图未设置{orchid}%s{default}终点区域!", SURF::ZONE::GetZoneNameByTrack(track));
 		pZoneService->PlayErrorSound();
 		return;
 	}
@@ -74,19 +74,19 @@ CCMD_CALLBACK(Command_PauseTimer) {
 	}
 
 	if (!pPlayer->IsAlive()) {
-		SURF::PrintWarning(pPlayer, "非存活状态!");
+		pPlayer->PrintWarning("非存活状态!");
 		return;
 	}
 
 	auto& pTimerService = pPlayer->m_pTimerService;
 	if (pTimerService->m_bPaused) {
-		SURF::PrintWarning(pPlayer, "已处于暂停状态!");
+		pTimerService->PrintWarning("已处于暂停状态!");
 		pTimerService->PlayErrorSound();
 		return;
 	}
 
 	pTimerService->DoTimerPause();
-	SURF::Print(pPlayer, "计时已暂停");
+	pTimerService->Print("计时已暂停");
 }
 
 CCMD_CALLBACK(Command_ResumeTimer) {
@@ -96,19 +96,19 @@ CCMD_CALLBACK(Command_ResumeTimer) {
 	}
 
 	if (!pPlayer->IsAlive()) {
-		SURF::PrintWarning(pPlayer, "非存活状态!");
+		pPlayer->PrintWarning("非存活状态!");
 		return;
 	}
 
 	auto& pTimerService = pPlayer->m_pTimerService;
 	if (!pTimerService->m_bPaused) {
-		SURF::PrintWarning(pPlayer, "非暂停状态!");
+		pTimerService->PrintWarning("非暂停状态!");
 		pTimerService->PlayErrorSound();
 		return;
 	}
 
 	pTimerService->DoTimerResume();
-	SURF::Print(pPlayer, "计时已恢复");
+	pTimerService->Print("计时已恢复");
 }
 
 void CSurfTimerPlugin::RegisterCommand() {

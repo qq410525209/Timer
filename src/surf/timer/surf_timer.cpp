@@ -108,18 +108,18 @@ void CSurfTimerService::DoTimerPause() {
 	CSurfPlayer* pSurfPlayer = this->GetPlayer();
 	auto pPawn = pSurfPlayer->GetPlayerPawn();
 	if (!pPawn) {
-		SURF::PrintWarning(pSurfPlayer, "未知错误: %s", FILE_LINE_STRING);
+		PrintWarning("未知错误: %s", FILE_LINE_STRING);
 		return;
 	}
 
 	if (!pPawn->IsAlive()) {
-		SURF::PrintWarning(pSurfPlayer, "未存活");
+		PrintWarning("未存活");
 		return;
 	}
 
 	auto pMoveService = pSurfPlayer->GetMoveServices();
 	if (!pMoveService) {
-		SURF::PrintWarning(pSurfPlayer, "未知错误: %s", FILE_LINE_STRING);
+		PrintWarning("未知错误: %s", FILE_LINE_STRING);
 		return;
 	}
 
@@ -152,18 +152,18 @@ void CSurfTimerService::DoTimerResume() {
 	CSurfPlayer* pSurfPlayer = this->GetPlayer();
 	auto pPawn = pSurfPlayer->GetPlayerPawn();
 	if (!pPawn) {
-		SURF::PrintWarning(pSurfPlayer, "未知错误: %s", FILE_LINE_STRING);
+		PrintWarning("未知错误: %s", FILE_LINE_STRING);
 		return;
 	}
 
 	if (!pPawn->IsAlive()) {
-		SURF::PrintWarning(pSurfPlayer, "未存活");
+		PrintWarning("未存活");
 		return;
 	}
 
 	auto pMoveService = pSurfPlayer->GetMoveServices();
 	if (!pMoveService) {
-		SURF::PrintWarning(pSurfPlayer, "未知错误: %s", FILE_LINE_STRING);
+		PrintWarning("未知错误: %s", FILE_LINE_STRING);
 		return;
 	}
 

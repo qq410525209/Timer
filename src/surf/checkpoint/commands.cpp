@@ -39,7 +39,7 @@ CCMD_CALLBACK(Command_Tele) {
 		iCP = V_StringToInt32(sCP.c_str(), -1);
 
 		if (iCP == -1) {
-			SURF::Print(pSurfPlayer, "输入格式不合法!");
+			pCPService->Print("输入格式不合法!");
 			return;
 		}
 	}

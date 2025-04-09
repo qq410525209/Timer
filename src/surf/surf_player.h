@@ -18,6 +18,10 @@ public:
 	virtual void Reset() override;
 
 public:
+	void Print(const char* fmt, ...) const;
+	void PrintWarning(const char* fmt, ...) const;
+
+public:
 	PlayerServicePtr<CSurfTimerService> m_pTimerService;
 	PlayerServicePtr<CSurfZoneService> m_pZoneService;
 	PlayerServicePtr<CSurfHudService> m_pHudService;
@@ -39,7 +43,9 @@ public:
 	}
 
 public:
-	virtual void PlayErrorSound() const;
+	void PlayErrorSound() const;
+	void Print(const char* fmt, ...) const;
+	void PrintWarning(const char* fmt, ...) const;
 };
 
 class CSurfPlayerManager : public CMovementPlayerManager {
