@@ -61,17 +61,19 @@ void CSurfTimerService::DoTimerStart() {
 	this->m_iCurrentStage = 0;
 }
 
-void CSurfTimerService::DoTimerStop() {
+bool CSurfTimerService::DoTimerStop() {
 	CSurfPlayer* pSurfPlayer = this->GetPlayer();
 	if (!pSurfPlayer->IsAlive()) {
-		return;
+		return false;
 	}
 
-	FORWARD_PRE_void(CSurfForward, OnTimerStop, pSurfPlayer);
+	FORWARD_PRE(CSurfForward, OnTimerStop, false, pSurfPlayer);
 
 	this->m_fCurrentTime = 0.0f;
 
 	FORWARD_POST(CSurfForward, OnTimerStopPost, pSurfPlayer);
+
+	return true;
 }
 
 void CSurfTimerService::DoTimerFinish() {
@@ -89,6 +91,10 @@ void CSurfTimerService::DoTimerFinish() {
 	m_fCurrentTime += ENGINE_FIXED_TICK_INTERVAL;
 
 	FORWARD_PRE_void(CSurfForward, OnTimerFinish, pSurfPlayer);
+
+	if (!DoTimerStop()) {
+		return;
+	}
 
 	m_bTimerRunning = false;
 	m_fLastEndTime = UTIL::GetServerGlobals()->curtime;

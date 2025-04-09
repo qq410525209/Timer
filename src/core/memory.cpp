@@ -248,18 +248,18 @@ static bool Hook_OnFireEvent(IGameEventManager2* pEventManager, IGameEvent* pEve
 		return MEM::SDKCall<bool>(MEM::TRAMPOLINE::g_fnFireGameEvent, pEventManager, pEvent, bDontBroadcast);
 	}
 
-	auto dontBroadcast = false;
+	auto block = false;
 	for (auto& event : pList) {
 		if (!event.m_pCallbackPre) {
 			continue;
 		}
 
-		if ((event.m_pCallbackPre)(pEvent, pEvent->GetName(), bDontBroadcast) == EventHookAction_Block) {
-			dontBroadcast = true;
+		if (!(event.m_pCallbackPre)(pEvent, pEvent->GetName(), bDontBroadcast)) {
+			block = true;
 		}
 	}
 
-	if (dontBroadcast) {
+	if (block) {
 		IFACE::pGameEventManager->FireEvent(pClone);
 		return false;
 	}

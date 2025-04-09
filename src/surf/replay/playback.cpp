@@ -1,20 +1,18 @@
 #include "surf_replay.h"
 #include <utils/utils.h>
 
-void CSurfReplayPlugin::DoPlayback(CCSPlayerPawn* pBotPawn, CInButtonState& buttons) {
-	auto& aFrames = m_umTrackReplays[0];
+void CSurfBotReplayService::DoPlayback(CCSPlayerPawn* pBotPawn, CInButtonState& buttons) {
+	auto& aFrames = SURF::ReplayPlugin()->m_aTrackReplays[0];
 	auto iFrameSize = aFrames.size();
 	if (iFrameSize == 0) {
 		return;
 	}
 
-	auto slot = pBotPawn->GetController()->GetPlayerSlot();
-	auto& currentTick = m_iCurrentTick.at(slot);
-	if (currentTick >= iFrameSize) {
-		currentTick = 0;
+	if (m_iCurrentTick >= iFrameSize) {
+		m_iCurrentTick = 0;
 	}
 
-	auto& frame = aFrames.at(currentTick);
+	auto& frame = aFrames.at(m_iCurrentTick);
 	MEM::CALL::SnapViewAngles(pBotPawn, frame.ang);
 
 	auto botFlags = pBotPawn->m_fFlags();
@@ -24,7 +22,7 @@ void CSurfReplayPlugin::DoPlayback(CCSPlayerPawn* pBotPawn, CInButtonState& butt
 	pBotPawn->SetMoveType(frame.mt);
 
 	Vector& currentPos = pBotPawn->GetAbsOrigin();
-	if (currentTick == 0 || currentPos.DistTo(frame.pos) > 15000.0) {
+	if (m_iCurrentTick == 0 || currentPos.DistTo(frame.pos) > 15000.0) {
 		static Vector zeroVel {0.0f, 0.0f, 0.0f};
 		pBotPawn->SetMoveType(MoveType_t::MOVETYPE_NOCLIP);
 		pBotPawn->Teleport(&frame.pos, nullptr, &zeroVel);
@@ -34,5 +32,5 @@ void CSurfReplayPlugin::DoPlayback(CCSPlayerPawn* pBotPawn, CInButtonState& butt
 		pBotPawn->Teleport(nullptr, nullptr, &calculatedVelocity);
 	}
 
-	currentTick++;
+	m_iCurrentTick++;
 }

@@ -38,6 +38,8 @@ CCMD_CALLBACK(Command_EndTimer) {
 	auto& pTimerService = pPlayer->m_pTimerService;
 	auto& pZoneService = pPlayer->m_pZoneService;
 
+	pTimerService->DoTimerStop();
+
 	auto track = pTimerService->m_iTrack;
 	if (!pZoneService->TeleportToZone(track, ZoneType::Zone_End)) {
 		SURF::PrintWarning(pPlayer, "您的计时器将不会启动，因为地图未设置{orchid}%s{default}终点区域.", SURF::ZONE::GetZoneNameByTrack(track));

@@ -5,7 +5,7 @@
 #include <sdk/entity/ccsplayercontroller.h>
 #include <surf/misc/surf_misc.h>
 
-static void OnPlayerDeath(IGameEvent* pEvent, const char* szName, bool bDontBroadcast) {
+EVENT_CALLBACK_POST(OnPlayerDeath) {
 	auto pController = (CCSPlayerController*)pEvent->GetPlayerController("userid");
 	if (!pController) {
 		return;
@@ -28,9 +28,9 @@ static void OnPlayerDeath(IGameEvent* pEvent, const char* szName, bool bDontBroa
 	});
 }
 
-static void OnRoundPrestart(IGameEvent* pEvent, const char* szName, bool bDontBroadcast) {}
+EVENT_CALLBACK_POST(OnRoundPrestart) {}
 
-static void OnRoundStart(IGameEvent* pEvent, const char* szName, bool bDontBroadcast) {
+EVENT_CALLBACK_POST(OnRoundStart) {
 	IFACE::pEngine->ServerCommand("sv_full_alltalk 1");
 
 	CCSGameRules* gameRules = UTIL::GetGameRules();
@@ -43,11 +43,11 @@ static void OnRoundStart(IGameEvent* pEvent, const char* szName, bool bDontBroad
 	}
 }
 
-static void OnPlayerTeam(IGameEvent* pEvent, const char* szName, bool bDontBroadcast) {
+EVENT_CALLBACK_POST(OnPlayerTeam) {
 	pEvent->SetBool("silent", true);
 }
 
-static void OnPlayerSpawm(IGameEvent* pEvent, const char* szName, bool bDontBroadcast) {
+EVENT_CALLBACK_POST(OnPlayerSpawm) {
 	auto pController = (CCSPlayerController*)pEvent->GetPlayerController("userid");
 	if (!pController) {
 		return;

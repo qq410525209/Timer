@@ -5,24 +5,25 @@
 #define _ZONE_DEBUG
 
 namespace SURF::ZONE::HOOK {
-	bool OnStartTouch(CBaseEntity* pSelf, CBaseEntity* pOther) {
-		if (!pOther->IsPawn()) {
+	bool OnStartTouch(CBaseEntity* pTrigger, CBaseEntity* pOther) {
+		auto pPawn = reinterpret_cast<CBasePlayerPawn*>(pOther);
+		if (!pPawn->IsPawn() || pPawn->IsBot()) {
 			return true;
 		}
 
 		// if not our zone, ignore endtouch fix
-		auto res = SURF::ZonePlugin()->FindZone(pSelf);
+		auto res = SURF::ZonePlugin()->FindZone(pTrigger);
 		if (!res.has_value()) {
 			return true;
 		}
 
-		auto player = SURF::GetPlayerManager()->ToPlayer((CBasePlayerPawn*)pOther);
-		if (!player) {
+		auto pPlayer = SURF::GetPlayerManager()->ToPlayer(pPawn);
+		if (!pPlayer) {
 			return true;
 		}
 
-		if (player->m_bJustTeleported) {
-			auto hTrigger = pSelf->GetRefEHandle();
+		if (pPlayer->m_bJustTeleported) {
+			auto hTrigger = pTrigger->GetRefEHandle();
 			auto hPlayer = pOther->GetRefEHandle();
 			UTIL::RequestFrame([hTrigger, hPlayer] {
 				auto pTrigger = (CBaseEntity*)hTrigger.Get();
@@ -42,65 +43,68 @@ namespace SURF::ZONE::HOOK {
 		return true;
 	}
 
-	void OnStartTouchPost(CBaseEntity* pSelf, CBaseEntity* pOther) {
-		if (!pOther->IsPawn()) {
+	void OnStartTouchPost(CBaseEntity* pTrigger, CBaseEntity* pOther) {
+		auto pPawn = reinterpret_cast<CBasePlayerPawn*>(pOther);
+		if (!pPawn->IsPawn() || pPawn->IsBot()) {
 			return;
 		}
 
-		auto res = SURF::ZonePlugin()->FindZone(pSelf);
+		auto res = SURF::ZonePlugin()->FindZone(pTrigger);
 		if (!res.has_value()) {
 			return;
 		}
 
-		auto player = SURF::GetPlayerManager()->ToPlayer((CBasePlayerPawn*)pOther);
-		if (!player) {
+		auto pPlayer = SURF::GetPlayerManager()->ToPlayer(pPawn);
+		if (!pPlayer) {
 			return;
 		}
 
 		auto& zone = res.value();
-		FORWARD_POST(CSurfForward, OnEnterZone, zone, player);
+		FORWARD_POST(CSurfForward, OnEnterZone, zone, pPlayer);
 
 #ifdef _ZONE_DEBUG
-		UTIL::PrintChatAll("start touch! self: %s, other: %s\n", pSelf->m_pEntity->m_name, pOther->GetClassname());
+		UTIL::PrintChatAll("start touch! self: %s, other: %s\n", pTrigger->m_pEntity->m_name, pOther->GetClassname());
 #endif
 	}
 
-	void OnTouchPost(CBaseEntity* pSelf, CBaseEntity* pOther) {
-		if (!pOther->IsPawn()) {
+	void OnTouchPost(CBaseEntity* pTrigger, CBaseEntity* pOther) {
+		auto pPawn = reinterpret_cast<CBasePlayerPawn*>(pOther);
+		if (!pPawn->IsPawn() || pPawn->IsBot()) {
 			return;
 		}
 
-		auto res = SURF::ZonePlugin()->FindZone(pSelf);
+		auto res = SURF::ZonePlugin()->FindZone(pTrigger);
 		if (!res.has_value()) {
 			return;
 		}
 
-		auto player = SURF::GetPlayerManager()->ToPlayer((CBasePlayerPawn*)pOther);
-		if (!player) {
+		auto pPlayer = SURF::GetPlayerManager()->ToPlayer(pPawn);
+		if (!pPlayer) {
 			return;
 		}
 
 		auto& zone = res.value();
-		FORWARD_POST(CSurfForward, OnStayZone, zone, player);
+		FORWARD_POST(CSurfForward, OnStayZone, zone, pPlayer);
 	}
 
-	void OnEndTouchPost(CBaseEntity* pSelf, CBaseEntity* pOther) {
-		if (!pOther->IsPawn()) {
+	void OnEndTouchPost(CBaseEntity* pTrigger, CBaseEntity* pOther) {
+		auto pPawn = reinterpret_cast<CBasePlayerPawn*>(pOther);
+		if (!pPawn->IsPawn() || pPawn->IsBot()) {
 			return;
 		}
 
-		auto res = SURF::ZonePlugin()->FindZone(pSelf);
+		auto res = SURF::ZonePlugin()->FindZone(pTrigger);
 		if (!res.has_value()) {
 			return;
 		}
 
-		auto player = SURF::GetPlayerManager()->ToPlayer((CBasePlayerPawn*)pOther);
-		if (!player) {
+		auto pPlayer = SURF::GetPlayerManager()->ToPlayer(pPawn);
+		if (!pPlayer) {
 			return;
 		}
 
 		auto& zone = res.value();
-		FORWARD_POST(CSurfForward, OnLeaveZone, zone, player);
+		FORWARD_POST(CSurfForward, OnLeaveZone, zone, pPlayer);
 
 #ifdef _ZONE_DEBUG
 		UTIL::PrintChatAll("end touch!\n");

@@ -6,7 +6,62 @@
 #include <sdk/entity/ccsplayercontroller.h>
 #include <core/forwards.h>
 
-class CPlayer {
+class CPlayer;
+
+class CPlayerService {
+public:
+	CPlayerService() = delete;
+
+	CPlayerService(CPlayer* player) : m_pPlayer(player) {}
+
+public:
+	virtual ~CPlayerService() {}
+
+	virtual CPlayer* GetPlayer() const {
+		return m_pPlayer;
+	}
+
+	virtual void OnInit() {}
+
+	virtual void OnReset() {}
+
+protected:
+	CPlayer* m_pPlayer;
+};
+
+class CPlayerServiceFactory {
+protected:
+	struct PlayerServiceDeleter {
+		void operator()(void* ptr) const {
+			delete reinterpret_cast<CPlayerService*>(ptr);
+		}
+	};
+
+	template<typename T>
+	void InitService(std::unique_ptr<T, PlayerServiceDeleter>& service) {
+		static_assert(std::is_base_of<CPlayerService, T>::value, "T must be derived from CPlayerService");
+
+		if (!service) {
+			service.reset(new T(reinterpret_cast<CPlayer*>(this)));
+			reinterpret_cast<CPlayerService*>(service.get())->OnInit();
+		}
+	}
+
+	template<typename T>
+	void ResetService(std::unique_ptr<T, PlayerServiceDeleter>& service) {
+		static_assert(std::is_base_of<CPlayerService, T>::value, "T must be derived from CPlayerService");
+
+		if (service) {
+			reinterpret_cast<CPlayerService*>(service.get())->OnReset();
+		}
+	}
+
+public:
+	template<typename T>
+	using PlayerServicePtr = std::unique_ptr<T, PlayerServiceDeleter>;
+};
+
+class CPlayer : public CPlayerServiceFactory {
 public:
 	CPlayer(int slot) : m_iSlot(slot) {}
 

@@ -89,17 +89,6 @@ static void Hook_OnPlayerTeleportPost(CBaseEntity* pSelf, const Vector* newPosit
 	});
 }
 
-void CSurfPlayerManager::OnClientConnected(ISource2GameClients* pClient, CPlayerSlot slot, const char* pszName, uint64 xuid, const char* pszNetworkID, const char* pszAddress, bool bFakePlayer) {
-	CMovementPlayerManager::OnClientConnected(pClient, slot, pszName, xuid, pszNetworkID, pszAddress, bFakePlayer);
-
-	if (bFakePlayer) {
-		auto pPlayer = this->ToPlayer(slot);
-		if (pPlayer) {
-			pPlayer->m_bFakeClient = true;
-		}
-	}
-}
-
 void CSurfPlayerManager::OnEntitySpawned(CEntityInstance* pEntity) {
 	auto pszClassname = pEntity->GetClassname();
 	if (!V_stricmp(pszClassname, "player")) {

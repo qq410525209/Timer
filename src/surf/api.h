@@ -1,5 +1,7 @@
 #pragma once
 
+#include <surf/zones/surf_zones.h>
+
 constexpr auto SURF_WORKSHOP_ADDONS_ID = "3377250885";
 constexpr auto SURF_WORKSHOP_ADDONS_SNDEVENT_FILE = "soundevents/surf.vsndevts";
 
@@ -16,7 +18,8 @@ constexpr auto SURF_SND_TIMER_RESERVED2 = "Instructor.ImportantLessonStart";
 constexpr auto SURF_SND_TIMER_RESERVED3 = "Vote.Passed";
 constexpr auto SURF_SND_TIMER_RESERVED4 = "UI.DeathNotice";
 
-#include <surf/zones/surf_zones.h>
+constexpr auto SURF_MAX_TRACK = ZoneTrack::TRACKS_SIZE;
+constexpr auto SURF_MAX_STAGE = 64; // surf_classics3 is crazy
 
 class CSurfForward : public CBaseForward<CSurfForward> {
 public:

@@ -136,11 +136,18 @@ bool CSurfZoneService::TeleportToZone(ZoneTrack track, ZoneType type) {
 		return false;
 	}
 
+	auto pPawn = GetPlayer()->GetPlayerPawn();
+	if (!pPawn) {
+		return false;
+	}
+
+	pPawn->SetMoveType(MOVETYPE_WALK);
+
 	const ZoneCache_t& zone = vZones.at(0);
 	Vector vecTargetOrigin = zone.m_vecDestination;
 	QAngle vecTargetAng = zone.m_angDestination;
 
-	const auto& customDestination = m_vCustomDestination.at(track).at(type);
+	const auto& customDestination = m_aCustomDestination.at(track).at(type);
 	if (customDestination.first.IsValid()) {
 		if (zone.IsInsideBox(customDestination.first)) {
 			vecTargetOrigin = customDestination.first;
@@ -156,7 +163,7 @@ bool CSurfZoneService::TeleportToZone(ZoneTrack track, ZoneType type) {
 }
 
 void CSurfZoneService::ResetCustomDestination() {
-	for (auto& arr : m_vCustomDestination) {
+	for (auto& arr : m_aCustomDestination) {
 		for (auto& custom : arr) {
 			custom.first.Invalidate();
 			custom.second.Invalidate();

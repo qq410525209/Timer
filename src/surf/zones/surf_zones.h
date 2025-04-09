@@ -40,7 +40,7 @@ private:
 	void ResetCustomDestination();
 
 public:
-	std::array<std::array<std::pair<Vector, QAngle>, ZoneType::ZONETYPES_SIZE>, ZoneTrack::TRACKS_SIZE> m_vCustomDestination;
+	std::array<std::array<std::pair<Vector, QAngle>, ZoneType::ZONETYPES_SIZE>, ZoneTrack::TRACKS_SIZE> m_aCustomDestination;
 	ZoneEditProperty m_ZoneEdit;
 };
 

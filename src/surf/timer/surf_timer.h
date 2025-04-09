@@ -38,7 +38,7 @@ public:
 	using CSurfBaseService::CSurfBaseService;
 
 	void DoTimerStart();
-	void DoTimerStop();
+	bool DoTimerStop();
 	void DoTimerFinish();
 	void DoTimerPause();
 	void DoTimerResume();

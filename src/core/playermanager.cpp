@@ -204,9 +204,10 @@ void CPlayerManager::OnClientDisconnect(ISource2GameClients* pClient, CPlayerSlo
 }
 
 void CPlayerManager::OnClientConnected(ISource2GameClients* pClient, CPlayerSlot slot, const char* pszName, uint64 xuid, const char* pszNetworkID, const char* pszAddress, bool bFakePlayer) {
-	CPlayer* player = this->ToPlayer(slot);
-	if (player) {
-		player->Init(slot.Get());
-		player->SetUnauthenticatedSteamID(xuid);
+	CPlayer* pPlayer = this->ToPlayer(slot);
+	if (pPlayer) {
+		pPlayer->Init(slot.Get());
+		pPlayer->SetUnauthenticatedSteamID(xuid);
+		pPlayer->m_bFakeClient = bFakePlayer;
 	}
 }
