@@ -1,6 +1,7 @@
 #include "surf_timer.h"
 #include <utils/utils.h>
 #include <surf/api.h>
+#include <surf/misc/surf_misc.h>
 
 CSurfTimerPlugin g_SurfTimerPlugin;
 
@@ -98,31 +99,94 @@ void CSurfTimerService::DoTimerFinish() {
 
 	m_bTimerRunning = false;
 	m_fLastEndTime = UTIL::GetServerGlobals()->curtime;
-	PlayFinishTimerSound(m_iTrack);
+	PlayFinishTimerSound(m_iCurrentTrack);
 
 	FORWARD_POST(CSurfForward, OnTimerFinishPost, pSurfPlayer);
 }
 
 void CSurfTimerService::DoTimerPause() {
 	CSurfPlayer* pSurfPlayer = this->GetPlayer();
-	if (!pSurfPlayer->IsAlive()) {
+	auto pPawn = pSurfPlayer->GetPlayerPawn();
+	if (!pPawn) {
+		SURF::PrintWarning(pSurfPlayer, "未知错误: %s", FILE_LINE_STRING);
+		return;
+	}
+
+	if (!pPawn->IsAlive()) {
+		SURF::PrintWarning(pSurfPlayer, "未存活");
+		return;
+	}
+
+	auto pMoveService = pSurfPlayer->GetMoveServices();
+	if (!pMoveService) {
+		SURF::PrintWarning(pSurfPlayer, "未知错误: %s", FILE_LINE_STRING);
 		return;
 	}
 
 	FORWARD_PRE_void(CSurfForward, OnTimerPause, pSurfPlayer);
 
 	m_bPaused = true;
+
+	pSurfPlayer->GetOrigin(m_Pause.m_vecPos);
+	pSurfPlayer->GetAngles(m_Pause.m_vecAng);
+	pSurfPlayer->GetVelocity(m_Pause.m_vecVel);
+	m_Pause.m_nMoveType = pPawn->m_MoveType();
+	m_Pause.m_nActualMoveType = pPawn->m_nActualMoveType();
+	m_Pause.m_fGravity = pPawn->m_flGravityScale();
+	m_Pause.m_fSpeed = pPawn->m_flVelocityModifier();
+	m_Pause.m_iFlags = pPawn->m_fFlags();
+	m_Pause.m_hGroundEntity = pPawn->m_hGroundEntity();
+
+	m_Pause.m_sTargetName = pPawn->m_pEntity->m_name.String();
+	m_Pause.m_nMoveType = MOVETYPE_WALK;
+	m_Pause.m_nActualMoveType = MOVETYPE_WALK;
+
+	m_Pause.m_vecLadderNormal = pMoveService->m_vecLadderNormal();
+	m_Pause.m_bDucked = pMoveService->m_bDucked();
+	m_Pause.m_bDucking = pMoveService->m_bDucking();
+	m_Pause.m_fDuckTime = pMoveService->m_flDuckAmount();
+	m_Pause.m_fDuckSpeed = pMoveService->m_flDuckSpeed();
 }
 
 void CSurfTimerService::DoTimerResume() {
 	CSurfPlayer* pSurfPlayer = this->GetPlayer();
-	if (!pSurfPlayer->IsAlive()) {
+	auto pPawn = pSurfPlayer->GetPlayerPawn();
+	if (!pPawn) {
+		SURF::PrintWarning(pSurfPlayer, "未知错误: %s", FILE_LINE_STRING);
+		return;
+	}
+
+	if (!pPawn->IsAlive()) {
+		SURF::PrintWarning(pSurfPlayer, "未存活");
+		return;
+	}
+
+	auto pMoveService = pSurfPlayer->GetMoveServices();
+	if (!pMoveService) {
+		SURF::PrintWarning(pSurfPlayer, "未知错误: %s", FILE_LINE_STRING);
 		return;
 	}
 
 	FORWARD_PRE_void(CSurfForward, OnTimerResume, pSurfPlayer);
 
 	m_bPaused = false;
+
+	pPawn->m_MoveType(m_Pause.m_nMoveType);
+	pPawn->m_nActualMoveType(m_Pause.m_nActualMoveType);
+	pPawn->m_flGravityScale(m_Pause.m_fGravity);
+	pPawn->m_flVelocityModifier(m_Pause.m_fSpeed);
+	pPawn->m_fFlags(m_Pause.m_iFlags);
+	pPawn->m_hGroundEntity(m_Pause.m_hGroundEntity);
+
+	pPawn->SetName(m_Pause.m_sTargetName.c_str(), true);
+
+	pMoveService->m_vecLadderNormal(m_Pause.m_vecLadderNormal);
+	pMoveService->m_bDucked(m_Pause.m_bDucked);
+	pMoveService->m_bDucking(m_Pause.m_bDucking);
+	pMoveService->m_flDuckAmount(m_Pause.m_fDuckTime);
+	pMoveService->m_flDuckSpeed(m_Pause.m_fDuckSpeed);
+
+	pSurfPlayer->Teleport(&m_Pause.m_vecPos, &m_Pause.m_vecAng, &m_Pause.m_vecVel);
 }
 
 void CSurfTimerService::BuildSnapshot(timer_snapshot_t& buffer) const {

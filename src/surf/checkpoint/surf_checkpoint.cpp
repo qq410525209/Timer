@@ -1,5 +1,6 @@
 #include "surf_checkpoint.h"
 #include <core/eventmanager.h>
+#include <surf/timer/surf_timer.h>
 #include <surf/misc/surf_misc.h>
 #include <utils/utils.h>
 

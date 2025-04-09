@@ -4,14 +4,6 @@
 #include <surf/api.h>
 #include <surf/surf_bot.h>
 
-struct ReplayFrame_t {
-	QAngle ang;
-	Vector pos;
-	CPlayerButton buttons;
-	uint32 flags;
-	MoveType_t mt;
-};
-
 class CSurfReplayService : CSurfPlayerService {
 private:
 	virtual void OnReset() override;
@@ -32,11 +24,17 @@ class CSurfBotReplayService : CSurfBotService {
 public:
 	using CSurfBotService::CSurfBotService;
 
+	virtual void OnInit() override;
+	virtual void OnReset() override;
+
 public:
+	void Reset();
 	void DoPlayback(CCSPlayerPawn* pPawn, CInButtonState& buttons);
 
 public:
 	i32 m_iCurrentTick;
+	i32 m_iCurrentStage;
+	ZoneTrack m_iCurrentTrack;
 };
 
 class CSurfReplayPlugin : CSurfForward, CMovementForward, CCoreForward {

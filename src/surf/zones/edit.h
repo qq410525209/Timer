@@ -1,24 +1,8 @@
 #pragma once
 
+#include <surf/datatypes.h>
+
 class CSurfZoneService;
-
-enum ZoneTrack : u8 {
-	Track_Main,
-	Track_Bonus,
-	Track_MaxBonus = 16,
-	TRACKS_SIZE,
-};
-
-enum ZoneType : u8 {
-	Zone_Start,
-	Zone_End,
-	Zone_Stage,
-	Zone_Checkpoint,
-	Zone_Stop,     // stops the player's timer
-	Zone_Teleport, // teleports to a defined point
-	Zone_Mark,     // do nothing, mainly used for marking trigger;
-	ZONETYPES_SIZE
-};
 
 enum ZoneEditStep : u8 {
 	EditStep_None,   // 0 - nothing

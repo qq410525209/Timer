@@ -1,32 +1,8 @@
 #pragma once
 
 #include <surf/api.h>
-#include <surf/timer/surf_timer.h>
 
-struct cp_cache_t : timer_snapshot_t {
-	Vector m_vecPos = Vector(0.0f, 0.0f, 0.0f);
-	QAngle m_vecAng = QAngle(0.0f, 0.0f, 0.0f);
-	Vector m_vecVel = Vector(0.0f, 0.0f, 0.0f);
-
-	Vector m_vecLadderNormal = Vector(0.0f, 0.0f, 0.0f);
-
-	MoveType_t m_nMoveType {};
-	MoveType_t m_nActualMoveType {};
-
-	bool m_bDucked {};
-	bool m_bDucking {};
-	f32 m_fDuckTime {};
-	f32 m_fDuckSpeed {};
-
-	f32 m_fGravity {};
-	f32 m_fSpeed {};
-	f32 m_fStamina {};
-
-	i32 m_iFlags {};
-	CEntityHandle m_hGroundEntity;
-
-	std::string m_sTargetName;
-};
+struct cp_cache_t : timer_snapshot_t, timer_pausemovement_t {};
 
 class CSurfCheckpointPlugin : CSurfForward, CMovementForward, CCoreForward {
 private:

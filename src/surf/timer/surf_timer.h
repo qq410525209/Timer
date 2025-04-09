@@ -2,25 +2,6 @@
 
 #include <surf/api.h>
 
-struct timer_snapshot_t {
-	timer_snapshot_t() = default;
-	timer_snapshot_t(const timer_snapshot_t&) = default;
-
-	timer_snapshot_t& operator=(const timer_snapshot_t& other) = default;
-
-	f64 m_fCurrentTime {};
-	bool m_bTimerRunning {};
-	bool m_bPracticeMode {};
-	bool m_bPaused {};
-
-	ZoneTrack m_iTrack = ZoneTrack::Track_Main;
-
-	i32 m_iCurrentStage {};
-	i32 m_iCurrentCP {};
-	i32 m_iLastStage {};
-	i32 m_iLastCP {};
-};
-
 class CSurfTimerPlugin : CSurfForward, CMovementForward, CCoreForward {
 private:
 	virtual void OnPluginStart() override;
@@ -56,9 +37,7 @@ public:
 	f64 m_fLastMissedTimeSoundTime {};
 	bool m_bValidTime {};
 
-	Vector m_vecPausePos = SURF::ZERO_VEC;
-	QAngle m_vecPauseAng = SURF::ZERO_ANG;
-	Vector m_vecPauseVel = SURF::ZERO_VEC;
+	timer_pausemovement_t m_Pause;
 };
 
 namespace SURF {

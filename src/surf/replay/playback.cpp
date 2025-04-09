@@ -1,8 +1,22 @@
 #include "surf_replay.h"
 #include <utils/utils.h>
 
+void CSurfBotReplayService::OnInit() {
+	Reset();
+}
+
+void CSurfBotReplayService::OnReset() {
+	Reset();
+}
+
+void CSurfBotReplayService::Reset() {
+	m_iCurrentTick = 0;
+	m_iCurrentTrack = ZoneTrack::Track_Main;
+	m_iCurrentStage = 0;
+}
+
 void CSurfBotReplayService::DoPlayback(CCSPlayerPawn* pBotPawn, CInButtonState& buttons) {
-	auto& aFrames = SURF::ReplayPlugin()->m_aTrackReplays[0];
+	auto& aFrames = SURF::ReplayPlugin()->m_aTrackReplays[m_iCurrentTrack];
 	auto iFrameSize = aFrames.size();
 	if (iFrameSize == 0) {
 		return;
@@ -21,7 +35,7 @@ void CSurfBotReplayService::DoPlayback(CCSPlayerPawn* pBotPawn, CInButtonState& 
 	buttons = frame.buttons;
 	pBotPawn->SetMoveType(frame.mt);
 
-	Vector& currentPos = pBotPawn->GetAbsOrigin();
+	const Vector& currentPos = pBotPawn->GetAbsOrigin();
 	if (m_iCurrentTick == 0 || currentPos.DistTo(frame.pos) > 15000.0) {
 		static Vector zeroVel {0.0f, 0.0f, 0.0f};
 		pBotPawn->SetMoveType(MoveType_t::MOVETYPE_NOCLIP);

@@ -1,25 +1,8 @@
 #pragma once
 
 #include <surf/surf_player.h>
+#include <surf/datatypes.h>
 #include <core/screentext.h>
-
-struct hudsettings_t {
-	bool m_bMaster = true;
-
-	struct {
-		bool m_bEnabled = true;
-		bool m_bTimer = true;
-		bool m_bSpeed = true;
-		bool m_bRank = true;
-		bool m_bMapinfo = true;
-		bool m_bZone = true;
-	} m_Center;
-
-	bool m_bSpectators = true;
-	bool m_bKeyOverlay = true;
-	bool m_bSpeedText = true;
-	bool m_bHidePlayers = false;
-};
 
 class CSurfHudPlugin : CMovementForward, CCoreForward {
 private:

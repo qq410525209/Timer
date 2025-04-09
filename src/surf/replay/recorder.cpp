@@ -1,4 +1,5 @@
 #include <surf/replay/surf_replay.h>
+#include <surf/timer/surf_timer.h>
 
 void CSurfReplayService::StartRecord() {
 	m_bEnabled = true;
@@ -17,7 +18,8 @@ void CSurfReplayService::DoRecord(CCSPlayerPawn* pawn, const CPlayerButton& butt
 
 void CSurfReplayService::SaveRecord() {
 	auto plugin = SURF::ReplayPlugin();
-	plugin->m_aTrackReplays[0] = m_vReplayFrames;
+	auto& pTimerService = GetPlayer()->m_pTimerService;
+	plugin->m_aTrackReplays[pTimerService->m_iCurrentTrack] = m_vReplayFrames;
 	m_vReplayFrames.clear();
 	m_bEnabled = false;
 }
