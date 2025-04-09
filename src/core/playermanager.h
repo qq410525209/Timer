@@ -37,8 +37,13 @@ protected:
 		}
 	};
 
+public:
 	template<typename T>
-	void InitService(std::unique_ptr<T, PlayerServiceDeleter>& service) {
+	using PlayerServicePtr = std::unique_ptr<T, PlayerServiceDeleter>;
+
+protected:
+	template<typename T>
+	void InitService(PlayerServicePtr<T>& service) {
 		static_assert(std::is_base_of<CPlayerService, T>::value, "T must be derived from CPlayerService");
 
 		if (!service) {
@@ -48,17 +53,13 @@ protected:
 	}
 
 	template<typename T>
-	void ResetService(std::unique_ptr<T, PlayerServiceDeleter>& service) {
+	void ResetService(PlayerServicePtr<T>& service) {
 		static_assert(std::is_base_of<CPlayerService, T>::value, "T must be derived from CPlayerService");
 
 		if (service) {
 			reinterpret_cast<CPlayerService*>(service.get())->OnReset();
 		}
 	}
-
-public:
-	template<typename T>
-	using PlayerServicePtr = std::unique_ptr<T, PlayerServiceDeleter>;
 };
 
 class CPlayer : public CPlayerServiceFactory {
