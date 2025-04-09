@@ -21,52 +21,58 @@ using MenuHandler = std::function<void(MENU_CALLBACK_ARGS)>;
 
 class CBaseMenu {
 public:
-	CBaseMenu(MenuHandler pFnHandler, std::string sTitle = "") : m_pFnMenuHandler(pFnHandler), m_sTitle(sTitle) {
+	using MenuItemType = std::pair<std::string, std::any>;
+	static inline const MenuItemType NULL_ITEM = {};
+	static const size_t PAGE_SIZE = 6;
+
+public:
+	CBaseMenu(CBasePlayerController* pController, MenuHandler pFnHandler, std::string sTitle = "") : m_hController(pController->GetRefEHandle()), m_pFnMenuHandler(pFnHandler), m_sTitle(sTitle) {
 		AllocatePage();
 	}
 
-	virtual ~CBaseMenu() {
-		m_pFnMenuHandler = nullptr;
-	}
-
-	virtual void SetTitle(const std::string_view& sTitle) {
-		m_sTitle = sTitle;
-	}
-
-	virtual void AddItem(std::string sItem) {
-		if (m_vItems.empty() || m_vItems.back().size() >= PAGE_SIZE) {
-			AllocatePage();
-		}
-
-		m_vItems.back().emplace_back(sItem);
-	}
+	virtual ~CBaseMenu() {}
 
 	virtual EMenuType GetType() {
 		return EMenuType::Unknown;
 	}
 
-	virtual std::string GetItem(int iPageIndex, int iItemIndex);
-
 	virtual void Display(int iPageIndex = 0) = 0;
 	virtual bool Close() = 0;
 
 public:
-	size_t GetPageLength() const {
-		return m_vItems.size();
+	void SetTitle(const std::string_view& sTitle) {
+		m_sTitle = sTitle;
 	}
+
+	void AddItem(std::string sItem, std::optional<std::any> data = std::nullopt);
+
+	size_t GetPageLength() const {
+		return m_vPage.size();
+	}
+
+	size_t GetItemLength() const {
+		if (m_vPage.size() == 0) {
+			return 0;
+		}
+
+		return ((m_vPage.size() - 1) * PAGE_SIZE) + m_vPage.back().size();
+	}
+
+	const MenuItemType& GetItem(int iPageIndex, int iItemIndex) const;
+	const MenuItemType& GetItem(int iItemIndex) const;
 
 private:
 	void AllocatePage() {
-		std::vector<std::string> nullItems;
+		std::vector<MenuItemType> nullItems;
 		nullItems.reserve(PAGE_SIZE);
-		m_vItems.emplace_back(nullItems);
+		m_vPage.emplace_back(nullItems);
 	}
 
 public:
-	static const size_t PAGE_SIZE = 6;
 	std::string m_sTitle;
-	std::vector<std::vector<std::string>> m_vItems;
+	std::vector<std::vector<MenuItemType>> m_vPage;
 	MenuHandler m_pFnMenuHandler;
+	CHandle<CBasePlayerController> m_hController;
 };
 
 class CScreenTextMenu : public CBaseMenu {

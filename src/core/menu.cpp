@@ -9,7 +9,7 @@
 constexpr float g_fMenuDefaultOffsetX_Alive = -8.9f;
 constexpr float g_fMenuDefaultOffsetY_Alive = 2.4f;
 
-CScreenTextMenu::CScreenTextMenu(CBasePlayerController* pController, MenuHandler fnHandler, std::string sTitle) : CBaseMenu(fnHandler, sTitle) {
+CScreenTextMenu::CScreenTextMenu(CBasePlayerController* pController, MenuHandler fnHandler, std::string sTitle) : CBaseMenu(pController, fnHandler, sTitle) {
 	ScreenTextManifest_t manifest;
 	manifest.m_iUnits = 1000;
 	manifest.m_sFont = "Arial Bold";
@@ -50,7 +50,7 @@ void CScreenTextMenu::Display(int iPageIndex) {
 
 	auto formatItem = [](int iItemIndex, const std::string& sItem) { return !sItem.empty() ? fmt::format("{}.{}", iItemIndex, sItem) : ""; };
 	bool bDrawPreview = (iPageIndex != 0);
-	bool bDrawNext = ((this->m_vItems.size() > 0) && (iPageIndex < (this->m_vItems.size() - 1)));
+	bool bDrawNext = ((this->m_vPage.size() > 0) && (iPageIndex < (this->m_vPage.size() - 1)));
 
 	// clang-format off
 	std::string sMenuText = fmt::format("{}\n\n"
@@ -64,12 +64,12 @@ void CScreenTextMenu::Display(int iPageIndex) {
 										"{}\n"
 										"9.退出",
 										this->m_sTitle, 
-										formatItem(1, GetItem(iPageIndex, 0)), 
-										formatItem(2, GetItem(iPageIndex, 1)), 
-										formatItem(3, GetItem(iPageIndex, 2)), 
-										formatItem(4, GetItem(iPageIndex, 3)), 
-										formatItem(5, GetItem(iPageIndex, 4)), 
-										formatItem(6, GetItem(iPageIndex, 5)), 
+										formatItem(1, GetItem(iPageIndex, 0).first), 
+										formatItem(2, GetItem(iPageIndex, 1).first), 
+										formatItem(3, GetItem(iPageIndex, 2).first), 
+										formatItem(4, GetItem(iPageIndex, 3).first), 
+										formatItem(5, GetItem(iPageIndex, 4).first), 
+										formatItem(6, GetItem(iPageIndex, 5).first), 
 										formatItem(7, bDrawPreview ? "上一页" : ""), 
 										formatItem(8, bDrawNext ? "下一页" : ""));
 	// clang-format on
@@ -88,23 +88,48 @@ bool CScreenTextMenu::Close() {
 	return true;
 }
 
-std::string CBaseMenu::GetItem(int iPageIndex, int iItemIndex) {
-	if (iPageIndex < 0 || iPageIndex >= this->m_vItems.size()) {
+void CBaseMenu::AddItem(std::string sItem, std::optional<std::any> data) {
+	if (m_vPage.empty() || m_vPage.back().size() >= PAGE_SIZE) {
+		AllocatePage();
+	}
+
+	MenuItemType item {sItem, data.has_value() ? data.value() : std::any()};
+	m_vPage.back().emplace_back(item);
+}
+
+const CBaseMenu::MenuItemType& CBaseMenu::GetItem(int iPageIndex, int iItemIndex) const {
+	if (iPageIndex < 0 || iPageIndex >= this->m_vPage.size()) {
 		SDK_ASSERT(false);
-		return "";
+		return CBaseMenu::NULL_ITEM;
 	}
 
 	if (iItemIndex < 0) {
 		SDK_ASSERT(false);
-		return "";
+		return CBaseMenu::NULL_ITEM;
 	}
 
-	auto& vItems = m_vItems[iPageIndex];
+	auto& vItems = m_vPage[iPageIndex];
 	if (iItemIndex < vItems.size()) {
-		return vItems[iItemIndex];
+		return vItems.at(iItemIndex);
 	}
 
-	return "";
+	return CBaseMenu::NULL_ITEM;
+}
+
+const CBaseMenu::MenuItemType& CBaseMenu::GetItem(int iItemIndex) const {
+	auto pController = m_hController.Get();
+	if (!pController) {
+		SDK_ASSERT(false);
+		return CBaseMenu::NULL_ITEM;
+	}
+
+	CMenuPlayer* pMenuPlayer = MENU::GetManager()->ToPlayer(pController);
+	if (!pMenuPlayer) {
+		SDK_ASSERT(false);
+		return CBaseMenu::NULL_ITEM;
+	}
+
+	return GetItem(pMenuPlayer->m_iCurrentPage, iItemIndex);
 }
 
 void CMenuPlayer::ResetMenu() {
@@ -266,19 +291,7 @@ bool CScreenTextMenuHandle::Close() {
 		return false;
 	}
 
-	auto pScreenTextMenu = std::dynamic_pointer_cast<CScreenTextMenu>(pMenu);
-	if (!pScreenTextMenu) {
-		SDK_ASSERT(false);
-		return false;
-	}
-
-	auto pScreenText = pScreenTextMenu->m_wpScreenText.lock();
-	if (!pScreenText) {
-		SDK_ASSERT(false);
-		return false;
-	}
-
-	auto pController = pScreenText->GetOriginalController();
+	auto pController = pMenu->m_hController.Get();
 	if (!pController) {
 		SDK_ASSERT(false);
 		return false;

@@ -2,19 +2,14 @@
 #include <core/concmdmanager.h>
 #include <core/menu.h>
 #include <utils/utils.h>
+#include <fmt/format.h>
 
-static void OpenMenu_SelectZoneType(CBasePlayerController* pController) {
-	CSurfPlayer* player = SURF::GetPlayerManager()->ToPlayer(pController);
-	if (!player) {
-		return;
-	}
-
+static void ZoneMenu_SelectType(CSurfPlayer* pPlayer) {
 	auto wpMenu = MENU::Create(
-		pController, MENU_CALLBACK_L(player) {
-			auto& pZoneService = player->m_pZoneService;
+		pPlayer->GetController(), MENU_CALLBACK_L(pPlayer) {
+			auto& pZoneService = pPlayer->m_pZoneService;
 			pZoneService->m_ZoneEdit.m_iType = (ZoneType)iItem;
 			pZoneService->m_ZoneEdit.m_iValue = SURF::ZonePlugin()->GetZoneCount(pZoneService->m_ZoneEdit.m_iTrack, (ZoneType)iItem);
-			UTIL::PrintChat(pController, "SELECT: %s, value: %d\n", SURF::ZONE::GetZoneNameByType((ZoneType)iItem), pZoneService->m_ZoneEdit.m_iValue);
 			pZoneService->m_ZoneEdit.StartEditZone();
 
 			hMenu.Close();
@@ -33,16 +28,11 @@ static void OpenMenu_SelectZoneType(CBasePlayerController* pController) {
 	pMenu->Display();
 }
 
-static void OpenMenu_SelectZoneTrack(CBasePlayerController* pController) {
-	CSurfPlayer* player = SURF::GetPlayerManager()->ToPlayer(pController);
-	if (!player) {
-		return;
-	}
-
+static void ZoneMenu_SelectTrack(CSurfPlayer* pPlayer) {
 	auto wpMenu = MENU::Create(
-		pController, MENU_CALLBACK_L(player) {
-			player->m_pZoneService->m_ZoneEdit.m_iTrack = (ZoneTrack)iItem;
-			OpenMenu_SelectZoneType(pController);
+		pPlayer->GetController(), MENU_CALLBACK_L(pPlayer) {
+			pPlayer->m_pZoneService->m_ZoneEdit.m_iTrack = (ZoneTrack)iItem;
+			ZoneMenu_SelectType(pPlayer);
 		});
 
 	if (wpMenu.expired()) {
@@ -58,20 +48,78 @@ static void OpenMenu_SelectZoneTrack(CBasePlayerController* pController) {
 	pMenu->Display();
 }
 
-CCMD_CALLBACK(Command_Zones) {
-	CSurfPlayer* player = SURF::GetPlayerManager()->ToPlayer(pController);
-	if (!player) {
+static void ZoneMenu_Edit(CSurfPlayer* pPlayer) {
+	auto& hZones = SURF::ZonePlugin()->m_hZones;
+	if (hZones.empty()) {
+		pPlayer->m_pZoneService->Print("找不到任何区域.");
 		return;
 	}
 
 	auto wpMenu = MENU::Create(
-		pController, MENU_CALLBACK_L() {
+		pPlayer->GetController(), MENU_CALLBACK_L(pPlayer) {
+			auto& item = hMenu.Data()->GetItem(iItem);
+			if (!item.second.has_value()) {
+				pPlayer->PrintWarning("未知错误", FILE_LINE_STRING);
+				return;
+			}
+
+			auto hZone = std::any_cast<CZoneHandle>(item.second);
+			if (!SURF::ZonePlugin()->m_hZones.contains(hZone)) {
+				pPlayer->PrintWarning("未知错误", FILE_LINE_STRING);
+				return;
+			}
+
+			auto& zone = SURF::ZonePlugin()->m_hZones.at(hZone);
+			std::string sZone = fmt::format("{} - {} #{}", SURF::ZONE::GetZoneNameByTrack(zone.m_iTrack), SURF::ZONE::GetZoneNameByType(zone.m_iType), zone.m_iValue);
+			pPlayer->Print("你选择了: %s", sZone.c_str());
+
+			// TODO: edit zone
+		});
+
+	if (wpMenu.expired()) {
+		SDK_ASSERT(false);
+		return;
+	}
+
+	auto pMenu = wpMenu.lock();
+	pMenu->SetTitle("编辑区域");
+
+	std::vector<std::pair<CZoneHandle, ZoneCache_t>> vZones(hZones.begin(), hZones.end());
+	std::sort(vZones.begin(), vZones.end(), [](const auto& a, const auto& b) {
+		const ZoneCache_t& zoneA = a.second;
+		const ZoneCache_t& zoneB = b.second;
+
+		if (zoneA.m_iTrack != zoneB.m_iTrack) {
+			return zoneA.m_iTrack < zoneB.m_iTrack;
+		}
+		if (zoneA.m_iType != zoneB.m_iType) {
+			return zoneA.m_iType < zoneB.m_iType;
+		}
+		return zoneA.m_iValue < zoneB.m_iValue;
+	});
+
+	for (const auto& [handle, zone] : vZones) {
+		std::string sZone = fmt::format("{} - {} #{}", SURF::ZONE::GetZoneNameByTrack(zone.m_iTrack), SURF::ZONE::GetZoneNameByType(zone.m_iType), zone.m_iValue);
+		pMenu->AddItem(sZone, handle);
+	}
+
+	pMenu->Display();
+}
+
+CCMD_CALLBACK(Command_Zones) {
+	CSurfPlayer* pPlayer = SURF::GetPlayerManager()->ToPlayer(pController);
+	if (!pPlayer) {
+		return;
+	}
+
+	auto wpMenu = MENU::Create(
+		pController, MENU_CALLBACK_L(pPlayer) {
 			switch (iItem) {
 				case 0:
-					OpenMenu_SelectZoneTrack(pController);
+					ZoneMenu_SelectTrack(pPlayer);
 					return;
 				case 1:
-					UTIL::PrintChat(pController, "SELECT 编辑\n");
+					ZoneMenu_Edit(pPlayer);
 					break;
 				case 2:
 					SURF::ZonePlugin()->RefreshZones();
@@ -102,19 +150,7 @@ CCMD_CALLBACK(Command_EditZone) {
 	pZoneService->m_ZoneEdit.StartEditZone();
 }
 
-CCMD_CALLBACK(Command_TPStart) {
-	CSurfPlayer* player = SURF::GetPlayerManager()->ToPlayer(pController);
-	if (!player) {
-		return;
-	}
-
-	Vector testStart = {0.0f, 0.0f, 0.0f};
-
-	player->GetPlayerPawn()->Teleport(&testStart, nullptr, nullptr);
-}
-
 void CSurfZonePlugin::RegisterCommand() {
 	CONCMD::RegConsoleCmd("sm_zones", Command_Zones);
 	CONCMD::RegConsoleCmd("sm_editzone", Command_EditZone);
-	CONCMD::RegConsoleCmd("sm_r", Command_TPStart);
 }
