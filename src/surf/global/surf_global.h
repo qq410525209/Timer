@@ -88,12 +88,12 @@ public:
 	GlobalAPIPayload m_UpdaterAuth;
 };
 
-class CSurfGlobalAPIService : CSurfBaseService {
+class CSurfGlobalAPIService : CSurfPlayerService {
 private:
 	virtual void OnReset() override;
 
 public:
-	using CSurfBaseService::CSurfBaseService;
+	using CSurfPlayerService::CSurfPlayerService;
 
 	void CheckGlobalBan();
 

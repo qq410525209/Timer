@@ -24,13 +24,13 @@ struct std::hash<CZoneHandle> {
 	}
 };
 
-class CSurfZoneService : public CSurfBaseService {
+class CSurfZoneService : public CSurfPlayerService {
 private:
 	virtual void OnInit() override;
 	virtual void OnReset() override;
 
 public:
-	using CSurfBaseService::CSurfBaseService;
+	using CSurfPlayerService::CSurfPlayerService;
 
 public:
 	void EditZone(CCSPlayerPawnBase* pawn, const CInButtonState& buttons);

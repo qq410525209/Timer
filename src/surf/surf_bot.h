@@ -15,7 +15,7 @@ public:
 	PlayerServicePtr<CSurfBotReplayService> m_pReplayService;
 };
 
-class CSurfBotBaseService : public CPlayerService {
+class CSurfBotService : public CPlayerService {
 public:
 	using CPlayerService::CPlayerService;
 

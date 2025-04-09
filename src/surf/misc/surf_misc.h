@@ -24,8 +24,8 @@ public:
 	std::vector<CHandle<CBaseEntity>> m_vTeleDestination;
 };
 
-class CSurfMiscService : CSurfBaseService {
-	using CSurfBaseService::CSurfBaseService;
+class CSurfMiscService : CSurfPlayerService {
+	using CSurfPlayerService::CSurfPlayerService;
 
 	virtual void OnReset() override;
 

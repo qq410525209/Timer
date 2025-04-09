@@ -33,9 +33,9 @@ private:
 	void RegisterCommand();
 };
 
-class CSurfTimerService : public CSurfBaseService, public timer_snapshot_t {
+class CSurfTimerService : public CSurfPlayerService, public timer_snapshot_t {
 public:
-	using CSurfBaseService::CSurfBaseService;
+	using CSurfPlayerService::CSurfPlayerService;
 
 	void DoTimerStart();
 	bool DoTimerStop();

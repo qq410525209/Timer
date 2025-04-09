@@ -30,7 +30,7 @@ public:
 	bool m_bJustTeleported;
 };
 
-class CSurfBaseService : public CPlayerService {
+class CSurfPlayerService : public CPlayerService {
 public:
 	using CPlayerService::CPlayerService;
 

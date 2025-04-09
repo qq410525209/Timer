@@ -36,9 +36,9 @@ public:
 	static void OnPlayerSpawn(IGameEvent* pEvent, const char* szName, bool bDontBroadcast);
 };
 
-class CSurfHudService : CSurfBaseService {
+class CSurfHudService : CSurfPlayerService {
 public:
-	using CSurfBaseService::CSurfBaseService;
+	using CSurfPlayerService::CSurfPlayerService;
 
 	virtual void OnReset() override;
 

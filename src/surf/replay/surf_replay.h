@@ -12,12 +12,12 @@ struct ReplayFrame_t {
 	MoveType_t mt;
 };
 
-class CSurfReplayService : CSurfBaseService {
+class CSurfReplayService : CSurfPlayerService {
 private:
 	virtual void OnReset() override;
 
 public:
-	using CSurfBaseService::CSurfBaseService;
+	using CSurfPlayerService::CSurfPlayerService;
 
 	void StartRecord();
 	void DoRecord(CCSPlayerPawn* pawn, const CPlayerButton& buttons, const QAngle& viewAngles);
@@ -28,9 +28,9 @@ public:
 	std::vector<ReplayFrame_t> m_vReplayFrames;
 };
 
-class CSurfBotReplayService : CSurfBotBaseService {
+class CSurfBotReplayService : CSurfBotService {
 public:
-	using CSurfBotBaseService::CSurfBotBaseService;
+	using CSurfBotService::CSurfBotService;
 
 public:
 	void DoPlayback(CCSPlayerPawn* pPawn, CInButtonState& buttons);
