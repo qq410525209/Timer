@@ -7,6 +7,8 @@
         "map_info_update": "/map/info",
         "map_info_pull": "/map/info",
         "map_zone_update": "/map/zone",
+        "map_zone_delete": "/map/zone/delete",
+        "map_zone_delete_all": "/map/zone/delete/all",
         "map_zone_pull": "/map/zone"
     }
 }
