@@ -31,6 +31,8 @@ protected:
 
 class CPlayerServiceFactory {
 protected:
+	virtual ~CPlayerServiceFactory() {}
+
 	struct PlayerServiceDeleter {
 		void operator()(void* ptr) const {
 			delete reinterpret_cast<CPlayerService*>(ptr);
