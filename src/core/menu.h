@@ -12,7 +12,12 @@ enum class EMenuType {
 	ScreenText = 1
 };
 
-using CMenuHandle = CWeakHandle<class CBaseMenu>;
+class CMenuHandle : public CWeakHandle<class CBaseMenu> {
+public:
+	using CWeakHandle::CWeakHandle;
+
+	virtual bool Close() override;
+};
 
 #define MENU_CALLBACK_ARGS   CMenuHandle &hMenu, CBasePlayerController *pController, int iItem
 #define MENU_CALLBACK(fn)    static void fn(MENU_CALLBACK_ARGS)
@@ -90,13 +95,6 @@ public:
 
 public:
 	std::weak_ptr<CScreenText> m_wpScreenText;
-};
-
-class CScreenTextMenuHandle : public CMenuHandle {
-public:
-	using CMenuHandle::CMenuHandle;
-
-	virtual bool Close() override;
 };
 
 class CMenuPlayer : public CPlayer {

@@ -172,18 +172,9 @@ void CMenuPlayer::SelectMenu(int iMenuItem) {
 		case 6: {
 			if (pMenu->m_pFnMenuHandler) {
 				int iItemIndex = (m_iCurrentPage * CBaseMenu::PAGE_SIZE) + iMenuItem - 1;
-				switch (iMenuType) {
-					case EMenuType::ScreenText: {
-						CScreenTextMenuHandle hMenu(pMenu);
-						pMenu->m_pFnMenuHandler(hMenu, pController, iItemIndex);
-						UTIL::PlaySoundToClient(GetPlayerSlot(), MENU_SND_SELECT);
-						break;
-					}
-					default: {
-						SDK_ASSERT(false);
-						break;
-					}
-				}
+				CMenuHandle hMenu(pMenu);
+				pMenu->m_pFnMenuHandler(hMenu, pController, iItemIndex);
+				UTIL::PlaySoundToClient(GetPlayerSlot(), MENU_SND_SELECT);
 			}
 
 			break;
@@ -285,13 +276,12 @@ bool MENU::Close(CBasePlayerController* pController) {
 	return true;
 }
 
-bool CScreenTextMenuHandle::Close() {
-	auto pMenu = this->m_wpData.lock();
-	if (!pMenu) {
+bool CMenuHandle::Close() {
+	if (!IsValid()) {
 		return false;
 	}
 
-	auto pController = pMenu->m_hController.Get();
+	auto pController = Data()->m_hController.Get();
 	if (!pController) {
 		SDK_ASSERT(false);
 		return false;
