@@ -14,6 +14,9 @@
 
 #define GAPIRES_CHECK(http_res, gapi_res, ...) \
 	if (!http_res || http_res->status_code != HTTP_STATUS_OK) { \
+		do { \
+			__VA_ARGS__; \
+		} while (0); \
 		return; \
 	} \
 	GlobalAPIResponse gapi_res(http_res->body); \

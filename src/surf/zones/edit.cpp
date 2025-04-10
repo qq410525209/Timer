@@ -51,6 +51,7 @@ void ZoneEditProperty::CreateEditZone(const Vector& playerAim) {
 		}
 		case EditStep_Third: {
 			this->m_vecMaxs.z = playerAim.z;
+			this->EnsureDestination();
 			this->EnsureSettings();
 			break;
 		}
@@ -159,26 +160,32 @@ void ZoneEditProperty::EnsureSettings() {
 					break;
 				}
 				case 2: {
-					pPlayer->m_pZoneService->Print("方法没处理.");
+					pPlayer->m_pZoneService->Print("功能没处理.");
 					// pPlayer->m_pZoneService->Print("在聊天中输入您需要的数据.");
 					break;
 				}
 				case 3: {
-					pPlayer->Teleport(&this->m_vecDestination, nullptr, nullptr);
+					pPlayer->Teleport(&this->m_vecDestination, this->m_angDestination.IsValid() ? &this->m_angDestination : nullptr, &SURF::ZERO_VEC);
 					pPlayer->m_pZoneService->Print("已传送.");
 					break;
 				}
 				case 4: {
-					pPlayer->GetOrigin(this->m_vecDestination);
-					pPlayer->m_pZoneService->Print("已设置传送点.");
+					if (!IsInsideBox(this->m_vecDestination)) {
+						pPlayer->m_pZoneService->Print("未处于区域内.");
+					} else {
+						pPlayer->GetOrigin(this->m_vecDestination);
+						pPlayer->GetAngles(this->m_angDestination);
+						pPlayer->m_pZoneService->Print("已设置传送点.");
+					}
+
 					break;
 				}
 				case 5: {
-					pPlayer->m_pZoneService->Print("方法没处理.");
+					pPlayer->m_pZoneService->Print("功能没处理.");
 					break;
 				}
 				case 6: {
-					pPlayer->m_pZoneService->Print("方法没处理.");
+					pPlayer->m_pZoneService->Print("功能没处理.");
 					// pPlayer->m_pZoneService->Print("在聊天中输入您需要的数据, {lightgreen}-1{default}则表示无限速.");
 					break;
 				}

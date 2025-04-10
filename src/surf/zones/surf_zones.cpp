@@ -115,7 +115,6 @@ void CSurfZonePlugin::UpsertZone(const ZoneData_t& data, bool bUpload) {
 
 	CBaseEntity* pZone = CreateNormalZone(data.m_vecMins, data.m_vecMaxs);
 	ZoneCache_t cache(data);
-	cache.EnsureDestination();
 	CreateBeams(cache.m_vecMins, cache.m_vecMaxs, cache.m_aBeams);
 	m_hZones[pZone->GetRefEHandle()] = cache;
 

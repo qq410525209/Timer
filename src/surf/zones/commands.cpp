@@ -111,6 +111,15 @@ static void ZoneMenu_Edit(CSurfPlayer* pPlayer, bool bDelete = false) {
 	pMenu->Display();
 }
 
+static void ZoneMenu_DeleteAll(CSurfPlayer* pPlayer) {
+	if (SURF::ZonePlugin()->m_hZones.empty()) {
+		pPlayer->m_pZoneService->Print("找不到任何区域.");
+		return;
+	}
+
+	pPlayer->m_pZoneService->DeleteAllZones();
+}
+
 CCMD_CALLBACK(Command_Zones) {
 	CSurfPlayer* pPlayer = SURF::GetPlayerManager()->ToPlayer(pController);
 	if (!pPlayer) {
@@ -130,7 +139,7 @@ CCMD_CALLBACK(Command_Zones) {
 					ZoneMenu_Edit(pPlayer, true);
 					break;
 				case 3:
-					pPlayer->m_pZoneService->DeleteAllZones();
+					ZoneMenu_DeleteAll(pPlayer);
 					break;
 				case 4:
 					SURF::ZonePlugin()->RefreshZones();
@@ -159,8 +168,7 @@ CCMD_CALLBACK(Command_EditZone) {
 		return;
 	}
 
-	auto& pZoneService = player->m_pZoneService;
-	pZoneService->m_ZoneEdit.StartEditZone();
+	ZoneMenu_Edit(player);
 }
 
 void CSurfZonePlugin::RegisterCommand() {
