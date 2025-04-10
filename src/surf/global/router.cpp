@@ -57,6 +57,28 @@ namespace SURF::GLOBALAPI {
 			pPlugin->CreateRequest("map_zone_update", req, cb);
 		}
 
+		void DeleteZone(const zoneinfo_t& info, HttpResponseCallback cb) {
+			auto pPlugin = GlobalPlugin();
+			GlobalAPIRequest req;
+			req.m_sCustomToken = pPlugin->m_UpdaterAuth.m_sToken;
+			req.m_iMethod = HTTP_POST;
+
+			req["id"] = info.m_iDatabaseID;
+
+			pPlugin->CreateRequest("map_zone_delete", req, cb);
+		}
+
+		void DeleteAllZones(HttpResponseCallback cb) {
+			auto pPlugin = GlobalPlugin();
+			GlobalAPIRequest req;
+			req.m_sCustomToken = pPlugin->m_UpdaterAuth.m_sToken;
+			req.m_iMethod = HTTP_POST;
+
+			req["map"] = pPlugin->m_sMapName;
+
+			pPlugin->CreateRequest("map_zone_delete_all", req, cb);
+		}
+
 		void PullZone(HttpResponseCallback cb) {
 			auto pPlugin = GlobalPlugin();
 			GlobalAPIRequest req;

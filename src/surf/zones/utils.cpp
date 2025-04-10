@@ -1,4 +1,5 @@
 #include "surf_zones.h"
+#include <fmt/format.h>
 
 void SURF::ZONE::CreatePoints2D(const Vector& vecMin, const Vector& vecMax, Vector out[4]) {
 	out[0] = Vector(vecMin.x, vecMin.y, vecMin.z);
@@ -50,18 +51,16 @@ Vector SURF::ZONE::GetCenter(const Vector& vecMin, const Vector& vecMax) {
 	return (vecMin + vecMax) / 2.0f;
 }
 
-const char* SURF::ZONE::GetZoneNameByTrack(ZoneTrack track) {
+std::string SURF::ZONE::GetZoneNameByTrack(ZoneTrack track) {
 	switch (track) {
 		case ZoneTrack::Track_Main:
 			return "主线";
-		case ZoneTrack::Track_Bonus:
-			return "奖励";
 		default:
-			return "undefined track";
+			return fmt::format("奖励 {}", (u8)track);
 	}
 }
 
-const char* SURF::ZONE::GetZoneNameByType(ZoneType type) {
+std::string SURF::ZONE::GetZoneNameByType(ZoneType type) {
 	switch (type) {
 		case Zone_Start:
 			return "起点";

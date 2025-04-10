@@ -1,6 +1,7 @@
 #include "surf_zones.h"
 #include <utils/utils.h>
 #include <core/sdkhook.h>
+#include <core/menu.h>
 #include <surf/global/surf_global.h>
 
 CSurfZonePlugin g_SurfZonePlugin;
@@ -68,13 +69,12 @@ std::vector<ZoneCache_t> CSurfZonePlugin::GetZones(ZoneTrack track, ZoneType typ
 
 void CSurfZonePlugin::ClearZones() {
 	for (const auto& pair : m_hZones) {
-		CZoneHandle hZone = pair.first;
-		auto pZone = hZone.Get();
+		auto pZone = pair.first.Get();
 		if (pZone) {
 			pZone->Kill();
 		}
 
-		auto& vBeams = pair.second.m_aBeams;
+		const auto& vBeams = pair.second.m_aBeams;
 		for (const auto& hBeam : vBeams) {
 			auto pBeam = hBeam.Get();
 			if (pBeam) {
@@ -90,7 +90,7 @@ void CSurfZonePlugin::RefreshZones() {
 	UTIL::CPrintChatAll("开始刷新区域...");
 
 	SURF::GLOBALAPI::MAP::PullZone(HTTPRES_CALLBACK_L() {
-		GAPIRES_CHECK(res, r);
+		GAPIRES_CHECK(res, r, UTIL::CPrintChatAll("刷新区域失败."));
 
 		SURF::ZonePlugin()->ClearZones();
 
@@ -111,7 +111,7 @@ void CSurfZonePlugin::RefreshZones() {
 }
 
 void CSurfZonePlugin::UpsertZone(const ZoneData_t& data, bool bUpload) {
-	DeleteZone(data);
+	DeleteZone(data, false);
 
 	CBaseEntity* pZone = CreateNormalZone(data.m_vecMins, data.m_vecMaxs);
 	ZoneCache_t cache(data);
@@ -123,28 +123,40 @@ void CSurfZonePlugin::UpsertZone(const ZoneData_t& data, bool bUpload) {
 		SURF::GLOBALAPI::MAP::zoneinfo_t info(cache);
 		SURF::GLOBALAPI::MAP::UpdateZone(
 			info, HTTPRES_CALLBACK_L() {
-				GAPIRES_CHECK(res, r);
+				GAPIRES_CHECK(res, r, UTIL::CPrintChatAll("更新区域失败."));
 				UTIL::CPrintChatAll("更新区域成功!");
 			});
 	}
 }
 
-void CSurfZonePlugin::DeleteZone(const ZoneData_t& data) {
+void CSurfZonePlugin::DeleteZone(const ZoneData_t& data, bool bUpload) {
+	if (bUpload) {
+		SURF::GLOBALAPI::MAP::zoneinfo_t info(data);
+		SURF::GLOBALAPI::MAP::DeleteZone(
+			info, HTTPRES_CALLBACK_L() {
+				GAPIRES_CHECK(res, r, UTIL::CPrintChatAll("删除区域失败."));
+				UTIL::CPrintChatAll("删除区域成功!");
+			});
+	}
+
 	auto res = FindZone(data.m_iTrack, data.m_iType, data.m_iValue);
 	if (res) {
-		CBaseEntity* pZone = res.value().first.Get();
-		pZone->Kill();
+		const auto& zone = res.value();
+		KillZone(zone);
 
-		auto& vBeams = res.value().second.m_aBeams;
-		for (const auto& hBeam : vBeams) {
-			auto pBeam = hBeam.Get();
-			if (pBeam) {
-				pBeam->Kill();
-			}
-		}
-
-		vBeams.fill(CEntityHandle());
+		m_hZones.erase(zone.first);
 	}
+}
+
+void CSurfZonePlugin::DeleteAllZones(bool bUpload) {
+	if (bUpload) {
+		SURF::GLOBALAPI::MAP::DeleteAllZones(HTTPRES_CALLBACK_L() {
+			GAPIRES_CHECK(res, r, UTIL::CPrintChatAll("删除所有区域失败."));
+			UTIL::CPrintChatAll("删除所有区域成功!");
+		});
+	}
+
+	ClearZones();
 }
 
 void CSurfZoneService::EditZone(CCSPlayerPawnBase* pawn, const CInButtonState& buttons) {
@@ -167,6 +179,82 @@ void CSurfZoneService::EditZone(CCSPlayerPawnBase* pawn, const CInButtonState& b
 void CSurfZoneService::ReEditZone(const ZoneData_t& zone) {
 	m_ZoneEdit = zone;
 	m_ZoneEdit.EnsureSettings();
+}
+
+void CSurfZoneService::DeleteZone(const ZoneData_t& zone) {
+	auto pPlayer = GetPlayer();
+	if (!pPlayer) {
+		SDK_ASSERT(false);
+		return;
+	}
+
+	auto wpMenu = MENU::Create(
+		pPlayer->GetController(), MENU_CALLBACK_L(pPlayer, zone) {
+			switch (iItem) {
+				case 0: {
+					pPlayer->m_pZoneService->Print("已确认!");
+					SURF::ZonePlugin()->DeleteZone(zone);
+					break;
+				}
+				case 1: {
+					pPlayer->m_pZoneService->Print("已取消.");
+					break;
+				}
+			}
+
+			hMenu.Close();
+		});
+
+	if (wpMenu.expired()) {
+		SDK_ASSERT(false);
+		return;
+	}
+
+	auto pMenu = wpMenu.lock();
+	pMenu->SetTitle("确认删除?");
+
+	pMenu->AddItem("是");
+	pMenu->AddItem("否");
+
+	pMenu->Display();
+}
+
+void CSurfZoneService::DeleteAllZones() {
+	auto pPlayer = GetPlayer();
+	if (!pPlayer) {
+		SDK_ASSERT(false);
+		return;
+	}
+
+	auto wpMenu = MENU::Create(
+		pPlayer->GetController(), MENU_CALLBACK_L(pPlayer) {
+			switch (iItem) {
+				case 0: {
+					pPlayer->m_pZoneService->Print("已确认!");
+					SURF::ZonePlugin()->DeleteAllZones();
+					break;
+				}
+				case 1: {
+					pPlayer->m_pZoneService->Print("已取消.");
+					break;
+				}
+			}
+
+			hMenu.Close();
+		});
+
+	if (wpMenu.expired()) {
+		SDK_ASSERT(false);
+		return;
+	}
+
+	auto pMenu = wpMenu.lock();
+	pMenu->SetTitle("确认删除所有区域?");
+
+	pMenu->AddItem("是");
+	pMenu->AddItem("否");
+
+	pMenu->Display();
 }
 
 bool CSurfZoneService::TeleportToZone(ZoneTrack track, ZoneType type) {
@@ -237,6 +325,22 @@ CBaseEntity* CSurfZonePlugin::CreateNormalZone(const Vector& vecMins, const Vect
 	pZone->SetName("surf_zone");
 
 	return pZone;
+}
+
+void CSurfZonePlugin::KillZone(const std::pair<CZoneHandle, ZoneCache_t>& zone) {
+	const auto& hZone = zone.first;
+	CBaseEntity* pZone = hZone.Get();
+	if (pZone) {
+		pZone->Kill();
+	}
+
+	const auto& vBeams = zone.second.m_aBeams;
+	for (const auto& hBeam : vBeams) {
+		auto pBeam = hBeam.Get();
+		if (pBeam) {
+			pBeam->Kill();
+		}
+	}
 }
 
 void CSurfZoneService::OnInit() {

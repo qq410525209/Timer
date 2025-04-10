@@ -50,7 +50,7 @@ static void ZoneMenu_SelectTrack(CSurfPlayer* pPlayer) {
 	pMenu->Display();
 }
 
-static void ZoneMenu_Edit(CSurfPlayer* pPlayer) {
+static void ZoneMenu_Edit(CSurfPlayer* pPlayer, bool bDelete = false) {
 	auto& hZones = SURF::ZonePlugin()->m_hZones;
 	if (hZones.empty()) {
 		pPlayer->m_pZoneService->Print("找不到任何区域.");
@@ -58,7 +58,7 @@ static void ZoneMenu_Edit(CSurfPlayer* pPlayer) {
 	}
 
 	auto wpMenu = MENU::Create(
-		pPlayer->GetController(), MENU_CALLBACK_L(pPlayer) {
+		pPlayer->GetController(), MENU_CALLBACK_L(pPlayer, bDelete) {
 			auto& item = hMenu.Data()->GetItem(iItem);
 			if (!item.second.has_value()) {
 				pPlayer->PrintWarning("未知错误: %s", FILE_LINE_STRING);
@@ -72,11 +72,13 @@ static void ZoneMenu_Edit(CSurfPlayer* pPlayer) {
 			}
 
 			auto& zone = SURF::ZonePlugin()->m_hZones.at(hZone);
-			pPlayer->m_pZoneService->ReEditZone(zone);
+			if (bDelete) {
+				pPlayer->m_pZoneService->DeleteZone(zone);
+			} else {
+				pPlayer->m_pZoneService->ReEditZone(zone);
+			}
 			std::string sZone = fmt::format("{} - {} #{}", SURF::ZONE::GetZoneNameByTrack(zone.m_iTrack), SURF::ZONE::GetZoneNameByType(zone.m_iType), zone.m_iValue);
 			pPlayer->Print("你选择了: %s", sZone.c_str());
-
-			// TODO: edit zone
 		});
 
 	if (wpMenu.expired()) {
@@ -85,7 +87,7 @@ static void ZoneMenu_Edit(CSurfPlayer* pPlayer) {
 	}
 
 	auto pMenu = wpMenu.lock();
-	pMenu->SetTitle("编辑区域");
+	pMenu->SetTitle(bDelete ? "删除区域" : "编辑区域");
 
 	std::vector<std::pair<CZoneHandle, ZoneCache_t>> vZones(hZones.begin(), hZones.end());
 	std::sort(vZones.begin(), vZones.end(), [](const auto& a, const auto& b) {
@@ -125,6 +127,12 @@ CCMD_CALLBACK(Command_Zones) {
 					ZoneMenu_Edit(pPlayer);
 					break;
 				case 2:
+					ZoneMenu_Edit(pPlayer, true);
+					break;
+				case 3:
+					pPlayer->m_pZoneService->DeleteAllZones();
+					break;
+				case 4:
 					SURF::ZonePlugin()->RefreshZones();
 					break;
 			}
@@ -139,6 +147,8 @@ CCMD_CALLBACK(Command_Zones) {
 	pMenu->SetTitle("区域菜单");
 	pMenu->AddItem("添加");
 	pMenu->AddItem("编辑");
+	pMenu->AddItem("删除");
+	pMenu->AddItem("删除所有");
 	pMenu->AddItem("刷新");
 	pMenu->Display();
 }

@@ -35,6 +35,8 @@ public:
 public:
 	void EditZone(CCSPlayerPawnBase* pawn, const CInButtonState& buttons);
 	void ReEditZone(const ZoneData_t& zone);
+	void DeleteZone(const ZoneData_t& zone);
+	void DeleteAllZones();
 	bool TeleportToZone(ZoneTrack track, ZoneType type);
 
 private:
@@ -58,9 +60,11 @@ public:
 	void ClearZones();
 	void RefreshZones();
 	void UpsertZone(const ZoneData_t& data, bool bUpload = true);
-	void DeleteZone(const ZoneData_t& data);
+	void DeleteZone(const ZoneData_t& data, bool bUpload = true);
+	void DeleteAllZones(bool bUpload = true);
 	void CreateBeams(const Vector& vecMin, const Vector& vecMax, std::array<CHandle<CBeam>, 12>& out);
 	CBaseEntity* CreateNormalZone(const Vector& vecMins, const Vector& vecMaxs);
+	void KillZone(const std::pair<CZoneHandle, ZoneCache_t>& zone);
 
 private:
 	void RegisterCommand();
@@ -77,8 +81,8 @@ namespace SURF {
 		void CreatePoints3D(const Vector& vecMin, const Vector& vecMax, Vector out[8]);
 		void FillBoxMinMax(Vector& vecMin, Vector& vecMax, bool resize = false);
 		Vector GetCenter(const Vector& vecMin, const Vector& vecMax);
-		const char* GetZoneNameByTrack(ZoneTrack track);
-		const char* GetZoneNameByType(ZoneType type);
+		std::string GetZoneNameByTrack(ZoneTrack track);
+		std::string GetZoneNameByType(ZoneType type);
 
 		namespace HOOK {
 			bool OnStartTouch(CBaseEntity* pSelf, CBaseEntity* pOther);

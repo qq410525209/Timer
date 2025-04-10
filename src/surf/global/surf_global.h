@@ -12,12 +12,15 @@
 #define HTTPRES_CALLBACK_L(...) [__VA_ARGS__](const HttpResponsePtr& res) -> void
 #endif
 
-#define GAPIRES_CHECK(http_res, gapi_res) \
+#define GAPIRES_CHECK(http_res, gapi_res, ...) \
 	if (!http_res || http_res->status_code != HTTP_STATUS_OK) { \
 		return; \
 	} \
 	GlobalAPIResponse gapi_res(http_res->body); \
 	if (gapi_res.m_iCode != HTTP_STATUS_OK) { \
+		do { \
+			__VA_ARGS__; \
+		} while (0); \
 		return; \
 	}
 
@@ -135,6 +138,8 @@ namespace SURF {
 			};
 
 			void UpdateZone(const zoneinfo_t& info, HttpResponseCallback cb);
+			void DeleteZone(const zoneinfo_t& info, HttpResponseCallback cb);
+			void DeleteAllZones(HttpResponseCallback cb);
 			void PullZone(HttpResponseCallback cb);
 		} // namespace MAP
 
