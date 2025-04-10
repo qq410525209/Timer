@@ -37,6 +37,10 @@ struct ZoneData_t {
 		return (vec.x > m_vecMins.x && vec.y > m_vecMins.y && vec.z > m_vecMins.z) && (vec.x < m_vecMaxs.x && vec.y < m_vecMaxs.y && vec.z < m_vecMaxs.z);
 	}
 
+	Vector GetCenter() const {
+		return (m_vecMins + m_vecMaxs) / 2.0f;
+	}
+
 	void EnsureDestination();
 
 	ZoneTrack m_iTrack;

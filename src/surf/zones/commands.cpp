@@ -61,13 +61,13 @@ static void ZoneMenu_Edit(CSurfPlayer* pPlayer) {
 		pPlayer->GetController(), MENU_CALLBACK_L(pPlayer) {
 			auto& item = hMenu.Data()->GetItem(iItem);
 			if (!item.second.has_value()) {
-				pPlayer->PrintWarning("未知错误", FILE_LINE_STRING);
+				pPlayer->PrintWarning("未知错误: %s", FILE_LINE_STRING);
 				return;
 			}
 
 			auto hZone = std::any_cast<CZoneHandle>(item.second);
 			if (!SURF::ZonePlugin()->m_hZones.contains(hZone)) {
-				pPlayer->PrintWarning("未知错误", FILE_LINE_STRING);
+				pPlayer->PrintWarning("未知错误: %s", FILE_LINE_STRING);
 				return;
 			}
 

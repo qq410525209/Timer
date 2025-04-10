@@ -181,7 +181,7 @@ void CSurfZonePlugin::CreateBeams(const Vector& vecMin, const Vector& vecMax, st
 }
 
 CBaseEntity* CSurfZonePlugin::CreateNormalZone(const Vector& vecMins, const Vector& vecMaxs) {
-	Vector vecCenter = (vecMins + vecMaxs) / 2.0f;
+	Vector vecCenter = SURF::ZONE::GetCenter(vecMins, vecMaxs);
 	Vector mins(vecMins), maxs(vecMaxs);
 	SURF::ZONE::FillBoxMinMax(mins, maxs, true);
 	auto pZone = MEM::CALL::CreateAABBTrigger(vecCenter, mins, maxs);

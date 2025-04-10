@@ -46,6 +46,10 @@ void SURF::ZONE::FillBoxMinMax(Vector& vecMin, Vector& vecMax, bool resize) {
 	vecMax.z = size.z / 2;
 }
 
+Vector SURF::ZONE::GetCenter(const Vector& vecMin, const Vector& vecMax) {
+	return (vecMin + vecMax) / 2.0f;
+}
+
 const char* SURF::ZONE::GetZoneNameByTrack(ZoneTrack track) {
 	switch (track) {
 		case ZoneTrack::Track_Main:

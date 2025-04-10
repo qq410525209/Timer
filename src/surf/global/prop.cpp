@@ -23,16 +23,32 @@ namespace SURF::GLOBALAPI {
 		}
 
 		json zoneinfo_t::ToJson() const {
-			json j {{"map", m_sMap}, {"track", m_iTrack}, {"type", m_iType}, {"value", m_iValue}, {"mins_x", m_vecMins.x}, {"mins_y", m_vecMins.y}, {"mins_z", m_vecMins.z}, {"maxs_x", m_vecMaxs.x}, {"maxs_y", m_vecMaxs.y}, {"maxs_z", m_vecMaxs.z}};
+			// clang-format off
+			json j {
+				{"map", m_sMap}, 
+				{"track", m_iTrack}, 
+				{"type", m_iType}, 
+				{"value", m_iValue}, 
+				{"mins_x", m_vecMins.x}, 
+				{"mins_y", m_vecMins.y}, 
+				{"mins_z", m_vecMins.z}, 
+				{"maxs_x", m_vecMaxs.x}, 
+				{"maxs_y", m_vecMaxs.y}, 
+				{"maxs_z", m_vecMaxs.z},
+				{"des_pos_x", m_vecDestination.x},
+				{"des_pos_y", m_vecDestination.y},
+				{"des_pos_z", m_vecDestination.z},
+			};
+			// clang-format on
 
 			if (m_iDatabaseID != -1) {
 				j["id"] = m_iDatabaseID;
 			}
 
-			if (m_vecDestination.Length() != 0) {
-				j["des_x"] = m_vecDestination.x;
-				j["des_y"] = m_vecDestination.y;
-				j["des_z"] = m_vecDestination.z;
+			if (m_angDestination.IsValid()) {
+				j["des_ang_x"] = m_angDestination.x;
+				j["des_ang_y"] = m_angDestination.y;
+				j["des_ang_z"] = m_angDestination.z;
 			}
 
 			if (m_iFlag != -1) {
@@ -64,9 +80,12 @@ namespace SURF::GLOBALAPI {
 			JSON_GETTER(j, maxs_x, m_vecMaxs.x);
 			JSON_GETTER(j, maxs_y, m_vecMaxs.y);
 			JSON_GETTER(j, maxs_z, m_vecMaxs.z);
-			JSON_GETTER(j, des_x, m_vecDestination.x);
-			JSON_GETTER(j, des_y, m_vecDestination.y);
-			JSON_GETTER(j, des_z, m_vecDestination.z);
+			JSON_GETTER(j, des_pos_x, m_vecDestination.x);
+			JSON_GETTER(j, des_pos_y, m_vecDestination.y);
+			JSON_GETTER(j, des_pos_z, m_vecDestination.z);
+			JSON_GETTER(j, des_ang_x, m_angDestination.x);
+			JSON_GETTER(j, des_ang_y, m_angDestination.y);
+			JSON_GETTER(j, des_ang_z, m_angDestination.z);
 			JSON_GETTER(j, track, m_iTrack);
 			JSON_GETTER(j, flags, m_iFlag);
 			JSON_GETTER(j, value, m_iValue);

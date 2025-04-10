@@ -73,6 +73,7 @@ namespace SURF {
 		void CreatePoints2D(const Vector& vecMin, const Vector& vecMax, Vector out[4]);
 		void CreatePoints3D(const Vector& vecMin, const Vector& vecMax, Vector out[8]);
 		void FillBoxMinMax(Vector& vecMin, Vector& vecMax, bool resize = false);
+		Vector GetCenter(const Vector& vecMin, const Vector& vecMax);
 		const char* GetZoneNameByTrack(ZoneTrack track);
 		const char* GetZoneNameByType(ZoneType type);
 

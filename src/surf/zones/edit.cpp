@@ -25,8 +25,8 @@ void ZoneEditProperty::StartEditZone() {
 	UTIL::GetPlayerAiming(m_pOuter->GetPlayer()->GetPlayerPawn(), tr);
 	Vector& aimPos = tr.m_vEndPos;
 
-	auto pBeam = UTIL::CreateBeam(tr.m_vEndPos, tr.m_vEndPos);
 	m_vBeam.clear();
+	auto pBeam = UTIL::CreateBeam(tr.m_vEndPos, tr.m_vEndPos);
 	m_vBeam.emplace_back(pBeam->GetRefEHandle());
 }
 
@@ -146,6 +146,6 @@ void ZoneData_t::EnsureDestination() {
 		}
 	}
 
-	m_vecDestination = (m_vecMins + m_vecMaxs) / 2.0f;
+	m_vecDestination = GetCenter();
 	m_angDestination.Invalidate();
 }
