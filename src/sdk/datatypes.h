@@ -18,7 +18,7 @@ public:
 	virtual ~CWeakHandle() {}
 
 	virtual bool IsValid() const {
-		return this->m_wpData.expired();
+		return !this->m_wpData.expired();
 	}
 
 	virtual bool Close() {
