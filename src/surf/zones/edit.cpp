@@ -1,7 +1,9 @@
 #include "edit.h"
-#include <utils/utils.h>
-#include <surf/zones/surf_zones.h>
+#include "surf_zones.h"
 #include <surf/misc/surf_misc.h>
+#include <core/menu.h>
+#include <utils/utils.h>
+#include <fmt/format.h>
 
 void ZoneEditProperty::Init(CSurfZoneService* outer) {
 	m_pOuter = outer;
@@ -49,14 +51,8 @@ void ZoneEditProperty::CreateEditZone(const Vector& playerAim) {
 		}
 		case EditStep_Third: {
 			this->m_vecMaxs.z = playerAim.z;
-			m_pOuter->GetPlayer()->m_pZoneService->Print("The final step! Confirmed?");
+			this->EnsureSettings();
 			break;
-		}
-		case EditStep_Final: {
-			m_pOuter->GetPlayer()->m_pZoneService->Print("Confirmed!\n");
-			SURF::ZonePlugin()->AddZone(*this);
-			this->Reset();
-			return;
 		}
 	}
 }
@@ -131,6 +127,87 @@ void ZoneEditProperty::ClearBeams() {
 		}
 	}
 	m_vBeam.clear();
+}
+
+void ZoneEditProperty::EnsureSettings() {
+	auto pPlayer = this->m_pOuter->GetPlayer();
+	if (!pPlayer) {
+		SDK_ASSERT(false);
+		return;
+	}
+
+	auto wpMenu = MENU::Create(
+		pPlayer->GetController(), MENU_CALLBACK_L(this) {
+			auto pPlayer = this->m_pOuter->GetPlayer();
+			if (!pPlayer) {
+				SDK_ASSERT(false);
+				return;
+			}
+
+			switch (iItem) {
+				case 0: {
+					pPlayer->m_pZoneService->Print("已确认!");
+					SURF::ZonePlugin()->UpsertZone(*this);
+					this->Reset();
+					hMenu.Close();
+					break;
+				}
+				case 1: {
+					pPlayer->m_pZoneService->Print("已取消.");
+					this->Reset();
+					hMenu.Close();
+					break;
+				}
+				case 2: {
+					pPlayer->m_pZoneService->Print("方法没处理.");
+					// pPlayer->m_pZoneService->Print("在聊天中输入您需要的数据.");
+					break;
+				}
+				case 3: {
+					pPlayer->Teleport(&this->m_vecDestination, nullptr, nullptr);
+					pPlayer->m_pZoneService->Print("已传送.");
+					break;
+				}
+				case 4: {
+					pPlayer->GetOrigin(this->m_vecDestination);
+					pPlayer->m_pZoneService->Print("已设置传送点.");
+					break;
+				}
+				case 5: {
+					pPlayer->m_pZoneService->Print("方法没处理.");
+					break;
+				}
+				case 6: {
+					pPlayer->m_pZoneService->Print("方法没处理.");
+					// pPlayer->m_pZoneService->Print("在聊天中输入您需要的数据, {lightgreen}-1{default}则表示无限速.");
+					break;
+				}
+			}
+		});
+
+	if (wpMenu.expired()) {
+		SDK_ASSERT(false);
+		return;
+	}
+
+	auto pMenu = wpMenu.lock();
+	pMenu->SetTitle("确认区域设置");
+
+	pMenu->AddItem("是");
+	pMenu->AddItem("否");
+
+	auto sData = fmt::format("当前值: {}", m_iValue);
+	pMenu->AddItem(sData);
+
+	pMenu->AddItem("传送到区域");
+	pMenu->AddItem("设置传送点");
+	pMenu->AddItem("调整区域");
+	pMenu->AddItem("设置限速");
+
+	// pMenu->AddItem("hookname: ?");
+	// pMenu->AddItem("hammerid: ?");
+
+	pMenu->Display();
 }
 
 void ZoneData_t::EnsureDestination() {

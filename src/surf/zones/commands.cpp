@@ -72,6 +72,7 @@ static void ZoneMenu_Edit(CSurfPlayer* pPlayer) {
 			}
 
 			auto& zone = SURF::ZonePlugin()->m_hZones.at(hZone);
+			pPlayer->m_pZoneService->ReEditZone(zone);
 			std::string sZone = fmt::format("{} - {} #{}", SURF::ZONE::GetZoneNameByTrack(zone.m_iTrack), SURF::ZONE::GetZoneNameByType(zone.m_iType), zone.m_iValue);
 			pPlayer->Print("你选择了: %s", sZone.c_str());
 

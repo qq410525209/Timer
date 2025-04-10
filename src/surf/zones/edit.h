@@ -19,10 +19,13 @@ struct ZoneData_t {
 
 	ZoneData_t(const ZoneData_t& other) = default;
 
+	ZoneData_t& operator=(const ZoneData_t& other) = default;
+
 	void Reset() {
 		m_iTrack = (ZoneTrack)-1;
 		m_iType = (ZoneType)-1;
 		m_iValue = -1;
+		m_iDatabaseID = -1;
 		m_vecMins = Vector(0.0f, 0.0f, 0.0f);
 		m_vecMaxs = Vector(0.0f, 0.0f, 0.0f);
 		m_vecDestination = Vector(0.0f, 0.0f, 0.0f);
@@ -46,6 +49,7 @@ struct ZoneData_t {
 	ZoneTrack m_iTrack;
 	ZoneType m_iType;
 	i32 m_iValue;
+	i32 m_iDatabaseID;
 	Vector m_vecMins;
 	Vector m_vecMaxs;
 	Vector m_vecDestination;
@@ -58,6 +62,7 @@ struct ZoneData_t {
 
 struct ZoneEditProperty : ZoneData_t {
 	using ZoneData_t::ZoneData_t;
+	using ZoneData_t::operator=;
 
 	void Init(CSurfZoneService* outer);
 	void Reset();
@@ -70,6 +75,7 @@ struct ZoneEditProperty : ZoneData_t {
 	void UpdateZone2D(const std::vector<CHandle<CBeam>>& vBeams, const Vector& vecMin, const Vector& vecMax);
 	void UpdateZone3D(const std::vector<CHandle<CBeam>>& vBeams, const Vector& vecMin, const Vector& vecMax);
 	void ClearBeams();
+	void EnsureSettings();
 
 	CSurfZoneService* m_pOuter;
 	bool m_bEnabled;

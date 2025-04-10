@@ -128,7 +128,6 @@ namespace SURF {
 				zoneinfo_t();
 				zoneinfo_t(const ZoneData_t& other);
 
-				int m_iDatabaseID = -1;
 				std::string m_sMap;
 
 				json ToJson() const;

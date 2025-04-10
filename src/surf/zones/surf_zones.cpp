@@ -31,6 +31,17 @@ std::optional<ZoneCache_t> CSurfZonePlugin::FindZone(CBaseEntity* pEnt) {
 	return std::nullopt;
 }
 
+std::optional<std::pair<CZoneHandle, ZoneCache_t>> CSurfZonePlugin::FindZone(ZoneTrack track, ZoneType type, i32 value) {
+	for (const auto& pair : m_hZones) {
+		const auto& cache = pair.second;
+		if (cache.m_iTrack == track && cache.m_iType == type && cache.m_iValue == value) {
+			return pair;
+		}
+	}
+
+	return std::nullopt;
+}
+
 int CSurfZonePlugin::GetZoneCount(ZoneTrack track, ZoneType type) {
 	int count = 0;
 	for (const auto& pair : m_hZones) {
@@ -76,10 +87,12 @@ void CSurfZonePlugin::ClearZones() {
 }
 
 void CSurfZonePlugin::RefreshZones() {
-	ClearZones();
+	UTIL::CPrintChatAll("开始刷新区域...");
 
 	SURF::GLOBALAPI::MAP::PullZone(HTTPRES_CALLBACK_L() {
 		GAPIRES_CHECK(res, r);
+
+		SURF::ZonePlugin()->ClearZones();
 
 		auto vZones = r.m_Data.get<std::vector<json>>();
 		for (const auto& j : vZones) {
@@ -90,18 +103,21 @@ void CSurfZonePlugin::RefreshZones() {
 			SURF::GLOBALAPI::MAP::zoneinfo_t info;
 			info.FromJson(j);
 
-			SURF::ZonePlugin()->AddZone(info, false);
+			SURF::ZonePlugin()->UpsertZone(info, false);
 		}
+
+		UTIL::CPrintChatAll("刷新区域成功!");
 	});
 }
 
-void CSurfZonePlugin::AddZone(const ZoneData_t& data, bool bUpload) {
-	auto pZone = this->CreateNormalZone(data.m_vecMins, data.m_vecMaxs);
-	CZoneHandle hRefZone = pZone->GetRefEHandle();
+void CSurfZonePlugin::UpsertZone(const ZoneData_t& data, bool bUpload) {
+	DeleteZone(data);
+
+	CBaseEntity* pZone = CreateNormalZone(data.m_vecMins, data.m_vecMaxs);
 	ZoneCache_t cache(data);
 	cache.EnsureDestination();
-	SURF::ZonePlugin()->CreateBeams(cache.m_vecMins, cache.m_vecMaxs, cache.m_aBeams);
-	SURF::ZonePlugin()->m_hZones[hRefZone] = cache;
+	CreateBeams(cache.m_vecMins, cache.m_vecMaxs, cache.m_aBeams);
+	m_hZones[pZone->GetRefEHandle()] = cache;
 
 	if (bUpload) {
 		SURF::GLOBALAPI::MAP::zoneinfo_t info(cache);
@@ -110,6 +126,24 @@ void CSurfZonePlugin::AddZone(const ZoneData_t& data, bool bUpload) {
 				GAPIRES_CHECK(res, r);
 				UTIL::CPrintChatAll("更新区域成功!");
 			});
+	}
+}
+
+void CSurfZonePlugin::DeleteZone(const ZoneData_t& data) {
+	auto res = FindZone(data.m_iTrack, data.m_iType, data.m_iValue);
+	if (res) {
+		CBaseEntity* pZone = res.value().first.Get();
+		pZone->Kill();
+
+		auto& vBeams = res.value().second.m_aBeams;
+		for (const auto& hBeam : vBeams) {
+			auto pBeam = hBeam.Get();
+			if (pBeam) {
+				pBeam->Kill();
+			}
+		}
+
+		vBeams.fill(CEntityHandle());
 	}
 }
 
@@ -128,6 +162,11 @@ void CSurfZoneService::EditZone(CCSPlayerPawnBase* pawn, const CInButtonState& b
 
 		m_ZoneEdit.UpdateZone(aim);
 	}
+}
+
+void CSurfZoneService::ReEditZone(const ZoneData_t& zone) {
+	m_ZoneEdit = zone;
+	m_ZoneEdit.EnsureSettings();
 }
 
 bool CSurfZoneService::TeleportToZone(ZoneTrack track, ZoneType type) {

@@ -34,6 +34,7 @@ public:
 
 public:
 	void EditZone(CCSPlayerPawnBase* pawn, const CInButtonState& buttons);
+	void ReEditZone(const ZoneData_t& zone);
 	bool TeleportToZone(ZoneTrack track, ZoneType type);
 
 private:
@@ -51,11 +52,13 @@ private:
 
 public:
 	std::optional<ZoneCache_t> FindZone(CBaseEntity* pEnt);
+	std::optional<std::pair<CZoneHandle, ZoneCache_t>> FindZone(ZoneTrack track, ZoneType type, i32 value);
 	int GetZoneCount(ZoneTrack track, ZoneType type);
 	std::vector<ZoneCache_t> GetZones(ZoneTrack track, ZoneType type);
 	void ClearZones();
 	void RefreshZones();
-	void AddZone(const ZoneData_t& data, bool bUpload = true);
+	void UpsertZone(const ZoneData_t& data, bool bUpload = true);
+	void DeleteZone(const ZoneData_t& data);
 	void CreateBeams(const Vector& vecMin, const Vector& vecMax, std::array<CHandle<CBeam>, 12>& out);
 	CBaseEntity* CreateNormalZone(const Vector& vecMins, const Vector& vecMaxs);
 
