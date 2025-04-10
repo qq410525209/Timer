@@ -109,8 +109,9 @@ const CBaseMenu::MenuItemType& CBaseMenu::GetItem(int iPageIndex, int iItemIndex
 	}
 
 	auto& vItems = m_vPage[iPageIndex];
-	if (iItemIndex < vItems.size()) {
-		return vItems.at(iItemIndex);
+	auto iActualItemIdx = iItemIndex % CBaseMenu::PAGE_SIZE;
+	if (iActualItemIdx < vItems.size()) {
+		return vItems.at(iActualItemIdx);
 	}
 
 	return CBaseMenu::NULL_ITEM;

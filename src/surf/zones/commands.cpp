@@ -40,6 +40,8 @@ static void ZoneMenu_SelectTrack(CSurfPlayer* pPlayer) {
 		return;
 	}
 
+	pPlayer->m_pZoneService->m_ZoneEdit.Reset();
+
 	auto pMenu = wpMenu.lock();
 	pMenu->SetTitle("选择赛道");
 	for (int i = ZoneTrack::Track_Main; i < ZoneTrack::TRACKS_SIZE; i++) {
