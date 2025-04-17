@@ -73,6 +73,10 @@ public:
 		return true;
 	}
 
+	virtual bool OnSayCommand(CCSPlayerController* pController, const std::vector<std::string>& vArgs) {
+		return true;
+	}
+
 	virtual void OnPostEventAbstract(IGameEventSystem* pEventSystem, CSplitScreenSlot nSlot, int nClientCount, const uint64* clients, INetworkMessageInternal* pEvent, const CNetMessage* pData) {}
 
 	virtual bool OnWeaponDrop(CCSPlayer_WeaponServices* pService, CBasePlayerWeapon* pWeapon, int& iDropType, Vector* targetPos) {

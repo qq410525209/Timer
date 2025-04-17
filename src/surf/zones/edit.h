@@ -33,7 +33,7 @@ struct ZoneData_t {
 		m_iFlag = -1;
 		m_iHookHammerid = -1;
 		m_sHookName = std::string();
-		m_fLimitSpeed = -1.0f;
+		m_iLimitSpeed = 350;
 	}
 
 	bool IsInsideBox(const Vector& vec) const {
@@ -55,7 +55,7 @@ struct ZoneData_t {
 	Vector m_vecDestination;
 	QAngle m_angDestination;
 	i32 m_iFlag;
-	f32 m_fLimitSpeed;
+	i32 m_iLimitSpeed;
 	i32 m_iHookHammerid;
 	std::string m_sHookName;
 };
@@ -81,6 +81,12 @@ struct ZoneEditProperty : ZoneData_t {
 	bool m_bEnabled;
 	ZoneEditStep m_iStep;
 	std::vector<CHandle<CBeam>> m_vBeam;
+
+	bool m_bAwaitValueInput;
+	i32 m_iValueInput;
+
+	bool m_bAwaitVelocityInput;
+	i32 m_iVelocityInput;
 
 	static constexpr const int m_iZonePairs2D[][2] = {{0, 1}, {1, 2}, {2, 3}, {3, 0}};
 	static constexpr const int m_iZonePairs3D[][2] = {{0, 2}, {2, 6}, {6, 4}, {4, 0}, {0, 1}, {3, 1}, {3, 2}, {3, 7}, {5, 1}, {5, 4}, {6, 7}, {7, 5}};

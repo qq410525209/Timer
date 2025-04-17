@@ -138,9 +138,11 @@ static void HandleSrvCommand(const CCommand& pCommand, const std::wstring& wComm
 	}
 }
 
-static bool HandleConCommand(CCSPlayerController* pController, const CCommand& pCommand, const std::wstring& wCommand, bool sayCommand, bool spaceFound) {
-	auto bRegistedCmd = g_manager.m_umConCmds.contains(wCommand);
-	auto bListenedCmd = g_manager.m_umConCmdListeners.contains(wCommand);
+static bool HandleConCommand(CCSPlayerController* pController, const CCommand& pCommand, const std::wstring& wOriginalCommand, bool sayCommand, bool spaceFound) {
+	auto wFixedCommand = sayCommand ? L"sm_" + wOriginalCommand : wOriginalCommand;
+
+	auto bRegistedCmd = g_manager.m_umConCmds.contains(wFixedCommand);
+	auto bListenedCmd = g_manager.m_umConCmdListeners.contains(wFixedCommand);
 	if (!bRegistedCmd && !bListenedCmd) {
 		return true;
 	}
@@ -152,6 +154,8 @@ static bool HandleConCommand(CCSPlayerController* pController, const CCommand& p
 			std::string sRawContent(pCommand.ArgS());
 			ParseCommandArgs(sRawContent, vArgs);
 		}
+
+		FORWARD_PRE(CCoreForward, OnSayCommand, false, pController, vArgs);
 	} else {
 		for (int i = 1; i < pCommand.ArgC(); i++) {
 			vArgs.emplace_back(pCommand.Arg(i));
@@ -159,7 +163,7 @@ static bool HandleConCommand(CCSPlayerController* pController, const CCommand& p
 	}
 
 	if (bRegistedCmd) {
-		auto& vCmdInfo = g_manager.m_umConCmds.at(wCommand);
+		auto& vCmdInfo = g_manager.m_umConCmds.at(wFixedCommand);
 		for (const auto& info : vCmdInfo) {
 			if (info.adminFlags != AdminFlag::None) {
 				if (!ADMIN::CheckAccess(pController->m_steamID(), info.adminFlags)) {
@@ -168,14 +172,14 @@ static bool HandleConCommand(CCSPlayerController* pController, const CCommand& p
 				}
 			}
 
-			info.callback(pController, vArgs, wCommand);
+			info.callback(pController, vArgs, wFixedCommand);
 		}
 	}
 
 	if (bListenedCmd) {
-		auto& vListenCmds = g_manager.m_umConCmdListeners.at(wCommand);
+		auto& vListenCmds = g_manager.m_umConCmdListeners.at(wFixedCommand);
 		for (const auto& callback : vListenCmds) {
-			if (!callback(pController, vArgs, wCommand)) {
+			if (!callback(pController, vArgs, wFixedCommand)) {
 				return false;
 			}
 		}
@@ -249,8 +253,6 @@ bool CONCMD::CConCmdManager::OnDispatchConCommand(ICvar* pCvar, ConCommandRef cm
 		if (bSpaceFound) {
 			wCommand.append(1, L'\0');
 		}
-
-		wCommand = L"sm_" + wCommand;
 
 		HandleConCommand(pController, args, wCommand, true, bSpaceFound);
 

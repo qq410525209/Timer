@@ -63,8 +63,8 @@ namespace SURF::GLOBALAPI {
 				j["hookname"] = m_sHookName;
 			}
 
-			if (m_fLimitSpeed != -1.0f) {
-				j["limitspeed"] = m_fLimitSpeed;
+			if (m_iLimitSpeed != -1) {
+				j["limitspeed"] = m_iLimitSpeed;
 			}
 
 			return j;
@@ -91,7 +91,7 @@ namespace SURF::GLOBALAPI {
 			JSON_GETTER(j, value, m_iValue);
 			JSON_GETTER(j, hammerid, m_iHookHammerid);
 			JSON_GETTER(j, hookname, m_sHookName);
-			JSON_GETTER(j, limitspeed, m_fLimitSpeed);
+			JSON_GETTER(j, limitspeed, m_iLimitSpeed);
 		}
 	} // namespace MAP
 } // namespace SURF::GLOBALAPI

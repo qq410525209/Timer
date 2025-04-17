@@ -13,6 +13,10 @@ void ZoneEditProperty::Init(CSurfZoneService* outer) {
 void ZoneEditProperty::Reset() {
 	m_bEnabled = false;
 	m_iStep = EditStep_None;
+	m_bAwaitValueInput = false;
+	m_bAwaitVelocityInput = false;
+	m_iValueInput = -1;
+	m_iVelocityInput = -1;
 
 	ZoneData_t::Reset();
 
@@ -148,6 +152,15 @@ void ZoneEditProperty::EnsureSettings() {
 			switch (iItem) {
 				case 0: {
 					pPlayer->m_pZoneService->Print("已确认!");
+
+					if (this->m_iValueInput != -1) {
+						this->m_iValue = this->m_iValueInput;
+					}
+
+					if (this->m_iVelocityInput != -1) {
+						this->m_iLimitSpeed = this->m_iVelocityInput;
+					}
+
 					SURF::ZonePlugin()->UpsertZone(*this);
 					this->Reset();
 					hMenu.Close();
@@ -160,8 +173,8 @@ void ZoneEditProperty::EnsureSettings() {
 					break;
 				}
 				case 2: {
-					pPlayer->m_pZoneService->Print("功能没处理.");
-					// pPlayer->m_pZoneService->Print("在聊天中输入您需要的数据.");
+					pPlayer->m_pZoneService->Print("在聊天中输入您需要的数据.");
+					this->m_bAwaitValueInput = true;
 					break;
 				}
 				case 3: {
@@ -185,8 +198,8 @@ void ZoneEditProperty::EnsureSettings() {
 					break;
 				}
 				case 6: {
-					pPlayer->m_pZoneService->Print("功能没处理.");
-					// pPlayer->m_pZoneService->Print("在聊天中输入您需要的数据, {lightgreen}-1{default}则表示无限速.");
+					pPlayer->m_pZoneService->Print("在聊天中输入您需要的数据, {lightgreen}0{default}则表示无限速.");
+					this->m_bAwaitVelocityInput = true;
 					break;
 				}
 			}
@@ -209,7 +222,9 @@ void ZoneEditProperty::EnsureSettings() {
 	pMenu->AddItem("传送到区域");
 	pMenu->AddItem("设置传送点");
 	pMenu->AddItem("调整区域");
-	pMenu->AddItem("设置限速");
+
+	auto sVelocity = fmt::format("当前限速: {}", m_iLimitSpeed);
+	pMenu->AddItem(sVelocity);
 
 	// pMenu->AddItem("hookname: ?");
 	// pMenu->AddItem("hammerid: ?");

@@ -51,6 +51,7 @@ class CSurfZonePlugin : CMovementForward, CCoreForward {
 private:
 	virtual void OnPluginStart() override;
 	virtual void OnPlayerRunCmdPost(CCSPlayerPawn* pawn, const CInButtonState& buttons, const float (&vec)[3], const QAngle& viewAngles, const int& weapon, const int& cmdnum, const int& tickcount, const int& seed, const int (&mouse)[2]) override;
+	virtual bool OnSayCommand(CCSPlayerController* pController, const std::vector<std::string>& vArgs) override;
 
 public:
 	std::optional<ZoneCache_t> FindZone(CBaseEntity* pEnt);

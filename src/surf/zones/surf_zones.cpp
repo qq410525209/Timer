@@ -15,12 +15,36 @@ void CSurfZonePlugin::OnPluginStart() {
 }
 
 void CSurfZonePlugin::OnPlayerRunCmdPost(CCSPlayerPawn* pawn, const CInButtonState& buttons, const float (&vec)[3], const QAngle& viewAngles, const int& weapon, const int& cmdnum, const int& tickcount, const int& seed, const int (&mouse)[2]) {
-	CSurfPlayer* player = SURF::GetPlayerManager()->ToPlayer(pawn);
-	if (!player) {
+	CSurfPlayer* pPlayer = SURF::GetPlayerManager()->ToPlayer(pawn);
+	if (!pPlayer) {
 		return;
 	}
 
-	player->m_pZoneService->EditZone(pawn, buttons);
+	pPlayer->m_pZoneService->EditZone(pawn, buttons);
+}
+
+bool CSurfZonePlugin::OnSayCommand(CCSPlayerController* pController, const std::vector<std::string>& vArgs) {
+	CSurfPlayer* pPlayer = SURF::GetPlayerManager()->ToPlayer(pController);
+	if (!pPlayer || vArgs.empty()) {
+		return true;
+	}
+
+	auto& pZoneService = pPlayer->m_pZoneService;
+	if (pZoneService->m_ZoneEdit.m_bAwaitValueInput) {
+		pZoneService->m_ZoneEdit.m_iValueInput = std::stoi(vArgs.at(0));
+		pZoneService->m_ZoneEdit.EnsureSettings();
+
+		pZoneService->m_ZoneEdit.m_bAwaitValueInput = false;
+		return false;
+	} else if (pZoneService->m_ZoneEdit.m_bAwaitVelocityInput) {
+		pZoneService->m_ZoneEdit.m_iVelocityInput = std::stof(vArgs.at(0));
+		pZoneService->m_ZoneEdit.EnsureSettings();
+
+		pZoneService->m_ZoneEdit.m_bAwaitVelocityInput = false;
+		return false;
+	}
+
+	return true;
 }
 
 std::optional<ZoneCache_t> CSurfZonePlugin::FindZone(CBaseEntity* pEnt) {
