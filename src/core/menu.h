@@ -3,6 +3,7 @@
 #include <pch.h>
 #include <core/playermanager.h>
 #include <core/screentext.h>
+#include <movement/movement.h>
 
 constexpr auto MENU_SND_SELECT = "UIPanorama.submenu_select";
 constexpr auto MENU_SND_EXIT = "UIPanorama.submenu_slidein";
@@ -19,7 +20,7 @@ public:
 	virtual bool Close() override;
 };
 
-#define MENU_CALLBACK_ARGS   CMenuHandle &hMenu, CBasePlayerController *pController, int iItem
+#define MENU_CALLBACK_ARGS   CMenuHandle &hMenu, CBasePlayerController *pController, uint iItem
 #define MENU_CALLBACK(fn)    static void fn(MENU_CALLBACK_ARGS)
 #define MENU_CALLBACK_L(...) [__VA_ARGS__](MENU_CALLBACK_ARGS) -> void
 using MenuHandler = std::function<void(MENU_CALLBACK_ARGS)>;
@@ -102,21 +103,33 @@ private:
 	virtual void Reset() override {
 		CPlayer::Reset();
 
-		ResetMenu();
+		ResetMenu(true);
 	}
 
 public:
 	using CPlayer::CPlayer;
 
-	void ResetMenu();
-	void SelectMenu(int iMenuItem);
+	void ResetMenu(bool bResetMode = false);
+	void SelectMenu();
+	void SwitchMode(bool bRedraw = false);
+	void DisplayPagePrev();
+	void DisplayPageNext();
+	void Refresh() const;
+	void CloseMenu();
+
+private:
+	friend class CScreenTextMenu;
+	void ClampItem();
 
 public:
+	// std::list<std::shared_ptr<CBaseMenu>> m_MenuList;
 	std::shared_ptr<CBaseMenu> m_pCurrentMenu;
-	int m_iCurrentPage;
+	uint m_nCurrentPage;
+	uint m_nCurrentItem;
+	bool m_bWSADMenu;
 };
 
-class CMenuManager : CPlayerManager {
+class CMenuManager : CPlayerManager, CMovementForward {
 public:
 	CMenuManager() {
 		for (int i = 0; i < MAXPLAYERS; i++) {
@@ -134,6 +147,7 @@ public:
 
 private:
 	virtual void OnPluginStart() override;
+	virtual void OnPlayerRunCmdPost(CCSPlayerPawn* pPawn, const CInButtonState& buttons, const float (&vec)[3], const QAngle& viewAngles, const int& weapon, const int& cmdnum, const int& tickcount, const int& seed, const int (&mouse)[2]) override;
 };
 
 namespace MENU {
