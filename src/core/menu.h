@@ -4,6 +4,7 @@
 #include <core/playermanager.h>
 #include <core/screentext.h>
 #include <movement/movement.h>
+#include <deque>
 
 constexpr auto MENU_SND_SELECT = "UIPanorama.submenu_select";
 constexpr auto MENU_SND_EXIT = "UIPanorama.submenu_slidein";
@@ -32,7 +33,7 @@ public:
 	static const size_t PAGE_SIZE = 6;
 
 public:
-	CBaseMenu(CBasePlayerController* pController, MenuHandler pFnHandler, std::string sTitle = "") : m_hController(pController->GetRefEHandle()), m_pFnMenuHandler(pFnHandler), m_sTitle(sTitle) {
+	CBaseMenu(CBasePlayerController* pController, MenuHandler pFnHandler, std::string sTitle = "") : m_hController(pController->GetRefEHandle()), m_pFnMenuHandler(pFnHandler), m_sTitle(sTitle), m_bExitBack(false) {
 		AllocatePage();
 	}
 
@@ -43,11 +44,17 @@ public:
 	}
 
 	virtual void Display(int iPageIndex = 0) = 0;
+	virtual void Enable() = 0;
+	virtual void Disable() = 0;
 	virtual bool Close() = 0;
 
 public:
 	void SetTitle(const std::string_view& sTitle) {
 		m_sTitle = sTitle;
+	}
+
+	void SetExitback(bool bExitback) {
+		m_bExitBack = bExitback;
 	}
 
 	void AddItem(std::string sItem, std::optional<std::any> data = std::nullopt);
@@ -79,6 +86,7 @@ public:
 	std::vector<std::vector<MenuItemType>> m_vPage;
 	MenuHandler m_pFnMenuHandler;
 	CHandle<CBasePlayerController> m_hController;
+	bool m_bExitBack;
 };
 
 class CScreenTextMenu : public CBaseMenu {
@@ -92,6 +100,8 @@ public:
 public:
 	virtual ~CScreenTextMenu() override;
 	virtual void Display(int iPageIndex = 0) override;
+	virtual void Enable() override;
+	virtual void Disable() override;
 	virtual bool Close() override;
 
 public:
@@ -103,27 +113,34 @@ private:
 	virtual void Reset() override {
 		CPlayer::Reset();
 
+		Cleanup();
 		ResetMenu(true);
 	}
 
 public:
 	using CPlayer::CPlayer;
 
+	void Cleanup();
 	void ResetMenu(bool bResetMode = false);
 	void SelectMenu();
 	void SwitchMode(bool bRedraw = false);
 	void DisplayPagePrev();
 	void DisplayPageNext();
-	void Refresh() const;
-	void CloseMenu();
+	void Refresh();
+	void Exit();
+	void CloseCurrentMenu();
+	void CloseAllMenu();
+
+	std::shared_ptr<CBaseMenu>& GetPreviousMenu();
+	std::shared_ptr<CBaseMenu>& GetCurrentMenu();
+	bool IsDisplaying();
 
 private:
 	friend class CScreenTextMenu;
 	void ClampItem();
 
 public:
-	// std::list<std::shared_ptr<CBaseMenu>> m_MenuList;
-	std::shared_ptr<CBaseMenu> m_pCurrentMenu;
+	std::deque<std::shared_ptr<CBaseMenu>> m_MenuQueue;
 	uint m_nCurrentPage;
 	uint m_nCurrentItem;
 	bool m_bWSADMenu;
@@ -154,5 +171,6 @@ namespace MENU {
 	extern CMenuManager* GetManager();
 
 	[[nodiscard]] std::weak_ptr<CBaseMenu> Create(CBasePlayerController* pController, MenuHandler pFnMenuHandler, EMenuType eMenuType = EMenuType::ScreenText);
-	bool Close(CBasePlayerController* pController);
+	bool CloseCurrent(CBasePlayerController* pController);
+	bool CloseAll(CBasePlayerController* pController);
 } // namespace MENU

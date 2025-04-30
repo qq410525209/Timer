@@ -105,5 +105,6 @@ namespace VGUI {
 	[[nodiscard]] std::weak_ptr<CScreenText> CreateScreenText(CBasePlayerController* pController, std::optional<ScreenTextManifest_t> manifest = std::nullopt);
 	void Render(const std::weak_ptr<CScreenText>& hText);
 	void Unrender(const std::weak_ptr<CScreenText>& hText);
+	void Dispose(const std::weak_ptr<CScreenText>& hText);
 	void Cleanup(CBasePlayerController* pController);
 } // namespace VGUI

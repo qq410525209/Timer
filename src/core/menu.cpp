@@ -34,8 +34,8 @@ void CScreenTextMenu::Display(int iPageIndex) {
 		return;
 	}
 
-	auto pMenu = m_wpScreenText.lock();
-	auto pController = pMenu->GetOriginalController();
+	auto pMenuText = m_wpScreenText.lock();
+	auto pController = pMenuText->GetOriginalController();
 	if (!pController) {
 		return;
 	}
@@ -44,6 +44,10 @@ void CScreenTextMenu::Display(int iPageIndex) {
 	if (!pMenuPlayer) {
 		SDK_ASSERT(false);
 		return;
+	}
+
+	for (const auto& pMenu : pMenuPlayer->m_MenuQueue) {
+		pMenu->Disable();
 	}
 
 	pMenuPlayer->m_nCurrentPage = iPageIndex;
@@ -82,17 +86,25 @@ void CScreenTextMenu::Display(int iPageIndex) {
 										formatItem(4, GetItem(iPageIndex, 4).first), 
 										formatItem(5, GetItem(iPageIndex, 5).first), 
 										!bWSAD ? fmt::format("{}\n"
-															"{}\n"
-															"{}",
-															formatItem(6, bDrawPreview ? "上一页" : ""), 
-															formatItem(7, bDrawNext ? "下一页" : ""),
-															formatItem(8, "退出"))
-											 : fmt::format("A/D: 翻页, W/S: 滚动\n"
-														   "E/F: 选择, Shift: 退出"));
+															 "{}\n"
+															 "{}",
+															 formatItem(6, bDrawPreview ? "上一页" : ""), 
+															 formatItem(7, bDrawNext ? "下一页" : ""),
+															 formatItem(8, "退出"))
+											   : fmt::format("A/D: 翻页, W/S: 滚动\n"
+														     "E/F: 选择, Shift: 退出"));
 	// clang-format on
 
-	pMenu->SetText(sMenuText.c_str());
+	pMenuText->SetText(sMenuText.c_str());
+	this->Enable();
+}
+
+void CScreenTextMenu::Enable() {
 	VGUI::Render(m_wpScreenText);
+}
+
+void CScreenTextMenu::Disable() {
+	VGUI::Unrender(m_wpScreenText);
 }
 
 bool CScreenTextMenu::Close() {
@@ -100,7 +112,7 @@ bool CScreenTextMenu::Close() {
 		return false;
 	}
 
-	VGUI::Unrender(m_wpScreenText);
+	VGUI::Dispose(m_wpScreenText);
 
 	return true;
 }
@@ -150,11 +162,11 @@ const CBaseMenu::MenuItemType& CBaseMenu::GetItem(int iItemIndex) const {
 	return GetItem(pMenuPlayer->m_nCurrentPage, iItemIndex);
 }
 
-void CMenuPlayer::ResetMenu(bool bResetMode) {
-	if (m_pCurrentMenu) {
-		m_pCurrentMenu.reset();
-	}
+void CMenuPlayer::Cleanup() {
+	m_MenuQueue.clear();
+}
 
+void CMenuPlayer::ResetMenu(bool bResetMode) {
 	m_nCurrentPage = 0;
 	m_nCurrentItem = 0;
 
@@ -175,7 +187,7 @@ void CMenuPlayer::SelectMenu() {
 		return;
 	}
 
-	const auto& pMenu = m_pCurrentMenu;
+	const auto& pMenu = GetCurrentMenu();
 	if (!pMenu) {
 		return;
 	}
@@ -213,7 +225,7 @@ void CMenuPlayer::SelectMenu() {
 			break;
 		}
 		case 8: {
-			this->CloseMenu();
+			this->Exit();
 			break;
 		}
 	}
@@ -222,34 +234,84 @@ void CMenuPlayer::SelectMenu() {
 void CMenuPlayer::SwitchMode(bool bRedraw) {
 	m_bWSADMenu = !m_bWSADMenu;
 
-	if (m_pCurrentMenu && bRedraw) {
-		m_pCurrentMenu->Display(m_nCurrentPage);
+	auto& pCurrentMenu = GetCurrentMenu();
+	if (pCurrentMenu && bRedraw) {
+		pCurrentMenu->Display(m_nCurrentPage);
 	}
 }
 
 void CMenuPlayer::DisplayPagePrev() {
 	int iPrevPageIndex = m_nCurrentPage - 1;
-	if (iPrevPageIndex >= 0 && iPrevPageIndex < m_pCurrentMenu->GetPageLength()) {
-		m_pCurrentMenu->Display(iPrevPageIndex);
+	auto& pCurrentMenu = GetCurrentMenu();
+	if (iPrevPageIndex >= 0 && iPrevPageIndex < pCurrentMenu->GetPageLength()) {
+		pCurrentMenu->Display(iPrevPageIndex);
 		UTIL::PlaySoundToClient(GetPlayerSlot(), MENU_SND_SELECT);
 	}
 }
 
 void CMenuPlayer::DisplayPageNext() {
 	int iNextPageIndex = m_nCurrentPage + 1;
-	if (iNextPageIndex >= 0 && iNextPageIndex < m_pCurrentMenu->GetPageLength()) {
-		m_pCurrentMenu->Display(iNextPageIndex);
+	auto& pCurrentMenu = GetCurrentMenu();
+	if (iNextPageIndex >= 0 && iNextPageIndex < pCurrentMenu->GetPageLength()) {
+		pCurrentMenu->Display(iNextPageIndex);
 		UTIL::PlaySoundToClient(GetPlayerSlot(), MENU_SND_SELECT);
 	}
 }
 
-void CMenuPlayer::Refresh() const {
-	m_pCurrentMenu->Display(m_nCurrentPage);
+void CMenuPlayer::Refresh() {
+	auto& pCurrentMenu = GetCurrentMenu();
+	pCurrentMenu->Display(m_nCurrentPage);
 }
 
-void CMenuPlayer::CloseMenu() {
+void CMenuPlayer::Exit() {
+	const auto& pCurrentMenu = GetCurrentMenu();
+	if (pCurrentMenu->m_bExitBack) {
+		pCurrentMenu->Disable();
+
+		const auto& pPrevMenu = GetPreviousMenu();
+		if (pPrevMenu) {
+			pPrevMenu->Enable();
+		}
+
+		CloseCurrentMenu();
+	} else {
+		CloseAllMenu();
+	}
+}
+
+void CMenuPlayer::CloseCurrentMenu() {
+	m_MenuQueue.pop_back();
 	ResetMenu();
 	UTIL::PlaySoundToClient(GetPlayerSlot(), MENU_SND_EXIT);
+}
+
+void CMenuPlayer::CloseAllMenu() {
+	Cleanup();
+	ResetMenu();
+	UTIL::PlaySoundToClient(GetPlayerSlot(), MENU_SND_EXIT);
+}
+
+std::shared_ptr<CBaseMenu>& CMenuPlayer::GetPreviousMenu() {
+	if (m_MenuQueue.size() < 2) {
+		static std::shared_ptr<CBaseMenu> s_nullMenu;
+		return s_nullMenu;
+	}
+
+	return m_MenuQueue.at(m_MenuQueue.size() - 2);
+}
+
+std::shared_ptr<CBaseMenu>& CMenuPlayer::GetCurrentMenu() {
+	if (m_MenuQueue.empty()) {
+		static std::shared_ptr<CBaseMenu> s_nullMenu;
+		return s_nullMenu;
+	}
+
+	return m_MenuQueue.back();
+}
+
+bool CMenuPlayer::IsDisplaying() {
+	const auto& menu = GetCurrentMenu();
+	return menu.get() != nullptr;
 }
 
 void CMenuPlayer::ClampItem() {
@@ -257,7 +319,7 @@ void CMenuPlayer::ClampItem() {
 		return;
 	}
 
-	uint nItemSize = (uint)m_pCurrentMenu->m_vPage[m_nCurrentPage].size();
+	uint nItemSize = (uint)GetCurrentMenu()->m_vPage[m_nCurrentPage].size();
 	if (m_nCurrentItem == UINT_MAX) {
 		m_nCurrentItem = nItemSize - 1;
 	} else if (m_nCurrentItem >= nItemSize) {
@@ -272,7 +334,7 @@ CCMD_CALLBACK(OnMenuItemSelect) {
 		return;
 	}
 
-	if (!pMenuPlayer->m_pCurrentMenu) {
+	if (!pMenuPlayer->IsDisplaying()) {
 		return;
 	}
 
@@ -292,7 +354,7 @@ CCMD_CALLBACK(OnNumberSelect) {
 		return;
 	}
 
-	if (!pMenuPlayer->m_pCurrentMenu) {
+	if (!pMenuPlayer->IsDisplaying()) {
 		return;
 	}
 
@@ -329,7 +391,7 @@ void CMenuManager::OnPlayerRunCmdPost(CCSPlayerPawn* pPawn, const CInButtonState
 		return;
 	}
 
-	if (!pMenuPlayer->m_pCurrentMenu || !pMenuPlayer->m_bWSADMenu) {
+	if (!pMenuPlayer->IsDisplaying() || !pMenuPlayer->m_bWSADMenu) {
 		return;
 	}
 
@@ -346,7 +408,7 @@ void CMenuManager::OnPlayerRunCmdPost(CCSPlayerPawn* pPawn, const CInButtonState
 	} else if (buttons.Pressed(IN_USE) || buttons.Pressed(IN_LOOK_AT_WEAPON)) {
 		pMenuPlayer->SelectMenu();
 	} else if (buttons.Pressed(IN_SPEED)) {
-		pMenuPlayer->CloseMenu();
+		pMenuPlayer->Exit();
 	}
 }
 
@@ -362,7 +424,7 @@ std::weak_ptr<CBaseMenu> MENU::Create(CBasePlayerController* pController, MenuHa
 			pMenuPlayer->ResetMenu();
 
 			auto pMenu = std::make_shared<CScreenTextMenu>(pController, pFnMenuHandler);
-			pMenuPlayer->m_pCurrentMenu = pMenu;
+			pMenuPlayer->m_MenuQueue.emplace_back(pMenu);
 			return pMenu;
 			break;
 		}
@@ -371,14 +433,25 @@ std::weak_ptr<CBaseMenu> MENU::Create(CBasePlayerController* pController, MenuHa
 	return {};
 }
 
-bool MENU::Close(CBasePlayerController* pController) {
+bool MENU::CloseCurrent(CBasePlayerController* pController) {
 	CMenuPlayer* pMenuPlayer = MENU::GetManager()->ToPlayer(pController);
 	if (!pMenuPlayer) {
 		SDK_ASSERT(false);
 		return false;
 	}
 
-	pMenuPlayer->ResetMenu();
+	pMenuPlayer->CloseCurrentMenu();
+	return true;
+}
+
+bool MENU::CloseAll(CBasePlayerController* pController) {
+	CMenuPlayer* pMenuPlayer = MENU::GetManager()->ToPlayer(pController);
+	if (!pMenuPlayer) {
+		SDK_ASSERT(false);
+		return false;
+	}
+
+	pMenuPlayer->CloseAllMenu();
 	return true;
 }
 
@@ -393,5 +466,5 @@ bool CMenuHandle::Close() {
 		return false;
 	}
 
-	return MENU::Close(pController);
+	return MENU::CloseCurrent(pController);
 }

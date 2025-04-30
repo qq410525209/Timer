@@ -72,7 +72,7 @@ void CScreenText::SetUnits(int unit) {
 }
 
 bool CScreenText::IsRendering() {
-	return m_hOwner.IsValid();
+	return m_hOwner.IsValid() && m_hScreenEnt->m_bEnabled();
 }
 
 void CScreenText::Display(CBasePlayerController* pController) {
@@ -182,6 +182,19 @@ void VGUI::Render(const std::weak_ptr<CScreenText>& hText) {
 }
 
 void VGUI::Unrender(const std::weak_ptr<CScreenText>& hText) {
+	auto pText = hText.lock();
+	if (!pText) {
+		return;
+	}
+
+	if (!pText->IsRendering()) {
+		return;
+	}
+
+	pText->Disable();
+}
+
+void VGUI::Dispose(const std::weak_ptr<CScreenText>& hText) {
 	auto pText = hText.lock();
 	if (!pText) {
 		return;

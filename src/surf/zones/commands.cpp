@@ -25,6 +25,7 @@ static void ZoneMenu_SelectType(CSurfPlayer* pPlayer) {
 	for (int i = ZoneType::Zone_Start; i < ZoneType::ZONETYPES_SIZE; i++) {
 		pMenu->AddItem(SURF::ZONE::GetZoneNameByType((ZoneType)i));
 	}
+	pMenu->SetExitback(true);
 	pMenu->Display();
 }
 
@@ -47,6 +48,7 @@ static void ZoneMenu_SelectTrack(CSurfPlayer* pPlayer) {
 	for (int i = ZoneTrack::Track_Main; i < ZoneTrack::TRACKS_SIZE; i++) {
 		pMenu->AddItem(SURF::ZONE::GetZoneNameByTrack((ZoneTrack)i));
 	}
+	pMenu->SetExitback(true);
 	pMenu->Display();
 }
 
@@ -108,6 +110,7 @@ static void ZoneMenu_Edit(CSurfPlayer* pPlayer, bool bDelete = false) {
 		pMenu->AddItem(sZone, handle);
 	}
 
+	pMenu->SetExitback(true);
 	pMenu->Display();
 }
 
