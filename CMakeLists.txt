@@ -11,7 +11,7 @@ include_directories(
 	${SURFTIMER_SRC}/sdk/protobuf
 	./vendor/libhv/include
 	./vendor/libmem/include
-	./vendor/libmodule
+	./vendor/libmodule/include
 	./vendor/nlohmann
 	./vendor/fmt/include
 	./vendor/polyhook/include
@@ -20,23 +20,17 @@ include_directories(
 if(WIN32)
 	file(GLOB SURFTIMER_LIBS 
 			"./vendor/libmem/lib/*.lib"
+			"./vendor/libmodule/lib/*.lib"
 			"./vendor/libhv/lib/*.lib"
 			"./vendor/polyhook/lib/*.lib"
 	)
 else()
 	file(GLOB SURFTIMER_LIBS 
 			"./vendor/libmem/lib/*.a"
+			"./vendor/libmodule/lib/*.a"
 			"./vendor/libhv/lib/*.a"
 			"./vendor/polyhook/lib/*.a"
 	)
-endif()
-
-set(LIBMODULE_DIR "./vendor/libmodule")
-file(GLOB_RECURSE LIBMODULE_SOURCES "${LIBMODULE_DIR}/module.cpp" "${LIBMODULE_DIR}/*.h")
-if(WIN32)
-	list(APPEND LIBMODULE_SOURCES "${LIBMODULE_DIR}/module_windows.cpp")
-else()
-	list(APPEND LIBMODULE_SOURCES "${LIBMODULE_DIR}/module_linux.cpp")
 endif()
 
 file(GLOB_RECURSE SDK_SOURCES 
@@ -51,7 +45,7 @@ file(GLOB_RECURSE SURFTIMER_SOURCES "${SURFTIMER_SRC}/*.cpp" "${SURFTIMER_SRC}/*
 
 add_definitions(-DHV_STATICLIB -DHAVE_MEMOVERRIDE_NEW_DELETE -DFMT_HEADER_ONLY)
 
-add_library(${PROJECT_NAME} SHARED ${LIBMODULE_SOURCES} ${SDK_SOURCES} ${PROTOBUF_SOURCES} ${SURFTIMER_SOURCES})
+add_library(${PROJECT_NAME} SHARED ${SDK_SOURCES} ${PROTOBUF_SOURCES} ${SURFTIMER_SOURCES})
 
 if(WIN32)
 	target_link_options(${PROJECT_NAME} PRIVATE "ntdll.lib")

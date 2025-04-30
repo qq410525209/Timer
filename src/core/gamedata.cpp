@@ -1,7 +1,7 @@
 #include "gamedata.h"
 #include <fstream>
 #include <libmem/libmem_helper.h>
-#include <memaddr.h>
+#include <libmodule/memaddr.h>
 #include <utils/utils.h>
 
 using namespace libmodule;

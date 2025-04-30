@@ -5,8 +5,8 @@
 #include <sdk/common.h>
 #include <sdk/datatypes.h>
 #include <libmem/libmem_helper.h>
+#include <libmodule/module.h>
 #include <polyhook2/Detour/NatDetour.hpp>
-#include <vendor/libmodule/module.h>
 #include <utils/vtablehelper.h>
 
 #include <list>
