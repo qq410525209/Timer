@@ -455,7 +455,7 @@ bool MENU::CloseAll(CBasePlayerController* pController) {
 	return true;
 }
 
-bool CMenuHandle::Close() {
+bool CMenuHandle::CloseAll() {
 	if (!IsValid()) {
 		return false;
 	}
@@ -466,5 +466,30 @@ bool CMenuHandle::Close() {
 		return false;
 	}
 
-	return MENU::CloseCurrent(pController);
+	return MENU::CloseAll(pController);
+}
+
+bool CMenuHandle::CloseCurrent() {
+	if (!IsValid()) {
+		return false;
+	}
+
+	auto pController = Data()->m_hController.Get();
+	if (!pController) {
+		SDK_ASSERT(false);
+		return false;
+	}
+
+	if (!MENU::CloseCurrent(pController)) {
+		return false;
+	}
+
+	CMenuPlayer* pMenuPlayer = MENU::GetManager()->ToPlayer(pController);
+	if (!pMenuPlayer) {
+		SDK_ASSERT(false);
+		return false;
+	}
+
+	pMenuPlayer->Refresh();
+	return true;
 }

@@ -18,7 +18,18 @@ class CMenuHandle : public CWeakHandle<class CBaseMenu> {
 public:
 	using CWeakHandle::CWeakHandle;
 
-	virtual bool Close() override;
+	// Close all menu by default
+	// Mostly we will close all menu
+	// And doesn't care about previous one
+	// Otherwise you should use CloseCurrent()
+	virtual bool Close() override {
+		return this->CloseAll();
+	}
+
+	virtual bool CloseAll();
+
+	// Close current menu and display previous
+	virtual bool CloseCurrent();
 };
 
 #define MENU_CALLBACK_ARGS   CMenuHandle &hMenu, CBasePlayerController *pController, uint iItem

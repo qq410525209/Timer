@@ -21,10 +21,7 @@ public:
 		return !this->m_wpData.expired();
 	}
 
-	virtual bool Close() {
-		COMPILE_TIME_ASSERT("Implement this!");
-		return false;
-	}
+	virtual bool Close() = 0;
 
 	T* Data() {
 		return m_wpData.lock().get();
