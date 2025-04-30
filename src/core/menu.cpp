@@ -199,6 +199,7 @@ void CMenuPlayer::SelectMenu() {
 	}
 
 	this->ClampItem();
+	CMenuHandle hMenu(pMenu);
 
 	switch (m_nCurrentItem) {
 		case 0:
@@ -209,8 +210,7 @@ void CMenuPlayer::SelectMenu() {
 		case 5: {
 			if (pMenu->m_pFnMenuHandler) {
 				int iItemIndex = (m_nCurrentPage * CBaseMenu::PAGE_SIZE) + m_nCurrentItem;
-				CMenuHandle hMenu(pMenu);
-				pMenu->m_pFnMenuHandler(hMenu, pController, iItemIndex);
+				pMenu->m_pFnMenuHandler(hMenu, EMenuAction::SelectItem, pController, iItemIndex);
 				UTIL::PlaySoundToClient(GetPlayerSlot(), MENU_SND_SELECT);
 			}
 
@@ -218,10 +218,12 @@ void CMenuPlayer::SelectMenu() {
 		}
 		case 6: {
 			this->DisplayPagePrev();
+			pMenu->m_pFnMenuHandler(hMenu, EMenuAction::SwitchPage, pController, -1);
 			break;
 		}
 		case 7: {
 			this->DisplayPageNext();
+			pMenu->m_pFnMenuHandler(hMenu, EMenuAction::SwitchPage, pController, -1);
 			break;
 		}
 		case 8: {
@@ -265,6 +267,7 @@ void CMenuPlayer::Refresh() {
 
 void CMenuPlayer::Exit() {
 	const auto& pCurrentMenu = GetCurrentMenu();
+	CMenuHandle hMenu(pCurrentMenu);
 	if (pCurrentMenu->m_bExitBack) {
 		pCurrentMenu->Disable();
 
@@ -273,19 +276,29 @@ void CMenuPlayer::Exit() {
 			pPrevMenu->Enable();
 		}
 
+		pCurrentMenu->m_pFnMenuHandler(hMenu, EMenuAction::Cancel, GetController(), -1);
 		CloseCurrentMenu();
 	} else {
+		pCurrentMenu->m_pFnMenuHandler(hMenu, EMenuAction::Exit, GetController(), -1);
 		CloseAllMenu();
 	}
 }
 
 void CMenuPlayer::CloseCurrentMenu() {
+	if (m_MenuQueue.empty()) {
+		return;
+	}
+
 	m_MenuQueue.pop_back();
 	ResetMenu();
 	UTIL::PlaySoundToClient(GetPlayerSlot(), MENU_SND_EXIT);
 }
 
 void CMenuPlayer::CloseAllMenu() {
+	if (m_MenuQueue.empty()) {
+		return;
+	}
+
 	Cleanup();
 	ResetMenu();
 	UTIL::PlaySoundToClient(GetPlayerSlot(), MENU_SND_EXIT);

@@ -11,7 +11,14 @@ constexpr auto MENU_SND_EXIT = "UIPanorama.submenu_slidein";
 
 enum class EMenuType {
 	Unknown = 0,
-	ScreenText = 1
+	ScreenText
+};
+
+enum class EMenuAction {
+	SelectItem = 0,
+	SwitchPage,
+	Cancel,
+	Exit
 };
 
 class CMenuHandle : public CWeakHandle<class CBaseMenu> {
@@ -32,7 +39,7 @@ public:
 	virtual bool CloseCurrent();
 };
 
-#define MENU_CALLBACK_ARGS   CMenuHandle &hMenu, CBasePlayerController *pController, uint iItem
+#define MENU_CALLBACK_ARGS   CMenuHandle &hMenu, EMenuAction action, CBasePlayerController *pController, uint iItem
 #define MENU_CALLBACK(fn)    static void fn(MENU_CALLBACK_ARGS)
 #define MENU_CALLBACK_L(...) [__VA_ARGS__](MENU_CALLBACK_ARGS) -> void
 using MenuHandler = std::function<void(MENU_CALLBACK_ARGS)>;

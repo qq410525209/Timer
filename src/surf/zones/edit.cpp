@@ -15,8 +15,6 @@ void ZoneEditProperty::Reset() {
 	m_iStep = EditStep_None;
 	m_bAwaitValueInput = false;
 	m_bAwaitVelocityInput = false;
-	m_iValueInput = -1;
-	m_iVelocityInput = -1;
 
 	ZoneData_t::Reset();
 
@@ -149,59 +147,55 @@ void ZoneEditProperty::EnsureSettings() {
 				return;
 			}
 
-			switch (iItem) {
-				case 0: {
-					pPlayer->m_pZoneService->Print("已确认!");
+			if (action == EMenuAction::SelectItem) {
+				switch (iItem) {
+					case 0: {
+						pPlayer->m_pZoneService->Print("已确认!");
 
-					if (this->m_iValueInput != -1) {
-						this->m_iValue = this->m_iValueInput;
+						SURF::ZonePlugin()->UpsertZone(*this);
+						this->Reset();
+						hMenu.Close();
+						break;
 					}
-
-					if (this->m_iVelocityInput != -1) {
-						this->m_iLimitSpeed = this->m_iVelocityInput;
+					case 1: {
+						pPlayer->m_pZoneService->Print("已取消.");
+						this->Reset();
+						hMenu.Close();
+						break;
 					}
-
-					SURF::ZonePlugin()->UpsertZone(*this);
-					this->Reset();
-					hMenu.Close();
-					break;
-				}
-				case 1: {
-					pPlayer->m_pZoneService->Print("已取消.");
-					this->Reset();
-					hMenu.Close();
-					break;
-				}
-				case 2: {
-					pPlayer->m_pZoneService->Print("在聊天中输入您需要的数据.");
-					this->m_bAwaitValueInput = true;
-					break;
-				}
-				case 3: {
-					pPlayer->Teleport(&this->m_vecDestination, this->m_angDestination.IsValid() ? &this->m_angDestination : nullptr, &SURF::ZERO_VEC);
-					pPlayer->m_pZoneService->Print("已传送.");
-					break;
-				}
-				case 4: {
-					if (!IsInsideBox(this->m_vecDestination)) {
-						pPlayer->m_pZoneService->Print("未处于区域内.");
-					} else {
-						pPlayer->GetOrigin(this->m_vecDestination);
-						pPlayer->GetAngles(this->m_angDestination);
-						pPlayer->m_pZoneService->Print("已设置传送点.");
+					case 2: {
+						pPlayer->m_pZoneService->Print("在聊天中输入您需要的数据.");
+						this->m_bAwaitValueInput = true;
+						break;
 					}
+					case 3: {
+						pPlayer->Teleport(&this->m_vecDestination, this->m_angDestination.IsValid() ? &this->m_angDestination : nullptr, &SURF::ZERO_VEC);
+						pPlayer->m_pZoneService->Print("已传送.");
+						break;
+					}
+					case 4: {
+						if (!IsInsideBox(this->m_vecDestination)) {
+							pPlayer->m_pZoneService->Print("未处于区域内.");
+						} else {
+							pPlayer->GetOrigin(this->m_vecDestination);
+							pPlayer->GetAngles(this->m_angDestination);
+							pPlayer->m_pZoneService->Print("已设置传送点.");
+						}
 
-					break;
+						break;
+					}
+					case 5: {
+						pPlayer->m_pZoneService->Print("功能没处理.");
+						break;
+					}
+					case 6: {
+						pPlayer->m_pZoneService->Print("在聊天中输入您需要的数据, {green}0{default}则表示无限速.");
+						this->m_bAwaitVelocityInput = true;
+						break;
+					}
 				}
-				case 5: {
-					pPlayer->m_pZoneService->Print("功能没处理.");
-					break;
-				}
-				case 6: {
-					pPlayer->m_pZoneService->Print("在聊天中输入您需要的数据, {lightgreen}0{default}则表示无限速.");
-					this->m_bAwaitVelocityInput = true;
-					break;
-				}
+			} else if (action == EMenuAction::Exit) {
+				this->Reset();
 			}
 		});
 

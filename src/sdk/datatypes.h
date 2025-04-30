@@ -13,6 +13,8 @@ class CTraceFilterPlayerMovementCS : public CTraceFilter {};
 template<typename T>
 class CWeakHandle {
 public:
+	CWeakHandle() = default;
+
 	CWeakHandle(const std::shared_ptr<T>& pData) : m_wpData(pData) {}
 
 	virtual ~CWeakHandle() {}

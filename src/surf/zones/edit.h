@@ -83,10 +83,7 @@ struct ZoneEditProperty : ZoneData_t {
 	std::vector<CHandle<CBeam>> m_vBeam;
 
 	bool m_bAwaitValueInput;
-	i32 m_iValueInput;
-
 	bool m_bAwaitVelocityInput;
-	i32 m_iVelocityInput;
 
 	static constexpr const int m_iZonePairs2D[][2] = {{0, 1}, {1, 2}, {2, 3}, {3, 0}};
 	static constexpr const int m_iZonePairs3D[][2] = {{0, 2}, {2, 6}, {6, 4}, {4, 0}, {0, 1}, {3, 1}, {3, 2}, {3, 7}, {5, 1}, {5, 4}, {6, 7}, {7, 5}};

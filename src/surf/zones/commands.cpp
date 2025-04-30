@@ -7,12 +7,14 @@
 static void ZoneMenu_SelectType(CSurfPlayer* pPlayer) {
 	auto wpMenu = MENU::Create(
 		pPlayer->GetController(), MENU_CALLBACK_L(pPlayer) {
-			auto& pZoneService = pPlayer->m_pZoneService;
-			pZoneService->m_ZoneEdit.m_iType = (ZoneType)iItem;
-			pZoneService->m_ZoneEdit.m_iValue = SURF::ZonePlugin()->GetZoneCount(pZoneService->m_ZoneEdit.m_iTrack, (ZoneType)iItem);
-			pZoneService->m_ZoneEdit.StartEditZone();
+			if (action == EMenuAction::SelectItem) {
+				auto& pZoneService = pPlayer->m_pZoneService;
+				pZoneService->m_ZoneEdit.m_iType = (ZoneType)iItem;
+				pZoneService->m_ZoneEdit.m_iValue = SURF::ZonePlugin()->GetZoneCount(pZoneService->m_ZoneEdit.m_iTrack, (ZoneType)iItem);
+				pZoneService->m_ZoneEdit.StartEditZone();
 
-			hMenu.Close();
+				hMenu.Close();
+			}
 		});
 
 	if (wpMenu.expired()) {
@@ -32,8 +34,10 @@ static void ZoneMenu_SelectType(CSurfPlayer* pPlayer) {
 static void ZoneMenu_SelectTrack(CSurfPlayer* pPlayer) {
 	auto wpMenu = MENU::Create(
 		pPlayer->GetController(), MENU_CALLBACK_L(pPlayer) {
-			pPlayer->m_pZoneService->m_ZoneEdit.m_iTrack = (ZoneTrack)iItem;
-			ZoneMenu_SelectType(pPlayer);
+			if (action == EMenuAction::SelectItem) {
+				pPlayer->m_pZoneService->m_ZoneEdit.m_iTrack = (ZoneTrack)iItem;
+				ZoneMenu_SelectType(pPlayer);
+			}
 		});
 
 	if (wpMenu.expired()) {
@@ -61,6 +65,10 @@ static void ZoneMenu_Edit(CSurfPlayer* pPlayer, bool bDelete = false) {
 
 	auto wpMenu = MENU::Create(
 		pPlayer->GetController(), MENU_CALLBACK_L(pPlayer, bDelete) {
+			if (action != EMenuAction::SelectItem) {
+				return;
+			}
+
 			auto& item = hMenu.Data()->GetItem(iItem);
 			if (!item.second.has_value()) {
 				pPlayer->PrintWarning("未知错误: %s", FILE_LINE_STRING);
@@ -131,22 +139,24 @@ CCMD_CALLBACK(Command_Zones) {
 
 	auto wpMenu = MENU::Create(
 		pController, MENU_CALLBACK_L(pPlayer) {
-			switch (iItem) {
-				case 0:
-					ZoneMenu_SelectTrack(pPlayer);
-					return;
-				case 1:
-					ZoneMenu_Edit(pPlayer);
-					break;
-				case 2:
-					ZoneMenu_Edit(pPlayer, true);
-					break;
-				case 3:
-					ZoneMenu_DeleteAll(pPlayer);
-					break;
-				case 4:
-					SURF::ZonePlugin()->RefreshZones();
-					break;
+			if (action == EMenuAction::SelectItem) {
+				switch (iItem) {
+					case 0:
+						ZoneMenu_SelectTrack(pPlayer);
+						return;
+					case 1:
+						ZoneMenu_Edit(pPlayer);
+						break;
+					case 2:
+						ZoneMenu_Edit(pPlayer, true);
+						break;
+					case 3:
+						ZoneMenu_DeleteAll(pPlayer);
+						break;
+					case 4:
+						SURF::ZonePlugin()->RefreshZones();
+						break;
+				}
 			}
 		});
 

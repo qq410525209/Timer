@@ -80,16 +80,16 @@ std::optional<ConCommandRef> CONCMD::Find(const char* name) {
 	return cmdRef;
 }
 
-static void ParseCommandArgs(const std::string& sRaw, std::vector<std::string>& vArgs) {
+static void ParseSayArgs(const std::string& sRaw, std::vector<std::string>& vArgs) {
 	std::string currentArg;
 	bool inQuotes = false;
 
 	size_t start = sRaw.find(' ');
-	if (start == std::string::npos) {
-		return;
+	if (start != std::string::npos) {
+		++start;
+	} else {
+		start = 0;
 	}
-
-	++start;
 
 	while (start < sRaw.size() && sRaw[start] == ' ') {
 		++start;
@@ -138,11 +138,9 @@ static void HandleSrvCommand(const CCommand& pCommand, const std::wstring& wComm
 	}
 }
 
-static bool HandleConCommand(CCSPlayerController* pController, const CCommand& pCommand, const std::wstring& wOriginalCommand, bool sayCommand, bool spaceFound) {
-	auto wFixedCommand = sayCommand ? L"sm_" + wOriginalCommand : wOriginalCommand;
-
-	auto bRegistedCmd = g_manager.m_umConCmds.contains(wFixedCommand);
-	auto bListenedCmd = g_manager.m_umConCmdListeners.contains(wFixedCommand);
+static bool HandleConCommand(CCSPlayerController* pController, const CCommand& pCommand, const std::wstring& wCommand, bool sayCommand, bool spaceFound) {
+	auto bRegistedCmd = g_manager.m_umConCmds.contains(wCommand);
+	auto bListenedCmd = g_manager.m_umConCmdListeners.contains(wCommand);
 	if (!bRegistedCmd && !bListenedCmd) {
 		return true;
 	}
@@ -152,10 +150,8 @@ static bool HandleConCommand(CCSPlayerController* pController, const CCommand& p
 	if (sayCommand) {
 		if (spaceFound) {
 			std::string sRawContent(pCommand.ArgS());
-			ParseCommandArgs(sRawContent, vArgs);
+			ParseSayArgs(sRawContent, vArgs);
 		}
-
-		FORWARD_PRE(CCoreForward, OnSayCommand, false, pController, vArgs);
 	} else {
 		for (int i = 1; i < pCommand.ArgC(); i++) {
 			vArgs.emplace_back(pCommand.Arg(i));
@@ -163,7 +159,7 @@ static bool HandleConCommand(CCSPlayerController* pController, const CCommand& p
 	}
 
 	if (bRegistedCmd) {
-		auto& vCmdInfo = g_manager.m_umConCmds.at(wFixedCommand);
+		auto& vCmdInfo = g_manager.m_umConCmds.at(wCommand);
 		for (const auto& info : vCmdInfo) {
 			if (info.adminFlags != AdminFlag::None) {
 				if (!ADMIN::CheckAccess(pController->m_steamID(), info.adminFlags)) {
@@ -172,14 +168,14 @@ static bool HandleConCommand(CCSPlayerController* pController, const CCommand& p
 				}
 			}
 
-			info.callback(pController, vArgs, wFixedCommand);
+			info.callback(pController, vArgs, wCommand);
 		}
 	}
 
 	if (bListenedCmd) {
-		auto& vListenCmds = g_manager.m_umConCmdListeners.at(wFixedCommand);
+		auto& vListenCmds = g_manager.m_umConCmdListeners.at(wCommand);
 		for (const auto& callback : vListenCmds) {
-			if (!callback(pController, vArgs, wFixedCommand)) {
+			if (!callback(pController, vArgs, wCommand)) {
 				return false;
 			}
 		}
@@ -237,6 +233,15 @@ bool CONCMD::CConCmdManager::OnDispatchConCommand(ICvar* pCvar, ConCommandRef cm
 			return true;
 		}
 
+		for (auto p = CCoreForward::m_pFirst; p; p = p->m_pNext) {
+			if (p->ProcessSayCommand(pController)) {
+				std::string sRawContent(args.ArgS());
+				std::vector<std::string> vArgs;
+				ParseSayArgs(sRawContent, vArgs);
+				FORWARD_PRE(CCoreForward, OnSayCommand, false, pController, vArgs);
+			}
+		}
+
 		auto wSayContent = UTIL::ToWideString(pszSayContent);
 		wchar_t commandSymbol = wSayContent[0];
 		if (commandSymbol != L'!' && commandSymbol != 65281 && commandSymbol != L'.' && commandSymbol != 12290 && commandSymbol != L'/') {
@@ -253,6 +258,8 @@ bool CONCMD::CConCmdManager::OnDispatchConCommand(ICvar* pCvar, ConCommandRef cm
 		if (bSpaceFound) {
 			wCommand.append(1, L'\0');
 		}
+
+		wCommand = L"sm_" + wCommand;
 
 		HandleConCommand(pController, args, wCommand, true, bSpaceFound);
 

@@ -73,6 +73,11 @@ public:
 		return true;
 	}
 
+	virtual bool ProcessSayCommand(CCSPlayerController* pController) {
+		return false;
+	}
+
+	// Only trigger on ProcessSayCommand return true
 	virtual bool OnSayCommand(CCSPlayerController* pController, const std::vector<std::string>& vArgs) {
 		return true;
 	}

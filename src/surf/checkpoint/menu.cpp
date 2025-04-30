@@ -9,33 +9,35 @@ void CSurfCheckpointService::OpenCheckpointsMenu() {
 
 	auto wpMenu = MENU::Create(
 		pController, MENU_CALLBACK_L(this) {
-			switch (iItem) {
-				case 0: {
-					this->SaveCheckpoint();
-					this->m_iCurrentCP = this->GetLatestCheckpoint();
-					break;
-				}
-				case 1: {
-					this->LoadCheckpoint(this->m_iCurrentCP);
-					break;
-				}
-				case 2: {
-					this->LoadPrev();
-					break;
-				}
-				case 3: {
-					this->LoadNext();
-					break;
-				}
-				case 4: {
-					this->DeleteCheckpoint(this->m_iCurrentCP);
-					this->m_iCurrentCP--;
-					this->ClampIndex(this->m_iCurrentCP);
-					break;
-				}
-				case 5: {
-					this->ResetCheckpoint();
-					break;
+			if (action == EMenuAction::SelectItem) {
+				switch (iItem) {
+					case 0: {
+						this->SaveCheckpoint();
+						this->m_iCurrentCP = this->GetLatestCheckpoint();
+						break;
+					}
+					case 1: {
+						this->LoadCheckpoint(this->m_iCurrentCP);
+						break;
+					}
+					case 2: {
+						this->LoadPrev();
+						break;
+					}
+					case 3: {
+						this->LoadNext();
+						break;
+					}
+					case 4: {
+						this->DeleteCheckpoint(this->m_iCurrentCP);
+						this->m_iCurrentCP--;
+						this->ClampIndex(this->m_iCurrentCP);
+						break;
+					}
+					case 5: {
+						this->ResetCheckpoint();
+						break;
+					}
 				}
 			}
 		});

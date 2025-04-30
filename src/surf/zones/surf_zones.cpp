@@ -23,6 +23,20 @@ void CSurfZonePlugin::OnPlayerRunCmdPost(CCSPlayerPawn* pawn, const CInButtonSta
 	pPlayer->m_pZoneService->EditZone(pawn, buttons);
 }
 
+bool CSurfZonePlugin::ProcessSayCommand(CCSPlayerController* pController) {
+	CSurfPlayer* pPlayer = SURF::GetPlayerManager()->ToPlayer(pController);
+	if (!pPlayer) {
+		return false;
+	}
+
+	auto& pZoneService = pPlayer->m_pZoneService;
+	if (pZoneService->m_ZoneEdit.m_bAwaitValueInput || pZoneService->m_ZoneEdit.m_bAwaitVelocityInput) {
+		return true;
+	}
+
+	return false;
+}
+
 bool CSurfZonePlugin::OnSayCommand(CCSPlayerController* pController, const std::vector<std::string>& vArgs) {
 	CSurfPlayer* pPlayer = SURF::GetPlayerManager()->ToPlayer(pController);
 	if (!pPlayer || vArgs.empty()) {
@@ -31,13 +45,13 @@ bool CSurfZonePlugin::OnSayCommand(CCSPlayerController* pController, const std::
 
 	auto& pZoneService = pPlayer->m_pZoneService;
 	if (pZoneService->m_ZoneEdit.m_bAwaitValueInput) {
-		pZoneService->m_ZoneEdit.m_iValueInput = std::stoi(vArgs.at(0));
+		pZoneService->m_ZoneEdit.m_iValue = std::stoi(vArgs.at(0));
 		pZoneService->m_ZoneEdit.EnsureSettings();
 
 		pZoneService->m_ZoneEdit.m_bAwaitValueInput = false;
 		return false;
 	} else if (pZoneService->m_ZoneEdit.m_bAwaitVelocityInput) {
-		pZoneService->m_ZoneEdit.m_iVelocityInput = std::stof(vArgs.at(0));
+		pZoneService->m_ZoneEdit.m_iLimitSpeed = std::stof(vArgs.at(0));
 		pZoneService->m_ZoneEdit.EnsureSettings();
 
 		pZoneService->m_ZoneEdit.m_bAwaitVelocityInput = false;
@@ -213,19 +227,21 @@ void CSurfZoneService::DeleteZone(const ZoneData_t& zone) {
 
 	auto wpMenu = MENU::Create(
 		pPlayer->GetController(), MENU_CALLBACK_L(pPlayer, zone) {
-			switch (iItem) {
-				case 0: {
-					pPlayer->m_pZoneService->Print("已确认!");
-					SURF::ZonePlugin()->DeleteZone(zone);
-					break;
+			if (action == EMenuAction::SelectItem) {
+				switch (iItem) {
+					case 0: {
+						pPlayer->m_pZoneService->Print("已确认!");
+						SURF::ZonePlugin()->DeleteZone(zone);
+						break;
+					}
+					case 1: {
+						pPlayer->m_pZoneService->Print("已取消.");
+						break;
+					}
 				}
-				case 1: {
-					pPlayer->m_pZoneService->Print("已取消.");
-					break;
-				}
-			}
 
-			hMenu.Close();
+				hMenu.Close();
+			}
 		});
 
 	if (wpMenu.expired()) {
@@ -251,19 +267,21 @@ void CSurfZoneService::DeleteAllZones() {
 
 	auto wpMenu = MENU::Create(
 		pPlayer->GetController(), MENU_CALLBACK_L(pPlayer) {
-			switch (iItem) {
-				case 0: {
-					pPlayer->m_pZoneService->Print("已确认!");
-					SURF::ZonePlugin()->DeleteAllZones();
-					break;
+			if (action == EMenuAction::SelectItem) {
+				switch (iItem) {
+					case 0: {
+						pPlayer->m_pZoneService->Print("已确认!");
+						SURF::ZonePlugin()->DeleteAllZones();
+						break;
+					}
+					case 1: {
+						pPlayer->m_pZoneService->Print("已取消.");
+						break;
+					}
 				}
-				case 1: {
-					pPlayer->m_pZoneService->Print("已取消.");
-					break;
-				}
-			}
 
-			hMenu.Close();
+				hMenu.Close();
+			}
 		});
 
 	if (wpMenu.expired()) {
