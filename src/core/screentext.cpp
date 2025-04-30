@@ -155,7 +155,7 @@ std::weak_ptr<CScreenText> VGUI::CreateScreenText(CBasePlayerController* pContro
 
 	auto pText = std::make_shared<CScreenText>(manifest.value());
 	pText->m_hOriginalController = pController->GetRefEHandle();
-	pTextController->m_vScreenTexts.emplace_back(pText);
+	pTextController->m_ScreenTextList.emplace_back(pText);
 	return pText;
 }
 
@@ -215,7 +215,7 @@ void VGUI::Dispose(const std::weak_ptr<CScreenText>& hText) {
 		return;
 	}
 
-	std::erase(pTextController->m_vScreenTexts, pText);
+	std::erase(pTextController->m_ScreenTextList, pText);
 }
 
 void VGUI::Cleanup(CBasePlayerController* pController) {
@@ -225,5 +225,5 @@ void VGUI::Cleanup(CBasePlayerController* pController) {
 		return;
 	}
 
-	pTextController->m_vScreenTexts.clear();
+	pTextController->m_ScreenTextList.clear();
 }

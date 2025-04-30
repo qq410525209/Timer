@@ -2,6 +2,7 @@
 
 #include <pch.h>
 #include <core/playermanager.h>
+#include <list>
 
 struct ScreenTextManifest_t {
 	Vector2D m_vecPos = {0.0f, 0.0f};
@@ -75,11 +76,11 @@ public:
 	virtual void Reset() override {
 		CPlayer::Reset();
 
-		m_vScreenTexts.clear();
+		m_ScreenTextList.clear();
 	}
 
 public:
-	std::vector<std::shared_ptr<CScreenText>> m_vScreenTexts;
+	std::list<std::shared_ptr<CScreenText>> m_ScreenTextList;
 };
 
 class CScreenTextControllerManager : CPlayerManager {
