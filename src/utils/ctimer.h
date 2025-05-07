@@ -4,11 +4,16 @@
 #include <tuple>
 
 #include <sdk/common.h>
-#include <utlvector.h>
+#include <sdk/datatypes.h>
 
 /*
  * Credit to cs2kz
  */
+
+struct TimerOption_t {
+	bool useRealTime = false;
+	bool preserveMapChange = false;
+};
 
 class CTimerBase {
 public:
@@ -39,6 +44,13 @@ public:
 	}
 };
 
+class CTimerHandle : public CWeakHandle<CTimerBase> {
+public:
+	using CWeakHandle::CWeakHandle;
+
+	virtual bool Close() override;
+};
+
 class IFrameAction {
 public:
 	virtual ~IFrameAction() {}
@@ -63,45 +75,33 @@ public:
 
 namespace UTIL {
 	namespace TIMER {
-		void AddTimer(CTimerBase* timer, bool preserveMapChange = true);
-		void RemoveTimer(CTimerBase* timer);
+		void AddTimer(const std::shared_ptr<CTimerBase>& pTimer, bool preserveMapChange = true);
+		void RemoveTimer(CTimerHandle& hTimer);
 		void AddFrameAction(std::unique_ptr<IFrameAction> action);
 	} // namespace TIMER
 
-	/* Creates a timer for the given function, the function must return a f64 that represents the interval in seconds; 0 or less to stop the timer */
+	// Creates a timer for the given function, the function must return a f64 that represents the interval in seconds; 0 or less to stop the timer
 	template<typename... Args>
-	CTimer<Args...>* StartTimer(typename CTimer<Args...>::Fn fn, f64 initialDelay, Args... args) {
-		auto timer = new CTimer<Args...>(false, initialDelay, fn, args...);
-		TIMER::AddTimer(timer);
-		return timer;
+	CTimerHandle StartTimer(f64 initialDelay, typename CTimer<Args...>::Fn fn, Args... args) {
+		TimerOption_t opt;
+		auto pTimer = std::make_shared<CTimer<std::decay_t<Args>...>>(opt.useRealTime, initialDelay, fn, args...);
+		TIMER::AddTimer(pTimer, opt.preserveMapChange);
+		return CTimerHandle(std::static_pointer_cast<CTimerBase>(pTimer));
 	}
 
-	/* The timer will be removed on map changed */
+	// See StartTimer.
+	// With options.
 	template<typename... Args>
-	CTimer<Args...>* StartTimer_NoMapChange(typename CTimer<Args...>::Fn fn, f64 initialDelay, Args... args) {
-		auto timer = new CTimer<Args...>(false, initialDelay, fn, args...);
-		TIMER::AddTimer(timer, false);
-		return timer;
+	CTimerHandle StartTimerEx(f64 initialDelay, TimerOption_t opt, typename CTimer<Args...>::Fn fn, Args... args) {
+		auto pTimer = std::make_shared<CTimer<std::decay_t<Args>...>>(opt.useRealTime, initialDelay, fn, args...);
+		TIMER::AddTimer(pTimer, opt.preserveMapChange);
+		return CTimerHandle(std::static_pointer_cast<CTimerBase>(pTimer));
 	}
 
-	template<typename... Args>
-	CTimer<Args...>* StartTimer_UseRealTime(typename CTimer<Args...>::Fn fn, f64 initialDelay, Args... args) {
-		auto timer = new CTimer<Args...>(true, initialDelay, fn, args...);
-		TIMER::AddTimer(timer);
-		return timer;
-	}
-
-	template<typename... Args>
-	CTimer<Args...>* StartTimer_UseRealTimeWithNoMapChange(typename CTimer<Args...>::Fn fn, f64 initialDelay, Args... args) {
-		auto timer = new CTimer<Args...>(true, initialDelay, fn, args...);
-		TIMER::AddTimer(timer, false);
-		return timer;
-	}
-
-	/* Request a frame action for the given function. */
+	// Request a frame action for the given function
 	template<typename... Args>
 	void RequestFrame(typename CFrameAction<Args...>::Fn fn, Args... args) {
-		auto pFrameAction = std::make_unique<CFrameAction<Args...>>(fn, args...);
+		auto pFrameAction = std::make_unique<CFrameAction<std::decay_t<Args>...>>(fn, args...);
 		TIMER::AddFrameAction(std::move(pFrameAction));
 	}
 } // namespace UTIL

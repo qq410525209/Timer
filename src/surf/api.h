@@ -2,6 +2,8 @@
 
 #include <surf/zones/surf_zones.h>
 
+constexpr auto SURF_TICKRATE = ENGINE_FIXED_TICK_RATE;
+
 constexpr auto SURF_WORKSHOP_ADDONS_ID = "3377250885";
 constexpr auto SURF_WORKSHOP_ADDONS_SNDEVENT_FILE = "soundevents/surf.vsndevts";
 

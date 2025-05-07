@@ -17,6 +17,10 @@ public:
 
 	CWeakHandle(const std::shared_ptr<T>& pData) : m_wpData(pData) {}
 
+	operator bool() const {
+		return IsValid();
+	}
+
 	virtual ~CWeakHandle() {}
 
 	virtual bool IsValid() const {
@@ -25,8 +29,12 @@ public:
 
 	virtual bool Close() = 0;
 
-	T* Data() {
-		return m_wpData.lock().get();
+	std::shared_ptr<T> Data() {
+		return m_wpData.lock();
+	}
+
+	T* Raw() {
+		return Data().get();
 	}
 
 protected:

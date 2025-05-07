@@ -3,8 +3,8 @@
 #include <queue>
 #include <core/forwards.h>
 
-CUtlVector<CTimerBase*> g_NonPersistentTimers;
-CUtlVector<CTimerBase*> g_PersistentTimers;
+std::list<std::shared_ptr<CTimerBase>> g_NonPersistentTimers;
+std::list<std::shared_ptr<CTimerBase>> g_PersistentTimers;
 
 std::mutex g_FrameMutex;
 std::queue<std::unique_ptr<IFrameAction>> g_FrameQueue;
@@ -23,51 +23,54 @@ static void ProcessFrameActions() {
 	}
 }
 
-static void ProcessTimerList(CUtlVector<CTimerBase*>& timers) {
-	for (int i = timers.Count() - 1; i >= 0; i--) {
-		auto timer = timers[i];
-		f64 currentTime = timer->useRealTime ? UTIL::GetGlobals()->realtime : UTIL::GetGlobals()->curtime;
-		if (timer->lastExecute == -1) {
-			timer->lastExecute = currentTime;
+static void ProcessTimerList(std::list<std::shared_ptr<CTimerBase>>& timers) {
+	for (auto it = timers.begin(); it != timers.end();) {
+		auto& pTimer = *it;
+		f64 currentTime = pTimer->useRealTime ? UTIL::GetGlobals()->realtime : UTIL::GetGlobals()->curtime;
+		if (pTimer->lastExecute == -1) {
+			pTimer->lastExecute = currentTime;
 		}
 
-		if (timer->lastExecute + timer->interval <= currentTime) {
-			if (!timer->Execute()) {
-				delete timer;
-				timers.Remove(i);
+		if (pTimer->lastExecute + pTimer->interval <= currentTime) {
+			if (!pTimer->Execute()) {
+				it = timers.erase(it);
+				continue;
 			} else {
-				timer->lastExecute = currentTime;
+				pTimer->lastExecute = currentTime;
 			}
 		}
+
+		++it;
 	}
 }
 
-void RemoveNonPersistentTimers() {
-	g_NonPersistentTimers.PurgeAndDeleteElements();
+static void RemoveNonPersistentTimers() {
+	g_NonPersistentTimers.clear();
 }
 
-void UTIL::TIMER::AddTimer(CTimerBase* timer, bool preserveMapChange) {
+void UTIL::TIMER::AddTimer(const std::shared_ptr<CTimerBase>& timer, bool preserveMapChange) {
 	if (preserveMapChange) {
-		g_PersistentTimers.AddToTail(timer);
+		g_PersistentTimers.emplace_back(timer);
 	} else {
-		g_NonPersistentTimers.AddToTail(timer);
+		g_NonPersistentTimers.emplace_back(timer);
 	}
 }
 
-void UTIL::TIMER::RemoveTimer(CTimerBase* timer) {
-	FOR_EACH_VEC(g_PersistentTimers, i) {
-		if (g_PersistentTimers.Element(i) == timer) {
-			g_PersistentTimers.Remove(i);
-			return;
-		}
+void UTIL::TIMER::RemoveTimer(CTimerHandle& hTimer) {
+	auto pTimer = hTimer.Data();
+	if (!pTimer) {
+		return;
 	}
 
-	FOR_EACH_VEC(g_NonPersistentTimers, i) {
-		if (g_NonPersistentTimers.Element(i) == timer) {
-			g_NonPersistentTimers.Remove(i);
-			return;
+	auto RemoveFromTimer = [pTimer](std::list<std::shared_ptr<CTimerBase>>& timers) {
+		auto it = std::find(timers.begin(), timers.end(), pTimer);
+		if (it != timers.end()) {
+			timers.erase(it);
 		}
-	}
+	};
+
+	RemoveFromTimer(g_PersistentTimers);
+	RemoveFromTimer(g_NonPersistentTimers);
 }
 
 void UTIL::TIMER::AddFrameAction(std::unique_ptr<IFrameAction> action) {
@@ -86,3 +89,13 @@ private:
 };
 
 CProcessTimer g_ProcessTimer;
+
+bool CTimerHandle::Close() {
+	if (!IsValid()) {
+		return false;
+	}
+
+	UTIL::TIMER::RemoveTimer(*this);
+
+	return true;
+}

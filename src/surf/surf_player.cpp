@@ -149,6 +149,14 @@ void CSurfPlayer::PrintWarning(const char* fmt, ...) const {
 	}
 }
 
+ZoneTrack CSurfPlayer::GetCurrentTrack() const {
+	return m_pTimerService->m_iCurrentTrack;
+}
+
+i32 CSurfPlayer::GetCurrentStage() const {
+	return m_pTimerService->m_iCurrentStage;
+}
+
 void CSurfPlayerService::PlayErrorSound() const {
 	UTIL::PlaySoundToClient(GetPlayer()->GetPlayerSlot(), SURF_SND_ERROR);
 }

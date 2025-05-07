@@ -1,6 +1,7 @@
 #include "surf_replay.h"
 #include <utils/print.h>
 #include <core/concmdmanager.h>
+#include <core/cvarmanager.h>
 #include <core/sdkhook.h>
 
 CSurfReplayPlugin g_SurfReplay;
@@ -9,14 +10,22 @@ CSurfReplayPlugin* SURF::ReplayPlugin() {
 	return &g_SurfReplay;
 }
 
-void CSurfReplayPlugin::OnPluginStart() {}
+#include <utils/ctimer.h>
+
+void CSurfReplayPlugin::OnPluginStart() {
+	m_cvarTrackPreRunTime = CVAR::Register("surf_replay_track_preruntime", 1.5f, "Time (in seconds) to record before a player leaves start zone.", 0.0f, 2.0f);
+	m_cvarTrackPostRunTime = CVAR::Register("surf_replay_track_postruntime", 2.0f, "Time (in seconds) to record after a player enters the end zone.", 0.0f, 2.0f);
+	m_cvarStagePreRunTime = CVAR::Register("surf_replay_stage_preruntime", 1.5f, "Time (in seconds) to record before a player leaves stage zone.", 0.0f, 2.0f);
+	m_cvarStagePostRunTime = CVAR::Register("surf_replay_stage_postruntime", 1.5f, "Time (in seconds) to record after a player finished a stage.", 0.0f, 2.0f);
+	m_cvarPreRunAlways = CVAR::Register("surf_replay_prerun_always", true, "Record prerun frames outside the start zone?");
+}
 
 void CSurfReplayPlugin::OnEntitySpawned(CEntityInstance* pEntity) {
 	const char* sClassname = pEntity->GetClassname();
 	if (V_strstr(sClassname, "trigger_") || V_strstr(sClassname, "_door")) {
-		SDKHOOK::HookEntity<SDKHookType::SDKHook_StartTouch>((CBaseEntity*)pEntity, SURF::REPLAY::HOOK::HookBotTrigger);
-		SDKHOOK::HookEntity<SDKHookType::SDKHook_EndTouch>((CBaseEntity*)pEntity, SURF::REPLAY::HOOK::HookBotTrigger);
-		SDKHOOK::HookEntity<SDKHookType::SDKHook_Touch>((CBaseEntity*)pEntity, SURF::REPLAY::HOOK::HookBotTrigger);
+		SDKHOOK::HookEntity<SDKHookType::SDKHook_StartTouch>((CBaseEntity*)pEntity, SURF::REPLAY::HOOK::OnBotTrigger);
+		SDKHOOK::HookEntity<SDKHookType::SDKHook_EndTouch>((CBaseEntity*)pEntity, SURF::REPLAY::HOOK::OnBotTrigger);
+		SDKHOOK::HookEntity<SDKHookType::SDKHook_Touch>((CBaseEntity*)pEntity, SURF::REPLAY::HOOK::OnBotTrigger);
 		// SDKHOOK::HookEntity<SDKHookType::SDKHook_Use>((CBaseEntity*)pEntity, SURF::REPLAY::HOOK::HookBotTrigger);
 	}
 }
@@ -52,6 +61,14 @@ bool CSurfReplayPlugin::OnEnterZone(const ZoneCache_t& zone, CSurfPlayer* pPlaye
 	return true;
 }
 
+bool CSurfReplayPlugin::OnStayZone(const ZoneCache_t& zone, CSurfPlayer* pPlayer) {
+	if (zone.m_iType == ZoneType::Zone_Start) {
+		pPlayer->m_pReplayService->m_bEnabled = true;
+	}
+
+	return true;
+}
+
 bool CSurfReplayPlugin::OnLeaveZone(const ZoneCache_t& zone, CSurfPlayer* pPlayer) {
 	if (zone.m_iType == ZoneType::Zone_Start) {
 		pPlayer->m_pReplayService->StartRecord();
@@ -62,5 +79,5 @@ bool CSurfReplayPlugin::OnLeaveZone(const ZoneCache_t& zone, CSurfPlayer* pPlaye
 
 void CSurfReplayService::OnReset() {
 	m_bEnabled = false;
-	m_vReplayFrames.clear();
+	m_vCurrentFrames.clear();
 }

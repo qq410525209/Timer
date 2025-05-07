@@ -2,21 +2,21 @@
 #include <utils/utils.h>
 
 void CSurfBotReplayService::OnInit() {
-	Reset();
+	Init();
 }
 
 void CSurfBotReplayService::OnReset() {
-	Reset();
+	Init();
 }
 
-void CSurfBotReplayService::Reset() {
+void CSurfBotReplayService::Init() {
 	m_iCurrentTick = 0;
-	m_iCurrentTrack = ZoneTrack::Track_Main;
-	m_iCurrentStage = 0;
+	m_iCurrentTrack = (ZoneTrack)-1;
+	m_iCurrentStage = -1;
 }
 
 void CSurfBotReplayService::DoPlayback(CCSPlayerPawn* pBotPawn, CInButtonState& buttons) {
-	auto& aFrames = SURF::ReplayPlugin()->m_aTrackReplays[m_iCurrentTrack];
+	auto& aFrames = SURF::ReplayPlugin()->m_aTrackReplays.at(m_iCurrentTrack);
 	auto iFrameSize = aFrames.size();
 	if (iFrameSize == 0) {
 		return;
@@ -30,20 +30,18 @@ void CSurfBotReplayService::DoPlayback(CCSPlayerPawn* pBotPawn, CInButtonState& 
 	MEM::CALL::SnapViewAngles(pBotPawn, frame.ang);
 
 	auto botFlags = pBotPawn->m_fFlags();
-	pBotPawn->m_fFlags(botFlags ^= frame.flags);
+	pBotPawn->m_fFlags(botFlags ^ frame.flags);
 
 	buttons = frame.buttons;
 	pBotPawn->SetMoveType(frame.mt);
 
-	const Vector& currentPos = pBotPawn->GetAbsOrigin();
-	if (m_iCurrentTick == 0 || currentPos.DistTo(frame.pos) > 15000.0) {
-		static Vector zeroVel {0.0f, 0.0f, 0.0f};
+	const Vector& vecCurrentPos = pBotPawn->GetAbsOrigin();
+	if (m_iCurrentTick == 0 || vecCurrentPos.DistTo(frame.pos) > 15000.0) {
 		pBotPawn->SetMoveType(MoveType_t::MOVETYPE_NOCLIP);
-		pBotPawn->Teleport(&frame.pos, nullptr, &zeroVel);
+		pBotPawn->Teleport(&frame.pos, nullptr, &SURF::ZERO_VEC);
 	} else {
-		constexpr auto replay_tickrate = ENGINE_FIXED_TICK_RATE;
-		Vector calculatedVelocity = (frame.pos - currentPos) * replay_tickrate;
-		pBotPawn->Teleport(nullptr, nullptr, &calculatedVelocity);
+		Vector vecCalculatedVelocity = (frame.pos - vecCurrentPos) * SURF_TICKRATE;
+		pBotPawn->Teleport(nullptr, nullptr, &vecCalculatedVelocity);
 	}
 
 	m_iCurrentTick++;

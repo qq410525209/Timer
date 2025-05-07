@@ -1,6 +1,7 @@
 #pragma once
 
 #include <movement/movement.h>
+#include "datatypes.h"
 
 class CSurfTimerService;
 class CSurfZoneService;
@@ -20,6 +21,9 @@ public:
 public:
 	void Print(const char* fmt, ...) const;
 	void PrintWarning(const char* fmt, ...) const;
+
+	ZoneTrack GetCurrentTrack() const;
+	i32 GetCurrentStage() const;
 
 public:
 	PlayerServicePtr<CSurfTimerService> m_pTimerService;

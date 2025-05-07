@@ -8,10 +8,25 @@ extern void ReplicateConVarValue(const char* name, const char* value, CPlayerSlo
 namespace CVAR {
 	// Must be on OnPluginStart
 	template<typename T>
-	ConVarRefAbstract* Register(const char* name, T defaultValue, const char* helpString = "", typename CConVar<T>::FnChangeCallback_t callback = 0) {
+	ConVarRefAbstract* Register(const char* name, T defaultValue, const char* helpString, typename CConVar<T>::FnChangeCallback_t callback = 0) {
 		CConVar<T>* pCvarCreated = new CConVar<T>(name, 0, helpString, defaultValue, callback);
 		return pCvarCreated;
 	}
+
+	template<typename T>
+	ConVarRefAbstract* Register(const char* name, T defaultValue, const char* helpString, T minValue, typename CConVar<T>::FnChangeCallback_t callback = 0) {
+		CConVar<T>* pCvarCreated = new CConVar<T>(name, 0, helpString, defaultValue, true, minValue, false, T {}, callback);
+		return pCvarCreated;
+	}
+
+	template<typename T>
+	ConVarRefAbstract* Register(const char* name, T defaultValue, const char* helpString, T minValue, T maxValue, typename CConVar<T>::FnChangeCallback_t callback = 0) {
+		CConVar<T>* pCvarCreated = new CConVar<T>(name, 0, helpString, defaultValue, true, minValue, true, maxValue, callback);
+		return pCvarCreated;
+	}
+
+	// TODO: only maxValue
+	// ConVarRefAbstract* Register()
 
 	std::optional<ConVarRefAbstract> Find(const char* name);
 

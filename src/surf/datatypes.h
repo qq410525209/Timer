@@ -5,14 +5,14 @@ namespace SURF {
 	inline const QAngle ZERO_ANG = {0.0f, 0.0f, 0.0f};
 } // namespace SURF
 
-enum ZoneTrack : u8 {
+enum ZoneTrack : i8 {
 	Track_Main,
 	Track_Bonus,
 	Track_MaxBonus = 16,
 	TRACKS_SIZE
 };
 
-enum ZoneType : u8 {
+enum ZoneType : i8 {
 	Zone_Start,
 	Zone_End,
 	Zone_Stage,
