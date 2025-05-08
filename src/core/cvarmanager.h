@@ -16,11 +16,7 @@ namespace CVAR {
 								typename CConVar<T>::FnChangeCallback_t callback = nullptr) {
 		auto hasValue = [](auto& v) -> bool {
 			using RawType = std::decay_t<decltype(v)>;
-			if constexpr (std::is_same_v<RawType, T>) {
-				return true;
-			} else {
-				return false;
-			}
+			return std::is_same_v<RawType, T>;
 		};
 
 		auto getValue = [](auto& v) -> T {
