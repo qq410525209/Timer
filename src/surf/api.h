@@ -23,6 +23,9 @@ constexpr auto SURF_SND_TIMER_RESERVED4 = "UI.DeathNotice";
 constexpr auto SURF_MAX_TRACK = ZoneTrack::TRACKS_SIZE;
 constexpr auto SURF_MAX_STAGE = 64; // surf_classics3 is crazy
 
+constexpr auto SURF_REPLAY_FORMAT = "{CS2SURF-CN-REPLAY}";
+constexpr auto SURF_REPLAY_VERSION = 0x01;
+
 class CSurfForward : public CBaseForward<CSurfForward> {
 public:
 	virtual bool OnTimerStart(CSurfPlayer* pPlayer) {

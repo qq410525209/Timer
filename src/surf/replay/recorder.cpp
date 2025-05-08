@@ -1,5 +1,6 @@
 #include <surf/replay/surf_replay.h>
 #include <surf/timer/surf_timer.h>
+#include <utils/utils.h>
 
 void CSurfReplayService::OnStart_Recording() {
 	auto pPlayer = GetPlayer();
@@ -35,8 +36,47 @@ void CSurfReplayService::OnStart_Recording() {
 	m_iTrackPrerunFrame = m_iCurrentFrame;
 }
 
+void CSurfReplayService::OnTimerFinishPost_SaveRecording() {
+	auto pPlayer = GetPlayer();
+	if (pPlayer->IsPracticeMode() || m_iCurrentFrame == 0) {
+		return;
+	}
+
+	m_iTrackFinishFrame = m_iCurrentFrame;
+
+	auto fTrackPostRunTime = SURF::ReplayPlugin()->m_cvarTrackPostRunTime->GetFloat();
+	if (fTrackPostRunTime > 0.0f) {
+		m_bGrabbingTrackPostFrame = true;
+
+		m_hPostFrameTimer.Close();
+		m_hPostFrameTimer = UTIL::CreateTimer(
+			fTrackPostRunTime,
+			[](CEntityHandle hController) {
+				auto pController = (CCSPlayerController*)hController.Get();
+				if (!pController || !pController->IsController()) {
+					return -1.0;
+				}
+
+				auto pPlayer = SURF::GetPlayerManager()->ToPlayer(pController);
+				if (!pPlayer) {
+					SDK_ASSERT(false);
+					return -1.0;
+				}
+
+				pPlayer->m_pReplayService->SaveRecord();
+
+				return -1.0;
+			},
+			pPlayer->GetController()->GetRefEHandle());
+	} else {
+		SaveRecord();
+	}
+}
+
 void CSurfReplayService::FinishGrabbingTrackPostFrames() {
 	m_bGrabbingTrackPostFrame = false;
+	m_hPostFrameTimer.Close();
+	SaveRecord();
 }
 
 void CSurfReplayService::StartRecord() {
@@ -44,7 +84,7 @@ void CSurfReplayService::StartRecord() {
 }
 
 void CSurfReplayService::DoRecord(CCSPlayerPawn* pawn, const CPlayerButton& buttons, const QAngle& viewAngles) {
-	ReplayFrame_t frame;
+	replay_frame_t frame;
 	frame.ang = viewAngles;
 	frame.pos = pawn->GetAbsOrigin();
 	frame.buttons = buttons;
@@ -55,16 +95,42 @@ void CSurfReplayService::DoRecord(CCSPlayerPawn* pawn, const CPlayerButton& butt
 }
 
 void CSurfReplayService::SaveRecord() {
+	auto pPlayer = GetPlayer();
 	auto pPlugin = SURF::ReplayPlugin();
-	auto& pTimerService = GetPlayer()->m_pTimerService;
-	pPlugin->m_aTrackReplays[pTimerService->m_iCurrentTrack] = m_vCurrentFrames;
+	bool bStageTimer = pPlayer->IsStageTimer();
+
+	replay_run_info_t info {};
+	info.timestamp = std::time(nullptr);
+	info.steamid = pPlayer->GetSteamId64();
+	info.time = pPlayer->GetCurrentTime();
+	info.style = pPlayer->GetStyle();
+	info.track = pPlayer->GetCurrentTrack();
+	info.stage = bStageTimer ? pPlayer->GetCurrentStage() : 0;
+	info.preframes = bStageTimer ? m_iStagePrerunFrame : m_iTrackPrerunFrame;
+
+	info.postframes = m_iCurrentFrame - bStageTimer ? m_iStageFinishFrame : m_iTrackFinishFrame;
+	info.framelength = m_iCurrentFrame - info.preframes;
+
+	ReplayArray_t arrFrames;
+	bool bStageReplay = info.stage == 0;
+	if (bStageReplay) {
+		// FIXME: stage preframes
+		arrFrames = UTIL::VECTOR::Slice(m_vCurrentFrames, 114514, m_iCurrentFrame);
+	} else {
+		arrFrames = m_vCurrentFrames;
+	}
+
+	pPlugin->AsyncWriteReplayFile(info, arrFrames);
+
+	ClearFrames();
 }
 
 void CSurfReplayService::ClearFrames() {
 	m_bEnabled = false;
 	m_vCurrentFrames.clear();
 	m_iCurrentFrame = 0;
-	m_iFinishFrame = 0;
 	m_iTrackPrerunFrame = 0;
 	m_iStagePrerunFrame = 0;
+	m_iTrackFinishFrame = 0;
+	m_iStageFinishFrame = 0;
 }

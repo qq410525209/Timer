@@ -27,6 +27,17 @@ namespace UTIL {
 		}
 	} // namespace PATH
 
+	namespace VECTOR {
+		template<typename T>
+		std::vector<T> Slice(const std::vector<T>& v, size_t start, size_t end) {
+			if (start >= end || start >= v.size()) {
+				return {};
+			}
+			end = std::min(end, v.size());
+			return std::vector<T>(v.begin() + start, v.begin() + end);
+		}
+	} // namespace VECTOR
+
 	namespace PB {
 		template<typename T>
 		bool ReadFromBuffer(bf_read& buffer, T& pb) {

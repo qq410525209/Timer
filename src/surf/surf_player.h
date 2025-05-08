@@ -11,6 +11,8 @@ class CSurfMiscService;
 class CSurfGlobalAPIService;
 class CSurfCheckpointService;
 
+#undef GetCurrentTime
+
 class CSurfPlayer : public CMovementPlayer {
 public:
 	using CMovementPlayer::CMovementPlayer;
@@ -22,8 +24,12 @@ public:
 	void Print(const char* fmt, ...) const;
 	void PrintWarning(const char* fmt, ...) const;
 
+	i8 GetStyle() const;
 	ZoneTrack GetCurrentTrack() const;
 	i32 GetCurrentStage() const;
+	f64 GetCurrentTime() const;
+	bool IsPracticeMode() const;
+	bool IsStageTimer() const;
 
 public:
 	PlayerServicePtr<CSurfTimerService> m_pTimerService;

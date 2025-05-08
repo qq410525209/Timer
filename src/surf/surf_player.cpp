@@ -149,12 +149,28 @@ void CSurfPlayer::PrintWarning(const char* fmt, ...) const {
 	}
 }
 
+i8 CSurfPlayer::GetStyle() const {
+	return m_pTimerService->m_iCurrentStyle;
+}
+
 ZoneTrack CSurfPlayer::GetCurrentTrack() const {
 	return m_pTimerService->m_iCurrentTrack;
 }
 
 i32 CSurfPlayer::GetCurrentStage() const {
 	return m_pTimerService->m_iCurrentStage;
+}
+
+f64 CSurfPlayer::GetCurrentTime() const {
+	return m_pTimerService->m_fCurrentTime;
+}
+
+bool CSurfPlayer::IsPracticeMode() const {
+	return m_pTimerService->m_bPracticeMode;
+}
+
+bool CSurfPlayer::IsStageTimer() const {
+	return m_pTimerService->m_bStageTimer;
 }
 
 void CSurfPlayerService::PlayErrorSound() const {

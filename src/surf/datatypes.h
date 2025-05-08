@@ -31,10 +31,12 @@ struct timer_snapshot_t {
 
 	f64 m_fCurrentTime {};
 	bool m_bTimerRunning {};
+	bool m_bStageTimer {};
 	bool m_bPracticeMode {};
 	bool m_bPaused {};
 
 	ZoneTrack m_iCurrentTrack = ZoneTrack::Track_Main;
+	i8 m_iCurrentStyle {};
 
 	i32 m_iCurrentStage {};
 	i32 m_iLastStage {};
@@ -83,7 +85,7 @@ struct hudsettings_t {
 	bool m_bHidePlayers = false;
 };
 
-struct ReplayFrame_t {
+struct replay_frame_t {
 	QAngle ang;
 	Vector pos;
 	CPlayerButton buttons;

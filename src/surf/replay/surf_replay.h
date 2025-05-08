@@ -3,6 +3,32 @@
 #include <pch.h>
 #include <surf/api.h>
 #include <surf/surf_bot.h>
+#include <utils/ctimer.h>
+
+using ReplayArray_t = std::vector<replay_frame_t>;
+
+struct replay_run_info_t {
+	std::time_t timestamp;
+	uint64 steamid;
+	f64 time;
+	i8 style;
+	ZoneTrack track;
+	i32 stage;
+	i32 preframes;
+	i32 framelength;
+	i32 postframes;
+};
+
+struct replay_file_header_t {
+	std::string format = SURF_REPLAY_FORMAT;
+	u8 version = SURF_REPLAY_VERSION;
+	std::string map;
+	f32 tickrate;
+	replay_run_info_t info;
+
+	void ReadFromStream(std::ifstream& in);
+	void WriteToStream(std::ofstream& out) const;
+};
 
 class CSurfReplayService : CSurfPlayerService {
 private:
@@ -12,6 +38,7 @@ public:
 	using CSurfPlayerService::CSurfPlayerService;
 
 	void OnStart_Recording();
+	void OnTimerFinishPost_SaveRecording();
 	void FinishGrabbingTrackPostFrames();
 
 	void StartRecord();
@@ -21,13 +48,16 @@ public:
 
 public:
 	bool m_bEnabled;
-	std::vector<ReplayFrame_t> m_vCurrentFrames;
+	ReplayArray_t m_vCurrentFrames;
 	i32 m_iCurrentFrame;
-	i32 m_iFinishFrame;
 	i32 m_iTrackPrerunFrame;
 	i32 m_iStagePrerunFrame;
+	i32 m_iTrackFinishFrame;
+	i32 m_iStageFinishFrame;
 	bool m_bGrabbingTrackPostFrame;
 	bool m_bGrabbingStagePostFrame;
+
+	CTimerHandle m_hPostFrameTimer;
 };
 
 class CSurfBotReplayService : CSurfBotService {
@@ -71,6 +101,11 @@ private:
 	virtual bool OnEnterZone(const ZoneCache_t& zone, CSurfPlayer* pPlayer) override;
 	virtual bool OnStayZone(const ZoneCache_t& zone, CSurfPlayer* pPlayer) override;
 	virtual bool OnLeaveZone(const ZoneCache_t& zone, CSurfPlayer* pPlayer) override;
+	virtual void OnTimerFinishPost(CSurfPlayer* pPlayer) override;
+
+public:
+	void AsyncWriteReplayFile(const replay_run_info_t& info, const ReplayArray_t& vFrames);
+	bool ReadReplayFile(const std::string_view path, ReplayArray_t& out);
 
 private:
 	void HookEvents();
@@ -82,8 +117,8 @@ public:
 	ConVarRefAbstract* m_cvarStagePostRunTime;
 	ConVarRefAbstract* m_cvarPreRunAlways;
 
-	std::array<std::vector<ReplayFrame_t>, SURF_MAX_TRACK> m_aTrackReplays;
-	std::array<std::vector<ReplayFrame_t>, SURF_MAX_STAGE> m_aStageReplays;
+	std::array<ReplayArray_t, SURF_MAX_TRACK> m_aTrackReplays;
+	std::array<ReplayArray_t, SURF_MAX_STAGE> m_aStageReplays;
 };
 
 namespace SURF {

@@ -94,6 +94,7 @@ CProcessTimer g_ProcessTimer;
 
 bool CTimerHandle::Close() {
 	if (!IsValid()) {
+		Reset();
 		return false;
 	}
 

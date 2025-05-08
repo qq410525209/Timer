@@ -77,6 +77,10 @@ bool CSurfReplayPlugin::OnLeaveZone(const ZoneCache_t& zone, CSurfPlayer* pPlaye
 	return true;
 }
 
+void CSurfReplayPlugin::OnTimerFinishPost(CSurfPlayer* pPlayer) {
+	pPlayer->m_pReplayService->OnTimerFinishPost_SaveRecording();
+}
+
 void CSurfReplayService::OnReset() {
 	m_bEnabled = false;
 	m_vCurrentFrames.clear();

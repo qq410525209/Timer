@@ -23,10 +23,6 @@ public:
 
 	virtual ~CWeakHandle() {}
 
-	virtual bool IsValid() const {
-		return !this->m_wpData.expired();
-	}
-
 	virtual bool Close() = 0;
 
 	std::shared_ptr<T> Data() {
@@ -37,7 +33,15 @@ public:
 		return Data().get();
 	}
 
-protected:
+	bool IsValid() const {
+		return !this->m_wpData.expired();
+	}
+
+	void Reset() {
+		this->m_wpData.reset();
+	}
+
+public:
 	std::weak_ptr<T> m_wpData;
 };
 

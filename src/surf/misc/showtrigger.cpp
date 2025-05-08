@@ -142,7 +142,7 @@ void CShowTrigger::OnPluginStart() {
 }
 
 void CShowTrigger::OnActivateServer(CNetworkGameServerBase* pGameServer) {
-	UTIL::StartTimer(1.0, []() {
+	UTIL::CreateTimer(1.0, []() {
 		IFACE::pEngine->ServerCommand("sv_debug_overlays_broadcast 1");
 		return -1.0;
 	});
