@@ -83,9 +83,8 @@ namespace UTIL {
 	// Creates a timer for the given function, the function must return a f64 that represents the interval in seconds; 0 or less to stop the timer
 	template<typename... Args>
 	CTimerHandle StartTimer(f64 initialDelay, typename CTimer<Args...>::Fn fn, Args... args) {
-		TimerOption_t opt;
-		auto pTimer = std::make_shared<CTimer<std::decay_t<Args>...>>(opt.useRealTime, initialDelay, fn, args...);
-		TIMER::AddTimer(pTimer, opt.preserveMapChange);
+		auto pTimer = std::make_shared<CTimer<std::decay_t<Args>...>>(false, initialDelay, fn, args...);
+		TIMER::AddTimer(pTimer, false);
 		return CTimerHandle(std::static_pointer_cast<CTimerBase>(pTimer));
 	}
 

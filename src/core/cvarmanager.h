@@ -6,27 +6,40 @@
 extern void ReplicateConVarValue(const char* name, const char* value, CPlayerSlot slot);
 
 namespace CVAR {
+	// clang-format off
+	
 	// Must be on OnPluginStart
-	template<typename T>
-	ConVarRefAbstract* Register(const char* name, T defaultValue, const char* helpString, typename CConVar<T>::FnChangeCallback_t callback = 0) {
-		CConVar<T>* pCvarCreated = new CConVar<T>(name, 0, helpString, defaultValue, callback);
+	template<typename T, typename TMin = std::optional<T>, typename TMax = std::optional<T>>
+	ConVarRefAbstract* Register(const char* name, T defaultValue, const char* helpString,
+								TMin minValue = std::nullopt,
+								TMax maxValue = std::nullopt,
+								typename CConVar<T>::FnChangeCallback_t callback = nullptr) {
+		auto hasValue = [](auto& v) -> bool {
+			using RawType = std::decay_t<decltype(v)>;
+			if constexpr (std::is_same_v<RawType, T>) {
+				return true;
+			} else {
+				return false;
+			}
+		};
+
+		auto getValue = [](auto& v) -> T {
+			using RawType = std::decay_t<decltype(v)>;
+			if constexpr (std::is_same_v<RawType, T>) {
+				return v;
+			} else {
+				return T{};
+			}
+		};
+
+		CConVar<T>* pCvarCreated = new CConVar<T>(name, 0, helpString, defaultValue, 
+			hasValue(minValue), getValue(minValue), 
+			hasValue(maxValue), getValue(maxValue), 
+			callback);
 		return pCvarCreated;
 	}
 
-	template<typename T>
-	ConVarRefAbstract* Register(const char* name, T defaultValue, const char* helpString, T minValue, typename CConVar<T>::FnChangeCallback_t callback = 0) {
-		CConVar<T>* pCvarCreated = new CConVar<T>(name, 0, helpString, defaultValue, true, minValue, false, T {}, callback);
-		return pCvarCreated;
-	}
-
-	template<typename T>
-	ConVarRefAbstract* Register(const char* name, T defaultValue, const char* helpString, T minValue, T maxValue, typename CConVar<T>::FnChangeCallback_t callback = 0) {
-		CConVar<T>* pCvarCreated = new CConVar<T>(name, 0, helpString, defaultValue, true, minValue, true, maxValue, callback);
-		return pCvarCreated;
-	}
-
-	// TODO: only maxValue
-	// ConVarRefAbstract* Register()
+	// clang-format on
 
 	std::optional<ConVarRefAbstract> Find(const char* name);
 

@@ -1,6 +1,8 @@
 #include "ctimer.h"
-#include <utils/utils.h>
 #include <queue>
+#include <list>
+
+#include <utils/utils.h>
 #include <core/forwards.h>
 
 std::list<std::shared_ptr<CTimerBase>> g_NonPersistentTimers;
