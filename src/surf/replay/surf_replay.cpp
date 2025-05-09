@@ -53,8 +53,7 @@ void CSurfReplayPlugin::OnPlayerRunCmdPost(CCSPlayerPawn* pPawn, const CInButton
 bool CSurfReplayPlugin::OnEnterZone(const ZoneCache_t& zone, CSurfPlayer* pPlayer) {
 	if (zone.m_iType == EZoneType::Zone_Start) {
 		pPlayer->m_pReplayService->OnEnterStart_Recording();
-	}
-	else if (zone.m_iType == EZoneType::Zone_End) {
+	} else if (zone.m_iType == EZoneType::Zone_End) {
 		pPlayer->m_pReplayService->SaveRecord();
 	}
 

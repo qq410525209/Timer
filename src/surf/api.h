@@ -78,4 +78,4 @@ namespace SURF {
 	std::string GetStyleName(TimerStyle_t style);
 	std::string GetStyleShortName(TimerStyle_t style);
 	std::string GetTrackName(TimerTrack_t track);
-}
+} // namespace SURF

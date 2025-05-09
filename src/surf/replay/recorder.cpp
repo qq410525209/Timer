@@ -23,7 +23,7 @@ void CSurfReplayService::OnStart_Recording() {
 		if (iFrameDifference > 100) {
 			// need figure out why diff > 100
 			SDK_ASSERT(false);
-			
+
 			/*for (size_t i = iFrameDifference; i < m_iCurrentFrame; i++) {
 				size_t iSwapFrame = i - iFrameDifference;
 				std::swap(m_vCurrentFrames.at(i), m_vCurrentFrames.at(iSwapFrame));
