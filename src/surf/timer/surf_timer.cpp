@@ -201,7 +201,7 @@ void CSurfTimerService::PlayStartTimerSound() {
 	UTIL::PlaySoundToClient(GetPlayer()->GetPlayerSlot(), SURF_SND_TIMER_START, 3.0f);
 }
 
-void CSurfTimerService::PlayFinishTimerSound(TimerTrack iTrack) {
+void CSurfTimerService::PlayFinishTimerSound(TimerTrack_t iTrack) {
 	switch (iTrack) {
 		case EZoneTrack::Track_Main: {
 			UTIL::PlaySoundToClient(GetPlayer()->GetPlayerSlot(), SURF_SND_TIMER_FINISH_MAIN);

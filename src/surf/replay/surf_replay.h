@@ -11,9 +11,9 @@ struct replay_run_info_t {
 	std::time_t timestamp;
 	uint64 steamid;
 	f64 time;
-	i8 style;
-	TimerTrack track;
-	i8 stage;
+	TimerStyle_t style;
+	TimerTrack_t track;
+	TimerStage_t stage;
 	size_t framelength;
 	// ReplayArray_t frames; // Not POD, write it on where else
 };
@@ -92,8 +92,8 @@ public:
 public:
 	bool m_bReplayBot;
 	i32 m_iCurrentTick;
-	TimerStage m_iCurrentStage;
-	TimerTrack m_iCurrentTrack;
+	TimerStage_t m_iCurrentStage;
+	TimerTrack_t m_iCurrentTrack;
 };
 
 class CSurfReplayPlugin : CSurfForward, CMovementForward, CCoreForward {
@@ -110,7 +110,7 @@ private:
 	virtual void OnTimerFinishPost(CSurfPlayer* pPlayer) override;
 
 public:
-	std::string BuildReplayPath(const i8 style, const TimerTrack track, const i8 stage, const std::string_view map);
+	std::string BuildReplayPath(const i8 style, const TimerTrack_t track, const i8 stage, const std::string_view map);
 	void AsyncWriteReplayFile(const replay_run_info_t& info, const ReplayArray_t& vFrames);
 	bool ReadReplayFile(const std::string_view path, ReplayArray_t& out);
 

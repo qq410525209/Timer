@@ -70,7 +70,7 @@ std::optional<ZoneCache_t> CSurfZonePlugin::FindZone(CBaseEntity* pEnt) {
 	return std::nullopt;
 }
 
-std::optional<std::pair<CZoneHandle, ZoneCache_t>> CSurfZonePlugin::FindZone(TimerTrack track, EZoneType type, i32 value) {
+std::optional<std::pair<CZoneHandle, ZoneCache_t>> CSurfZonePlugin::FindZone(TimerTrack_t track, EZoneType type, i32 value) {
 	for (const auto& pair : m_hZones) {
 		const auto& cache = pair.second;
 		if (cache.m_iTrack == track && cache.m_iType == type && cache.m_iValue == value) {
@@ -81,7 +81,7 @@ std::optional<std::pair<CZoneHandle, ZoneCache_t>> CSurfZonePlugin::FindZone(Tim
 	return std::nullopt;
 }
 
-int CSurfZonePlugin::GetZoneCount(TimerTrack track, EZoneType type) {
+int CSurfZonePlugin::GetZoneCount(TimerTrack_t track, EZoneType type) {
 	int count = 0;
 	for (const auto& pair : m_hZones) {
 		const auto& cache = pair.second;
@@ -93,7 +93,7 @@ int CSurfZonePlugin::GetZoneCount(TimerTrack track, EZoneType type) {
 	return count;
 }
 
-std::vector<ZoneCache_t> CSurfZonePlugin::GetZones(TimerTrack track, EZoneType type) {
+std::vector<ZoneCache_t> CSurfZonePlugin::GetZones(TimerTrack_t track, EZoneType type) {
 	std::vector<ZoneCache_t> vZones;
 	for (const auto& pair : m_hZones) {
 		const auto& cache = pair.second;
@@ -298,7 +298,7 @@ void CSurfZoneService::DeleteAllZones() {
 	pMenu->Display();
 }
 
-bool CSurfZoneService::TeleportToZone(TimerTrack track, EZoneType type) {
+bool CSurfZoneService::TeleportToZone(TimerTrack_t track, EZoneType type) {
 	const auto vZones = SURF::ZonePlugin()->GetZones(track, type);
 	if (vZones.empty()) {
 		return false;

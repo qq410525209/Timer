@@ -28,13 +28,13 @@ public:
 	void FromSnapshot(const timer_snapshot_t& snapshot);
 
 	void PlayStartTimerSound();
-	void PlayFinishTimerSound(TimerTrack iTrack);
+	void PlayFinishTimerSound(TimerTrack_t iTrack);
 
 public:
-	f64 m_fLastEndTime {};
-	f64 m_fLastFalseEndTime {};
-	f64 m_fLastStartSoundTime {};
-	f64 m_fLastMissedTimeSoundTime {};
+	TimerTime_t m_fLastEndTime {};
+	TimerTime_t m_fLastFalseEndTime {};
+	TimerTime_t m_fLastStartSoundTime {};
+	TimerTime_t m_fLastMissedTimeSoundTime {};
 	bool m_bValidTime {};
 
 	timer_pausemovement_t m_Pause;
@@ -43,8 +43,8 @@ public:
 namespace SURF {
 	extern CSurfTimerPlugin* TimerPlugin();
 
-	void FormatTime(f64 time, char* output, u32 length, bool precise = true);
-	CUtlString FormatTime(f64 time, bool precise = true);
-	void FormatDiffTime(f64 time, char* output, u32 length, bool precise = true);
-	CUtlString FormatDiffTime(f64 time, bool precise = true);
+	void FormatTime(TimerTime_t time, char* output, u32 length, bool precise = true);
+	CUtlString FormatTime(TimerTime_t time, bool precise = true);
+	void FormatDiffTime(TimerTime_t time, char* output, u32 length, bool precise = true);
+	CUtlString FormatDiffTime(TimerTime_t time, bool precise = true);
 } // namespace SURF

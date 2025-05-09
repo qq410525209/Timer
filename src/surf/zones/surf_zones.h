@@ -37,7 +37,7 @@ public:
 	void ReEditZone(const ZoneData_t& zone);
 	void DeleteZone(const ZoneData_t& zone);
 	void DeleteAllZones();
-	bool TeleportToZone(TimerTrack track, EZoneType type);
+	bool TeleportToZone(TimerTrack_t track, EZoneType type);
 
 private:
 	void ResetCustomDestination();
@@ -56,9 +56,9 @@ private:
 
 public:
 	std::optional<ZoneCache_t> FindZone(CBaseEntity* pEnt);
-	std::optional<std::pair<CZoneHandle, ZoneCache_t>> FindZone(TimerTrack track, EZoneType type, i32 value);
-	int GetZoneCount(TimerTrack track, EZoneType type);
-	std::vector<ZoneCache_t> GetZones(TimerTrack track, EZoneType type);
+	std::optional<std::pair<CZoneHandle, ZoneCache_t>> FindZone(TimerTrack_t track, EZoneType type, i32 value);
+	int GetZoneCount(TimerTrack_t track, EZoneType type);
+	std::vector<ZoneCache_t> GetZones(TimerTrack_t track, EZoneType type);
 	void ClearZones();
 	void RefreshZones();
 	void UpsertZone(const ZoneData_t& data, bool bUpload = true);

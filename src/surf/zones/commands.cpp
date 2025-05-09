@@ -36,7 +36,7 @@ static void ZoneMenu_SelectTrack(CSurfPlayer* pPlayer) {
 	auto wpMenu = MENU::Create(
 		pPlayer->GetController(), MENU_CALLBACK_L(pPlayer) {
 			if (action == EMenuAction::SelectItem) {
-				pPlayer->m_pZoneService->m_ZoneEdit.m_iTrack = iItem;
+				pPlayer->m_pZoneService->m_ZoneEdit.m_iTrack = (EZoneTrack)iItem;
 				ZoneMenu_SelectType(pPlayer);
 			}
 		});
@@ -50,7 +50,7 @@ static void ZoneMenu_SelectTrack(CSurfPlayer* pPlayer) {
 
 	auto pMenu = wpMenu.lock();
 	pMenu->SetTitle("选择赛道");
-	for (TimerTrack i = EZoneTrack::Track_Main; i < EZoneTrack::TRACKS_SIZE; i++) {
+	for (TimerTrack_t i = EZoneTrack::Track_Main; i < EZoneTrack::TRACKS_SIZE; i++) {
 		pMenu->AddItem(SURF::GetTrackName(i));
 	}
 	pMenu->SetExitback(true);

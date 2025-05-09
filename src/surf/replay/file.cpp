@@ -35,7 +35,7 @@ void replay_file_header_t::WriteToStream(std::ofstream& out) const {
 	out.write(reinterpret_cast<const char*>(&info), sizeof(info));
 }
 
-std::string CSurfReplayPlugin::BuildReplayPath(const i8 style, const TimerTrack track, const i8 stage, const std::string_view map) {
+std::string CSurfReplayPlugin::BuildReplayPath(const i8 style, const TimerTrack_t track, const i8 stage, const std::string_view map) {
 	std::string sDirPath = UTIL::PATH::Join(UTIL::GetWorkingDirectory(), "replay", map);
 	try {
 		if (!std::filesystem::exists(sDirPath)) {
@@ -46,7 +46,7 @@ std::string CSurfReplayPlugin::BuildReplayPath(const i8 style, const TimerTrack 
 		return "";
 	}
 
-	auto getTrackFileName = [](const TimerTrack track) -> std::string {
+	auto getTrackFileName = [](const TimerTrack_t track) -> std::string {
 		switch (track) {
 			case EZoneTrack::Track_Main:
 				return "Main";

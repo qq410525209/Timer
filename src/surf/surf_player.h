@@ -24,10 +24,10 @@ public:
 	void Print(const char* fmt, ...) const;
 	void PrintWarning(const char* fmt, ...) const;
 
-	i8 GetStyle() const;
-	TimerTrack GetCurrentTrack() const;
-	i32 GetCurrentStage() const;
-	f64 GetCurrentTime() const;
+	TimerStyle_t GetStyle() const;
+	TimerTrack_t GetCurrentTrack() const;
+	TimerStage_t GetCurrentStage() const;
+	TimerTime_t GetCurrentTime() const;
 	bool IsPracticeMode() const;
 	bool IsStageTimer() const;
 

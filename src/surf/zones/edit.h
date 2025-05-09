@@ -22,7 +22,7 @@ struct ZoneData_t {
 	ZoneData_t& operator=(const ZoneData_t& other) = default;
 
 	void Reset() {
-		m_iTrack = -1;
+		m_iTrack = (EZoneTrack)-1;
 		m_iType = (EZoneType)-1;
 		m_iValue = -1;
 		m_iDatabaseID = -1;
@@ -46,7 +46,7 @@ struct ZoneData_t {
 
 	void EnsureDestination();
 
-	TimerTrack m_iTrack;
+	EZoneTrack m_iTrack;
 	EZoneType m_iType;
 	i32 m_iValue;
 	i32 m_iDatabaseID;

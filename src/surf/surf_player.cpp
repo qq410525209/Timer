@@ -149,19 +149,19 @@ void CSurfPlayer::PrintWarning(const char* fmt, ...) const {
 	}
 }
 
-i8 CSurfPlayer::GetStyle() const {
+TimerStyle_t CSurfPlayer::GetStyle() const {
 	return m_pTimerService->m_iCurrentStyle;
 }
 
-TimerTrack CSurfPlayer::GetCurrentTrack() const {
+TimerTrack_t CSurfPlayer::GetCurrentTrack() const {
 	return m_pTimerService->m_iCurrentTrack;
 }
 
-i32 CSurfPlayer::GetCurrentStage() const {
+TimerStage_t CSurfPlayer::GetCurrentStage() const {
 	return m_pTimerService->m_iCurrentStage;
 }
 
-f64 CSurfPlayer::GetCurrentTime() const {
+TimerTime_t CSurfPlayer::GetCurrentTime() const {
 	return m_pTimerService->m_fCurrentTime;
 }
 

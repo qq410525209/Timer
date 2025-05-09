@@ -1,6 +1,6 @@
 #include <surf/timer/surf_timer.h>
 
-void SURF::FormatTime(f64 time, char* output, u32 length, bool precise) {
+void SURF::FormatTime(TimerTime_t time, char* output, u32 length, bool precise) {
 	int roundedTime = RoundFloatToInt(time * 1000); // Time rounded to number of ms
 
 	int milliseconds = roundedTime % 1000;
@@ -26,13 +26,13 @@ void SURF::FormatTime(f64 time, char* output, u32 length, bool precise) {
 	}
 }
 
-CUtlString SURF::FormatTime(f64 time, bool precise) {
+CUtlString SURF::FormatTime(TimerTime_t time, bool precise) {
 	char temp[32];
 	FormatTime(time, temp, sizeof(temp), precise);
 	return CUtlString(temp);
 }
 
-void SURF::FormatDiffTime(f64 time, char* output, u32 length, bool precise) {
+void SURF::FormatDiffTime(TimerTime_t time, char* output, u32 length, bool precise) {
 	char temp[32];
 	if (time > 0) {
 		FormatTime(time, temp, sizeof(temp), precise);
@@ -43,7 +43,7 @@ void SURF::FormatDiffTime(f64 time, char* output, u32 length, bool precise) {
 	}
 }
 
-CUtlString SURF::FormatDiffTime(f64 time, bool precise) {
+CUtlString SURF::FormatDiffTime(TimerTime_t time, bool precise) {
 	char temp[32];
 	FormatDiffTime(time, temp, sizeof(temp), precise);
 	return CUtlString(temp);

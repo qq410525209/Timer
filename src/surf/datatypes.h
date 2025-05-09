@@ -5,11 +5,12 @@ namespace SURF {
 	inline const QAngle ZERO_ANG = {0.0f, 0.0f, 0.0f};
 } // namespace SURF
 
-using TimerStyle = i8;
-using TimerTrack = i8;
-using TimerStage = i8;
+using TimerStyle_t = i8;
+using TimerTrack_t = i8;
+using TimerStage_t = i8;
+using TimerTime_t = f64;
 
-enum EZoneTrack : TimerTrack {
+enum EZoneTrack : TimerTrack_t {
 	Track_Main,
 	Track_Bonus,
 	Track_MaxBonus = 16,
@@ -33,17 +34,17 @@ struct timer_snapshot_t {
 
 	timer_snapshot_t& operator=(const timer_snapshot_t& other) = default;
 
-	f64 m_fCurrentTime {};
+	TimerTime_t m_fCurrentTime {};
 	bool m_bTimerRunning {};
 	bool m_bStageTimer {};
 	bool m_bPracticeMode {};
 	bool m_bPaused {};
 
-	TimerTrack m_iCurrentTrack = EZoneTrack::Track_Main;
-	TimerStyle m_iCurrentStyle {};
+	TimerTrack_t m_iCurrentTrack = EZoneTrack::Track_Main;
+	TimerStyle_t m_iCurrentStyle {};
 
-	TimerStage m_iCurrentStage {};
-	TimerStage m_iLastStage {};
+	TimerStage_t m_iCurrentStage {};
+	TimerStage_t m_iLastStage {};
 };
 
 struct timer_pausemovement_t {
