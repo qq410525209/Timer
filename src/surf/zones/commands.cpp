@@ -1,4 +1,5 @@
 #include "surf_zones.h"
+#include <surf/api.h>
 #include <core/concmdmanager.h>
 #include <core/menu.h>
 #include <utils/utils.h>
@@ -9,8 +10,8 @@ static void ZoneMenu_SelectType(CSurfPlayer* pPlayer) {
 		pPlayer->GetController(), MENU_CALLBACK_L(pPlayer) {
 			if (action == EMenuAction::SelectItem) {
 				auto& pZoneService = pPlayer->m_pZoneService;
-				pZoneService->m_ZoneEdit.m_iType = (ZoneType)iItem;
-				pZoneService->m_ZoneEdit.m_iValue = SURF::ZonePlugin()->GetZoneCount(pZoneService->m_ZoneEdit.m_iTrack, (ZoneType)iItem);
+				pZoneService->m_ZoneEdit.m_iType = (EZoneType)iItem;
+				pZoneService->m_ZoneEdit.m_iValue = SURF::ZonePlugin()->GetZoneCount(pZoneService->m_ZoneEdit.m_iTrack, (EZoneType)iItem);
 				pZoneService->m_ZoneEdit.StartEditZone();
 
 				hMenu.Close();
@@ -24,8 +25,8 @@ static void ZoneMenu_SelectType(CSurfPlayer* pPlayer) {
 
 	auto pMenu = wpMenu.lock();
 	pMenu->SetTitle("选择类型");
-	for (int i = ZoneType::Zone_Start; i < ZoneType::ZONETYPES_SIZE; i++) {
-		pMenu->AddItem(SURF::ZONE::GetZoneNameByType((ZoneType)i));
+	for (int i = EZoneType::Zone_Start; i < EZoneType::ZONETYPES_SIZE; i++) {
+		pMenu->AddItem(SURF::ZONE::GetZoneNameByType((EZoneType)i));
 	}
 	pMenu->SetExitback(true);
 	pMenu->Display();
@@ -35,7 +36,7 @@ static void ZoneMenu_SelectTrack(CSurfPlayer* pPlayer) {
 	auto wpMenu = MENU::Create(
 		pPlayer->GetController(), MENU_CALLBACK_L(pPlayer) {
 			if (action == EMenuAction::SelectItem) {
-				pPlayer->m_pZoneService->m_ZoneEdit.m_iTrack = (ZoneTrack)iItem;
+				pPlayer->m_pZoneService->m_ZoneEdit.m_iTrack = iItem;
 				ZoneMenu_SelectType(pPlayer);
 			}
 		});
@@ -49,8 +50,8 @@ static void ZoneMenu_SelectTrack(CSurfPlayer* pPlayer) {
 
 	auto pMenu = wpMenu.lock();
 	pMenu->SetTitle("选择赛道");
-	for (int i = ZoneTrack::Track_Main; i < ZoneTrack::TRACKS_SIZE; i++) {
-		pMenu->AddItem(SURF::ZONE::GetZoneNameByTrack((ZoneTrack)i));
+	for (TimerTrack i = EZoneTrack::Track_Main; i < EZoneTrack::TRACKS_SIZE; i++) {
+		pMenu->AddItem(SURF::GetTrackName(i));
 	}
 	pMenu->SetExitback(true);
 	pMenu->Display();
@@ -87,7 +88,7 @@ static void ZoneMenu_Edit(CSurfPlayer* pPlayer, bool bDelete = false) {
 			} else {
 				pPlayer->m_pZoneService->ReEditZone(zone);
 			}
-			std::string sZone = fmt::format("{} - {} #{}", SURF::ZONE::GetZoneNameByTrack(zone.m_iTrack), SURF::ZONE::GetZoneNameByType(zone.m_iType), zone.m_iValue);
+			std::string sZone = fmt::format("{} - {} #{}", SURF::GetTrackName(zone.m_iTrack), SURF::ZONE::GetZoneNameByType(zone.m_iType), zone.m_iValue);
 			pPlayer->Print("你选择了: %s", sZone.c_str());
 		});
 
@@ -114,7 +115,7 @@ static void ZoneMenu_Edit(CSurfPlayer* pPlayer, bool bDelete = false) {
 	});
 
 	for (const auto& [handle, zone] : vZones) {
-		std::string sZone = fmt::format("{} - {} #{}", SURF::ZONE::GetZoneNameByTrack(zone.m_iTrack), SURF::ZONE::GetZoneNameByType(zone.m_iType), zone.m_iValue);
+		std::string sZone = fmt::format("{} - {} #{}", SURF::GetTrackName(zone.m_iTrack), SURF::ZONE::GetZoneNameByType(zone.m_iType), zone.m_iValue);
 		pMenu->AddItem(sZone, handle);
 	}
 

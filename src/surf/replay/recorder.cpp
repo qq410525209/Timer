@@ -2,38 +2,42 @@
 #include <surf/timer/surf_timer.h>
 #include <utils/utils.h>
 
-void CSurfReplayService::OnStart_Recording() {
-	auto pPlayer = GetPlayer();
-
+void CSurfReplayService::OnEnterStart_Recording() {
 	m_bEnabled = true;
 
-	if (m_bGrabbingStagePostFrame && pPlayer->GetCurrentStage() == 1) {
-		// FinishGrabbingPostFrames_Stage
+	auto pPlayer = GetPlayer();
+
+	if (m_ExtraStageFrame.bGrabEnd && pPlayer->GetCurrentStage() == 1) {
+		FinishGrabbingStagePostFrames();
 	}
 
-	if (m_bGrabbingTrackPostFrame) {
+	if (m_ExtraTrackFrame.bGrabEnd) {
 		FinishGrabbingTrackPostFrames();
 	}
+}
 
-	i32 iMaxPreFrames = std::floor(SURF::ReplayPlugin()->m_cvarTrackPreRunTime->GetFloat() * SURF_TICKRATE);
-	i32 iFrameDifference = m_iCurrentFrame - iMaxPreFrames;
+void CSurfReplayService::OnStart_Recording() {
+	size_t iMaxPreFrames = std::floor(SURF::ReplayPlugin()->m_cvarTrackPreRunTime->GetFloat() * SURF_TICKRATE);
+	size_t iFrameDifference = m_iCurrentFrame - iMaxPreFrames;
 	if (iFrameDifference > 0) {
 		if (iFrameDifference > 100) {
-			for (i32 i = iFrameDifference; i < m_iCurrentFrame; i++) {
-				i32 iSwapFrame = i - iFrameDifference;
+			// need figure out why diff > 100
+			SDK_ASSERT(false);
+			
+			/*for (size_t i = iFrameDifference; i < m_iCurrentFrame; i++) {
+				size_t iSwapFrame = i - iFrameDifference;
 				std::swap(m_vCurrentFrames.at(i), m_vCurrentFrames.at(iSwapFrame));
 			}
 
-			m_iCurrentFrame = iMaxPreFrames;
+			m_iCurrentFrame = iMaxPreFrames;*/
 		} else {
-			while (iFrameDifference--) {
-				m_vCurrentFrames.erase(m_vCurrentFrames.begin());
-				m_iCurrentFrame--;
-			}
+			m_vCurrentFrames.erase(m_vCurrentFrames.begin(), m_vCurrentFrames.begin() + iFrameDifference);
+
+			m_iCurrentFrame = 0;
 		}
 	}
 
-	m_iTrackPrerunFrame = m_iCurrentFrame;
+	m_ExtraTrackFrame.iPreEnd = m_iCurrentFrame;
 }
 
 void CSurfReplayService::OnTimerFinishPost_SaveRecording() {
@@ -42,11 +46,11 @@ void CSurfReplayService::OnTimerFinishPost_SaveRecording() {
 		return;
 	}
 
-	m_iTrackFinishFrame = m_iCurrentFrame;
+	m_ExtraTrackFrame.iEndStart = m_iCurrentFrame;
 
 	auto fTrackPostRunTime = SURF::ReplayPlugin()->m_cvarTrackPostRunTime->GetFloat();
 	if (fTrackPostRunTime > 0.0f) {
-		m_bGrabbingTrackPostFrame = true;
+		m_ExtraTrackFrame.bGrabEnd = true;
 
 		m_hPostFrameTimer.Close();
 		m_hPostFrameTimer = UTIL::CreateTimer(
@@ -73,8 +77,14 @@ void CSurfReplayService::OnTimerFinishPost_SaveRecording() {
 	}
 }
 
+void CSurfReplayService::FinishGrabbingStagePostFrames() {
+	m_ExtraStageFrame.bGrabEnd = false;
+	m_hPostFrameTimer.Close(); // should be stagepostframetimer
+	SaveRecord();
+}
+
 void CSurfReplayService::FinishGrabbingTrackPostFrames() {
-	m_bGrabbingTrackPostFrame = false;
+	m_ExtraTrackFrame.bGrabEnd = false;
 	m_hPostFrameTimer.Close();
 	SaveRecord();
 }
@@ -84,14 +94,25 @@ void CSurfReplayService::StartRecord() {
 }
 
 void CSurfReplayService::DoRecord(CCSPlayerPawn* pawn, const CPlayerButton& buttons, const QAngle& viewAngles) {
-	replay_frame_t frame;
+	bool bCanRecord = m_bEnabled || m_ExtraStageFrame.bGrabEnd || m_ExtraTrackFrame.bGrabEnd;
+	if (!bCanRecord) {
+		return;
+	}
+
+	if (m_vCurrentFrames.size() <= m_iCurrentFrame) {
+		size_t newSize = static_cast<size_t>(m_iCurrentFrame) * 2;
+		m_vCurrentFrames.resize(newSize);
+	}
+
+	replay_frame_data_t frame;
 	frame.ang = viewAngles;
 	frame.pos = pawn->GetAbsOrigin();
 	frame.buttons = buttons;
 	frame.flags = pawn->m_fFlags();
 	frame.mt = pawn->m_MoveType();
 
-	m_vCurrentFrames.emplace_back(frame);
+	m_vCurrentFrames[m_iCurrentFrame] = frame;
+	m_iCurrentFrame++;
 }
 
 void CSurfReplayService::SaveRecord() {
@@ -106,16 +127,12 @@ void CSurfReplayService::SaveRecord() {
 	info.style = pPlayer->GetStyle();
 	info.track = pPlayer->GetCurrentTrack();
 	info.stage = bStageTimer ? pPlayer->GetCurrentStage() : 0;
-	info.preframes = bStageTimer ? m_iStagePrerunFrame : m_iTrackPrerunFrame;
-
-	info.postframes = m_iCurrentFrame - bStageTimer ? m_iStageFinishFrame : m_iTrackFinishFrame;
-	info.framelength = m_iCurrentFrame - info.preframes;
+	info.framelength = m_iCurrentFrame - bStageTimer ? m_ExtraStageFrame.iPreStart : 0;
 
 	ReplayArray_t arrFrames;
 	bool bStageReplay = info.stage == 0;
 	if (bStageReplay) {
-		// FIXME: stage preframes
-		arrFrames = UTIL::VECTOR::Slice(m_vCurrentFrames, 114514, m_iCurrentFrame);
+		arrFrames = UTIL::VECTOR::Slice(m_vCurrentFrames, m_ExtraStageFrame.iPreStart, m_iCurrentFrame);
 	} else {
 		arrFrames = m_vCurrentFrames;
 	}
@@ -129,8 +146,6 @@ void CSurfReplayService::ClearFrames() {
 	m_bEnabled = false;
 	m_vCurrentFrames.clear();
 	m_iCurrentFrame = 0;
-	m_iTrackPrerunFrame = 0;
-	m_iStagePrerunFrame = 0;
-	m_iTrackFinishFrame = 0;
-	m_iStageFinishFrame = 0;
+	m_ExtraStageFrame = {};
+	m_ExtraTrackFrame = {};
 }

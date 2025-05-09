@@ -11,7 +11,7 @@ void CSurfBotReplayService::OnReset() {
 
 void CSurfBotReplayService::Init() {
 	m_iCurrentTick = 0;
-	m_iCurrentTrack = (ZoneTrack)-1;
+	m_iCurrentTrack = -1;
 	m_iCurrentStage = -1;
 }
 

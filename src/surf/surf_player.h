@@ -25,7 +25,7 @@ public:
 	void PrintWarning(const char* fmt, ...) const;
 
 	i8 GetStyle() const;
-	ZoneTrack GetCurrentTrack() const;
+	TimerTrack GetCurrentTrack() const;
 	i32 GetCurrentStage() const;
 	f64 GetCurrentTime() const;
 	bool IsPracticeMode() const;

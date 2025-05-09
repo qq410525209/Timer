@@ -20,7 +20,7 @@ constexpr auto SURF_SND_TIMER_RESERVED2 = "Instructor.ImportantLessonStart";
 constexpr auto SURF_SND_TIMER_RESERVED3 = "Vote.Passed";
 constexpr auto SURF_SND_TIMER_RESERVED4 = "UI.DeathNotice";
 
-constexpr auto SURF_MAX_TRACK = ZoneTrack::TRACKS_SIZE;
+constexpr auto SURF_MAX_TRACK = EZoneTrack::TRACKS_SIZE;
 constexpr auto SURF_MAX_STAGE = 64; // surf_classics3 is crazy
 
 constexpr auto SURF_REPLAY_FORMAT = "{CS2SURF-CN-REPLAY}";
@@ -73,3 +73,9 @@ public:
 
 	virtual void OnGlobalMapValidated() {}
 };
+
+namespace SURF {
+	std::string GetStyleName(i8 style);
+	std::string GetStyleShortName(i8 style);
+	std::string GetTrackName(TimerTrack track);
+}

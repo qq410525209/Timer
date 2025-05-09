@@ -1,6 +1,7 @@
 #include "surf_replay.h"
 #include <thread>
 #include <utils/utils.h>
+#include <fmt/format.h>
 
 constexpr auto REPLAY_ARRAY_HEAD = "===ARRAY_HEAD===";
 constexpr auto REPLAY_ARRAY_TAIL = "===ARRAY_TAIL===";
@@ -34,26 +35,49 @@ void replay_file_header_t::WriteToStream(std::ofstream& out) const {
 	out.write(reinterpret_cast<const char*>(&info), sizeof(info));
 }
 
+std::string CSurfReplayPlugin::BuildReplayPath(const i8 style, const TimerTrack track, const i8 stage, const std::string_view map) {
+	std::string sDirPath = UTIL::PATH::Join(UTIL::GetWorkingDirectory(), "replay", map);
+	try {
+		if (!std::filesystem::exists(sDirPath)) {
+			std::filesystem::create_directories(sDirPath);
+		}
+	} catch (const std::filesystem::filesystem_error& e) {
+		LOG::Error("[BuildReplayPath] Failed to create directory: %s\n", e.what());
+		return "";
+	}
+
+	auto getTrackFileName = [](const TimerTrack track) -> std::string {
+		switch (track) {
+			case EZoneTrack::Track_Main:
+				return "Main";
+			default:
+				return fmt::format("B{}", (i8)track);
+		}
+	};
+
+	std::string sMaybeStage = (stage == 0) ? "" : fmt::format("s{}", stage);
+	return fmt::format("{}/{}{}{}.replay", sDirPath, SURF::GetStyleShortName(style), getTrackFileName(track), sMaybeStage);
+}
+
 void CSurfReplayPlugin::AsyncWriteReplayFile(const replay_run_info_t& info, const ReplayArray_t& vFrames) {
-	std::thread([info, vFrames]() {
-		std::string path = "../../csgo/addons/cs2surf/FIXME";
-		std::ofstream file(path, std::ios::out | std::ios::binary);
+	std::string sMap = UTIL::GetGlobals()->mapname.ToCStr();
+	std::string sFilePath = BuildReplayPath(info.style, info.track, info.stage, sMap);
+	std::thread([info, vFrames, sFilePath, sMap]() {
+		std::ofstream file(sFilePath, std::ios::out | std::ios::binary);
 		if (!file.good()) {
-			LOG::Error("Failed to WriteReplayFile: %s", path.data());
+			LOG::Error("Failed to WriteReplayFile: %s", sFilePath.data());
 			SDK_ASSERT(false);
 			return;
 		}
 
 		replay_file_header_t header;
-		header.map = UTIL::GetGlobals()->mapname.ToCStr();
+		header.map = sMap;
 		header.tickrate = SURF_TICKRATE;
 		header.info = info;
 		header.WriteToStream(file);
 
 		file.write(REPLAY_ARRAY_HEAD, std::strlen(REPLAY_ARRAY_HEAD));
 
-		auto iFrameLen = vFrames.size();
-		file.write(reinterpret_cast<const char*>(&iFrameLen), sizeof(iFrameLen));
 		for (const auto& frame : vFrames) {
 			file.write(reinterpret_cast<const char*>(&frame), sizeof(frame));
 		}
@@ -83,12 +107,11 @@ bool CSurfReplayPlugin::ReadReplayFile(const std::string_view path, ReplayArray_
 		return false;
 	}
 
-	size_t iFrameLen = 0;
-	file.read(reinterpret_cast<char*>(&iFrameLen), sizeof(iFrameLen));
+	auto iFrameLen = header.info.framelength;
 	out.reserve(iFrameLen);
 
 	for (size_t i = 0; i < iFrameLen; i++) {
-		replay_frame_t frame;
+		replay_frame_data_t frame;
 		file.read(reinterpret_cast<char*>(&frame), sizeof(frame));
 		out.emplace_back(frame);
 	}

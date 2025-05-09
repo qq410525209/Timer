@@ -22,8 +22,8 @@ struct ZoneData_t {
 	ZoneData_t& operator=(const ZoneData_t& other) = default;
 
 	void Reset() {
-		m_iTrack = (ZoneTrack)-1;
-		m_iType = (ZoneType)-1;
+		m_iTrack = -1;
+		m_iType = (EZoneType)-1;
 		m_iValue = -1;
 		m_iDatabaseID = -1;
 		m_vecMins = Vector(0.0f, 0.0f, 0.0f);
@@ -46,8 +46,8 @@ struct ZoneData_t {
 
 	void EnsureDestination();
 
-	ZoneTrack m_iTrack;
-	ZoneType m_iType;
+	TimerTrack m_iTrack;
+	EZoneType m_iType;
 	i32 m_iValue;
 	i32 m_iDatabaseID;
 	Vector m_vecMins;

@@ -37,13 +37,13 @@ public:
 	void ReEditZone(const ZoneData_t& zone);
 	void DeleteZone(const ZoneData_t& zone);
 	void DeleteAllZones();
-	bool TeleportToZone(ZoneTrack track, ZoneType type);
+	bool TeleportToZone(TimerTrack track, EZoneType type);
 
 private:
 	void ResetCustomDestination();
 
 public:
-	std::array<std::array<std::pair<Vector, QAngle>, ZoneType::ZONETYPES_SIZE>, ZoneTrack::TRACKS_SIZE> m_aCustomDestination;
+	std::array<std::array<std::pair<Vector, QAngle>, EZoneType::ZONETYPES_SIZE>, EZoneTrack::TRACKS_SIZE> m_aCustomDestination;
 	ZoneEditProperty m_ZoneEdit;
 };
 
@@ -56,9 +56,9 @@ private:
 
 public:
 	std::optional<ZoneCache_t> FindZone(CBaseEntity* pEnt);
-	std::optional<std::pair<CZoneHandle, ZoneCache_t>> FindZone(ZoneTrack track, ZoneType type, i32 value);
-	int GetZoneCount(ZoneTrack track, ZoneType type);
-	std::vector<ZoneCache_t> GetZones(ZoneTrack track, ZoneType type);
+	std::optional<std::pair<CZoneHandle, ZoneCache_t>> FindZone(TimerTrack track, EZoneType type, i32 value);
+	int GetZoneCount(TimerTrack track, EZoneType type);
+	std::vector<ZoneCache_t> GetZones(TimerTrack track, EZoneType type);
 	void ClearZones();
 	void RefreshZones();
 	void UpsertZone(const ZoneData_t& data, bool bUpload = true);
@@ -83,8 +83,7 @@ namespace SURF {
 		void CreatePoints3D(const Vector& vecMin, const Vector& vecMax, Vector out[8]);
 		void FillBoxMinMax(Vector& vecMin, Vector& vecMax, bool resize = false);
 		Vector GetCenter(const Vector& vecMin, const Vector& vecMax);
-		std::string GetZoneNameByTrack(ZoneTrack track);
-		std::string GetZoneNameByType(ZoneType type);
+		std::string GetZoneNameByType(EZoneType type);
 
 		namespace HOOK {
 			bool OnStartTouch(CBaseEntity* pSelf, CBaseEntity* pOther);

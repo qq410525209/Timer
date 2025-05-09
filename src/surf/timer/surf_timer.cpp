@@ -26,7 +26,7 @@ void CSurfTimerPlugin::OnPhysicsSimulatePost(CCSPlayerController* pController) {
 }
 
 bool CSurfTimerPlugin::OnEnterZone(const ZoneCache_t& zone, CSurfPlayer* pPlayer) {
-	if (zone.m_iType == ZoneType::Zone_End) {
+	if (zone.m_iType == EZoneType::Zone_End) {
 		pPlayer->m_pTimerService->DoTimerFinish();
 	}
 
@@ -34,7 +34,7 @@ bool CSurfTimerPlugin::OnEnterZone(const ZoneCache_t& zone, CSurfPlayer* pPlayer
 }
 
 bool CSurfTimerPlugin::OnStayZone(const ZoneCache_t& zone, CSurfPlayer* pPlayer) {
-	if (zone.m_iType == ZoneType::Zone_Start) {
+	if (zone.m_iType == EZoneType::Zone_Start) {
 		pPlayer->m_pTimerService->DoTimerStart();
 	}
 
@@ -42,7 +42,7 @@ bool CSurfTimerPlugin::OnStayZone(const ZoneCache_t& zone, CSurfPlayer* pPlayer)
 }
 
 bool CSurfTimerPlugin::OnLeaveZone(const ZoneCache_t& zone, CSurfPlayer* pPlayer) {
-	if (zone.m_iType == ZoneType::Zone_Start) {
+	if (zone.m_iType == EZoneType::Zone_Start) {
 		pPlayer->m_pTimerService->PlayStartTimerSound();
 	}
 
@@ -201,13 +201,13 @@ void CSurfTimerService::PlayStartTimerSound() {
 	UTIL::PlaySoundToClient(GetPlayer()->GetPlayerSlot(), SURF_SND_TIMER_START, 3.0f);
 }
 
-void CSurfTimerService::PlayFinishTimerSound(ZoneTrack iTrack) {
+void CSurfTimerService::PlayFinishTimerSound(TimerTrack iTrack) {
 	switch (iTrack) {
-		case ZoneTrack::Track_Main: {
+		case EZoneTrack::Track_Main: {
 			UTIL::PlaySoundToClient(GetPlayer()->GetPlayerSlot(), SURF_SND_TIMER_FINISH_MAIN);
 			break;
 		}
-		case ZoneTrack::Track_Bonus: {
+		case EZoneTrack::Track_Bonus: {
 			UTIL::PlaySoundToClient(GetPlayer()->GetPlayerSlot(), SURF_SND_TIMER_FINISH_BONUS);
 			break;
 		}

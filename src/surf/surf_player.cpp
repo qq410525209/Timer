@@ -153,7 +153,7 @@ i8 CSurfPlayer::GetStyle() const {
 	return m_pTimerService->m_iCurrentStyle;
 }
 
-ZoneTrack CSurfPlayer::GetCurrentTrack() const {
+TimerTrack CSurfPlayer::GetCurrentTrack() const {
 	return m_pTimerService->m_iCurrentTrack;
 }
 

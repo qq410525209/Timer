@@ -28,7 +28,7 @@ public:
 	void FromSnapshot(const timer_snapshot_t& snapshot);
 
 	void PlayStartTimerSound();
-	void PlayFinishTimerSound(ZoneTrack iTrack);
+	void PlayFinishTimerSound(TimerTrack iTrack);
 
 public:
 	f64 m_fLastEndTime {};

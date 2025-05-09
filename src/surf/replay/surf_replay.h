@@ -5,19 +5,20 @@
 #include <surf/surf_bot.h>
 #include <utils/ctimer.h>
 
-using ReplayArray_t = std::vector<replay_frame_t>;
+using ReplayArray_t = std::vector<replay_frame_data_t>;
 
 struct replay_run_info_t {
 	std::time_t timestamp;
 	uint64 steamid;
 	f64 time;
 	i8 style;
-	ZoneTrack track;
-	i32 stage;
-	i32 preframes;
-	i32 framelength;
-	i32 postframes;
+	TimerTrack track;
+	i8 stage;
+	size_t framelength;
+	// ReplayArray_t frames; // Not POD, write it on where else
 };
+
+static_assert(std::is_trivial_v<replay_run_info_t> && std::is_standard_layout_v<replay_run_info_t>);
 
 struct replay_file_header_t {
 	std::string format = SURF_REPLAY_FORMAT;
@@ -30,6 +31,13 @@ struct replay_file_header_t {
 	void WriteToStream(std::ofstream& out) const;
 };
 
+struct replay_extraframe_t {
+	size_t iPreStart {};
+	size_t iPreEnd {};
+	bool bGrabEnd {};
+	size_t iEndStart {};
+};
+
 class CSurfReplayService : CSurfPlayerService {
 private:
 	virtual void OnReset() override;
@@ -37,8 +45,10 @@ private:
 public:
 	using CSurfPlayerService::CSurfPlayerService;
 
+	void OnEnterStart_Recording();
 	void OnStart_Recording();
 	void OnTimerFinishPost_SaveRecording();
+	void FinishGrabbingStagePostFrames();
 	void FinishGrabbingTrackPostFrames();
 
 	void StartRecord();
@@ -49,13 +59,9 @@ public:
 public:
 	bool m_bEnabled;
 	ReplayArray_t m_vCurrentFrames;
-	i32 m_iCurrentFrame;
-	i32 m_iTrackPrerunFrame;
-	i32 m_iStagePrerunFrame;
-	i32 m_iTrackFinishFrame;
-	i32 m_iStageFinishFrame;
-	bool m_bGrabbingTrackPostFrame;
-	bool m_bGrabbingStagePostFrame;
+	size_t m_iCurrentFrame;
+	replay_extraframe_t m_ExtraTrackFrame;
+	replay_extraframe_t m_ExtraStageFrame;
 
 	CTimerHandle m_hPostFrameTimer;
 };
@@ -86,8 +92,8 @@ public:
 public:
 	bool m_bReplayBot;
 	i32 m_iCurrentTick;
-	i32 m_iCurrentStage;
-	ZoneTrack m_iCurrentTrack;
+	TimerStage m_iCurrentStage;
+	TimerTrack m_iCurrentTrack;
 };
 
 class CSurfReplayPlugin : CSurfForward, CMovementForward, CCoreForward {
@@ -104,6 +110,7 @@ private:
 	virtual void OnTimerFinishPost(CSurfPlayer* pPlayer) override;
 
 public:
+	std::string BuildReplayPath(const i8 style, const TimerTrack track, const i8 stage, const std::string_view map);
 	void AsyncWriteReplayFile(const replay_run_info_t& info, const ReplayArray_t& vFrames);
 	bool ReadReplayFile(const std::string_view path, ReplayArray_t& out);
 

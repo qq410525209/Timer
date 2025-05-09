@@ -47,14 +47,14 @@ void CSurfReplayPlugin::OnPlayerRunCmdPost(CCSPlayerPawn* pPawn, const CInButton
 		return;
 	}
 
-	auto& pReplayService = player->m_pReplayService;
-	if (pReplayService->m_bEnabled) {
-		pReplayService->DoRecord(pPawn, buttons, viewAngles);
-	}
+	player->m_pReplayService->DoRecord(pPawn, buttons, viewAngles);
 }
 
 bool CSurfReplayPlugin::OnEnterZone(const ZoneCache_t& zone, CSurfPlayer* pPlayer) {
-	if (zone.m_iType == ZoneType::Zone_End) {
+	if (zone.m_iType == EZoneType::Zone_Start) {
+		pPlayer->m_pReplayService->OnEnterStart_Recording();
+	}
+	else if (zone.m_iType == EZoneType::Zone_End) {
 		pPlayer->m_pReplayService->SaveRecord();
 	}
 
@@ -62,17 +62,17 @@ bool CSurfReplayPlugin::OnEnterZone(const ZoneCache_t& zone, CSurfPlayer* pPlaye
 }
 
 bool CSurfReplayPlugin::OnStayZone(const ZoneCache_t& zone, CSurfPlayer* pPlayer) {
-	if (zone.m_iType == ZoneType::Zone_Start) {
-		pPlayer->m_pReplayService->m_bEnabled = true;
+	if (zone.m_iType == EZoneType::Zone_Start) {
+		pPlayer->m_pReplayService->OnStart_Recording();
 	}
 
 	return true;
 }
 
 bool CSurfReplayPlugin::OnLeaveZone(const ZoneCache_t& zone, CSurfPlayer* pPlayer) {
-	if (zone.m_iType == ZoneType::Zone_Start) {
+	/*if (zone.m_iType == ZoneType::Zone_Start) {
 		pPlayer->m_pReplayService->StartRecord();
-	}
+	}*/
 
 	return true;
 }
@@ -83,5 +83,6 @@ void CSurfReplayPlugin::OnTimerFinishPost(CSurfPlayer* pPlayer) {
 
 void CSurfReplayService::OnReset() {
 	m_bEnabled = false;
+	m_vCurrentFrames.resize(10000);
 	m_vCurrentFrames.clear();
 }

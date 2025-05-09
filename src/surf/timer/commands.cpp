@@ -17,8 +17,8 @@ CCMD_CALLBACK(Command_StartTimer) {
 	auto& pZoneService = pPlayer->m_pZoneService;
 
 	auto track = pTimerService->m_iCurrentTrack;
-	if (!pZoneService->TeleportToZone(track, ZoneType::Zone_Start)) {
-		pTimerService->PrintWarning("您的计时器将不会启动，因为地图未设置{orchid}%s{default}起点区域.", SURF::ZONE::GetZoneNameByTrack(track).c_str());
+	if (!pZoneService->TeleportToZone(track, EZoneType::Zone_Start)) {
+		pTimerService->PrintWarning("您的计时器将不会启动，因为地图未设置{orchid}%s{default}起点区域.", SURF::GetTrackName(track).c_str());
 		pZoneService->PlayErrorSound();
 		return;
 	}
@@ -54,11 +54,11 @@ CCMD_CALLBACK(Command_EndTimer) {
 	auto& pZoneService = pPlayer->m_pZoneService;
 
 	auto track = pTimerService->m_iCurrentTrack;
-	auto type = ZoneType::Zone_End;
+	auto type = EZoneType::Zone_End;
 
 	const auto vEndZones = SURF::ZonePlugin()->GetZones(track, type);
 	if (vEndZones.empty()) {
-		pTimerService->PrintWarning("地图未设置{orchid}%s{default}终点区域!", SURF::ZONE::GetZoneNameByTrack(track).c_str());
+		pTimerService->PrintWarning("地图未设置{orchid}%s{default}终点区域!", SURF::GetTrackName(track).c_str());
 		pZoneService->PlayErrorSound();
 		return;
 	}

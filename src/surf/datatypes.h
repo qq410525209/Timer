@@ -5,14 +5,18 @@ namespace SURF {
 	inline const QAngle ZERO_ANG = {0.0f, 0.0f, 0.0f};
 } // namespace SURF
 
-enum ZoneTrack : i8 {
+using TimerStyle = i8;
+using TimerTrack = i8;
+using TimerStage = i8;
+
+enum EZoneTrack : TimerTrack {
 	Track_Main,
 	Track_Bonus,
 	Track_MaxBonus = 16,
 	TRACKS_SIZE
 };
 
-enum ZoneType : i8 {
+enum EZoneType : i8 {
 	Zone_Start,
 	Zone_End,
 	Zone_Stage,
@@ -35,11 +39,11 @@ struct timer_snapshot_t {
 	bool m_bPracticeMode {};
 	bool m_bPaused {};
 
-	ZoneTrack m_iCurrentTrack = ZoneTrack::Track_Main;
-	i8 m_iCurrentStyle {};
+	TimerTrack m_iCurrentTrack = EZoneTrack::Track_Main;
+	TimerStyle m_iCurrentStyle {};
 
-	i32 m_iCurrentStage {};
-	i32 m_iLastStage {};
+	TimerStage m_iCurrentStage {};
+	TimerStage m_iLastStage {};
 };
 
 struct timer_pausemovement_t {
@@ -85,7 +89,7 @@ struct hudsettings_t {
 	bool m_bHidePlayers = false;
 };
 
-struct replay_frame_t {
+struct replay_frame_data_t {
 	QAngle ang;
 	Vector pos;
 	CPlayerButton buttons;
