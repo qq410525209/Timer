@@ -15,3 +15,5 @@
 using json = nlohmann::json;
 
 #include <core/forwards.h>
+
+#include <utils/enumhelper.h>
