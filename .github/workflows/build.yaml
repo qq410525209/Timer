@@ -24,12 +24,9 @@ jobs:
       - name: Find Visual C++ compilers and make all environment variables global (W)
         shell: cmd
         run: |
-          :: See https://github.com/microsoft/vswhere/wiki/Find-VC
           for /f "usebackq delims=*" %%i in (`vswhere -latest -property installationPath`) do (
             call "%%i"\Common7\Tools\vsdevcmd.bat -arch=x64 -host_arch=x64
           )
-
-          :: Loop over all environment variables and make them global.
           for /f "delims== tokens=1,2" %%a in ('set') do (
             echo>>"%GITHUB_ENV%" %%a=%%b
           )
@@ -41,14 +38,18 @@ jobs:
         run: |
           cmake -G Ninja -B build -S . -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER="cl" -DCMAKE_CXX_COMPILER="cl"
           cmake --build build
+          cmake --install build --prefix ./build/package  # 新增安装步骤
 
-      # - name: Archive build
-      #   uses: actions/upload-artifact@v4
-      #   with:
-      #     name: cs2surf-win
-      #     path: ./build/package
+      - name: List build artifacts (Debug)
+        run: dir build /s  # 调试目录结构
 
- build-linux:
+      - name: Archive build
+        uses: actions/upload-artifact@v4
+        with:
+          name: cs2surf-win
+          path: ./build/package  # 确保路径正确
+
+  build-linux:
     name: Linux
     runs-on: ubuntu-22.04
 
