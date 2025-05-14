@@ -48,7 +48,7 @@ jobs:
       #     name: cs2surf-win
       #     path: ./build/package
 
-  build-linux:
+ build-linux:
     name: Linux
     runs-on: ubuntu-22.04
 
@@ -62,6 +62,9 @@ jobs:
         run: |
           echo "#define VERSION_STRING \"${{ inputs.version }}\"" > ./src/version.h
 
+      - name: Install Clang-15  # 确保编译器存在
+        run: sudo apt-get install -y clang-15
+
       - name: Setup Ninja
         uses: seanmiddleditch/gha-setup-ninja@master
 
@@ -69,9 +72,13 @@ jobs:
         run: |
           cmake -G Ninja -B build -S . -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER="clang-15" -DCMAKE_CXX_COMPILER="clang++-15"
           cmake --build build
+          cmake --install build --prefix ./build/package  # 新增安装步骤
 
-      # - name: Archive build
-      #   uses: actions/upload-artifact@v4
-      #   with:
-      #     name: cs2surf-linux
-      #     path: ./build/package
+      - name: List build artifacts (Debug)
+        run: ls -R build  # 调试目录结构
+
+      - name: Archive build
+        uses: actions/upload-artifact@v4
+        with:
+          name: cs2surf-linux
+          path: ./build/package  # 确保路径正确
